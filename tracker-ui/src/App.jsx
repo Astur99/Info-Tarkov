@@ -63,7 +63,7 @@ function App() {
   );
 }
 
-// COMPONENTE: EFECTO DE LUZ EN EL TÍTULO
+// COMPONENTE: EFECTO DE LUZ EN EL TÍTULO (CORREGIDO CASE-SENSITIVE)
 function TitleGlow() {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -75,11 +75,11 @@ function TitleGlow() {
 
   return (
     <div onMouseMove={handleMouseMove} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} style={{ position: 'relative', display: 'inline-block', cursor: 'default', padding: '10px' }}>
-      <h1 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '4.5rem', fontWeight: '700', letterSpacing: '-1px', margin: '0', color: 'rgba(255, 255, 255, 0.12)', textTransform: 'lowercase' }}>
-        sherpa.com
+      <h1 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '4.5rem', fontWeight: '700', letterSpacing: '-1px', margin: '0', color: 'rgba(255, 255, 255, 0.12)' }}>
+        Tarkov Info
       </h1>
-      <h1 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '4.5rem', fontWeight: '700', letterSpacing: '-1px', margin: '0', textTransform: 'lowercase', position: 'absolute', top: '10px', left: '10px', width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', color: 'transparent', pointerEvents: 'none', backgroundImage: `radial-gradient(circle 250px at ${pos.x}px ${pos.y}px, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.6) 30%, rgba(255, 255, 255, 0.15) 65%, transparent 100%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', opacity: isHovered ? 1 : 0, transition: 'opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
-        sherpa.com
+      <h1 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '4.5rem', fontWeight: '700', letterSpacing: '-1px', margin: '0', position: 'absolute', top: '10px', left: '10px', width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', color: 'transparent', pointerEvents: 'none', backgroundImage: `radial-gradient(circle 250px at ${pos.x}px ${pos.y}px, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.6) 30%, rgba(255, 255, 255, 0.15) 65%, transparent 100%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', opacity: isHovered ? 1 : 0, transition: 'opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
+        Tarkov Info
       </h1>
     </div>
   );
@@ -88,7 +88,7 @@ function TitleGlow() {
 // COMPONENTE: TARJETA DE MÓDULO INDIVIDUAL
 function ModuleCard({ mod, index, onViewChange }) {
   const [isHovered, setIsHovered] = useState(false);
-  const delayClass = `delay-${(index % 7) + 1}`; // Ajustado el factor de delay al reducir módulos
+  const delayClass = `delay-${(index % 7) + 1}`;
 
   return (
     <div 
