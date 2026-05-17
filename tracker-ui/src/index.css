@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+  /* Paleta Tarkov-Apple Refinada */
+  --tk-deep-black: #000000;    /* Negro puro Apple para OLED */
+  --tk-bg: #050505;             /* Fondo base ligeramente gris */
+  --tk-glass: rgba(10, 10, 10, 0.6); /* Cristal ahumado transparente */
+  --tk-glass-border: rgba(255, 255, 255, 0.04); /* Borde de luz sutil (hairline) */
+  --tk-green: #8F9F7F;          /* Verde militar Sherpa, más elegante y apagado */
+  --tk-red: #B01515;            /* Rojo alerta táctica */
+  --tk-text-main: #FFFFFF;
+  --tk-text-muted: #888888;
+  --tk-ease: cubic-bezier(0.2, 0.8, 0.2, 1); /* Curva de animación Apple */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--tk-bg);
+  color: var(--tk-text-main);
+  /* Fuente del sistema optimizada (Apple-style) */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+  
+  /* Gradientes radiales para dar atmósfera de búnker iluminado por pantallas */
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(143, 159, 127, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(176, 21, 21, 0.02) 0%, transparent 40%);
+}
+
+/* Fondo con ruido metálico/ruido sutil (opcional para textura Tarkov) */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0.015; /* Casi imperceptible */
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3FfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3F/filter%3E%3Frect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3F/svg%3E");
+}
+
+/* Animaciones globales */
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-slide {
+  animation: fadeInSlide 1s var(--tk-ease) forwards;
+  opacity: 0;
+}
+
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+.delay-5 { animation-delay: 0.25s; }
+.delay-6 { animation-delay: 0.3s; }
+.delay-7 { animation-delay: 0.35s; }
+.delay-8 { animation-delay: 0.4s; }
+
+/* Personalización de la barra de scroll para la matriz táctica */
+.tarkov-matrix-container::-webkit-scrollbar {
+  height: 6px; /* Barra horizontal ultra fina */
+}
+
+.tarkov-matrix-container::-webkit-scrollbar-track {
+  background: #050505; /* Fondo del carril */
+}
+
+.tarkov-matrix-container::-webkit-scrollbar-thumb {
+  background: #222; /* El color del tirador estático */
+  border-radius: 3px;
+  transition: background 0.3s var(--tk-ease);
+}
+
+.tarkov-matrix-container::-webkit-scrollbar-thumb:hover {
+  background: var(--tk-green); /* Se ilumina con tu verde Sherpa al pasar el cursor */
+  box-shadow: 0 0 8px var(--tk-green);
+}

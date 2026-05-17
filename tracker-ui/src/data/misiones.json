@@ -1,0 +1,19 @@
+{
+  "quests": [
+    {
+      "id": "q_story_savior_04",
+      "title": "The Price of Salvation",
+      "story_node": {
+        "is_narrative_branch": true,
+        "branch_id": "savior_path",
+        "point_of_no_return": {
+          "is_trigger": true,
+          "trigger_on": "accept",
+          "warning_ui_message": "Aceptar este encargo te alinea definitivamente con Therapist y bloqueará las rutas de Peacekeeper y Skier.",
+          "locks_branches": ["escape_path", "abandon_path"],
+          "fails_active_quests": ["q_peacekeeper_terminal_04", "q_skier_betrayal_02"]
+        }
+      }
+    }
+  ]
+}
