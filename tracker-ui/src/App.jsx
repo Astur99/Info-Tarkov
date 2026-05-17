@@ -28,7 +28,7 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '1rem' }}>
             <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--tk-green)', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 10px var(--tk-green)' }}></span>
             <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '500' }}>
-              Terminal de asistencia táctica e inteligencia operativa
+              Todo lo que necesitas saber de Tarkov en un mismo lugar
             </p>
           </div>
         </header>

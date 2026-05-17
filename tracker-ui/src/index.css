@@ -3,7 +3,7 @@
 :root {
   /* Paleta Tarkov-Apple Refinada */
   --tk-deep-black: #000000;    /* Negro puro Apple para OLED */
-  --tk-bg: #050505;             /* Fondo base ligeramente gris */
+  --tk-bg: #0b0c0f;             /* Ajustado a un gris/azul militar ultrasaturnado para la rejilla */
   --tk-glass: rgba(10, 10, 10, 0.6); /* Cristal ahumado transparente */
   --tk-glass-border: rgba(255, 255, 255, 0.04); /* Borde de luz sutil (hairline) */
   --tk-green: #8F9F7F;          /* Verde militar Sherpa, más elegante y apagado */
@@ -24,26 +24,54 @@ body {
   color: var(--tk-text-main);
   /* Fuente del sistema optimizada (Apple-style) */
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
   overflow-x: hidden;
-  
-  /* Gradientes radiales para dar atmósfera de búnker iluminado por pantallas */
+  position: relative;
+
+  /* MEJORA: Iluminación ambiental de búnker + Rejilla táctica de coordenadas */
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(143, 159, 127, 0.03) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(176, 21, 21, 0.02) 0%, transparent 40%);
+    radial-gradient(circle at 50% 35%, rgba(143, 159, 127, 0.08) 0%, transparent 65%),
+    linear-gradient(rgba(255, 255, 255, 0.006) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.006) 1px, transparent 1px);
+  background-size: 100% 100%, 45px 45px, 45px 45px;
 }
 
-/* Fondo con ruido metálico/ruido sutil (opcional para textura Tarkov) */
-body::after {
-  content: "";
+/* EFECTO: Capa superior de Scanlines (Líneas de monitor militar CRT) */
+body::before {
+  content: " ";
+  display: block;
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  opacity: 0.015; /* Casi imperceptible */
-  z-index: -1;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.18) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.015), rgba(0, 255, 0, 0.005), rgba(0, 0, 255, 0.015));
+  z-index: 9999;
+  background-size: 100% 4px, 6px 100%;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3FfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3F/filter%3E%3Frect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3F/svg%3E");
+  opacity: 0.35;
+}
+
+/* Textura de grano/ruido analógico de fondo */
+.app-noise {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  content: "";
+  opacity: 0.022;
+  pointer-events: none;
+  z-index: 9998;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* ANIMACIÓN: Pulso y latido infinito para el LED de estado de la terminal */
+@keyframes ledPulse {
+  0% { transform: scale(1); opacity: 0.75; box-shadow: 0 0 10px var(--tk-green); }
+  50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 20px var(--tk-green), 0 0 30px rgba(143, 159, 127, 0.4); }
+  100% { transform: scale(1); opacity: 0.75; box-shadow: 0 0 10px var(--tk-green); }
+}
+
+header span {
+  animation: ledPulse 3s infinite ease-in-out;
 }
 
 /* Animaciones globales */
@@ -66,22 +94,21 @@ body::after {
 .delay-7 { animation-delay: 0.35s; }
 .delay-8 { animation-delay: 0.4s; }
 
-/* Personalización de la barra de scroll para la matriz táctica */
-.tarkov-matrix-container::-webkit-scrollbar {
-  height: 6px; /* Barra horizontal ultra fina */
+/* Personalización de la barra de scroll para navegadores basados en WebKit */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.tarkov-matrix-container::-webkit-scrollbar-track {
-  background: #050505; /* Fondo del carril */
+::-webkit-scrollbar-track {
+  background: var(--tk-deep-black);
 }
 
-.tarkov-matrix-container::-webkit-scrollbar-thumb {
-  background: #222; /* El color del tirador estático */
+::-webkit-scrollbar-thumb {
+  background: #222;
   border-radius: 3px;
-  transition: background 0.3s var(--tk-ease);
 }
 
-.tarkov-matrix-container::-webkit-scrollbar-thumb:hover {
-  background: var(--tk-green); /* Se ilumina con tu verde Sherpa al pasar el cursor */
-  box-shadow: 0 0 8px var(--tk-green);
+::-webkit-scrollbar-thumb:hover {
+  background: #333;
 }
