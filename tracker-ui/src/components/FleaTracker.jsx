@@ -353,7 +353,7 @@ export default function FleaTracker({ onViewChange }) {
         </h3>
         
         {cargandoHotDeals ? (
-          <div style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', letterSpacing: '1px' }}>EJECUTANDO DIAGNÓSTICO ALGORÍTMICO EN SERVIDORES...</div>
+          <div style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', letterSpacing: '1px' }}>LISTANDO ITEMS...</div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {hotDeals.map((deal) => {
