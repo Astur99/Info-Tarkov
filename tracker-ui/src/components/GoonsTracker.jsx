@@ -182,7 +182,7 @@ export default function GoonsTracker({ onViewChange }) {
           fontSize: '1.5rem',
           textTransform: 'uppercase'
         }}>
-          Filtrando frecuencia satelital y aislando canales {modoJuego.toUpperCase()}...
+          Extrayendo datos de los Goons en modo {modoJuego.toUpperCase()}...
         </p>
       </div>
     );
