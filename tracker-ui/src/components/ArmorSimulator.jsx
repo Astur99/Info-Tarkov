@@ -558,7 +558,7 @@ export default function ArmorSimulator({ onViewChange }) {
           letterSpacing: '2px'
         }}
       >
-        SITUACIÓN CRÍTICA // DECODIFICANDO ENTORNO BALÍSTICO...
+        CARGANDO ENTORNO BALÍSTICO...
       </div>
     );
   }

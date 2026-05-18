@@ -279,7 +279,7 @@ export default function KappaTree({ onViewChange }) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', fontFamily: "'Rajdhani', sans-serif" }}>
         <p style={{ letterSpacing: '2px', color: 'var(--tk-green)', fontSize: '1.5rem', textTransform: 'uppercase' }}>
-          Compilando matriz jerárquica v1.0...
+          COMPILANDO MATRÍZ JERÁRQUICA, ESPERE...
         </p>
       </div>
     );
