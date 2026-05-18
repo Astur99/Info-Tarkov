@@ -244,7 +244,7 @@ export default function FleaTracker({ onViewChange }) {
             boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)'
           }}
         />
-        {cargando && <p style={{ color: 'var(--tk-green)', marginTop: '0.5rem', fontSize: '0.9rem', letterSpacing: '1px' }}>RASTREANDO BASE DE DATOS CIFRADA...</p>}
+        {cargando && <p style={{ color: 'var(--tk-green)', marginTop: '0.5rem', fontSize: '0.9rem', letterSpacing: '1px' }}>BUSCANDO EN LA BASE DE DATOS...</p>}
         
         {!cargando && busqueda.length >= 3 && itemsResultados.length === 0 && (
           <p style={{ 
@@ -316,13 +316,13 @@ export default function FleaTracker({ onViewChange }) {
         {itemSeleccionado && (
           <section style={{ backgroundColor: 'var(--tk-glass)', backdropFilter: 'blur(20px)', border: '1px solid var(--tk-glass-border)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', height: 'fit-content' }}>
             <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px' }}>DATOS ESPECÍFICOS ESCANEADOS</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px' }}>DATOS ESPECÍFICOS</span>
               <h3 style={{ fontSize: '1.6rem', fontWeight: '700', color: '#fff', margin: '0.2rem 0 0 0' }}>{itemSeleccionado.name}</h3>
             </div>
 
             <div>
               <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.8rem', letterSpacing: '0.5px' }}>
-                📊 TENDENCIA HISTÓRICA REAL (ÚLTIMOS 7 DÍAS OPERATIVOS)
+                📊 TENDENCIA HISTÓRICA (ÚLTIMOS 7 DÍAS)
               </span>
               {renderRealSparkline(itemSeleccionado)}
               <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.85rem', marginTop: '0.8rem', paddingLeft: '4px' }}>
@@ -332,7 +332,7 @@ export default function FleaTracker({ onViewChange }) {
             </div>
 
             <div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.6rem', letterSpacing: '0.5px' }}>VALOR DE COMPRA EN TRADERS OFICIALES</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.6rem', letterSpacing: '0.5px' }}>VALOR DE COMPRA EN TRADERS</span>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 {itemSeleccionado.sellFor && itemSeleccionado.sellFor.slice(0, 4).map((trader, i) => (
                   <div key={i} style={{ backgroundColor: 'rgba(0,0,0,0.25)', padding: '0.75rem 1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
