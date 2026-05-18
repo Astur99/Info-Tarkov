@@ -318,7 +318,7 @@ export default function LiveEvents({ onViewChange }) {
       >
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
           <span style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--tk-text-muted)', letterSpacing: '1.5px' }}>
-            SIGNAL // TRACKING_TIME
+            HORA LOCAL
           </span>
 
           <span style={{ fontSize: '1.15rem', fontWeight: '800', color: '#fff', letterSpacing: '1px', marginTop: '1px' }}>
@@ -333,7 +333,7 @@ export default function LiveEvents({ onViewChange }) {
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
           <span style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--tk-text-muted)', letterSpacing: '1.5px' }}>
-            FEED // ACTIVE_EVENTS
+            FEED // EVENTOS ACTIVOS
           </span>
 
           <span style={{ fontSize: '1.15rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px', marginTop: '1px' }}>
@@ -441,7 +441,7 @@ export default function LiveEvents({ onViewChange }) {
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: '8rem', color: 'var(--tk-green)', fontSize: '1.2rem', letterSpacing: '2px' }}>
-          SINTONIZANDO RED DE COMUNICACIONES SECTORIZADA...
+          SINCRONIZANDO EVENTOS EN VIVO EN ESCAPE FROM TARKOV...
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -585,7 +585,7 @@ export default function LiveEvents({ onViewChange }) {
             boxShadow: loading ? 'none' : '0 0 20px rgba(26, 176, 21, 0.2)'
           }}
         >
-          {loading ? 'RE-ESCANEANDO BANDAS...' : 'FORZAR BÚSQUEDA DE SEÑALES'}
+          {loading ? 'RE-ESCANEANDO BANDAS...' : 'REFRESCAR LISTA DE EVENTOS'}
         </button>
       </div>
     </div>
