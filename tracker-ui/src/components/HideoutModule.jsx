@@ -228,9 +228,8 @@ export default function HideoutModule({ onViewChange }) {
               marginTop: '0.3rem'
             }}
           >
-             Planificación modular del refugio,
-            requisitos de construcción y costes
-            calculados en tiempo real a partir del flea.
+             Los items y requisitos están sujetos a cambios por parte de Battlestate Games,
+             asegúrese de revisar los ticks de FIR y posibles variaciones.
           </p>
         </div>
 
