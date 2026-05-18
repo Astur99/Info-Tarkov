@@ -261,10 +261,10 @@ export default function StoryDecisions({ onViewChange }) {
                 <span style={styles.badge()}>RESPUESTA DEL TERMINAL</span>
                 <h4 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff' }}>LA TARJETA NO FUNCIONÓ</h4>
                 <p style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', marginTop: '0.4rem', marginBottom: '1.2rem' }}>
-                  El portón rechaza el código. Pídele ayuda a Prapor para buscar una alternativa.
+                  Tarjeta rechazada. Pídele ayuda a Prapor para buscar una alternativa.
                 </p>
                 <button onClick={() => setVerPraporExigencias(!verPraporExigencias)} style={styles.btnDecision(verPraporExigencias, '#fff')}>
-                  {verPraporExigencias ? 'OCULTAR TASAS DE NEGOCIACIÓN' : 'MOSTRAR TASAS DE NEGOCIACIÓN'}
+                  {verPraporExigencias ? 'OCULTAR REQUISITOS DE AYUDA' : 'MOSTRAR REQUISITOS DE AYUDA'}
                 </button>
               </div>
             </div>
@@ -294,7 +294,7 @@ export default function StoryDecisions({ onViewChange }) {
                         <li>• Mata 4 PMCs y sobrevive en una única raid.</li>
                       </ul>
                       <div style={{ marginTop: '1.2rem', padding: '0.8rem', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '6px', fontSize: '0.85rem', borderLeft: '3px solid var(--tk-red)', color: 'rgba(255,255,255,0.85)' }}>
-                        PENALIZACIÓN CRÍTICA: Estas tareas deben hacerse en menos de 72 horas o se deberá entregar el contenedor Kappa para poder avanzar. Si se completa en plazo, consigues el logro I Am Speed.
+                        PENALIZACIÓN: Estas tareas deben hacerse en menos de 72 horas o se deberá entregar el contenedor Kappa para poder avanzar. Si se completa en plazo, consigues el logro "I Am Speed".
                       </div>
                     </div>
                   )}
@@ -312,7 +312,7 @@ export default function StoryDecisions({ onViewChange }) {
               <div style={styles.lineaConectora}></div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
                 <div style={styles.card}>
-                  <span style={styles.badge('#fff', '#000')}>PROCEDIMIENTO EN RAID</span>
+                  <span style={styles.badge('#fff', '#000')}>CAMINO A TERMINAL</span>
                   <p style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', marginTop: '0.5rem', lineHeight: '1.5' }}>
                     Ve a Shoreline entre las 21:00 y las 06:00, habla en el intercom de la torre y pasa la Keycard. Acércate al portón de Terminal sin el arma en la mano y empieza tu intento de Escapar de Tarkov.
                   </p>
@@ -352,23 +352,23 @@ export default function StoryDecisions({ onViewChange }) {
           
           {/* Cadena inicial común de Kerman */}
           <div style={{ ...styles.card, border: '1px solid rgba(26,176,21,0.2)' }}>
-            <span style={styles.badge('var(--tk-green)', '#fff')}>ARCO DE ACCESO CORPORATIVO</span>
+            <span style={styles.badge('var(--tk-green)', '#fff')}>PRIMERA FASE CON KERMAN</span>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1rem', marginTop: '1rem', color: 'rgba(255,255,255,0.95)', fontSize: '0.95rem' }}>
               <div style={{ backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.2rem', borderRadius: '8px' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)' }}>INFILTRACIÓN LABS</span>
                 <p style={{ marginTop: '0.2rem', lineHeight: '1.4' }}>Busca la Masterkeycard y el dispositivo RFID en LABS.</p>
               </div>
               <div style={{ backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.2rem', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)' }}>BLOQUEO / MECHANIC</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)' }}>AYUDA DE MECHANIC</span>
                 <p style={{ marginTop: '0.2rem', lineHeight: '1.4' }}>Masterkeycard adquirida, pero no el RFID: habla con Mechanic y págale 40 Bitcoins.</p>
               </div>
               <div style={{ backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.2rem', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)' }}>ASALTO EN STREETS</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)' }}>TOCA IR A EN STREETS</span>
                 <p style={{ marginTop: '0.2rem', lineHeight: '1.4' }}>Obtén la llave de Elektroniks y ve a su apartamento en Streets de Tarkov a por el dispositivo RFID.</p>
               </div>
               <div style={{ backgroundColor: 'rgba(0,0,0,0.2)', padding: '1.2rem', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)' }}>ACTIVACIÓN DE ENLACE</span>
-                <p style={{ marginTop: '0.2rem', lineHeight: '1.4' }}>Activa la tarjeta RFID desde el Armored Case. Ve a la entrada del puerto (intercom) y pasa la Keycard.</p>
+                <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)' }}>ACTIVACIÓN DE TARJETA RFID</span>
+                <p style={{ marginTop: '0.2rem', lineHeight: '1.4' }}>Activa la tarjeta RFID desde el Armored Case. Ve a la entrada del puerto (intercom) y pasala por el lector.</p>
               </div>
             </div>
           </div>
@@ -377,17 +377,17 @@ export default function StoryDecisions({ onViewChange }) {
 
           {/* Punto de decisión de evidencias */}
           <div style={{ ...styles.card, border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center', backgroundColor: 'rgba(0,0,0,0.15)', padding: '2.5rem 2rem' }}>
-            <span style={styles.badge('#fff', '#000')}>PUNTO DE NO RETORNO</span>
+            <span style={styles.badge('var(--tk-red)', '#fff')}>PUNTO DE NO RETORNO</span>
             <h3 style={{ fontSize: '1.6rem', fontWeight: '700', color: '#fff', margin: '0.3rem 0 1.5rem 0' }}>FILTRACIÓN DE LAS EVIDENCIAS CONTRA TERRAGROUP</h3>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <button onClick={() => setRamaKerman('full_evidencias')} style={styles.btnDecision(ramaKerman === 'full_evidencias', '#2b7fff')}>
-                OPCIÓN: ENTREGAR TODAS LAS EVIDENCIAS A KERMAN
+                OPCIÓN A: ENTREGAR TODAS LAS EVIDENCIAS A KERMAN
               </button>
               <button onClick={() => setRamaKerman('u_turn')} style={styles.btnDecision(ramaKerman === 'u_turn', '#ffaa00')}>
-                OPCIÓN: ENTREGAR POCAS EVIDENCIAS E IRTE CON LIGHTKEEPER
+                OPCIÓN A-2: ENTREGAR POCAS EVIDENCIAS E IRTE CON LIGHTKEEPER
               </button>
               <button onClick={() => setRamaKerman('no_evidencias')} style={styles.btnDecision(ramaKerman === 'no_evidencias', 'var(--tk-red)')}>
-                OPCIÓN: NEGARSE A AYUDAR A KERMAN
+                OPCIÓN B: NEGARSE A AYUDAR A KERMAN
               </button>
             </div>
           </div>
