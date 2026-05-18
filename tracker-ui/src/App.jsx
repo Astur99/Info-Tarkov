@@ -23,11 +23,11 @@ function App() {
   // Matriz de módulos operativos con el Simulador Balístico integrado en su posición exacta
   const modules = [
     { id: 'maps', title: 'MAPAS TÁCTICOS', desc: 'Cartografía interactiva de alto detalle, extracciones y puntos de interés.' },
-    { id: 'kappa', title: 'MISIONES / KAPPA', desc: 'Organigrama global con filtrado de misiones, misiones para Kappa y checklist de completado.' },
+    { id: 'kappa', title: 'MISIONES / KAPPA', desc: 'Organigrama global con filtrado de quests, misiones para Kappa y checklist de completado.' },
     { id: 'story', title: 'DECISIONES / FINALES', desc: 'Puntos de no retorno y decisiones a tomar para llegar a los distintos finales (Survivor, Savior, Debtor y Fallen).' },
-    { id: 'bosses', title: 'INTEL: BOSSES', desc: 'Información completa, ubicaciones, gear, puntos débiles y alijos de botín estratégico.' },
-    { id: 'goons', title: 'TRACKER DE GOONS', desc: 'Estado de rotación, avistamientos de la comunidad y localización en tiempo real de la patrulla rogue.' },
-    { id: 'flea', title: 'FLEA MARKET TRACKER', desc: 'Buscador de precios en vivo por API, gráficas de fluctuación y cálculo analítico de rentabilidad por slot.' },
+    { id: 'bosses', title: 'INTEL: BOSSES', desc: 'Información completa, ubicaciones, gear, puntos débiles y loot de los distintos bosses.' },
+    { id: 'goons', title: 'TRACKER DE GOONS', desc: 'Estado de rotación, avistamientos de la comunidad y localización en tiempo real de los Goons.' },
+    { id: 'flea', title: 'FLEA MARKET TRACKER', desc: 'Buscador de precios en vivo por API, gráficas de fluctuación y cálculo de rentabilidad.' },
     { id: 'simulador', title: 'SIMULADOR BALÍSTICO', desc: 'Cálculo de probabilidad de penetración y simulación de rotura de placas e impactos TTK en tiempo real.' }, // AÑADIDO AQUÍ
     { id: 'trouble', title: 'TROUBLESHOOTING', desc: 'Reporte de anomalías conocidas en la app, registros de depuración y soluciones aplicables.' }
   ];
@@ -68,7 +68,7 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '1.5rem' }}>
             <span style={{ width: '7px', height: '7px', backgroundColor: 'var(--tk-green)', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 10px var(--tk-green)' }}></span>
             <p style={{ color: 'var(--tk-text-muted)', fontSize: '0.85rem', letterSpacing: '2.5px', textTransform: 'uppercase', fontWeight: '600', fontFamily: "'Rajdhani', sans-serif" }}>
-              TERMINAL DE DATOS OPERATIVA // CONEXIÓN CIFRADA
+            TODO LO QUE NECESITAS DE TARKOV CENTRALIZADO EN UN ÚNICO LUGAR.
             </p>
           </div>
         </header>

@@ -9,7 +9,27 @@ export default function ArmorSimulator({ onViewChange }) {
   const [logSimulacion, setLogSimulacion] = useState([]);
   const [ttkResult, setTtkResult] = useState(null);
 
-  // 1. CARGA DE BALÍSTICA ESTABLE (AMMO Y CHALECOS DE INFANTERÍA NATIVOS)
+  // DATOS DE CONTINGENCIA LOCAL MILITAR (SIEMPRE DISPONIBLES)
+  const poolAmmoLocal = [
+    { id: "m1", name: "7.62x54mmR SNB gzh", shortName: "7.62x54 R SNB", penetration: 62, damage: 75, armorDamage: 88 },
+    { id: "m2", name: "7.62x51mm M61", shortName: "7.62 M61", penetration: 64, damage: 70, armorDamage: 83 },
+    { id: "m3", name: "5.56x45mm M855A1", shortName: "5.56 M855A1", penetration: 44, damage: 46, armorDamage: 52 },
+    { id: "m4", name: "5.45x39mm BT gzh", shortName: "5.45 BT", penetration: 40, damage: 42, armorDamage: 49 },
+    { id: "m5", name: "9x19mm PBP gzh", shortName: "9x19 PBP", penetration: 39, damage: 52, armorDamage: 40 },
+    { id: "m6", name: "7.62x39mm PS gzh", shortName: "7.62 PS", penetration: 35, damage: 57, armorDamage: 52 }
+  ];
+
+  const poolArmorLocal = [
+    { id: "v1", name: "Placa Balística Clase 6 (Granit GOST)", shortName: "Granit Cl.6", clase: 6, durabilidad: 60, material: "Ceramic" },
+    { id: "v2", name: "Hexgrid Thor Thoracic Armor Vest", shortName: "Hexgrid Cl.6", clase: 6, durabilidad: 50, material: "Polyethylene" },
+    { id: "v3", name: "Placa Balística Clase 5 (Korund-VM)", shortName: "Korund Cl.5", clase: 5, durabilidad: 45, material: "Steel" },
+    { id: "v4", name: "IOTV Gen4 Body Armor (Full Protection)", shortName: "Gen4 Cl.5", clase: 5, durabilidad: 95, material: "Titanium" },
+    { id: "v5", name: "HighCom Trooper TFO Armor Vest", shortName: "Trooper Cl.4", clase: 4, durabilidad: 85, material: "Polyethylene" },
+    { id: "v6", name: "6B23-1 Armor (Digital Flora Camo)", shortName: "6B23-1 Cl.3", clase: 3, durabilidad: 60, material: "Steel" },
+    { id: "v7", name: "PACA MK2 Body Armor (Black)", shortName: "PACA Cl.2", clase: 2, durabilidad: 40, material: "Aramid" }
+  ];
+
+  // 1. CARGA DE BALÍSTICA AISLADA CON CONTROL TOTAL DE EXCEPCIONES
   useEffect(() => {
     const queryBalistica = JSON.stringify({
       query: `
@@ -36,7 +56,6 @@ export default function ArmorSimulator({ onViewChange }) {
       `
     });
 
-    // Petición directa al servidor de Tarkov
     fetch('https://api.tarkov.dev/graphql', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -44,98 +63,67 @@ export default function ArmorSimulator({ onViewChange }) {
     })
       .then(res => res.json())
       .then(result => {
-        if (result?.data?.items) {
-          const poolItems = result.data.items;
-          
-          // Filtrado y mapeo de munición balística
-          const almidonAmmo = poolItems
-            .filter(i => i.type === 'ammo' && i.properties?.penetrationPower > 0)
-            .map(i => ({
-              id: i.id,
-              name: i.name,
-              shortName: i.shortName,
-              penetration: i.properties.penetrationPower,
-              damage: i.properties.damage,
-              armorDamage: i.properties.armorDamage
-            }))
-            .sort((a, b) => b.penetration - a.penetration);
-
-          // Si la API falla devolviendo 'armor' en la 1.0 por cambios de placas, inyectamos un set de emergencia
-          let almidonArmor = poolItems
-            .filter(i => i.type === 'armor' && i.properties?.class > 0)
-            .map(i => ({
-              id: i.id,
-              name: i.name,
-              shortName: i.shortName,
-              clase: i.properties.class,
-              durabilidad: i.properties.durability || 60,
-              material: i.properties.material || "Titanium"
-            }));
-
-          // PARCHE DE SEGURIDAD BALÍSTICA: Si los servidores devuelven vacío por culpa del inventario modular de la 1.0, 
-          // autogeneramos las placas y chalecos más usados para que el simulador funcione al 100% en local y producción.
-          if (almidonArmor.length === 0) {
-            almidonArmor = [
-              { id: "v1", name: "Placa Balística Clase 6 (Granit)", shortName: "Granit Cl.6", clase: 6, durabilidad: 60, material: "Ceramic" },
-              { id: "v2", name: "Hexgrid Thor Thoracic Vest", shortName: "Hexgrid Cl.6", clase: 6, durabilidad: 50, material: "Ultra-high-molecular-weight polyethylene" },
-              { id: "v3", name: "Placa Balística Clase 5 (Korund)", shortName: "Korund Cl.5", clase: 5, durabilidad: 45, material: "Steel" },
-              { id: "v4", name: "IOTV Gen4 Body Armor (Full Protection)", shortName: "Gen4 Cl.5", clase: 5, durabilidad: 95, material: "Titanium" },
-              { id: "v5", name: "HighCom Trooper TFO Armor", shortName: "Trooper Cl.4", clase: 4, durabilidad: 85, material: "Ultra-high-molecular-weight polyethylene" },
-              { id: "v6", name: "6B23-1 Digital Flora Camo", shortName: "6B23-1 Cl.3", clase: 3, durabilidad: 60, material: "Steel" },
-              { id: "v7", name: "PACA MK2 Body Armor", shortName: "PACA Cl.2", clase: 2, durabilidad: 40, material: "Aramid" }
-            ];
-          }
-
-          // Si las municiones fallan por caché, metemos las de referencia militar principal
-          if (almidonAmmo.length === 0) {
-            setMuniciones([
-              { id: "m1", name: "7.62x54mmR SNB", shortName: "7.62x54 R SNB", penetration: 62, damage: 75, armorDamage: 88 },
-              { id: "m2", name: "7.62x51mm M61", shortName: "7.62 M61", penetration: 64, damage: 70, armorDamage: 83 },
-              { id: "m3", name: "5.56x45mm M855A1", shortName: "5.56 M855A1", penetration: 44, damage: 46, armorDamage: 52 },
-              { id: "m4", name: "5.45x39mm BT", shortName: "5.45 BT", penetration: 40, damage: 42, armorDamage: 49 },
-              { id: "m5", name: "9x19mm PBP gzh", shortName: "9x19 PBP", penetration: 39, damage: 52, armorDamage: 40 },
-              { id: "m6", name: "7.62x39mm PS gzh", shortName: "7.62x39 PS", penetration: 35, damage: 57, armorDamage: 52 }
-            ]);
-          } else {
-            setMuniciones(almidonAmmo);
-          }
-
-          setArmaduras(almidonArmor.sort((a, b) => b.clase - a.clase));
-          
-          // Fijamos los selectores con los datos listos
-          if (almidonAmmo.length > 0) setSelectedAmmo(almidonAmmo[0]);
-          else setSelectedAmmo({ id: "m1", name: "7.62x54mmR SNB", shortName: "7.62x54 R SNB", penetration: 62, damage: 75, armorDamage: 88 });
-          
-          setSelectedArmor(almidonArmor[0]);
+        // CONTROL CRÍTICO: Si la estructura de la API no es exactamente la esperada, forzamos la contingencia sin romper React
+        if (!result?.data?.items || !Array.isArray(result.data.items)) {
+          cargarEntornoLocal();
+          return;
         }
-        setCargando(false);
+
+        const poolItems = result.data.items;
+        
+        const almidonAmmo = poolItems
+          .filter(i => i?.type === 'ammo' && i?.properties?.penetrationPower > 0)
+          .map(i => ({
+            id: i.id,
+            name: i.name,
+            shortName: i.shortName,
+            penetration: i.properties.penetrationPower,
+            damage: i.properties.damage,
+            armorDamage: i.properties.armorDamage
+          }))
+          .sort((a, b) => b.penetration - a.penetration);
+
+        const almidonArmor = poolItems
+          .filter(i => i?.type === 'armor' && i?.properties?.class > 0)
+          .map(i => ({
+            id: i.id,
+            name: i.name,
+            shortName: i.shortName,
+            clase: i.properties.class,
+            durabilidad: i.properties.durability || 60,
+            material: i.properties.material || "Titanium"
+          }))
+          .sort((a, b) => b.clase - a.clase);
+
+        // Si la respuesta venía vacía por temas de la 1.0, disparamos el fallback
+        if (almidonAmmo.length === 0 || almidonArmor.length === 0) {
+          cargarEntornoLocal();
+        } else {
+          setMuniciones(almidonAmmo);
+          setArmaduras(almidonArmor);
+          setSelectedAmmo(almidonAmmo[0]);
+          setSelectedArmor(almidonArmor[0]);
+          setCargando(false);
+        }
       })
       .catch(() => {
-        // En caso de caída de la API, levantamos el entorno de simulación local offline completo
-        const fallAmmo = [
-          { id: "m1", name: "7.62x54mmR SNB", shortName: "7.62x54 R SNB", penetration: 62, damage: 75, armorDamage: 88 },
-          { id: "m2", name: "7.62x51mm M61", shortName: "7.62 M61", penetration: 64, damage: 70, armorDamage: 83 },
-          { id: "m3", name: "5.56x45mm M855A1", shortName: "5.56 M855A1", penetration: 44, damage: 46, armorDamage: 52 },
-          { id: "m4", name: "5.45x39mm BT", shortName: "5.45 BT", penetration: 40, damage: 42, armorDamage: 49 },
-          { id: "m5", name: "7.62x39mm PS gzh", shortName: "7.62x39 PS", penetration: 35, damage: 57, armorDamage: 52 }
-        ];
-        const fallArmor = [
-          { id: "v1", name: "Placa Balística Clase 6 (Granit)", shortName: "Granit Cl.6", clase: 6, durabilidad: 60, material: "Ceramic" },
-          { id: "v3", name: "Placa Balística Clase 5 (Korund)", shortName: "Korund Cl.5", clase: 5, durabilidad: 45, material: "Steel" },
-          { id: "v5", name: "HighCom Trooper TFO Armor", shortName: "Trooper Cl.4", clase: 4, durabilidad: 85, material: "Ultra-high-molecular-weight polyethylene" },
-          { id: "v7", name: "PACA MK2 Body Armor", shortName: "PACA Cl.2", clase: 2, durabilidad: 40, material: "Aramid" }
-        ];
-        setMuniciones(fallAmmo);
-        setArmaduras(fallArmor);
-        setSelectedAmmo(fallAmmo[0]);
-        setSelectedArmor(fallArmor[0]);
-        setCargando(false);
+        // Captura errores de red crudos
+        cargarEntornoLocal();
       });
   }, []);
 
-  // 2. MOTOR DE CÁLCULO BALÍSTICO DISPARO A DISPARO (BLINDADO CONTRA CAÍDAS)
+  // FUNCIÓN SANEADORA: Fuerza los datos locales estables en los states
+  const cargarEntornoLocal = () => {
+    setMuniciones(poolAmmoLocal);
+    setArmaduras(poolArmorLocal);
+    setSelectedAmmo(poolAmmoLocal[0]);
+    setSelectedArmor(poolArmorLocal[0]);
+    setCargando(false);
+  };
+
+  // 2. MOTOR DE CALCULO MATEMÁTICO DISPARO A DISPARO
   useEffect(() => {
-    if (!selectedAmmo || !selectedArmor) {
+    if (!selectedAmmo || !selectedArmor || !selectedAmmo.penetration || !selectedArmor.clase) {
       setLogSimulacion([]);
       setTtkResult(0);
       return;
@@ -157,7 +145,7 @@ export default function ArmorSimulator({ onViewChange }) {
     let factorDestruccion = 0.7; 
     if (material.includes("Ceramic")) factorDestruccion = 0.95; 
     if (material.includes("Steel")) factorDestruccion = 0.5;    
-    if (material.includes("polyethylene") || material.includes("Aramid")) factorDestruccion = 0.6;
+    if (material.includes("polyethylene") || material.includes("Aramid") || material.includes("Polyethylene")) factorDestruccion = 0.6;
 
     while (hpTorax > 0 && contadorTiros < 20) {
       contadorTiros++;
@@ -174,7 +162,6 @@ export default function ArmorSimulator({ onViewChange }) {
       if (probabilidadPenetración > 99) probabilidadPenetración = 99;
       if (probabilidadPenetración < 1) probabilidadPenetración = 1;
 
-      // Cálculo estocástico de perforación
       const penetra = ammoPen > factorDefensa || Math.random() * 100 < probabilidadPenetración;
       let danoRecibido = 0;
       let danoAArmadura = 0;
