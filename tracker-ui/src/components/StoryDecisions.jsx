@@ -96,7 +96,7 @@ export default function StoryDecisions({ onViewChange }) {
         <div>
           <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>STORY DECISIONS</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
-            Árbol de misiones, cadenas de decisión y requisitos operativos para los finales de la versión 1.0.
+            Todas las rutas, decisiones y puntos de no retorno que debes tener en cuenta para llegar a los distintos finales del modo historia de Tarkov.
           </p>
         </div>
         

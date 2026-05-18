@@ -115,7 +115,7 @@ function App() {
             e.currentTarget.style.textShadow = 'none';
           }}
         >
-          SYS_AUTH: BY ASTUR
+         BY ASTUR
         </a>
       </div>
     </div>

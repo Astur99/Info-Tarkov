@@ -210,7 +210,7 @@ export default function FleaTracker({ onViewChange }) {
         <div>
           <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>FLEA MARKET TRACKER</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
-            Análisis dinámico de fluctuación analítica, anomalías de red y rentabilidad táctica por slot.
+            Análisis dinámico de precios, gráficos de fluctuación y rentabilidad por item.
           </p>
         </div>
         <button 
@@ -224,11 +224,11 @@ export default function FleaTracker({ onViewChange }) {
       {/* INPUT DEL BUSCADOR GENERAL */}
       <section style={{ marginBottom: '2.5rem' }}>
         <h3 style={{ fontSize: '0.9rem', color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          🔍 LOCALIZADOR HÍBRIDO (INGLÉS / ESPAÑOL SIN TILDES)
+          🔍 BUSCADOR HÍBRIDO (INGLÉS / ESPAÑOL SIN TILDES)
         </h3>
         <input 
           type="text" 
-          placeholder="EJ: sugar, azucar, ledx, graphics card, tarjeta grafica..." 
+          placeholder="EJ: sugar, ledx, graphics card..." 
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           style={{
@@ -349,7 +349,7 @@ export default function FleaTracker({ onViewChange }) {
       {/* CAMBIO DE ORDEN: RADAR DE ANOMALÍAS EN LA MITAD INFERIOR */}
       <section style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '3rem' }}>
         <h3 style={{ fontSize: '0.9rem', color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          📡 RADAR DE ANOMALÍAS EN MERCADO // HASTA 12 HOT DEALS EN VIVO
+          📡 RADAR DE ITEMS MÁS FLUCTUANTES EN CADA MOMENTO:
         </h3>
         
         {cargandoHotDeals ? (
