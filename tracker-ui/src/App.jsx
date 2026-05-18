@@ -1,25 +1,32 @@
 import { useState } from 'react';
 import './index.css';
-// Módulo unificado de misiones jerárquicas en 2D
+
+// IMPORTACIÓN DE COMPONENTES DE OPERACIONES MODULARIZADOS
+import MapsView from './components/MapsView';
 import KappaTree from './components/KappaTree';
+import StoryDecisions from './components/StoryDecisions';
+import BossesIntel from './components/BossesIntel';
+import GoonsTracker from './components/GoonsTracker';
+import TroubleshootingView from './components/TroubleshootingView';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
 
-  // Cuadrícula refundada (Misiones y Kappa unificados en un solo bloque operativo)
+  // Matriz de módulos operativos (6 categorías simétricas)
   const modules = [
     { id: 'maps', title: 'MAPAS TÁCTICOS', desc: 'Cartografía interactiva de alto detalle, extracciones y puntos de interés.' },
     { id: 'kappa', title: 'MISIONES / KAPPA', desc: 'Organigrama global v1.0 con motor de dependencias, auto-enfoque y guías tácticas en vivo.' },
     { id: 'story', title: 'DECISIONES / FINALES', desc: 'Puntos de no retorno y rutas narrativas (Savior, Escape, Abandon).' },
     { id: 'bosses', title: 'INTEL: BOSSES', desc: 'Parámetros de combate, patrones de patrulla y equipamiento táctico.' },
     { id: 'goons', title: 'TRACKER DE GOONS', desc: 'Estado y localización en tiempo real de la escuadra Rogue (Knight, Birdeye, Big Pipe).' },
-    { id: 'events', title: 'ESTADO DE EVENTOS', desc: 'Monitorización de alteraciones climáticas y eventos globales activos.' },
-    { id: 'flea', title: 'FLEA MARKET INTELLIGENCE', desc: 'Análisis de fluctuación económica y valores de intercambio en vivo.' }
+    { id: 'trouble', title: 'TROUBLESHOOTING / ERRORES', desc: 'Reporte de anomalías conocidas en la app y de soluciones aplicables.' }
   ];
 
-  // RENDERIZADO CONDICIONAL DE LAS VISTAS
-  
-  // VISTA 1: HOME (Menú de operaciones unificado)
+  // ==========================================
+  // RENDERIZADO CONDICIONAL DE ENRUTAMIENTO
+  // ==========================================
+
+  // 1. MENU PRINCIPAL (HOME)
   if (currentView === 'home') {
     return (
       <div style={{ padding: '6rem 2rem 10rem 2rem', maxWidth: '1400px', margin: '0 auto' }}>
@@ -28,7 +35,7 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '1rem' }}>
             <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--tk-green)', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 10px var(--tk-green)' }}></span>
             <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '500' }}>
-              Todo lo que necesitas saber de Tarkov en un mismo lugar
+              Todo lo que necesitas saber de Tarkov en un único lugar.
             </p>
           </div>
         </header>
@@ -46,24 +53,43 @@ function App() {
     );
   }
 
-  // VISTA 2: NÚCLEO OPERATIVO DE MISIONES UNIFICADAS
+  // 2. ENRUTAMIENTO COMPONENTES AUXILIARES
+  if (currentView === 'maps') {
+    return <MapsView onViewChange={setCurrentView} />;
+  }
+
   if (currentView === 'kappa') {
     return <KappaTree onViewChange={setCurrentView} />;
   }
 
-  // CUALQUIER OTRA VISTA EN DESARROLLO
+  if (currentView === 'story') {
+    return <StoryDecisions onViewChange={setCurrentView} />;
+  }
+
+  if (currentView === 'bosses') {
+    return <BossesIntel onViewChange={setCurrentView} />;
+  }
+
+  if (currentView === 'goons') {
+    return <GoonsTracker onViewChange={setCurrentView} />;
+  }
+
+  if (currentView === 'trouble') {
+    return <TroubleshootingView onViewChange={setCurrentView} />;
+  }
+
+  // FALLBACK DE SEGURIDAD
   return (
     <div style={{ padding: '6rem 2rem', textAlign: 'center', fontFamily: "'Rajdhani', sans-serif" }}>
-      <h2 style={{ fontSize: '2rem', letterSpacing: '1px' }}>MÓDULO EN CONSTRUCCIÓN</h2>
-      <p style={{ color: 'var(--tk-text-muted)', marginTop: '0.5rem' }}>La terminal de inteligencia para esta sección se encuentra actualmente cifrada.</p>
-      <button onClick={() => setCurrentView('home')} style={{ marginTop: '2rem', backgroundColor: '#222', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontFamily: "'Rajdhani', sans-serif", fontWeight: '700', letterSpacing: '1px' }}>
+      <h2 style={{ fontSize: '2rem', letterSpacing: '1px' }}>MÓDULO NO PARAMETRIZADO</h2>
+      <button onClick={() => setCurrentView('home')} style={{ marginTop: '2rem', backgroundColor: '#222', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700' }}>
         VOLVER AL INICIO
       </button>
     </div>
   );
 }
 
-// COMPONENTE: EFECTO DE LUZ EN EL TÍTULO (CORREGIDO CASE-SENSITIVE)
+// COMPONENTE AUXILIAR: EFECTO DE LUZ EN EL TÍTULO
 function TitleGlow() {
   const [pos, setPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
@@ -85,7 +111,7 @@ function TitleGlow() {
   );
 }
 
-// COMPONENTE: TARJETA DE MÓDULO INDIVIDUAL
+// COMPONENTE AUXILIAR: TARJETA DE MÓDULO INDIVIDUAL
 function ModuleCard({ mod, index, onViewChange }) {
   const [isHovered, setIsHovered] = useState(false);
   const delayClass = `delay-${(index % 7) + 1}`;
