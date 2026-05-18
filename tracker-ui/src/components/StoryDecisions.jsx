@@ -378,13 +378,13 @@ export default function StoryDecisions({ onViewChange }) {
           {/* Punto de decisión de evidencias */}
           <div style={{ ...styles.card, border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center', backgroundColor: 'rgba(0,0,0,0.15)', padding: '2.5rem 2rem' }}>
             <span style={styles.badge('var(--tk-red)', '#fff')}>PUNTO DE NO RETORNO</span>
-            <h3 style={{ fontSize: '1.6rem', fontWeight: '700', color: '#fff', margin: '0.3rem 0 1.5rem 0' }}>FILTRACIÓN DE LAS EVIDENCIAS CONTRA TERRAGROUP</h3>
+            <h3 style={{ fontSize: '1.6rem', fontWeight: '700', color: '#fff', margin: '0.3rem 0 1.5rem 0' }}>RECABA EVIDENCIAS CONTRA TERRAGROUP</h3>
             <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
               <button onClick={() => setRamaKerman('full_evidencias')} style={styles.btnDecision(ramaKerman === 'full_evidencias', '#2b7fff')}>
                 OPCIÓN A: ENTREGAR TODAS LAS EVIDENCIAS A KERMAN
               </button>
               <button onClick={() => setRamaKerman('u_turn')} style={styles.btnDecision(ramaKerman === 'u_turn', '#ffaa00')}>
-                OPCIÓN A-2: ENTREGAR POCAS EVIDENCIAS E IRTE CON LIGHTKEEPER
+                OPCIÓN A-2: ENTREGAR 2 EVIDENCIAS E IRTE CON LIGHTKEEPER
               </button>
               <button onClick={() => setRamaKerman('no_evidencias')} style={styles.btnDecision(ramaKerman === 'no_evidencias', 'var(--tk-red)')}>
                 OPCIÓN B: NEGARSE A AYUDAR A KERMAN
@@ -398,16 +398,16 @@ export default function StoryDecisions({ onViewChange }) {
               <div style={styles.lineaConectora}></div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
                 <div style={styles.card}>
-                  <span style={styles.badge('#2b7fff')}>REQUISITOS DE FILTRACIÓN TOTAL</span>
+                  <span style={styles.badge('#2b7fff')}>REQUISITOS PARA COMPLETAR ESTA RUTA</span>
                   <ul style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', paddingLeft: '1.2rem', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <li>• Construye el Intelligence Center Nivel 3 en el Hideout.</li>
-                    <li>• Entregar las 8 "Major Evidence" completas a Kerman.</li>
+                    <li>• Entregar las 8 "Major Evidence" a Kerman.</li>
                     <li>• Kerman te considera contacto de confianza. Recibes un mensaje a través de Fence.</li>
-                    <li>• Alcanza reputación 4.0 con Fence. Sub-desafíos opcionales habilitados: matar 5 PMCs en una raid sin matar Scavs en Shoreline o Interchange, o usar extracciones cooperativas en Woods y Reserve.</li>
-                    <li>• Sube la reputación con el BTR Driver a 0.4. Completa la misión "The Price of Independence".</li>
+                    <li>• Alcanza reputación 4.0 con Fence. Debes matar 5 PMCs en una raid sin matar Scavs en Shoreline o Interchange (PVE), o usar extracciones cooperativas con scavs en Woods y Reserve (PVP).</li>
+                    <li>• Sube la reputación con el BTR Driver a 0.4. Completa la misión "The Price of Independence", si fallas aquí, deberás continuar hacia el final Survivor.</li>
                     <li>• Construye las Placas Solares (Solar Power) en el Hideout.</li>
-                    <li>• Craftea el chip para la Keycard en el último level del Hideout.</li>
-                    <li>• Raid de escape: Ve a Shoreline entre las 21:00 y las 06:00, usa el intercom de la torre, pasa la Keycard y ve al portón de Terminal sin armas en las manos. Si fallas, la tarjeta se destruye y necesitas craftear una nueva Blank RFID Card.</li>
+                    <li>• Craftea la blank RFID en el Intelligence Center Nivel 3.</li>
+                    <li>• RAID FINAL: Ve a Shoreline entre las 21:00 y las 06:00, usa el intercom de la torre, pasa la Keycard y ve al portón de Terminal sin armas en las manos. Si fallas, la tarjeta se destruye y necesitas craftear una nueva Blank RFID Card.</li>
                   </ul>
                 </div>
                 
@@ -435,17 +435,17 @@ export default function StoryDecisions({ onViewChange }) {
               <div style={styles.lineaConectora}></div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '2rem' }}>
                 <div style={styles.card}>
-                  <span style={styles.badge('#ffaa00', '#000')}>REQUISITOS DEL CAMBIO DE BANDO</span>
+                  <span style={styles.badge('#ffaa00', '#000')}>REQUISITOS PARA CAMBIAR DE BANDO</span>
                   <ul style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', paddingLeft: '1.2rem', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <li>• Construye el Intelligence Center Nivel 3 en el Hideout.</li>
-                    <li>• Entrega solo 2 Major Evidence a Kerman y corta lazos. Consigues el logro "U Turn". Habla con Lightkeeper.</li>
-                    <li>• Encuentra 5 mapas de reconocimiento (1 en cada uno de los 5 mapas indicados).</li>
+                    <li>• Entrega solo 2 Major Evidence a Kerman y corta lazos (Consigues el logro "U Turn"). Despues ve y habla con Lightkeeper.</li>
+                    <li>• Encuentra 5 mapas de reconocimiento (1 en cada mapa).</li>
                     <li>• Consigue y entrega un Flash Drive especial con datos a Lightkeeper.</li>
                     <li>• Mata a 30 PMCs en Woods y entrega 100 dogtags de PMC a Lightkeeper.</li>
                     <li>• Localiza un Cultist Amulet en cada una de las Marked Rooms del juego.</li>
                     <li>• Coloca los amuletos en la Shared Bedroom Marked Key en la isla de Lightkeeper.</li>
                     <li>• Lightkeeper te da la Keycard de Terminal.</li>
-                    <li>• Raid de escape: Ve a Shoreline (21:00 - 06:00), intercom, Keycard y acércate al portón desarmado. Si mueres, necesitas tradear una Blue Folder con Lightkeeper para otra tarjeta.</li>
+                    <li>• RAID FINAL: Ve a Shoreline (21:00 - 06:00), intercom, Keycard y acércate al portón desarmado. Si mueres, necesitas tradear una Blue Folder con Lightkeeper para otra tarjeta.</li>
                   </ul>
                 </div>
                 
@@ -478,21 +478,21 @@ export default function StoryDecisions({ onViewChange }) {
                   {/* COMPROBACIÓN CRUZADA */}
                   <div style={{ padding: '0.9rem', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '6px', fontSize: '0.9rem', borderLeft: '3px solid #ffaa00', marginBottom: '1.2rem', lineHeight: '1.4' }}>
                     {paso3Decision === 'prapor' ? (
-                      <span style={{ color: 'var(--tk-green)', fontWeight: '600' }}>Historial validado: Le diste el Case a Prapor en el paso 3.2. Te lo devuelve tras recuperarlo de Lightkeeper sin penalizaciones.</span>
+                      <span style={{ color: 'var(--tk-green)', fontWeight: '600' }}>ACCIONES PASADAS: Le diste el Armored Case a Prapor. Te lo devuelve tras recuperarlo de Lightkeeper sin penalizaciones.</span>
                     ) : (
-                      <span style={{ color: 'var(--tk-red)', fontWeight: '600' }}>Historial validado: NO le diste el Case a Prapor en el paso 3.1. Te exige: 40 Repair Kits al 100% de durabilidad, entregar tu contenedor seguro (Kappa, Theta o Epsilon) y entregar 50 Military Components (Virtex, COFDM, etc.).</span>
+                      <span style={{ color: 'var(--tk-red)', fontWeight: '600' }}>ACCIONES PASADAS: NO le diste el Case a Prapor. Te exige 40 Repair Kits al 100% de durabilidad, entregar tu contenedor seguro (Kappa, Theta o Epsilon) y entregar 50 Military Components (Virtex, COFDM, etc.).</span>
                     )}
                   </div>
 
                   <ul style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', paddingLeft: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                    <li>• No entregues ninguna evidencia a Kerman. Logro Enough of your Games!.</li>
+                    <li>• No entregues ninguna evidencia a Kerman (Logro Enough of your Games!).</li>
                     <li>• Ve a hablar con Prapor.</li>
-                    <li>• Recuperas el Case con cargamento peligroso y se lo das a Prapor.</li>
-                    <li>• Paga 1.000.000 de dólares (USD) en efectivo a Prapor. Consigues el logro Will it Blow?.</li>
-                    <li>• Prapor te da un USB Stick con su Hash Code.</li>
+                    <li>• Recuperas el "Maletín con cargamento peligroso" y se lo das a Prapor.</li>
+                    <li>• Paga 1.000.000 de dólares a Prapor (Consigues el logro Will it Blow?).</li>
+                    <li>• Prapor te da un USB con códigos Hash.</li>
                     <li>• Construye las Placas Solares (Solar Power) en el Hideout.</li>
-                    <li>• Craftea el chip final para la Keycard.</li>
-                    <li>• Raid de escape: Ve a Shoreline (21:00 - 06:00), intercom de la torre, Keycard y ve desarmado hacia Terminal. Si fallas, necesitas craftear una nueva Blank RFID Card desde cero.</li>
+                    <li>• Craftea la blank RFID en el Intelligence Center Nivel 3.</li>
+                    <li>• RAID FINAL: Ve a Shoreline (21:00 - 06:00), intercom de la torre, Keycard y ve desarmado hacia Terminal. Si fallas, necesitas craftear una nueva Blank RFID Card desde cero.</li>
                   </ul>
                 </div>
                 
