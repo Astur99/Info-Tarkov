@@ -150,7 +150,7 @@ function TitleGlowPro() {
       }} />
 
       <h1 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '4.8rem', fontWeight: '800', letterSpacing: '4px', margin: '0', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.08)' }}>
-        Tarkov Info
+        Info Tarkov
       </h1>
 
       <h1 style={{ 
@@ -159,7 +159,7 @@ function TitleGlowPro() {
         backgroundImage: `radial-gradient(circle 150px at ${relPos.x}px ${relPos.y}px, rgba(255, 255, 255, 0.95) 0%, rgba(26, 176, 21, 0.5) 45%, transparent 85%)`,
         WebkitBackgroundClip: 'text', backgroundClip: 'text', opacity: isHovered ? 1 : 0, transition: 'opacity 0.4s ease-out', zIndex: 2
       }}>
-        Tarkov Info
+      Info Tarkov
       </h1>
     </div>
   );
