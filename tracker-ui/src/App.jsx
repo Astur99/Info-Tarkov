@@ -11,107 +11,152 @@ import TroubleshootingView from './components/TroubleshootingView';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  // Matriz de módulos operativos (6 categorías simétricas)
+  // Mapea las coordenadas en base a todo el Viewport de la pantalla
+  const handleMouseMoveGlobal = (e) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
+
   const modules = [
     { id: 'maps', title: 'MAPAS TÁCTICOS', desc: 'Cartografía interactiva de alto detalle, extracciones y puntos de interés.' },
-    { id: 'kappa', title: 'MISIONES / KAPPA', desc: 'Organigrama global v1.0 con motor de dependencias, auto-enfoque y guías tácticas en vivo.' },
-    { id: 'story', title: 'DECISIONES / FINALES', desc: 'Puntos de no retorno y rutas narrativas (Savior, Escape, Abandon).' },
-    { id: 'bosses', title: 'INTEL: BOSSES', desc: 'Parámetros de combate, patrones de patrulla y equipamiento táctico.' },
-    { id: 'goons', title: 'TRACKER DE GOONS', desc: 'Estado y localización en tiempo real de la escuadra Rogue (Knight, Birdeye, Big Pipe).' },
-    { id: 'trouble', title: 'TROUBLESHOOTING / ERRORES', desc: 'Reporte de anomalías conocidas en la app y de soluciones aplicables.' }
+    { id: 'kappa', title: 'MISIONES / KAPPA', desc: 'Organigrama global con filtrado de misiones, misiones para Kappa y checklist de completado.' },
+    { id: 'story', title: 'DECISIONES / FINALES', desc: 'Puntos de no retorno y decisiones a tomar para llegar a los distintos finales (Survivor, Savior, Debtor y Fallen).' },
+    { id: 'bosses', title: 'INTEL: BOSSES', desc: 'Información completa, ubicaciones, gear, puntos débiles y alijos de botín estratégico.' },
+    { id: 'goons', title: 'TRACKER DE GOONS', desc: 'Estado de rotación, avistamientos de la comunidad y localización en tiempo real de la patrulla rogue.' },
+    { id: 'trouble', title: 'TROUBLESHOOTING', desc: 'Reporte de anomalías conocidas en la app, registros de depuración y soluciones aplicables.' }
   ];
 
-  // ==========================================
-  // RENDERIZADO CONDICIONAL DE ENRUTAMIENTO
-  // ==========================================
+  // ENRUTAMIENTO DE PANELES SECUNDARIOS (Se ejecutan fuera de la home)
+  if (currentView === 'maps') return <MapsView onViewChange={setCurrentView} />;
+  if (currentView === 'kappa') return <KappaTree onViewChange={setCurrentView} />;
+  if (currentView === 'story') return <StoryDecisions onViewChange={setCurrentView} />;
+  if (currentView === 'bosses') return <BossesIntel onViewChange={setCurrentView} />;
+  if (currentView === 'goons') return <GoonsTracker onViewChange={setCurrentView} />;
+  if (currentView === 'trouble') return <TroubleshootingView onViewChange={setCurrentView} />;
 
-  // 1. MENU PRINCIPAL (HOME)
-  if (currentView === 'home') {
-    return (
+  // MENU PRINCIPAL (HOME)
+  return (
+    <div 
+      className="viewport-wrapper"
+      onMouseMove={handleMouseMoveGlobal}
+      style={{ 
+        minHeight: '100vh',
+        width: '100%',
+        position: 'relative',
+        // FIJADO AQUÍ: El degradado ahora se renderiza sobre el 100% del ancho del monitor, sin importar el maxWidth
+        backgroundImage: `radial-gradient(circle 1000px at ${mousePos.x}px ${mousePos.y}px, rgba(26, 176, 21, 0.018) 0%, rgba(10, 10, 12, 1) 100%)`,
+        backgroundAttachment: 'fixed',
+        backgroundColor: '#0a0a0c',
+        transition: 'background-image 0.2s ease-out'
+      }}
+    >
+      {/* CONTENEDOR CENTRAL MAQUETADO A 1400PX */}
       <div style={{ padding: '6rem 2rem 10rem 2rem', maxWidth: '1400px', margin: '0 auto' }}>
+        
+        {/* CABECERA */}
         <header className="fade-in-slide" style={{ marginBottom: '6rem', textAlign: 'center' }}>
-          <TitleGlow />
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '1rem' }}>
-            <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--tk-green)', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 10px var(--tk-green)' }}></span>
-            <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '500' }}>
-              Todo lo que necesitas saber de Tarkov en un único lugar.
+          <TitleGlowPro />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '1.5rem' }}>
+            <span style={{ width: '7px', height: '7px', backgroundColor: 'var(--tk-green)', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 10px var(--tk-green)' }}></span>
+            <p style={{ color: 'var(--tk-text-muted)', fontSize: '0.85rem', letterSpacing: '2.5px', textTransform: 'uppercase', fontWeight: '600', fontFamily: "'Rajdhani', sans-serif" }}>
+              TODO LO QUE NECESITAS SABER DE TARKOV EN UN ÚNICO LUGAR.
             </p>
           </div>
         </header>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+        {/* REJILLA DE SECCIONES */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
           {modules.map((mod, index) => (
             <ModuleCard key={mod.id} mod={mod} index={index} onViewChange={setCurrentView} />
           ))}
         </div>
 
-        <div style={{ position: 'fixed', bottom: '2rem', right: '2rem', color: 'var(--tk-text-muted)', fontSize: '0.75rem', letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.5 }}>
-          By Astur
-        </div>
+        {/* FIRMA DE AUTOR */}
+        <a 
+          href="https://x.com/juankar_hh" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ 
+            position: 'fixed', 
+            bottom: '2.5rem', 
+            right: '2.5rem', 
+            color: 'var(--tk-text-muted)', 
+            fontSize: '0.75rem', 
+            letterSpacing: '3px', 
+            textTransform: 'uppercase', 
+            opacity: 0.5,
+            textDecoration: 'none',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontWeight: '700',
+            transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            zIndex: 1000,
+            borderBottom: '1px solid transparent',
+            paddingBottom: '2px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = '1';
+            e.currentTarget.style.color = 'var(--tk-green)';
+            e.currentTarget.style.borderBottom = '1px solid var(--tk-green)';
+            e.currentTarget.style.textShadow = '0 0 10px var(--tk-green)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '0.5';
+            e.currentTarget.style.color = 'var(--tk-text-muted)';
+            e.currentTarget.style.borderBottom = '1px solid transparent';
+            e.currentTarget.style.textShadow = 'none';
+          }}
+        >
+          BY ASTUR
+        </a>
       </div>
-    );
-  }
-
-  // 2. ENRUTAMIENTO COMPONENTES AUXILIARES
-  if (currentView === 'maps') {
-    return <MapsView onViewChange={setCurrentView} />;
-  }
-
-  if (currentView === 'kappa') {
-    return <KappaTree onViewChange={setCurrentView} />;
-  }
-
-  if (currentView === 'story') {
-    return <StoryDecisions onViewChange={setCurrentView} />;
-  }
-
-  if (currentView === 'bosses') {
-    return <BossesIntel onViewChange={setCurrentView} />;
-  }
-
-  if (currentView === 'goons') {
-    return <GoonsTracker onViewChange={setCurrentView} />;
-  }
-
-  if (currentView === 'trouble') {
-    return <TroubleshootingView onViewChange={setCurrentView} />;
-  }
-
-  // FALLBACK DE SEGURIDAD
-  return (
-    <div style={{ padding: '6rem 2rem', textAlign: 'center', fontFamily: "'Rajdhani', sans-serif" }}>
-      <h2 style={{ fontSize: '2rem', letterSpacing: '1px' }}>MÓDULO NO PARAMETRIZADO</h2>
-      <button onClick={() => setCurrentView('home')} style={{ marginTop: '2rem', backgroundColor: '#222', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700' }}>
-        VOLVER AL INICIO
-      </button>
     </div>
   );
 }
 
-// COMPONENTE AUXILIAR: EFECTO DE LUZ EN EL TÍTULO
-function TitleGlow() {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
+// COMPONENTE: LOGO CON ILUMINACIÓN DIRECCIONAL FLUIDA
+function TitleGlowPro() {
+  const [relPos, setRelPos] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMoveLocal = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    setPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    setRelPos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
   };
 
   return (
-    <div onMouseMove={handleMouseMove} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} style={{ position: 'relative', display: 'inline-block', cursor: 'default', padding: '10px' }}>
-      <h1 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '4.5rem', fontWeight: '700', letterSpacing: '-1px', margin: '0', color: 'rgba(255, 255, 255, 0.12)' }}>
+    <div 
+      onMouseMove={handleMouseMoveLocal}
+      onMouseEnter={() => setIsHovered(true)} 
+      onMouseLeave={() => setIsHovered(false)} 
+      style={{ position: 'relative', display: 'inline-block', padding: '20px 40px', zIndex: 1, cursor: 'default' }}
+    >
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+        background: `radial-gradient(circle 180px at ${relPos.x}px ${relPos.y}px, rgba(26, 176, 21, 0.18) 0%, transparent 80%)`,
+        pointerEvents: 'none', filter: 'blur(30px)', opacity: isHovered ? 1 : 0,
+        transition: 'opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)', zIndex: 0
+      }} />
+
+      <h1 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '4.8rem', fontWeight: '800', letterSpacing: '4px', margin: '0', textTransform: 'uppercase', color: 'rgba(255, 255, 255, 0.08)' }}>
         Tarkov Info
       </h1>
-      <h1 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: '4.5rem', fontWeight: '700', letterSpacing: '-1px', margin: '0', position: 'absolute', top: '10px', left: '10px', width: 'calc(100% - 20px)', height: 'calc(100% - 20px)', color: 'transparent', pointerEvents: 'none', backgroundImage: `radial-gradient(circle 250px at ${pos.x}px ${pos.y}px, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.6) 30%, rgba(255, 255, 255, 0.15) 65%, transparent 100%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', opacity: isHovered ? 1 : 0, transition: 'opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
+
+      <h1 style={{ 
+        fontFamily: "'Rajdhani', sans-serif", fontSize: '4.8rem', fontWeight: '800', letterSpacing: '4px', margin: '0', textTransform: 'uppercase',
+        position: 'absolute', top: '20px', left: '40px', width: 'calc(100% - 80px)', height: 'calc(100% - 40px)', color: 'transparent', pointerEvents: 'none',
+        backgroundImage: `radial-gradient(circle 150px at ${relPos.x}px ${relPos.y}px, rgba(255, 255, 255, 0.95) 0%, rgba(26, 176, 21, 0.5) 45%, transparent 85%)`,
+        WebkitBackgroundClip: 'text', backgroundClip: 'text', opacity: isHovered ? 1 : 0, transition: 'opacity 0.4s ease-out', zIndex: 2
+      }}>
         Tarkov Info
       </h1>
     </div>
   );
 }
 
-// COMPONENTE AUXILIAR: TARJETA DE MÓDULO INDIVIDUAL
 function ModuleCard({ mod, index, onViewChange }) {
   const [isHovered, setIsHovered] = useState(false);
   const delayClass = `delay-${(index % 7) + 1}`;
@@ -124,24 +169,31 @@ function ModuleCard({ mod, index, onViewChange }) {
       onClick={() => onViewChange(mod.id)}
       style={{
         backgroundColor: 'var(--tk-glass)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: `1px solid ${isHovered ? 'rgba(255,255,255, 0.15)' : 'var(--tk-glass-border)'}`,
-        borderRadius: '16px',
-        padding: '2.5rem',
+        backdropFilter: 'blur(25px)',
+        WebkitBackdropFilter: 'blur(25px)',
+        border: `1px solid ${isHovered ? 'rgba(26, 176, 21, 0.4)' : 'var(--tk-glass-border)'}`,
+        borderRadius: '8px',
+        padding: '2.5rem 2.25rem',
         cursor: 'pointer',
         position: 'relative',
         overflow: 'hidden',
-        transition: 'all 0.5s var(--tk-ease)',
-        transform: isHovered ? 'scale(1.02) translateY(-5px)' : 'scale(1) translateY(0)',
-        boxShadow: isHovered ? '0 30px 60px -12px rgba(0, 0, 0, 0.5), 0 18px 36px -18px rgba(0, 0, 0, 0.5)' : '0 4px 6px rgba(0,0,0,0.2)',
+        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+        boxShadow: isHovered ? '0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(26, 176, 21, 0.05)' : '0 4px 12px rgba(0,0,0,0.3)',
       }}
     >
-      <div style={{ position: 'absolute', top: 0, left: '2.5rem', width: '40px', height: '2px', backgroundColor: isHovered ? 'var(--tk-green)' : 'transparent', boxShadow: isHovered ? '0 0 15px var(--tk-green)' : 'none', transition: 'all 0.5s var(--tk-ease)' }}></div>
-      <h3 style={{ color: isHovered ? 'var(--tk-text-main)' : '#ccc', marginBottom: '1rem', fontSize: '1.1rem', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', transition: 'color 0.5s ease' }}>
+      <div style={{ 
+        position: 'absolute', top: '12px', left: '12px', width: '6px', height: '6px', 
+        borderTop: `2px solid ${isHovered ? 'var(--tk-green)' : 'rgba(255,255,255,0.1)'}`, 
+        borderLeft: `2px solid ${isHovered ? 'var(--tk-green)' : 'rgba(255,255,255,0.1)'}`,
+        transition: 'all 0.3s' 
+      }}></div>
+
+      <h3 style={{ color: isHovered ? '#fff' : '#bbb', fontFamily: "'Rajdhani', sans-serif", marginBottom: '0.75rem', fontSize: '1.15rem', fontWeight: '700', letterSpacing: '1.5px', transition: 'color 0.3s' }}>
         {mod.title}
       </h3>
-      <p style={{ color: isHovered ? 'var(--tk-text-main)' : 'var(--tk-text-muted)', fontSize: '0.9rem', lineHeight: '1.6', fontWeight: '400', transition: 'color 0.5s ease' }}>
+      
+      <p style={{ color: isHovered ? 'rgba(255,255,255,0.85)' : 'var(--tk-text-muted)', fontSize: '0.88rem', lineHeight: '1.5', fontWeight: '400', fontFamily: "'Rajdhani', sans-serif", transition: 'color 0.3s' }}>
         {mod.desc}
       </p>
     </div>

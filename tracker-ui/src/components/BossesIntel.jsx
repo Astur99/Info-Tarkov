@@ -1,28 +1,242 @@
 import { useState, useEffect } from 'react';
 
-export default function GoonsTracker({ onViewChange }) {
-  const [goonData, setGoonData] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function BossesView({ onViewChange }) {
+  const [busqueda, setBusqueda] = useState('');
+  const [mapaFiltro, setMapaFiltro] = useState('ALL');
+  const [bossSeleccionado, setBossSeleccionado] = useState(null);
+  const [bossesData, setBossesData] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
-  // Pool de mapas donde pueden spawnear los Goons para renderizar la cuadrícula táctica
-  const mapasObjetivo = [
-    { id: 'customs', name: 'Customs', label: 'ZONA: ADUANA / DORMITORIOS' },
-    { id: 'woods', name: 'Woods', label: 'ZONA: BASE MILITAR SCANAV' },
-    { id: 'shoreline', name: 'Shoreline', label: 'ZONA: ESTACIÓN DE RADAR / RESORT' },
-    { id: 'lighthouse', name: 'Lighthouse', label: 'ZONA: CHALETS / PLANTA DE TRATAMIENTO' }
+  // BASE DE DATOS LOCAL CON REFERENCIAS RELATIVAS A SRC/ASSETS/BOSSES/
+  const poolBossesEstatico = [
+    {
+      id: 'bigpipe',
+      name: 'BIG PIPE',
+      fileName: 'bigpipe.jpg',
+      mapaDefault: 'Customs, Lighthouse, Shoreline, Woods',
+      spawnDefault: '30%',
+      dificultad: 'Medium',
+      colorDificultad: '#ffcc00',
+      guardias: 'Acompañado por Knight y Birdeye (The Goons)',
+      fisico: 'Complexión masiva, tatuajes extensos, fuma una pipa mecánica.',
+      actitud: 'Ultra agresivo, avanza flanqueando a corta distancia mientras Knight da fuego de cobertura.',
+      armas: 'MGL 40mm, Remington 870, Colt M4A1',
+      municion: '40x46mm HE, 12/70 AP-20, 5.56x45mm M855A1',
+      debiles: 'Cabeza desprotegida (no lleva casco), zonas de articulaciones.',
+      loot: 'Lanzagranadas MGL, Pipe Mochila especial, llaves de alta prioridad.'
+    },
+    {
+      id: 'birdeye',
+      name: 'BIRDEYE',
+      fileName: 'birdeye.jpg',
+      mapaDefault: 'Customs, Lighthouse, Shoreline, Woods',
+      spawnDefault: '30%',
+      dificultad: 'Medium',
+      colorDificultad: '#ffcc00',
+      guardias: 'Acompañado por Knight y Big Pipe (The Goons)',
+      fisico: 'Equipamiento ligero de camuflaje, auriculares tácticos avanzados.',
+      actitud: 'Francotirador sigiloso, cambia de posición constantemente y sus pasos no emiten sonido.',
+      armas: 'Remington M700, SR-25, M4A1',
+      municion: '7.62x51mm M61 / M993, 5.56x45mm SSA AP',
+      debiles: 'Zonas expuestas del torso, carece de blindaje pesado en extremidades.',
+      loot: 'Rifle de cerrojo modificado, tarjetas de acceso, munición militar premium.'
+    },
+    {
+      id: 'glukhar',
+      name: 'GLUKHAR',
+      fileName: 'glukhar.jpg',
+      mapaDefault: 'Reserve',
+      spawnDefault: '75%',
+      dificultad: 'Hard',
+      colorDificultad: '#ffaa00',
+      guardias: 'De 6 a 7 guardias fuertemente blindados',
+      fisico: 'Uniforme militar de camuflaje urbano ruso, complexión robusta, sin casco.',
+      actitud: 'Estratégico y defensivo. Sus guardias se dividen en asaltantes y exploradores tácticos.',
+      armas: 'AS VAL, M1A, ASH-12',
+      municion: '9x39mm SP-6 / BP, 7.62x51mm M62, 12.7x55mm PS12B',
+      debiles: 'Cabeza (fácil de abatir si se le aísla de sus guardias de asalto).',
+      loot: 'Llaves militares de Reserve, ASH-12 FIR, cargadores de alta capacidad.'
+    },
+    {
+      id: 'kaban',
+      name: 'KABAN',
+      fileName: 'kaban.jpg',
+      mapaDefault: 'Streets of Tarkov',
+      spawnDefault: '75%',
+      dificultad: 'Hard',
+      colorDificultad: '#ffaa00',
+      guardias: 'Grupo masivo de guardias blindados y francotiradores inmóviles',
+      fisico: 'Tamaño descomunal, viste ropa civil pesada, se atrinchera en el taller de coches.',
+      actitud: 'Estático pero letal. Usa ametralladoras pesadas fijas y fuego sostenido implacable.',
+      armas: 'PKP Pecheneg, PKM, Tokarev TT-33',
+      municion: '7.62x54mmR SNB / BT, 7.62x25mm PST',
+      debiles: 'Movilidad extremadamente reducida, vulnerable al flanqueo con granadas.',
+      loot: 'Ametralladora PKP/PKM, llaves de Streets, maletines de munición completa.'
+    },
+    {
+      id: 'killa',
+      name: 'KILLA',
+      fileName: 'killa.jpg',
+      mapaDefault: 'Interchange',
+      spawnDefault: '75%',
+      dificultad: 'Hard',
+      colorDificultad: '#ffaa00',
+      guardias: 'Sale completamente solo',
+      fisico: 'Chándal negro de tres rayas con chaleco blindado 6B13 y casco Maska con visera.',
+      actitud: 'Cazador implacable. Corre directo hacia el sonido de pasos y dispara ráfagas prolongadas.',
+      armas: 'RPK-16, PP-19-01 Vityaz, AK-74M',
+      municion: '5.45x39mm 7N40 / Igolnik, 9x19mm PBP',
+      debiles: 'Puntos ciegos laterales, la nuca y las piernas.',
+      loot: 'Famoso casco Maska-1Sch, blindaje corporal Killa de polietileno nivel 5.'
+    },
+    {
+      id: 'knight',
+      name: 'KNIGHT',
+      fileName: 'knight.jpg',
+      mapaDefault: 'Customs, Lighthouse, Shoreline, Woods',
+      spawnDefault: '30%',
+      dificultad: 'Hard',
+      colorDificultad: '#ffaa00',
+      guardias: 'Líder del trío (Acompañado por Big Pipe y Birdeye)',
+      fisico: 'Máscara de calavera balística, chaleco táctico modular de asalto.',
+      actitud: 'Punta de lanza. Detecta objetivos a distancias extremas e inicia persecuciones letales.',
+      armas: 'FN SCAR-H, MDR 5.56, Glock 18C',
+      municion: '7.62x51mm BCP FMJ / M80, 5.56x45mm M855A1',
+      debiles: 'Visor de la máscara balística, extremidades inferiores.',
+      loot: 'Máscara de calavera, portaplacas de asalto, estimulantes avanzados.'
+    },
+    {
+      id: 'kollontay',
+      name: 'KOLLONTAY',
+      fileName: 'kollontay.jpg',
+      mapaDefault: 'Streets of Tarkov',
+      spawnDefault: '75%',
+      dificultad: 'Hard',
+      colorDificultad: '#ffaa00',
+      guardias: 'De 3 a 5 guardias con equipo policial ruso',
+      fisico: 'Antiguo uniforme de la policía militar, gorra oficial, porta una porra antidisturbios.',
+      actitud: 'Presión sicológica. Si se acerca demasiado, saca la porra forzando tu bloqueo de armas.',
+      armas: 'RPK-16, Stechkin APS, Porra de goma',
+      municion: '5.45x39mm PPBS / BP, 9x18mm PM PBM',
+      debiles: 'Zonas laterales del torso, vulnerable mientras avanza corriendo con la porra.',
+      loot: 'Porra de Kollontay única, llaves de las comisarías de Streets, equipo policial.'
+    },
+    {
+      id: 'partisan',
+      name: 'PARTISAN',
+      fileName: 'partisan.jpg',
+      mapaDefault: 'Customs, Woods, Shoreline, Factory',
+      spawnDefault: '25%',
+      dificultad: 'Medium',
+      colorDificultad: '#ffcc00',
+      guardias: 'Sale completamente solo',
+      fisico: 'Ropa de camuflaje forestal deshilachada, barba tupida, mochila táctica grande.',
+      actitud: 'Trampero hostil. Coloca granadas con cables de trampa y acecha oculto en la maleza.',
+      armas: 'AKM modificado, SKS, trampas de cable',
+      municion: '7.62x39mm BP / PP, granadas F-1 / VOG-25',
+      debiles: 'Fácilmente abatible en terreno abierto si se detectan sus trampas previas.',
+      loot: 'Kit de cables de trampa, AKM de coleccionista, dogtags de contrabando.'
+    },
+    {
+      id: 'reshala',
+      name: 'RESHALA',
+      fileName: 'reshala.jpg',
+      mapaDefault: 'Customs',
+      spawnDefault: '75%',
+      dificultad: 'Medium',
+      colorDificultad: '#ffcc00',
+      guardias: '4 guardias de élite (Zavodskoy)',
+      fisico: 'Chaqueta de cuero marrón con patrones dorados, sin blindaje visible.',
+      actitud: 'Cobarde y evasivo. Se esconde en las habitaciones mientras sus guardias asaltan.',
+      armas: 'Pistola TT dorada, AK-101, AK-74N',
+      municion: 'PST Gzh, 5.56x45mm M856A1, 5.45x39mm BT',
+      debiles: 'Torso y cabeza por completo (no tiene ningún tipo de blindaje corporal nativo).',
+      loot: 'Pistola TT dorada de colección, llave de la oficina de aduanas, bitcoins.'
+    },
+    {
+      id: 'sanitar',
+      name: 'SANITAR',
+      fileName: 'sanitar.jpg',
+      mapaDefault: 'Shoreline',
+      spawnDefault: '75%',
+      dificultad: 'Hard',
+      colorDificultad: '#ffaa00',
+      guardias: '2 guardias fuertemente armados',
+      fisico: 'Bata médica azul sobre ropa civil, bolsa de material quirúrgico al hombro.',
+      actitud: 'Soporte dinámico. Se cura constantemente en combate y sobrepotencia a sus guardias.',
+      armas: 'VSS Vintorez, OP-SKS, Kedr-B',
+      municion: '9x39mm SP-5, 7.62x39mm PS, 9x18mm SP7',
+      debiles: 'Cabeza desprotegida, vulnerable durante las animaciones de inyección de jeringuillas.',
+      loot: 'Maletín médico con estimulantes raros (Ophthalmoscope, LedX, jeringas xg).'
+    },
+    {
+      id: 'shturman',
+      name: 'SHTURMAN',
+      fileName: 'shturman.jpg',
+      mapaDefault: 'Woods',
+      spawnDefault: '75%',
+      dificultad: 'Hard',
+      colorDificultad: '#ffaa00',
+      guardias: '2 guardias equipados con rifles de largo alcance',
+      fisico: 'Abrigo de invierno con capucha de piel, rostro descubierto, posicionamiento en aserradero.',
+      actitud: 'Francotirador de zona. Te dispara a distancias extremas con una cadencia calculada.',
+      armas: 'SVDS, AK-105',
+      municion: '7.62x54mmR 7N1 / SNB, 5.45x39mm BT',
+      debiles: 'Cabeza y extremidades desprotegidas de blindajes balísticos rígidos.',
+      loot: 'Llave del alijo de Shturman, rifle SVDS modificado, tarjetas de acceso rojas.'
+    },
+    {
+      id: 'tagilla',
+      name: 'TAGILLA',
+      fileName: 'tagilla.jpg',
+      mapaDefault: 'Factory',
+      spawnDefault: '75%',
+      dificultad: 'Medium',
+      colorDificultad: '#ffcc00',
+      guardias: 'Sale completamente solo',
+      fisico: 'Pantalones de soldador caídos, torso desnudo tatuado, máscara de soldar pesada.',
+      actitud: 'Asalto implacable a corta distancia. Te persigue con un mazo de demolición industrial.',
+      armas: 'Mazo de Tagilla, Saiga-12, MP-155 Ultima',
+      municion: '12/70 Flechette / AP-20, perdigón Magnum',
+      debiles: 'La espalda descubierta y las piernas (tienen multiplicador de daño por carne).',
+      loot: 'Máscara de soldar nivel 5, chaleco portaplacas rígido de Tagilla, mazo de desguace.'
+    },
+    {
+      id: 'Zryachiy',
+      name: 'Zryachiy',
+      fileName: 'zryachiy.jpg',
+      mapaDefault: 'Lighthouse',
+      spawnDefault: '100%',
+      dificultad: 'Very Hard',
+      colorDificultad: '#ff4444',
+      guardias: '2 francotiradores de apoyo ocultos en las laderas de la isla',
+      fisico: 'Pasamontañas blanco con patrón de costuras, mira óptica acoplada en el ojo.',
+      actitud: 'Francotirador defensivo absoluto. Abre fuego instantáneo si cruzas el puente sin el transpondedor activo.',
+      armas: 'AXMC .338, SV-98',
+      municion: '.338 Lapua Magnum AP, 7.62x54mmR BS',
+      debiles: 'Inmóvil en su puesto defensivo, vulnerable si consigues romper su línea visual inicial.',
+      loot: 'Rifle táctico AXMC .338, munición Lapua AP de coleccionista, telemetría militar.'
+    }
   ];
 
+  // FUNCIÓN COMPILADORA DE VITE PARA RESOLVER IMÁGENES DE SRC/ASSETS/ EN COMPILACIÓN NATIVA
+  const getBossImage = (fileName) => {
+    return new URL(`../assets/bosses/${fileName}`, import.meta.url).href;
+  };
+
+  // FETCH GRAPHQL PARA MAPAS Y SPAWNS
   useEffect(() => {
-    const query = `
-      {
-        goonOutbreaks {
+    const queryGraphQL = JSON.stringify({
+      query: `{
+        bosses {
+          name
           maps {
             name
+            spawnChance
           }
-          lastDetected
         }
-      }
-    `;
+      }`
+    });
 
     fetch('https://api.tarkov.dev/graphql', {
       method: 'POST',
@@ -30,61 +244,122 @@ export default function GoonsTracker({ onViewChange }) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({ query })
+      body: queryGraphQL,
     })
       .then(res => res.json())
-      .then(response => {
-        if (response.data && response.data.goonOutbreaks) {
-          setGoonData(response.data.goonOutbreaks);
+      .then(result => {
+        if (result?.data?.bosses) {
+          const poolActualizado = poolBossesEstatico.map(bossLocal => {
+            const bossAPI = result.data.bosses.find(b => b.name.toLowerCase() === bossLocal.name.toLowerCase());
+            
+            if (bossAPI && bossAPI.maps && bossAPI.maps.length > 0) {
+              const listaMapas = bossAPI.maps.map(m => m.name).join(', ');
+              const ratioPorcentaje = `${Math.round(bossAPI.maps[0].spawnChance * 100)}%`;
+              
+              return {
+                ...bossLocal,
+                mapa: listaMapas,
+                spawn: ratioPorcentaje
+              };
+            }
+            return { ...bossLocal, mapa: bossLocal.mapaDefault, spawn: bossLocal.spawnDefault };
+          });
+          setBossesData(poolActualizado);
+        } else {
+          setBossesData(poolBossesEstatico.map(b => ({ ...b, mapa: b.mapaDefault, spawn: b.spawnDefault })));
         }
-        setLoading(false);
+        setCargando(false);
       })
-      .catch(err => {
-        console.error("Error de enlace con el radar de Goons:", err);
-        setLoading(false);
+      .catch(() => {
+        setBossesData(poolBossesEstatico.map(b => ({ ...b, mapa: b.mapaDefault, spawn: b.spawnDefault })));
+        setCargando(false);
       });
   }, []);
 
-  // Función lógica para verificar si un mapa concreto tiene presencia Rogue activa
-  const comprobarPresencia = (mapName) => {
-    if (!goonData || !goonData.length) return false;
-    // La API devuelve un array de brotes (outbreaks), miramos si coincide el nombre del mapa
-    return goonData.some(outbreak => 
-      outbreak.maps.some(m => m.name.toLowerCase() === mapName.toLowerCase())
-    );
-  };
+  const bossesFiltrados = bossesData.filter(boss => {
+    const coincideBusqueda = boss.name.toLowerCase().includes(busqueda.toLowerCase());
+    const coincideMapa = mapaFiltro === 'ALL' || boss.mapa.toLowerCase().includes(mapaFiltro.toLowerCase());
+    return coincideBusqueda && coincideMapa;
+  });
 
-  // Formateador rápido para la última detección
-  const obtenerUltimoReporte = () => {
-    if (!goonData || !goonData.length) return "SIN REPORTES RECIENTES";
-    const fecha = new Date(goonData[0].lastDetected);
-    return fecha.toLocaleString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit', day: '2-digit', month: '2-digit' });
+  const styles = {
+    card: {
+      backgroundColor: 'var(--tk-glass)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      border: '1px solid var(--tk-glass-border)',
+      borderRadius: '12px',
+      padding: '1.25rem',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+      cursor: 'pointer',
+      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.75rem'
+    },
+    badge: (bg = 'rgba(255,255,255,0.06)', col = '#fff') => ({
+      backgroundColor: bg,
+      color: col,
+      fontSize: '0.7rem',
+      fontWeight: '800',
+      padding: '4px 10px',
+      borderRadius: '4px',
+      letterSpacing: '0.5px',
+      textTransform: 'uppercase',
+      display: 'inline-block'
+    }),
+    input: {
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      border: '1px solid var(--tk-glass-border)',
+      borderRadius: '8px',
+      padding: '12px 16px',
+      color: '#fff',
+      fontSize: '1rem',
+      fontFamily: "'Rajdhani', sans-serif",
+      width: '100%',
+      maxWidth: '300px',
+      outline: 'none'
+    },
+    selector: {
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      border: '1px solid var(--tk-glass-border)',
+      borderRadius: '8px',
+      padding: '12px 16px',
+      color: '#fff',
+      fontSize: '1rem',
+      fontFamily: "'Rajdhani', sans-serif",
+      cursor: 'pointer',
+      outline: 'none'
+    }
   };
-
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', fontFamily: "'Rajdhani', sans-serif" }}>
-        <p style={{ letterSpacing: '2px', color: 'var(--tk-green)', fontSize: '1.5rem', textTransform: 'uppercase' }}>
-          Sincronizando satélite de telemetría Rogue...
-        </p>
-      </div>
-    );
-  }
 
   return (
-    <div className="fade-in-slide" style={{ padding: '6rem 2rem 10rem 2rem', maxWidth: '1200px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
+    <div className="fade-in-slide" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
       
-      {/* CABECERA TÁCTICA */}
-      <header style={{ marginBottom: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem' }}>
+      <style>{`
+        @keyframes desgloseFicha {
+          from { opacity: 0; transform: translateY(15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .boss-card:hover {
+          border-color: var(--tk-green) !important;
+          transform: translateY(-3px);
+          box-shadow: 0 10px 25px rgba(26,176,21,0.08);
+        }
+      `}</style>
+
+      {/* CABECERA */}
+      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div>
-          <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>DETECTOR OPERATIVO: THE GOONS</h2>
+          <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>INTEL: BOSSES</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
-            Monitorización de despliegue de Knight, Big Pipe y Birdeye en tiempo real.
+            Información vital de todos los bosses del juego.
           </p>
         </div>
+        
         <button 
           onClick={() => onViewChange('home')}
-          style={{ backgroundColor: 'rgba(255,255,255,0.02)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', padding: '10px 22px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', letterSpacing: '1px', transition: 'all 0.3s' }}
+          style={{ backgroundColor: 'rgba(255,255,255,0.02)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', padding: '12px 22px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', letterSpacing: '1px', transition: 'all 0.3s', fontSize: '0.85rem' }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
         >
@@ -92,74 +367,142 @@ export default function GoonsTracker({ onViewChange }) {
         </button>
       </header>
 
-      {/* REPORTE GENERAL DE ESTADO */}
-      <div style={{ backgroundColor: 'rgba(10,11,14,0.4)', border: '1px solid rgba(255,255,255,0.03)', borderRadius: '12px', padding: '1.5rem 2rem', marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <span style={{ color: 'var(--tk-text-muted)', fontSize: '0.8rem', fontWeight: '700', letterSpacing: '1px' }}>ÚLTIMA TRANSMISIÓN CAPTADA</span>
-          <div style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--tk-green)', marginTop: '0.2rem', letterSpacing: '0.5px' }}>
-            {obtenerUltimoReporte()}
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--tk-green)', borderRadius: '50%', boxShadow: '0 0 10px var(--tk-green)' }}></span>
-          <span style={{ fontSize: '0.9rem', fontWeight: '700', color: '#fff', letterSpacing: '0.5px' }}>ENLACE SATELITAL ACTIVO</span>
-        </div>
-      </div>
+      {/* FILTROS TÁCTICOS */}
+      <section style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <input 
+          type="text" 
+          placeholder="BUSCAR OBJETIVO..." 
+          value={busqueda}
+          onChange={(e) => { setBusqueda(e.target.value); setBossSeleccionado(null); }}
+          style={styles.input}
+          disabled={cargando}
+        />
+        
+        <select 
+          value={mapaFiltro} 
+          onChange={(e) => { setMapaFiltro(e.target.value); setBossSeleccionado(null); }}
+          style={styles.selector}
+          disabled={cargando}
+        >
+          <option value="ALL">TODOS LOS MAPAS</option>
+          <option value="Customs">CUSTOMS</option>
+          <option value="Factory">FACTORY</option>
+          <option value="Interchange">INTERCHANGE</option>
+          <option value="Lighthouse">LIGHTHOUSE</option>
+          <option value="Reserve">RESERVE</option>
+          <option value="Shoreline">SHORELINE</option>
+          <option value="Streets">STREETS OF TARKOV</option>
+          <option value="Woods">WOODS</option>
+        </select>
+      </section>
 
-      {/* REJILLA DE ESCANEO DE MAPAS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
-        {mapasObjetivo.map((mapa) => {
-          const bajoAtaque = comprobarPresencia(mapa.name);
-          return (
-            <div 
-              key={mapa.id}
-              style={{
-                backgroundColor: 'var(--tk-glass)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: bajoAtaque ? '1px solid rgba(176, 21, 21, 0.4)' : '1px solid var(--tk-glass-border)',
-                borderRadius: '12px',
-                padding: '2rem',
-                position: 'relative',
-                overflow: 'hidden',
-                boxShadow: bajoAtaque ? '0 0 30px rgba(176, 21, 21, 0.15)' : '0 10px 30px rgba(0,0,0,0.3)',
-                transition: 'all 0.3s'
-              }}
-            >
-              {/* Línea decorativa superior superior */}
-              <div style={{ position: 'absolute', top: 0, left: '2rem', width: '40px', height: '2px', backgroundColor: bajoAtaque ? 'var(--tk-red)' : 'rgba(255,255,255,0.05)', boxShadow: bajoAtaque ? '0 0 10px var(--tk-red)' : 'none' }}></div>
+      {/* MONITOR DE CARGA */}
+      {cargando ? (
+        <div style={{ textAlign: 'center', padding: '4rem 0', color: 'var(--tk-text-muted)', fontSize: '1.2rem', letterSpacing: '2px', fontWeight: '700' }}>
+          SINCRONIZANDO INTEL DESDE EL SERVIDOR...
+        </div>
+      ) : (
+        <>
+          {/* GRID DE CARDS GENERAL */}
+          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
+            {bossesFiltrados.map((boss) => {
+              const activo = bossSeleccionado?.id === boss.id;
+              return (
+                <div
+                  key={boss.id}
+                  onClick={() => setBossSeleccionado(boss)}
+                  style={{
+                    ...styles.card,
+                    border: activo ? '1px solid var(--tk-green)' : '1px solid var(--tk-glass-border)',
+                    backgroundColor: activo ? 'rgba(255,255,255,0.04)' : 'var(--tk-glass)'
+                  }}
+                  className="boss-card"
+                >
+                  {/* COMPILADOR DINÁMICO DE VITE: Resuelve la imagen en local y producción */}
+                  <div style={{ width: '100%', aspectRatio: '16/10', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', backgroundColor: '#09090a' }}>
+                    <img 
+                      src={getBossImage(boss.fileName)} 
+                      alt={boss.name} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: '0.85', filter: 'contrast(102%) brightness(95%)' }} 
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.2rem' }}>
+                    <h3 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#fff', letterSpacing: '0.5px' }}>{boss.name}</h3>
+                    <span style={styles.badge('rgba(26,176,21,0.08)', 'var(--tk-green)')}>{boss.spawn}</span>
+                  </div>
+                  <p style={{ color: 'var(--tk-text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '-0.3rem' }}>{boss.mapa}</p>
+                </div>
+              );
+            })}
+          </section>
+
+          {/* PANEL DETALLADO DEL OBJETIVO */}
+          {bossSeleccionado && (
+            <section style={{ animation: 'desgloseFicha 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards', backgroundColor: 'var(--tk-glass)', border: '1px solid var(--tk-glass-border)', borderRadius: '16px', padding: '2.5rem' }}>
               
-              <div style={{ marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '0.75rem', color: bajoAtaque ? 'var(--tk-red)' : 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px' }}>
-                  {mapa.label}
-                </span>
-                <h3 style={{ fontSize: '1.8rem', fontWeight: '700', color: '#fff', margin: '0.3rem 0 0 0', letterSpacing: '0.5px' }}>
-                  {mapa.name.toUpperCase()}
-                </h3>
+              <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '2rem', marginBottom: '2rem', display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div style={{ width: '140px', height: '140px', borderRadius: '12px', overflow: 'hidden', border: '2px solid var(--tk-glass-border)', boxShadow: '0 4px 20px rgba(0,0,0,0.6)', flexShrink: 0, backgroundColor: '#000' }}>
+                  <img 
+                    src={getBossImage(bossSeleccionado.fileName)} 
+                    alt={bossSeleccionado.name} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                </div>
+                <div>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <span style={styles.badge('rgba(26,176,21,0.1)', 'var(--tk-green)')}>INFORME TÁCTICO REVISADO</span>
+                    <span style={styles.badge('rgba(255,255,255,0.04)', bossSeleccionado.colorDificultad)}>{bossSeleccionado.dificultad}</span>
+                  </div>
+                  <h3 style={{ fontSize: '2.4rem', fontWeight: '700', color: '#fff', letterSpacing: '1px', marginTop: '0.3rem' }}>{bossSeleccionado.name}</h3>
+                </div>
               </div>
 
-              {/* Indicador Operativo */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2rem' }}>
-                <span style={{ 
-                  width: '6px', 
-                  height: '6px', 
-                  backgroundColor: bajoAtaque ? 'var(--tk-red)' : 'rgba(255,255,255,0.1)', 
-                  borderRadius: '50%',
-                  boxShadow: bajoAtaque ? '0 0 8px var(--tk-red)' : 'none'
-                }}></span>
-                <span style={{ 
-                  fontSize: '0.85rem', 
-                  fontWeight: '700', 
-                  color: bajoAtaque ? 'var(--tk-red)' : 'var(--tk-text-muted)',
-                  letterSpacing: '1px'
-                }}>
-                  {bajoAtaque ? '⚠️ PRESENCIA CONFIRMADA' : '✓ ZONA DESPEJADA'}
-                </span>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '2.5rem', color: '#fff' }}>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>LOCALIZACIONES REGISTRADAS</span>
+                    <p style={{ fontSize: '1.05rem', color: '#fff' }}>{bossSeleccionado.mapa}</p>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>SQUAD / ESCALADA DE GUARDIAS</span>
+                    <p style={{ fontSize: '1.05rem', color: '#fff' }}>{bossSeleccionado.guardias}</p>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>DETALLES VISUALES Y FÍSICOS</span>
+                    <p style={{ fontSize: '1.05rem', color: 'var(--tk-text-muted)', lineHeight: '1.5' }}>{bossSeleccionado.fisico}</p>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>MECÁNICA Y ACTITUD DE COMBATE</span>
+                    <p style={{ fontSize: '1.05rem', color: 'var(--tk-text-muted)', lineHeight: '1.5' }}>{bossSeleccionado.actitud}</p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>ARMAMENTO PRINCIPAL ASIGNADO</span>
+                    <p style={{ fontSize: '1.05rem', color: '#fff' }}>{bossSeleccionado.armas}</p>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>TIPO DE MUNICIÓN DETECTADA</span>
+                    <p style={{ fontSize: '1.05rem', color: 'var(--tk-red)' }}>{bossSeleccionado.municion}</p>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>PUNTOS DE IMPACTO CRÍTICO / DEBILIDADES</span>
+                    <p style={{ fontSize: '1.05rem', color: 'var(--tk-green)' }}>{bossSeleccionado.debiles}</p>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>LOOT DE ALTO VALOR</span>
+                    <p style={{ fontSize: '1.05rem', color: 'var(--tk-text-muted)', lineHeight: '1.5' }}>{bossSeleccionado.loot}</p>
+                  </div>
+                </div>
+
               </div>
-            </div>
-          );
-        })}
-      </div>
+            </section>
+          )}
+        </>
+      )}
 
     </div>
   );
