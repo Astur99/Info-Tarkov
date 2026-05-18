@@ -7,6 +7,7 @@ import KappaTree from './components/KappaTree';
 import StoryDecisions from './components/StoryDecisions';
 import BossesIntel from './components/BossesIntel';
 import GoonsTracker from './components/GoonsTracker';
+import FleaTracker from './components/FleaTracker'; // IMPORTADO: El nuevo analizador de mercado
 import TroubleshootingView from './components/TroubleshootingView';
 
 function App() {
@@ -18,21 +19,24 @@ function App() {
     setMousePos({ x: e.clientX, y: e.clientY });
   };
 
+  // Matriz de módulos operativos con el Flea Tracker insertado en su posición exacta
   const modules = [
     { id: 'maps', title: 'MAPAS TÁCTICOS', desc: 'Cartografía interactiva de alto detalle, extracciones y puntos de interés.' },
     { id: 'kappa', title: 'MISIONES / KAPPA', desc: 'Organigrama global con filtrado de misiones, misiones para Kappa y checklist de completado.' },
     { id: 'story', title: 'DECISIONES / FINALES', desc: 'Puntos de no retorno y decisiones a tomar para llegar a los distintos finales (Survivor, Savior, Debtor y Fallen).' },
     { id: 'bosses', title: 'INTEL: BOSSES', desc: 'Información completa, ubicaciones, gear, puntos débiles y alijos de botín estratégico.' },
     { id: 'goons', title: 'TRACKER DE GOONS', desc: 'Estado de rotación, avistamientos de la comunidad y localización en tiempo real de la patrulla rogue.' },
+    { id: 'flea', title: 'FLEA MARKET TRACKER', desc: 'Buscador de precios en vivo por API, gráficas de fluctuación y cálculo de rentabilidad por slot.' }, // AÑADIDO AQUÍ
     { id: 'trouble', title: 'TROUBLESHOOTING', desc: 'Reporte de anomalías conocidas en la app, registros de depuración y soluciones aplicables.' }
   ];
 
-  // ENRUTAMIENTO DE PANELES SECUNDARIOS (Se ejecutan fuera de la home)
+  // ENRUTAMIENTO DE PANELES SECUNDARIOS
   if (currentView === 'maps') return <MapsView onViewChange={setCurrentView} />;
   if (currentView === 'kappa') return <KappaTree onViewChange={setCurrentView} />;
   if (currentView === 'story') return <StoryDecisions onViewChange={setCurrentView} />;
   if (currentView === 'bosses') return <BossesIntel onViewChange={setCurrentView} />;
   if (currentView === 'goons') return <GoonsTracker onViewChange={setCurrentView} />;
+  if (currentView === 'flea') return <FleaTracker onViewChange={setCurrentView} />; // MAPEADO AQUÍ
   if (currentView === 'trouble') return <TroubleshootingView onViewChange={setCurrentView} />;
 
   // MENU PRINCIPAL (HOME)
@@ -44,7 +48,6 @@ function App() {
         minHeight: '100vh',
         width: '100%',
         position: 'relative',
-        // FIJADO AQUÍ: El degradado ahora se renderiza sobre el 100% del ancho del monitor, sin importar el maxWidth
         backgroundImage: `radial-gradient(circle 1000px at ${mousePos.x}px ${mousePos.y}px, rgba(26, 176, 21, 0.018) 0%, rgba(10, 10, 12, 1) 100%)`,
         backgroundAttachment: 'fixed',
         backgroundColor: '#0a0a0c',
@@ -60,12 +63,12 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '1.5rem' }}>
             <span style={{ width: '7px', height: '7px', backgroundColor: 'var(--tk-green)', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 10px var(--tk-green)' }}></span>
             <p style={{ color: 'var(--tk-text-muted)', fontSize: '0.85rem', letterSpacing: '2.5px', textTransform: 'uppercase', fontWeight: '600', fontFamily: "'Rajdhani', sans-serif" }}>
-              TODO LO QUE NECESITAS SABER DE TARKOV EN UN ÚNICO LUGAR.
+              TODO LO QUE NECESITAS DE TARKOV CENTRALIZADO EN UN ÚNICO LUGAR.
             </p>
           </div>
         </header>
 
-        {/* REJILLA DE SECCIONES */}
+        {/* REJILLA DE SECCIONES CON EL NUEVO MÓDULO INTEGRADO */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
           {modules.map((mod, index) => (
             <ModuleCard key={mod.id} mod={mod} index={index} onViewChange={setCurrentView} />
@@ -107,7 +110,7 @@ function App() {
             e.currentTarget.style.textShadow = 'none';
           }}
         >
-          BY ASTUR
+          SYS_AUTH: BY ASTUR
         </a>
       </div>
     </div>
