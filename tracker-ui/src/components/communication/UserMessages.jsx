@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { useTranslation } from 'react-i18next';
+import { supabase } from '../../lib/supabaseClient';
 
 const panelStyle = {
   padding: '1.4rem',
@@ -19,24 +20,10 @@ const actionButtonStyle = {
   fontWeight: '900'
 };
 
-const feedbackOptions = [
-  { value: 'bug', label: 'Bug' },
-  { value: 'suggestion', label: 'Sugerencia' },
-  { value: 'other', label: 'Otro' }
-];
-
-const feedbackStatusLabels = {
-  open: 'Abierto',
-  reviewing: 'En revisión',
-  closed: 'Cerrado'
-};
-
-const authorLabels = {
-  user: 'Tú',
-  admin: 'Astur'
-};
+const feedbackTypes = ['bug', 'suggestion', 'other'];
 
 export default function UserMessages({ onViewChange }) {
+  const { t } = useTranslation();
   const [tickets, setTickets] = useState([]);
   const [openTicketId, setOpenTicketId] = useState(null);
   const [replyDrafts, setReplyDrafts] = useState({});
@@ -61,7 +48,7 @@ export default function UserMessages({ onViewChange }) {
 
     if (error) {
       console.error(error);
-      setStatus('No se pudieron cargar tus tickets.');
+      setStatus(t('report.errors.load'));
       return;
     }
 
@@ -77,7 +64,7 @@ export default function UserMessages({ onViewChange }) {
     setStatus('');
 
     if (!feedbackSubject.trim() || !feedbackBody.trim()) {
-      setStatus('Completa asunto y descripción.');
+      setStatus(t('report.errors.required'));
       return;
     }
 
@@ -95,13 +82,13 @@ export default function UserMessages({ onViewChange }) {
 
     if (error) {
       console.error(error);
-      setStatus('No se pudo enviar el ticket.');
+      setStatus(t('report.errors.send'));
       return;
     }
 
     setFeedbackSubject('');
     setFeedbackBody('');
-    setStatus('Ticket enviado. Puedes seguir la conversación en Mis tickets.');
+    setStatus(t('report.messages.sent'));
     loadTickets();
   };
 
@@ -109,7 +96,7 @@ export default function UserMessages({ onViewChange }) {
     const body = replyDrafts[ticket.id]?.trim();
 
     if (!body) {
-      setStatus('Escribe una respuesta antes de enviar.');
+      setStatus(t('report.errors.emptyReply'));
       return;
     }
 
@@ -125,12 +112,12 @@ export default function UserMessages({ onViewChange }) {
     }
 
     setReplyDrafts((current) => ({ ...current, [ticket.id]: '' }));
-    setStatus('Respuesta enviada.');
+    setStatus(t('report.messages.replySent'));
     loadTickets();
   };
 
   const handleCloseTicket = async (ticket) => {
-    const confirmed = window.confirm(`¿Quieres cerrar el ticket "${ticket.subject}"?`);
+    const confirmed = window.confirm(t('report.confirm.close', { subject: ticket.subject }));
     if (!confirmed) return;
 
     const { error } = await supabase.rpc('close_own_feedback', {
@@ -143,13 +130,13 @@ export default function UserMessages({ onViewChange }) {
       return;
     }
 
-    setStatus('Ticket cerrado.');
+    setStatus(t('report.messages.closed'));
     loadTickets();
   };
 
   const handleDeleteOwnFeedback = async (ticket) => {
     const confirmed = window.confirm(
-      `¿Quieres borrar "${ticket.subject}" de tu lista de tickets?`
+      t('report.confirm.delete', { subject: ticket.subject })
     );
 
     if (!confirmed) return;
@@ -160,11 +147,11 @@ export default function UserMessages({ onViewChange }) {
 
     if (error) {
       console.error(error);
-      setStatus('No se pudo borrar el ticket.');
+      setStatus(t('report.errors.delete'));
       return;
     }
 
-    setStatus('Ticket borrado de tu lista.');
+    setStatus(t('report.messages.deleted'));
     loadTickets();
   };
 
@@ -195,33 +182,33 @@ export default function UserMessages({ onViewChange }) {
           letterSpacing: '1px'
         }}
       >
-        ← VOLVER AL TERMINAL
+        {t('common.backToTerminal')}
       </button>
 
       <main style={{ width: 'min(900px, 100%)', margin: '0 auto' }}>
         <header style={{ marginBottom: '2rem' }}>
-          <h1 style={{ color: '#fff', margin: 0, fontSize: '2.4rem' }}>Report</h1>
+          <h1 style={{ color: '#fff', margin: 0, fontSize: '2.4rem' }}>{t('report.title')}</h1>
           <p style={{ color: 'var(--tk-text-muted)', marginTop: '0.45rem' }}>
-            Reporta bugs, envía sugerencias y continúa la conversación en cada ticket.
+            {t('report.subtitle')}
           </p>
         </header>
 
-        {loading && <p style={{ color: 'var(--tk-green)' }}>Cargando tickets...</p>}
+        {loading && <p style={{ color: 'var(--tk-green)' }}>{t('common.loading')}</p>}
         {status && <p style={{ color: '#ffcf66' }}>{status}</p>}
 
         <section style={{ ...panelStyle, marginBottom: '1rem' }}>
-          <h2 style={{ color: '#fff', marginTop: 0 }}>Crear ticket</h2>
+          <h2 style={{ color: '#fff', marginTop: 0 }}>{t('report.createTitle')}</h2>
 
           <form onSubmit={handleFeedbackSubmit} style={{ display: 'grid', gap: '0.8rem' }}>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              {feedbackOptions.map((option) => {
-                const isActive = feedbackType === option.value;
+              {feedbackTypes.map((type) => {
+                const isActive = feedbackType === type;
 
                 return (
                   <button
-                    key={option.value}
+                    key={type}
                     type="button"
-                    onClick={() => setFeedbackType(option.value)}
+                    onClick={() => setFeedbackType(type)}
                     style={{
                       flex: '1 1 120px',
                       padding: '0.75rem',
@@ -234,7 +221,7 @@ export default function UserMessages({ onViewChange }) {
                       fontFamily: "'Rajdhani', sans-serif"
                     }}
                   >
-                    {option.label}
+                    {t(`report.types.${type}`)}
                   </button>
                 );
               })}
@@ -244,7 +231,7 @@ export default function UserMessages({ onViewChange }) {
               type="text"
               value={feedbackSubject}
               onChange={(event) => setFeedbackSubject(event.target.value)}
-              placeholder="Asunto"
+              placeholder={t('report.subject')}
               maxLength={120}
               style={{
                 padding: '0.8rem',
@@ -258,7 +245,7 @@ export default function UserMessages({ onViewChange }) {
             <textarea
               value={feedbackBody}
               onChange={(event) => setFeedbackBody(event.target.value)}
-              placeholder="Describe lo que pasa o lo que te gustaría ver..."
+              placeholder={t('report.bodyPlaceholder')}
               rows={5}
               maxLength={2000}
               style={{
@@ -283,17 +270,17 @@ export default function UserMessages({ onViewChange }) {
                 cursor: sendingFeedback ? 'wait' : 'pointer'
               }}
             >
-              {sendingFeedback ? 'Enviando...' : 'Crear ticket'}
+              {sendingFeedback ? t('report.sending') : t('report.createButton')}
             </button>
           </form>
         </section>
 
         <section style={{ display: 'grid', gap: '0.75rem', marginBottom: '1rem' }}>
-          <h2 style={{ color: '#fff', margin: '0.5rem 0' }}>Mis tickets</h2>
+          <h2 style={{ color: '#fff', margin: '0.5rem 0' }}>{t('report.myTickets')}</h2>
 
           {tickets.length === 0 && !loading && (
             <article style={panelStyle}>
-              <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>No tienes tickets enviados.</p>
+              <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>{t('report.noTickets')}</p>
             </article>
           )}
 
@@ -321,17 +308,17 @@ export default function UserMessages({ onViewChange }) {
                     <span>
                       <span style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.45rem' }}>
                         <strong style={{ color: 'var(--tk-green)' }}>
-                          {feedbackOptions.find((option) => option.value === ticket.type)?.label || ticket.type}
+                          {t(`report.types.${ticket.type}`, ticket.type)}
                         </strong>
                         <strong style={{ color: '#ffcf66' }}>
-                          {feedbackStatusLabels[ticket.status] || ticket.status}
+                          {t(`report.status.${ticket.status}`, ticket.status)}
                         </strong>
                       </span>
                       <strong style={{ color: '#fff', display: 'block', fontSize: '1.08rem' }}>
                         {ticket.subject}
                       </strong>
                       <span style={{ color: 'var(--tk-text-muted)', display: 'block', marginTop: '0.25rem' }}>
-                        {new Date(ticket.created_at).toLocaleString()} · {replies.length} respuestas
+                        {new Date(ticket.created_at).toLocaleString()} · {t('report.responses', { count: replies.length })}
                       </span>
                     </span>
                   </div>
@@ -341,7 +328,7 @@ export default function UserMessages({ onViewChange }) {
                   <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '1.1rem 1.25rem' }}>
                     <div style={{ display: 'grid', gap: '0.75rem', marginBottom: '1rem' }}>
                       <div style={{ color: '#fff', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
-                        <strong style={{ color: 'var(--tk-green)' }}>Tú</strong>
+                        <strong style={{ color: 'var(--tk-green)' }}>{t('report.authorUser')}</strong>
                         <p style={{ margin: '0.35rem 0 0 0' }}>{ticket.body}</p>
                       </div>
 
@@ -359,7 +346,7 @@ export default function UserMessages({ onViewChange }) {
                           }}
                         >
                           <strong style={{ color: reply.author_role === 'admin' ? 'var(--tk-green)' : '#fff' }}>
-                            {authorLabels[reply.author_role] || reply.author_role}
+                            {reply.author_role === 'admin' ? t('report.authorAdmin') : t('report.authorUser')}
                           </strong>
                           <span style={{ color: 'var(--tk-text-muted)', marginLeft: '0.5rem' }}>
                             {new Date(reply.created_at).toLocaleString()}
@@ -378,7 +365,7 @@ export default function UserMessages({ onViewChange }) {
                           onChange={(event) =>
                             setReplyDrafts((current) => ({ ...current, [ticket.id]: event.target.value }))
                           }
-                          placeholder="Responder en este ticket..."
+                          placeholder={t('report.replyPlaceholder')}
                           rows={3}
                           maxLength={2000}
                           style={{
@@ -397,7 +384,7 @@ export default function UserMessages({ onViewChange }) {
                             onClick={() => handleReplyTicket(ticket)}
                             style={{ ...actionButtonStyle, color: 'var(--tk-green)' }}
                           >
-                            Responder
+                            {t('common.reply')}
                           </button>
 
                           <button
@@ -405,7 +392,7 @@ export default function UserMessages({ onViewChange }) {
                             onClick={() => handleCloseTicket(ticket)}
                             style={{ ...actionButtonStyle, color: '#ffcf66' }}
                           >
-                            Cerrar ticket
+                            {t('report.closeTicket')}
                           </button>
                         </div>
                       </div>
@@ -421,7 +408,7 @@ export default function UserMessages({ onViewChange }) {
                         borderColor: 'rgba(255,107,107,0.35)'
                       }}
                     >
-                      Borrar de mi lista
+                      {t('report.deleteFromList')}
                     </button>
                   </div>
                 )}

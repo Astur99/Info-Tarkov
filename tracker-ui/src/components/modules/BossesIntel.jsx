@@ -1,5 +1,47 @@
 import { useState, useEffect } from 'react';
 
+const bossImageModules = import.meta.glob('../../assets/bosses/*', {
+  eager: true,
+  query: '?url',
+  import: 'default'
+});
+
+const getBossImage = (boss) => bossImageModules[`../../assets/bosses/${boss.fileName}`] || '';
+
+function BossImage({ boss, style }) {
+  const [failed, setFailed] = useState(false);
+  const src = getBossImage(boss);
+
+  if (!src || failed) {
+    return (
+      <div
+        style={{
+          ...style,
+          display: 'grid',
+          placeItems: 'center',
+          padding: '1rem',
+          background: 'linear-gradient(135deg, rgba(26,176,21,0.12), rgba(0,0,0,0.55))',
+          color: 'var(--tk-green)',
+          fontWeight: 900,
+          letterSpacing: '1px',
+          textAlign: 'center'
+        }}
+      >
+        {boss.name}
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={boss.name}
+      onError={() => setFailed(true)}
+      style={style}
+    />
+  );
+}
+
 export default function BossesView({ onViewChange }) {
   const [busqueda, setBusqueda] = useState('');
   const [mapaFiltro, setMapaFiltro] = useState('ALL');
@@ -219,11 +261,6 @@ export default function BossesView({ onViewChange }) {
     }
   ];
 
-  // FUNCIÓN COMPILADORA DE VITE PARA RESOLVER IMÁGENES DE SRC/ASSETS/ EN COMPILACIÓN NATIVA
-  const getBossImage = (fileName) => {
-    return new URL(`../assets/bosses/${fileName}`, import.meta.url).href;
-  };
-
   // FETCH GRAPHQL PARA MAPAS Y SPAWNS
   useEffect(() => {
     const queryGraphQL = JSON.stringify({
@@ -334,7 +371,7 @@ export default function BossesView({ onViewChange }) {
   };
 
   return (
-    <div className="fade-in-slide" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
+    <div className="fade-in-slide terminal-panel" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
       
       <style>{`
         @keyframes desgloseFicha {
@@ -420,10 +457,9 @@ export default function BossesView({ onViewChange }) {
                 >
                   {/* COMPILADOR DINÁMICO DE VITE: Resuelve la imagen en local y producción */}
                   <div style={{ width: '100%', aspectRatio: '16/10', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', backgroundColor: '#09090a' }}>
-                    <img 
-                      src={getBossImage(boss.fileName)} 
-                      alt={boss.name} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: '0.85', filter: 'contrast(102%) brightness(95%)' }} 
+                    <BossImage
+                      boss={boss}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: '0.85', filter: 'contrast(102%) brightness(95%)' }}
                     />
                   </div>
 
@@ -443,10 +479,9 @@ export default function BossesView({ onViewChange }) {
               
               <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '2rem', marginBottom: '2rem', display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
                 <div style={{ width: '140px', height: '140px', borderRadius: '12px', overflow: 'hidden', border: '2px solid var(--tk-glass-border)', boxShadow: '0 4px 20px rgba(0,0,0,0.6)', flexShrink: 0, backgroundColor: '#000' }}>
-                  <img 
-                    src={getBossImage(bossSeleccionado.fileName)} 
-                    alt={bossSeleccionado.name} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  <BossImage
+                    boss={bossSeleccionado}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </div>
                 <div>

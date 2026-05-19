@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SERVICES = [
   'Website',
@@ -12,47 +13,74 @@ const SERVICES = [
   'Inventory operations'
 ];
 
+const serviceKeyByName = {
+  website: 'website',
+  forum: 'forum',
+  authentication: 'authentication',
+  launcher: 'launcher',
+  'group lobby': 'groupLobby',
+  trading: 'trading',
+  matchmaking: 'matchmaking',
+  'friends and msg': 'friends',
+  'inventory operations': 'inventory'
+};
+
+const getStatusMeta = (rawStatus, t) => {
+  if (rawStatus.includes('outage') || rawStatus.includes('down') || rawStatus.includes('issue')) {
+    return { label: t('serverStatus.status.down'), color: '#ff4d4d', level: 'bad' };
+  }
+
+  if (rawStatus.includes('maintenance') || rawStatus.includes('update')) {
+    return { label: t('serverStatus.status.maintenance'), color: '#7ab7ff', level: 'warn' };
+  }
+
+  if (rawStatus.includes('degraded') || rawStatus.includes('slow')) {
+    return { label: t('serverStatus.status.degraded'), color: '#ffcf66', level: 'warn' };
+  }
+
+  return { label: t('serverStatus.status.operational'), color: 'var(--tk-green)', level: 'good' };
+};
+
 export default function ServerStatus({ onViewChange }) {
+  const { i18n, t } = useTranslation();
   const [apiData, setApiData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Consulta limpia al nodo oficial de estados de tarkov.dev
   const loadStatus = () => {
     setLoading(true);
     setError(null);
 
-    const queryStatus = JSON.stringify({
-      query: `
-        query GetServerStatus {
-          vanguardStatus {
-            name
-            status
-          }
-        }
-      `
-    });
-
     fetch('https://api.tarkov.dev/graphql', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: queryStatus
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        query: `
+          query GetServerStatus {
+            vanguardStatus {
+              name
+              status
+            }
+          }
+        `
+      })
     })
-      .then(res => res.json())
-      .then(result => {
+      .then((res) => res.json())
+      .then((result) => {
         const statuses = result?.data?.vanguardStatus;
-        
+
         if (Array.isArray(statuses) && statuses.length > 0) {
           setApiData(statuses);
           setError(null);
         } else {
           setApiData([]);
         }
+
         setLoading(false);
       })
-      .catch(err => {
-        console.error("Error al obtener el estado:", err);
-        setError("Error de red al conectar con el radar de servidores.");
+      .catch((statusError) => {
+        console.error(t('serverStatus.consoleError'), statusError);
+        setError(t('serverStatus.errors.network'));
         setLoading(false);
       });
   };
@@ -61,103 +89,73 @@ export default function ServerStatus({ onViewChange }) {
     loadStatus();
   }, []);
 
-  // Mapeamos tus servicios emparejándolos con la respuesta real de la API
   const parsedServices = useMemo(() => {
-    const traduccionServicios = {
-      'website': 'SITIO WEB',
-      'forum': 'FORO OFICIAL',
-      'authentication': 'AUTENTICACIÓN / LOGIN',
-      'launcher': 'LANZADOR (LAUNCHER)',
-      'group lobby': 'CREACIÓN DE GRUPOS',
-      'trading': 'COMERCIO / TRADERS',
-      'matchmaking': 'BUSQUEDA DE PARTIDA',
-      'friends and msg': 'MENSAJERÍA Y AMIGOS',
-      'inventory operations': 'ACCIONES DE INVENTARIO'
-    };
-
-    return SERVICES.map(serviceName => {
+    return SERVICES.map((serviceName) => {
       const matched = apiData.find(
-        item => item?.name?.toLowerCase() === serviceName.toLowerCase()
+        (item) => item?.name?.toLowerCase() === serviceName.toLowerCase()
       );
 
       const rawStatus = matched ? matched.status.toLowerCase() : 'ok';
-
-      let label = 'OPERATIVO';
-      let color = 'var(--tk-green)';
-      let level = 'good';
-
-      if (rawStatus.includes('outage') || rawStatus.includes('down') || rawStatus.includes('issue')) {
-        label = 'CAÍDO';
-        color = '#ff4d4d';
-        level = 'bad';
-      } else if (rawStatus.includes('maintenance') || rawStatus.includes('update')) {
-        label = 'MANTENIMIENTO';
-        color = '#7ab7ff';
-        level = 'warn';
-      } else if (rawStatus.includes('degraded') || rawStatus.includes('slow')) {
-        label = 'DEGRADADO';
-        color = '#ffcf66';
-        level = 'warn';
-      }
-
-      const keyLimpia = serviceName.toLowerCase();
-      const nameTraducido = traduccionServicios[keyLimpia] || serviceName.toUpperCase();
+      const statusMeta = getStatusMeta(rawStatus, t);
+      const serviceKey = serviceKeyByName[serviceName.toLowerCase()];
 
       return {
-        name: nameTraducido,
-        label,
-        color,
-        level
+        name: t(`serverStatus.services.${serviceKey}`, {
+          defaultValue: serviceName.toUpperCase()
+        }),
+        ...statusMeta
       };
     });
-  }, [apiData]);
+  }, [apiData, t]);
 
-  // Cálculo en tiempo real de cuántos servidores están en estado 'good' (OPERATIVO)
-  const servidoresOperativos = useMemo(() => {
-    return parsedServices.filter(s => s.level === 'good').length;
+  const activeServers = useMemo(() => {
+    return parsedServices.filter((service) => service.level === 'good').length;
   }, [parsedServices]);
 
   if (loading && apiData.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '12rem', color: 'var(--tk-green)', fontSize: '1.2rem', fontFamily: "'Rajdhani', sans-serif", letterSpacing: '2px' }}>
-        EXTRAYENDO DATOS DE ESTADO DE SERVICIO / RECOPILANDO TELEMETRÍA...
+        {t('serverStatus.loading')}
       </div>
     );
   }
 
   return (
-    <div className="fade-in-slide" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif", position: 'relative' }}>
-      
-      {/* COMPONENTE: RELOJ Y CONTADOR DE PUNTOS TÁCTICO */}
-      <TacticalHeaderTracker activos={servidoresOperativos} totales={SERVICES.length} />
+    <div className="fade-in-slide terminal-panel" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif", position: 'relative' }}>
+      <TacticalHeaderTracker
+        active={activeServers}
+        total={SERVICES.length}
+        language={i18n.resolvedLanguage}
+      />
 
-      {/* CABECERA DE OPERACIONES */}
       <header style={{ marginBottom: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div style={{ maxWidth: '70%' }}>
-          <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>TELEMETRÍA DE RED / BATTLEYE</h2>
+          <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>
+            {t('serverStatus.title')}
+          </h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
-            Estado en tiempo real de los servidores centrales, pasarelas de autenticación y servicios lógicos de Battlestate Games.
+            {t('serverStatus.subtitle')}
           </p>
         </div>
-        <button 
+
+        <button
           onClick={() => onViewChange('home')}
           style={{ backgroundColor: 'rgba(255,255,255,0.02)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', padding: '12px 22px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', letterSpacing: '1px', zIndex: 10 }}
         >
-          VOLVER AL MENÚ
+          {t('common.backToMenu')}
         </button>
       </header>
 
       {error && (
         <div style={{ backgroundColor: 'rgba(255,77,77,0.05)', border: '1px solid #ff4d4d', color: '#ff4d4d', padding: '1rem', borderRadius: '6px', marginBottom: '2rem', fontWeight: '600', letterSpacing: '0.5px' }}>
-          ⚠️ ADVERTENCIA: {error}
+          {t('serverStatus.warning', { error })}
         </div>
       )}
 
-      {/* REJILLA DE ESTADOS CRISTALIZADA */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
-        {parsedServices.map((service, index) => (
+        {parsedServices.map((service) => (
           <div
-            key={index}
+            key={service.name}
             style={{
               backgroundColor: 'var(--tk-glass)',
               backdropFilter: 'blur(25px)',
@@ -194,7 +192,6 @@ export default function ServerStatus({ onViewChange }) {
         ))}
       </div>
 
-      {/* BOTÓN DE ACTUALIZACIÓN MANUAL */}
       <div style={{ marginTop: '3rem', textAlign: 'center' }}>
         <button
           onClick={loadStatus}
@@ -213,19 +210,22 @@ export default function ServerStatus({ onViewChange }) {
             transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
             boxShadow: loading ? 'none' : '0 0 20px rgba(26, 176, 21, 0.2)'
           }}
-          onMouseEnter={(e) => { if(!loading) e.target.style.opacity = '0.9'; }}
-          onMouseLeave={(e) => { if(!loading) e.target.style.opacity = '1'; }}
+          onMouseEnter={(event) => {
+            if (!loading) event.currentTarget.style.opacity = '0.9';
+          }}
+          onMouseLeave={(event) => {
+            if (!loading) event.currentTarget.style.opacity = '1';
+          }}
         >
-          {loading ? 'RE-SINCRONIZANDO...' : 'REFRESCAR ESTADO DE SERVICIO'}
+          {loading ? t('serverStatus.resyncing') : t('serverStatus.refresh')}
         </button>
       </div>
-
     </div>
   );
 }
 
-// SUBCOMPONENTE DE ENTORNO: RECONSTRUIBLE CON RELOJ LOCAL Y PUNTUACIÓN DE RED
-function TacticalHeaderTracker({ activos, totales }) {
+function TacticalHeaderTracker({ active, total, language }) {
+  const { t } = useTranslation();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -233,15 +233,8 @@ function TacticalHeaderTracker({ activos, totales }) {
     return () => clearInterval(timer);
   }, []);
 
-  const formatHora = (t) => {
-    return t.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  };
-
-  const formatFecha = (t) => {
-    return t.toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
-  };
-
-  const todoOperacional = activos === totales;
+  const locale = language === 'en' ? 'en-US' : language || 'es';
+  const allOperational = active === total;
 
   return (
     <div style={{
@@ -257,22 +250,26 @@ function TacticalHeaderTracker({ activos, totales }) {
       borderRadius: '6px',
       border: '1px solid rgba(255, 255, 255, 0.03)'
     }}>
-      {/* CRONÓMETRO DE HORA LOCAL */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-        <span style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--tk-text-muted)', letterSpacing: '1.5px' }}>HORA // ZONA_LOCAL</span>
+        <span style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--tk-text-muted)', letterSpacing: '1.5px' }}>
+          {t('serverStatus.header.localTime')}
+        </span>
         <span style={{ fontSize: '1.15rem', fontWeight: '800', color: '#fff', letterSpacing: '1px', marginTop: '1px' }}>
-          {formatHora(time)} <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)', fontWeight: '500' }}>{formatFecha(time)}</span>
+          {time.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}{' '}
+          <span style={{ fontSize: '0.75rem', color: 'var(--tk-text-muted)', fontWeight: '500' }}>
+            {time.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '-')}
+          </span>
         </span>
       </div>
 
-      {/* SEPARADOR INDUSTRIAL */}
       <div style={{ width: '1px', height: '26px', backgroundColor: 'rgba(255,255,255,0.08)' }} />
 
-      {/* MARCADOR DE PUNTOS / SERVIDORES OPERATIVOS */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-        <span style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--tk-text-muted)', letterSpacing: '1.5px' }}>ESTADO DE SERVICIOS</span>
-        <span style={{ fontSize: '1.15rem', fontWeight: '800', color: todoOperacional ? 'var(--tk-green)' : '#ffcf66', letterSpacing: '1px', marginTop: '1px' }}>
-          SISTEMAS {activos} OF {totales}
+        <span style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--tk-text-muted)', letterSpacing: '1.5px' }}>
+          {t('serverStatus.header.serviceStatus')}
+        </span>
+        <span style={{ fontSize: '1.15rem', fontWeight: '800', color: allOperational ? 'var(--tk-green)' : '#ffcf66', letterSpacing: '1px', marginTop: '1px' }}>
+          {t('serverStatus.header.systems', { active, total })}
         </span>
       </div>
     </div>

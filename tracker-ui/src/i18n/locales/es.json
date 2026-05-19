@@ -1,0 +1,384 @@
+{
+  "common": {
+    "backToTerminal": "← VOLVER AL TERMINAL",
+    "loading": "Cargando...",
+    "processing": "Procesando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Borrar",
+    "close": "Cerrar",
+    "reply": "Responder",
+    "backToMenu": "VOLVER AL MENU"
+  },
+  "language": {
+    "label": "Idioma",
+    "es": "ES",
+    "en": "EN"
+  },
+  "home": {
+    "serverStatus": "Estado de Servidores",
+    "login": "Login / Crear cuenta",
+    "logout": "Cerrar sesión",
+    "userButton": "{{username}}",
+    "configureUser": "CONFIGURAR",
+    "report": "REPORT",
+    "admin": "ADMIN",
+    "sessionStarted": "SESIÓN INICIADA",
+    "adminSuffix": " · ADMIN",
+    "guestMode": "MODO INVITADO · PUEDES USAR LA APP SIN CUENTA",
+    "modules": {
+      "maps": {
+        "title": "MAPAS TÁCTICOS",
+        "desc": "Cartografía interactiva de alto detalle, extracciones y puntos de interés."
+      },
+      "kappa": {
+        "title": "MISIONES / KAPPA",
+        "desc": "Organigrama global con filtrado de misiones, misiones para Kappa y checklist de completado."
+      },
+      "story": {
+        "title": "DECISIONES / FINALES",
+        "desc": "Puntos de no retorno y decisiones a tomar para llegar a los distintos finales."
+      },
+      "bosses": {
+        "title": "INTEL: BOSSES",
+        "desc": "Información completa, ubicaciones, gear, puntos débiles y loot de los distintos bosses."
+      },
+      "goons": {
+        "title": "TRACKER DE GOONS",
+        "desc": "Estado de rotación, avistamientos de la comunidad y localización en tiempo real de los Goons."
+      },
+      "flea": {
+        "title": "FLEA MARKET TRACKER",
+        "desc": "Buscador de precios en vivo por API, gráficas de fluctuación y cálculo de rentabilidad."
+      },
+      "hideout": {
+        "title": "GESTIÓN DEL REFUGIO",
+        "desc": "Planificador de infraestructura, checklist de materiales unificado y cálculo de costes con precios en vivo."
+      },
+      "simulator": {
+        "title": "SIMULADOR BALÍSTICO",
+        "desc": "Cálculo de probabilidad de penetración y simulación de rotura de placas e impactos TTK."
+      },
+      "liveEvents": {
+        "title": "EVENTOS EN DIRECTO",
+        "desc": "Seguimiento de anuncios, eventos temporales, parches y transmisiones activas de Tarkov."
+      },
+      "prestige": {
+        "title": "PRESTIGIOS",
+        "desc": "Requisitos, recompensas y checklist para preparar cada nivel de prestigio PVP."
+      },
+      "keys": {
+        "title": "SISTEMA DE LLAVES",
+        "desc": "Base de datos tactica de llaves, usos, quests asociadas y prioridad de compra o guardado."
+      },
+      "questOptimizer": {
+        "title": "QUEST OPTIMIZER",
+        "desc": "Analiza quests pendientes y recomienda el mapa donde aprovechar mejor tu siguiente raid."
+      },
+      "pmcProfile": {
+        "title": "PERFIL DE PMC",
+        "desc": "Resumen local de tu wipe, objetivo principal, supervivencia, economia y progreso operativo."
+      },
+      "trouble": {
+        "title": "TROUBLESHOOTING",
+        "desc": "Reporte de anomalías conocidas en la app, registros de depuración y soluciones aplicables."
+      }
+    }
+  },
+  "account": {
+    "title": "Cuenta",
+    "adminProfile": "Perfil administrador",
+    "userProfile": "Perfil de usuario",
+    "username": {
+      "title": "Nombre de usuario",
+      "placeholder": "Tu usuario",
+      "rules": "El nombre debe tener entre 3 y 20 caracteres. Usa letras, números, guion bajo o guion.",
+      "helper": "3-20 caracteres. Letras, números, guion bajo o guion. No puede repetirse.",
+      "save": "Guardar usuario",
+      "saving": "Guardando..."
+    },
+    "password": {
+      "title": "Cambiar contraseña",
+      "placeholder": "Nueva contraseña",
+      "save": "Cambiar contraseña",
+      "saving": "Actualizando..."
+    },
+    "delete": {
+      "title": "Borrar cuenta",
+      "warning": "Esta acción borrará tu cuenta y perderás el progreso asociado a ella. No se puede deshacer.",
+      "placeholder": "Escribe BORRAR",
+      "button": "Borrar cuenta",
+      "deleting": "Borrando..."
+    },
+    "messages": {
+      "loginRequired": "Necesitas iniciar sesión para configurar tu usuario.",
+      "usernameTaken": "Ese nombre de usuario ya está en uso.",
+      "usernameSaveError": "No se pudo guardar el nombre de usuario.",
+      "usernameSaved": "Nombre de usuario guardado.",
+      "passwordSaveError": "No se pudo cambiar la contraseña.",
+      "passwordSaved": "Contraseña actualizada.",
+      "deleteConfirmRequired": "Escribe BORRAR para confirmar.",
+      "deleteError": "No se pudo borrar la cuenta."
+    }
+  },
+  "auth": {
+    "titleLogin": "Login",
+    "titleRegister": "Crear cuenta",
+    "email": "Email",
+    "password": "Contraseña",
+    "submitLogin": "Entrar",
+    "submitRegister": "Registrarse",
+    "switchToLogin": "Ya tengo cuenta",
+    "switchToRegister": "Crear una cuenta",
+    "created": "Cuenta creada correctamente.",
+    "loggedIn": "Sesión iniciada.",
+    "passwordRequirements": "La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.",
+    "checks": {
+      "length": "Mínimo 8 caracteres",
+      "uppercase": "Una mayúscula",
+      "lowercase": "Una minúscula",
+      "number": "Un número",
+      "symbol": "Un símbolo"
+    }
+  },
+  "report": {
+    "title": "Report",
+    "subtitle": "Reporta bugs, envía sugerencias y continúa la conversación en cada ticket.",
+    "createTitle": "Crear ticket",
+    "types": {
+      "bug": "Bug",
+      "suggestion": "Sugerencia",
+      "other": "Otro"
+    },
+    "status": {
+      "open": "Abierto",
+      "reviewing": "En revisión",
+      "closed": "Cerrado"
+    },
+    "subject": "Asunto",
+    "bodyPlaceholder": "Describe lo que pasa o lo que te gustaría ver...",
+    "createButton": "Crear ticket",
+    "sending": "Enviando...",
+    "myTickets": "Mis tickets",
+    "noTickets": "No tienes tickets enviados.",
+    "responses": "{{count}} respuestas",
+    "replyPlaceholder": "Responder en este ticket...",
+    "closeTicket": "Cerrar ticket",
+    "deleteFromList": "Borrar de mi lista",
+    "authorUser": "Tú",
+    "authorAdmin": "Astur",
+    "errors": {
+      "load": "No se pudieron cargar tus tickets.",
+      "required": "Completa asunto y descripción.",
+      "send": "No se pudo enviar el ticket.",
+      "emptyReply": "Escribe una respuesta antes de enviar.",
+      "delete": "No se pudo borrar el ticket."
+    },
+    "messages": {
+      "sent": "Ticket enviado. Puedes seguir la conversación en Mis tickets.",
+      "replySent": "Respuesta enviada.",
+      "closed": "Ticket cerrado.",
+      "deleted": "Ticket borrado de tu lista."
+    },
+    "confirm": {
+      "close": "¿Quieres cerrar el ticket \"{{subject}}\"?",
+      "delete": "¿Quieres borrar \"{{subject}}\" de tu lista de tickets?"
+    }
+  },
+  "troubleshooting": {
+    "title": "LOG DE ERRORES CONOCIDOS",
+    "subtitle": "Reporte de anomalias conocidas en la app y de soluciones aplicables. Se sigue trabajando en los fixes.",
+    "symptomLabel": "SINTOMA",
+    "fixLabel": "FIX",
+    "incidents": [
+      {
+        "code": "ERR_GRAPH_ISO_V1",
+        "title": "Aislamiento de Coincidencias en Buscador",
+        "symptom": "Al buscar términos compartidos en Misiones / Kappa, como por ejemplo \"Crisis\", la app filtra correctamente pero puede exponer primero solo una coincidencia visible dentro del trader activo.",
+        "fix": "Si buscas una misión con un nombre común o compartido, escribe la palabra en el buscador y revisa las pestañas de los diferentes comerciantes para ver todas las coincidencias."
+      },
+      {
+        "code": "SYS_GUEST_STORAGE_V2",
+        "title": "Progreso Local en Modo Invitado",
+        "symptom": "Si usas la app sin iniciar sesión, el progreso de quests se guarda en localStorage. Puede perderse al borrar datos del navegador, usar limpieza agresiva, modo incógnito o cambiar de dispositivo.",
+        "fix": "Crea una cuenta e inicia sesión para guardar el progreso en Supabase. El modo invitado sigue funcionando, pero no debe tratarse como persistencia permanente."
+      },
+      {
+        "code": "NET_EXTERNAL_APIS_V1",
+        "title": "Dependencia de APIs Externas",
+        "symptom": "Estado de servidores, eventos en directo, Goons Tracker, Flea Market y algunos datos de Kappa dependen de fuentes externas. Si una API, proxy o web externa falla, el módulo puede mostrar datos vacíos, antiguos o un error temporal.",
+        "fix": "Reintenta pasados unos minutos y comprueba tu conexión. En eventos en directo existe un fallback manual cuando las fuentes automáticas no responden."
+      },
+      {
+        "code": "GOONS_HTML_PARSE_V1",
+        "title": "Lectura del Tracker de Goons",
+        "symptom": "El Tracker de Goons extrae información desde HTML externo. Si la web fuente cambia su estructura, la app puede no detectar correctamente el mapa activo.",
+        "fix": "Si aparece un error de captura o el mapa no parece fiable, valida el dato con la fuente original hasta actualizar el parser."
+      },
+      {
+        "code": "I18N_PARTIAL_ROLLOUT_V1",
+        "title": "Traducción Parcial de la Interfaz",
+        "symptom": "El selector ES/EN ya funciona en portada, login, Report, Cuenta, Estado de Servidores y Misiones / Kappa, pero varios módulos internos todavía conservan textos hardcodeados en español.",
+        "fix": "La traducción se está desplegando por fases. Prioridad actual: panel admin y módulos principales."
+      },
+      {
+        "code": "DEV_LINT_REACT_V1",
+        "title": "Deuda Técnica Detectada por Lint",
+        "symptom": "El build de producción compila correctamente, pero ESLint detecta deuda técnica en varios módulos: efectos con setState inmediato, dependencias de hooks pendientes y pequeñas asignaciones o escapes innecesarios.",
+        "fix": "No bloquea el uso actual de la app, pero conviene corregirlo antes de un deploy público serio para reducir riesgos de renders extra y futuros bugs difíciles de rastrear."
+      },
+      {
+        "code": "DEV_HIDEOUT_FALLBACK_V1",
+        "title": "Fallback Local del Hideout",
+        "symptom": "ESLint marca que el fallback local del Hideout se referencia antes de su declaración. La app puede compilar, pero esa estructura es frágil si se toca la carga de datos.",
+        "fix": "Mover el helper de fallback antes del efecto o convertirlo en callback estable cuando se haga la siguiente pasada de limpieza del módulo Hideout."
+      }
+    ]
+  },
+  "liveEvents": {
+    "eyebrow": "Feed táctico",
+    "title": "Eventos en directo",
+    "subtitle": "Escanea fuentes de tarkovdata, clasifica eventos activos o recientes y conserva una referencia manual si el feed externo falla.",
+    "lastSync": "ÚLTIMA SINCRONIZACIÓN: {{date}} - FUENTE: {{source}}",
+    "visibleRecords": "{{count}} registros visibles",
+    "sourceWarning": "AVISO DE FUENTE: {{error}}",
+    "loading": "SINCRONIZANDO EVENTOS...",
+    "empty": "No se registran eventos activos o recientes ahora mismo.",
+    "noDate": "SIN FECHA",
+    "details": "DETALLES",
+    "sourceLabel": "SOURCE: {{source}}",
+    "actions": {
+      "scanning": "ESCANEANDO...",
+      "refresh": "REFRESCAR FEED",
+      "hideEnded": "OCULTAR FINALIZADOS",
+      "showEnded": "MOSTRAR FINALIZADOS"
+    },
+    "counters": {
+      "active": "Activos",
+      "recent": "Recientes",
+      "ended": "Finalizados",
+      "localTime": "Hora local"
+    },
+    "status": {
+      "active": "ACTIVO",
+      "recent": "RECIENTE",
+      "reference": "REFERENCIA",
+      "ended": "FINALIZADO"
+    },
+    "freshness": {
+      "inProgress": "EN CURSO",
+      "today": "HOY",
+      "daysAgo": "HACE {{count}} DIAS"
+    },
+    "sources": {
+      "verifiedManual": "verificado manual",
+      "fallbackManual": "referencia manual",
+      "none": "sin fuente"
+    },
+    "errors": {
+      "manualActive": "El feed automático no devolvió eventos, pero hay un evento temporal verificado manualmente.",
+      "noFeed": "No se pudo confirmar el feed automático. Mostrando enlace de referencia manual.",
+      "unexpected": "Error inesperado leyendo eventos. Mostrando enlace de referencia manual."
+    },
+    "fallback": {
+      "title": "Eventos de Escape From Tarkov",
+      "description": "No se pudo confirmar ningún evento activo desde las fuentes automáticas. Usa el enlace externo como referencia manual."
+    },
+    "manual": {
+      "fullSpeedAhead": {
+        "description": "Evento activo con Rogues fuera de Lighthouse, presencia en Shoreline y Reserve, cadena de Peacekeeper y logro Awaiting Departure."
+      }
+    }
+  },
+  "serverStatus": {
+    "title": "TELEMETRÍA DE RED / BATTLEYE",
+    "subtitle": "Estado en tiempo real de los servidores centrales, pasarelas de autenticación y servicios lógicos de Battlestate Games.",
+    "loading": "EXTRAYENDO DATOS DE ESTADO DE SERVICIO / RECOPILANDO TELEMETRÍA...",
+    "refresh": "REFRESCAR ESTADO DE SERVICIO",
+    "resyncing": "RE-SINCRONIZANDO...",
+    "warning": "ADVERTENCIA: {{error}}",
+    "consoleError": "Error al obtener el estado:",
+    "errors": {
+      "network": "Error de red al conectar con el radar de servidores."
+    },
+    "status": {
+      "operational": "OPERATIVO",
+      "down": "CAÍDO",
+      "maintenance": "MANTENIMIENTO",
+      "degraded": "DEGRADADO"
+    },
+    "services": {
+      "website": "SITIO WEB",
+      "forum": "FORO OFICIAL",
+      "authentication": "AUTENTICACIÓN / LOGIN",
+      "launcher": "LANZADOR (LAUNCHER)",
+      "groupLobby": "CREACIÓN DE GRUPOS",
+      "trading": "COMERCIO / TRADERS",
+      "matchmaking": "BÚSQUEDA DE PARTIDA",
+      "friends": "MENSAJERÍA Y AMIGOS",
+      "inventory": "ACCIONES DE INVENTARIO"
+    },
+    "header": {
+      "localTime": "HORA // ZONA_LOCAL",
+      "serviceStatus": "ESTADO DE SERVICIOS",
+      "systems": "SISTEMAS {{active}} DE {{total}}"
+    }
+  },
+  "kappa": {
+    "title": "ORGANIGRAMA ESTRATEGICO DE ENCARGOS",
+    "subtitle": "Seguimiento separado para PvP y PvE. Cambia de modo sin perder el progreso de cada rama.",
+    "optimizerButton": "Quest Optimizer",
+    "searchPlaceholder": "BUSCAR GLOBAL...",
+    "panel": {
+      "activeProfile": "PERFIL ACTIVO",
+      "syncing": "SINCRONIZANDO PROGRESO...",
+      "cloudActive": "PROGRESO CLOUD ACTIVO",
+      "localGuest": "MODO INVITADO: PROGRESO LOCAL",
+      "kappaOnly": "Misiones para Kappa",
+      "showIncomplete": "Mostrar solo incompletas",
+      "showingIncomplete": "Mostrando solo incompletas",
+      "statsTitle": "Estadísticas de Misiones:",
+      "resetProgress": "Reiniciar Progreso de {{mode}}"
+    },
+    "stats": {
+      "profile": "Perfil",
+      "total": "Cuenta total de misiones",
+      "completed": "Misiones completadas",
+      "remaining": "Misiones restantes",
+      "kappaTotal": "Misiones para Kappa",
+      "kappaCompleted": "Completadas para Kappa",
+      "kappaRemaining": "Restantes para Kappa"
+    },
+    "node": {
+      "completedStatus": "● {{mode}} COMPLETADA",
+      "availableStatus": "○ DISPONIBLE",
+      "lockedStatus": "🔒 REQUISITOS",
+      "completeButton": "COMPLETAR",
+      "completedButton": "{{mode}} COMPLETADA",
+      "completeTitle": "Completar esta misión y todas sus anteriores en {{mode}}",
+      "uncompleteTitle": "Desmarcar esta misión y limpiar su rama en {{mode}}"
+    },
+    "collector": {
+      "title": "Items Kappa",
+      "subtitle": "Checklist local para guardar y tachar items Found in Raid antes de entregar Collector en {{mode}}.",
+      "cardButton": "ITEMS COLLECTOR: {{completed}}/{{total}} - {{percent}}%",
+      "progress": "{{completed}}/{{total}} items marcados",
+      "searchPlaceholder": "Buscar item, pista o spawn...",
+      "reset": "RESET",
+      "empty": "No hay items que coincidan con la búsqueda.",
+      "footer": "Lista base de items de Collector/Kappa. Los requisitos pueden cambiar con parches; conviene contrastar antes de entregar. Total cargado: {{total}}."
+    },
+    "confirm": {
+      "resetProgress": "¿Seguro que quieres resetear todo el progreso de misiones de {{mode}}?",
+      "resetCollector": "¿Seguro que quieres resetear el checklist de Collector de {{mode}}?"
+    },
+    "errors": {
+      "collectorImages": "Error cargando imágenes de Collector",
+      "cloudLoad": "No se pudo cargar el progreso cloud. Se mantiene la copia local.",
+      "cloudCreate": "No se pudo crear el progreso cloud inicial.",
+      "cloudSync": "No se pudo sincronizar el progreso con Supabase.",
+      "serverCommunication": "Error de comunicación con el servidor",
+      "centralApi": "Error de enlace con la API central."
+    }
+  }
+}

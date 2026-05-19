@@ -1,27 +1,22 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
-
-const USERNAME_RULES =
-  'El nombre debe tener entre 3 y 20 caracteres. Usa letras, números, guion bajo o guion.';
-
-const PASSWORD_REQUIREMENTS =
-  'La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.';
+import { useTranslation } from 'react-i18next';
+import { supabase } from '../../lib/supabaseClient';
 
 const normalizeUsername = (value) => value.trim();
 
 const isValidUsername = (value) =>
   /^[A-Za-z0-9_-]{3,20}$/.test(normalizeUsername(value));
 
-const getPasswordChecks = (value) => [
-  { label: 'Mínimo 8 caracteres', ok: value.length >= 8 },
-  { label: 'Una mayúscula', ok: /[A-Z]/.test(value) },
-  { label: 'Una minúscula', ok: /[a-z]/.test(value) },
-  { label: 'Un número', ok: /[0-9]/.test(value) },
-  { label: 'Un símbolo', ok: /[^A-Za-z0-9]/.test(value) }
+const getPasswordChecks = (value, t) => [
+  { label: t('auth.checks.length'), ok: value.length >= 8 },
+  { label: t('auth.checks.uppercase'), ok: /[A-Z]/.test(value) },
+  { label: t('auth.checks.lowercase'), ok: /[a-z]/.test(value) },
+  { label: t('auth.checks.number'), ok: /[0-9]/.test(value) },
+  { label: t('auth.checks.symbol'), ok: /[^A-Za-z0-9]/.test(value) }
 ];
 
-const isSecurePassword = (value) =>
-  getPasswordChecks(value).every((check) => check.ok);
+const isSecurePassword = (value, t) =>
+  getPasswordChecks(value, t).every((check) => check.ok);
 
 const panelStyle = {
   width: '420px',
@@ -69,6 +64,7 @@ export default function AccountSettings({
   onProfileUpdated,
   onAccountDeleted
 }) {
+  const { t } = useTranslation();
   const [username, setUsername] = useState(userProfile?.username || '');
   const [newPassword, setNewPassword] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState('');
@@ -79,7 +75,9 @@ export default function AccountSettings({
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const passwordChecks = getPasswordChecks(newPassword);
+  const usernameRules = t('account.username.rules');
+  const passwordRequirements = t('auth.passwordRequirements');
+  const passwordChecks = getPasswordChecks(newPassword, t);
 
   const handleSaveUsername = async (event) => {
     event.preventDefault();
@@ -88,12 +86,12 @@ export default function AccountSettings({
     const cleanUsername = normalizeUsername(username);
 
     if (!session?.user?.id) {
-      setProfileMessage('Necesitas iniciar sesión para configurar tu usuario.');
+      setProfileMessage(t('account.messages.loginRequired'));
       return;
     }
 
     if (!isValidUsername(cleanUsername)) {
-      setProfileMessage(USERNAME_RULES);
+      setProfileMessage(usernameRules);
       return;
     }
 
@@ -116,25 +114,25 @@ export default function AccountSettings({
 
     if (error) {
       if (error.code === '23505') {
-        setProfileMessage('Ese nombre de usuario ya está en uso.');
+        setProfileMessage(t('account.messages.usernameTaken'));
         return;
       }
 
       console.error(error);
-      setProfileMessage('No se pudo guardar el nombre de usuario.');
+      setProfileMessage(t('account.messages.usernameSaveError'));
       return;
     }
 
     onProfileUpdated(data);
-    setProfileMessage('Nombre de usuario guardado.');
+    setProfileMessage(t('account.messages.usernameSaved'));
   };
 
   const handleChangePassword = async (event) => {
     event.preventDefault();
     setPasswordMessage('');
 
-    if (!isSecurePassword(newPassword)) {
-      setPasswordMessage(PASSWORD_REQUIREMENTS);
+    if (!isSecurePassword(newPassword, t)) {
+      setPasswordMessage(passwordRequirements);
       return;
     }
 
@@ -148,19 +146,19 @@ export default function AccountSettings({
 
     if (error) {
       console.error(error);
-      setPasswordMessage('No se pudo cambiar la contraseña.');
+      setPasswordMessage(t('account.messages.passwordSaveError'));
       return;
     }
 
     setNewPassword('');
-    setPasswordMessage('Contraseña actualizada.');
+    setPasswordMessage(t('account.messages.passwordSaved'));
   };
 
   const handleDeleteAccount = async () => {
     setDeleteMessage('');
 
     if (deleteConfirm !== 'BORRAR') {
-      setDeleteMessage('Escribe BORRAR para confirmar.');
+      setDeleteMessage(t('account.messages.deleteConfirmRequired'));
       return;
     }
 
@@ -172,7 +170,7 @@ export default function AccountSettings({
 
     if (error) {
       console.error(error);
-      setDeleteMessage('No se pudo borrar la cuenta.');
+      setDeleteMessage(t('account.messages.deleteError'));
       return;
     }
 
@@ -209,63 +207,61 @@ export default function AccountSettings({
           letterSpacing: '1px'
         }}
       >
-        ← VOLVER AL TERMINAL
+        {t('common.backToTerminal')}
       </button>
 
       <div style={{ display: 'grid', gap: '1rem', width: 'min(420px, 100%)' }}>
         <section style={panelStyle}>
-          <h1 style={{ color: '#fff', marginTop: 0 }}>Cuenta</h1>
+          <h1 style={{ color: '#fff', marginTop: 0 }}>{t('account.title')}</h1>
 
           <p style={{ color: 'var(--tk-text-muted)', marginTop: '-0.5rem', fontSize: '0.9rem' }}>
-            {userRole === 'admin' ? 'Perfil administrador' : 'Perfil de usuario'}
+            {userRole === 'admin' ? t('account.adminProfile') : t('account.userProfile')}
           </p>
         </section>
 
         <form onSubmit={handleSaveUsername} style={panelStyle}>
-          <h2 style={sectionTitleStyle}>Nombre de usuario</h2>
+          <h2 style={sectionTitleStyle}>{t('account.username.title')}</h2>
 
           <input
             type="text"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
-            placeholder="Tu usuario"
+            placeholder={t('account.username.placeholder')}
             minLength={3}
             maxLength={20}
             pattern="[A-Za-z0-9_-]{3,20}"
-            title={USERNAME_RULES}
+            title={usernameRules}
             required
             style={inputStyle}
           />
 
-          <p style={helperStyle}>
-            3-20 caracteres. Letras, números, guion bajo o guion. No puede repetirse.
-          </p>
+          <p style={helperStyle}>{t('account.username.helper')}</p>
 
           <button
             disabled={profileLoading}
             style={{ ...primaryButtonStyle, cursor: profileLoading ? 'wait' : 'pointer' }}
           >
-            {profileLoading ? 'Guardando...' : 'Guardar usuario'}
+            {profileLoading ? t('account.username.saving') : t('account.username.save')}
           </button>
 
           {profileMessage && (
-            <p style={{ color: profileMessage.includes('guardado') ? 'var(--tk-green)' : '#ffcf66', marginTop: '1rem' }}>
+            <p style={{ color: profileMessage === t('account.messages.usernameSaved') ? 'var(--tk-green)' : '#ffcf66', marginTop: '1rem' }}>
               {profileMessage}
             </p>
           )}
         </form>
 
         <form onSubmit={handleChangePassword} style={panelStyle}>
-          <h2 style={sectionTitleStyle}>Cambiar contraseña</h2>
+          <h2 style={sectionTitleStyle}>{t('account.password.title')}</h2>
 
           <input
             type="password"
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
-            placeholder="Nueva contraseña"
+            placeholder={t('account.password.placeholder')}
             minLength={8}
             pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$"
-            title={PASSWORD_REQUIREMENTS}
+            title={passwordRequirements}
             required
             style={inputStyle}
           />
@@ -302,11 +298,11 @@ export default function AccountSettings({
             disabled={passwordLoading}
             style={{ ...primaryButtonStyle, cursor: passwordLoading ? 'wait' : 'pointer' }}
           >
-            {passwordLoading ? 'Actualizando...' : 'Cambiar contraseña'}
+            {passwordLoading ? t('account.password.saving') : t('account.password.save')}
           </button>
 
           {passwordMessage && (
-            <p style={{ color: passwordMessage.includes('actualizada') ? 'var(--tk-green)' : '#ffcf66', marginTop: '1rem' }}>
+            <p style={{ color: passwordMessage === t('account.messages.passwordSaved') ? 'var(--tk-green)' : '#ffcf66', marginTop: '1rem' }}>
               {passwordMessage}
             </p>
           )}
@@ -319,17 +315,17 @@ export default function AccountSettings({
             background: 'rgba(255,107,107,0.045)'
           }}
         >
-          <h2 style={sectionTitleStyle}>Borrar cuenta</h2>
+          <h2 style={sectionTitleStyle}>{t('account.delete.title')}</h2>
 
           <p style={{ ...helperStyle, color: '#ffcf66' }}>
-            Esta acción borrará tu cuenta y perderás el progreso asociado a ella. No se puede deshacer.
+            {t('account.delete.warning')}
           </p>
 
           <input
             type="text"
             value={deleteConfirm}
             onChange={(event) => setDeleteConfirm(event.target.value)}
-            placeholder="Escribe BORRAR"
+            placeholder={t('account.delete.placeholder')}
             style={inputStyle}
           />
 
@@ -344,7 +340,7 @@ export default function AccountSettings({
               cursor: deleteLoading ? 'wait' : 'pointer'
             }}
           >
-            {deleteLoading ? 'Borrando...' : 'Borrar cuenta'}
+            {deleteLoading ? t('account.delete.deleting') : t('account.delete.button')}
           </button>
 
           {deleteMessage && (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
 
 const panelStyle = {
   padding: '1.4rem',
@@ -41,10 +41,50 @@ const feedbackStatusLabels = {
   closed: 'Cerrado'
 };
 
+const feedbackStatusActions = {
+  open: 'Marcar abierto',
+  reviewing: 'Pasar a revisión',
+  closed: 'Cerrar ticket'
+};
+
+const feedbackStatusStyles = {
+  open: {
+    color: 'var(--tk-green)',
+    border: 'rgba(26,176,21,0.35)',
+    background: 'rgba(26,176,21,0.08)'
+  },
+  reviewing: {
+    color: '#ffcf66',
+    border: 'rgba(255,207,102,0.35)',
+    background: 'rgba(255,207,102,0.08)'
+  },
+  closed: {
+    color: '#9ca3af',
+    border: 'rgba(156,163,175,0.28)',
+    background: 'rgba(156,163,175,0.08)'
+  }
+};
+
 const replyAuthorLabels = {
   user: 'Usuario',
   admin: 'Astur'
 };
+
+const getTicketButtonStyle = ({ color, border, background, active = false, danger = false, disabled = false }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '0.35rem',
+  background: active ? background : 'rgba(255,255,255,0.045)',
+  border: `1px solid ${active ? border : 'rgba(255,255,255,0.09)'}`,
+  color: danger ? '#ff6b6b' : color,
+  borderRadius: '8px',
+  padding: '0.5rem 0.7rem',
+  cursor: disabled ? 'not-allowed' : 'pointer',
+  fontWeight: '900',
+  whiteSpace: 'nowrap',
+  opacity: disabled ? 0.48 : 1,
+  fontFamily: "'Rajdhani', sans-serif"
+});
 
 export default function AdminPanel({ onViewChange }) {
   const [stats, setStats] = useState(null);
@@ -499,48 +539,62 @@ export default function AdminPanel({ onViewChange }) {
                     )}
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                    {['open', 'reviewing', 'closed'].map((status) => (
+                  <div style={{ display: 'grid', gap: '0.5rem', minWidth: '260px' }}>
+                    <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                      {['open', 'reviewing', 'closed'].map((status) => {
+                        const isActive = item.status === status;
+                        const statusStyle = feedbackStatusStyles[status];
+
+                        return (
+                          <button
+                            key={status}
+                            type="button"
+                            onClick={() => handleFeedbackStatusChange(item, status)}
+                            disabled={isActive}
+                            title={isActive ? `Estado actual: ${feedbackStatusLabels[status]}` : feedbackStatusActions[status]}
+                            style={getTicketButtonStyle({
+                              ...statusStyle,
+                              active: isActive,
+                              disabled: isActive
+                            })}
+                          >
+                            <span>{isActive ? '●' : '○'}</span>
+                            {isActive ? feedbackStatusLabels[status] : feedbackStatusActions[status]}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                       <button
-                        key={status}
                         type="button"
-                        onClick={() => handleFeedbackStatusChange(item, status)}
-                        style={{
-                          ...actionButtonStyle,
-                          color: item.status === status ? 'var(--tk-green)' : '#fff',
-                          borderColor: item.status === status
-                            ? 'rgba(26,176,21,0.35)'
-                            : 'rgba(255,255,255,0.08)'
-                        }}
+                        onClick={() => handleReplyFeedback(item)}
+                        disabled={item.status === 'closed'}
+                        title={item.status === 'closed' ? 'No se puede responder a un ticket cerrado' : 'Responder al usuario'}
+                        style={getTicketButtonStyle({
+                          color: 'var(--tk-green)',
+                          border: 'rgba(26,176,21,0.35)',
+                          background: 'rgba(26,176,21,0.08)',
+                          disabled: item.status === 'closed'
+                        })}
                       >
-                        {feedbackStatusLabels[status]}
+                        ↩ Responder al usuario
                       </button>
-                    ))}
 
-                    <button
-                      type="button"
-                      onClick={() => handleReplyFeedback(item)}
-                      disabled={item.status === 'closed'}
-                      style={{
-                        ...actionButtonStyle,
-                        color: item.status === 'closed' ? 'var(--tk-text-muted)' : 'var(--tk-green)',
-                        borderColor: 'rgba(26,176,21,0.35)'
-                      }}
-                    >
-                      Responder
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteFeedback(item)}
-                      style={{
-                        ...actionButtonStyle,
-                        color: '#ff6b6b',
-                        borderColor: 'rgba(255,107,107,0.35)'
-                      }}
-                    >
-                      Borrar global
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteFeedback(item)}
+                        title="Borrar este ticket para todos"
+                        style={getTicketButtonStyle({
+                          color: '#ff6b6b',
+                          border: 'rgba(255,107,107,0.35)',
+                          background: 'rgba(255,107,107,0.08)',
+                          danger: true
+                        })}
+                      >
+                        ✕ Borrar para todos
+                      </button>
+                    </div>
                   </div>
                 </div>
               </article>

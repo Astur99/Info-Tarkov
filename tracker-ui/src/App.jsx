@@ -1,23 +1,9 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './index.css';
 
 import { supabase } from './lib/supabaseClient';
-import Auth from './components/Auth';
-import AccountSettings from './components/AccountSettings';
-import AdminPanel from './components/AdminPanel';
-import UserMessages from './components/UserMessages';
-
-import MapsView from './components/MapsView';
-import KappaTree from './components/KappaTree';
-import StoryDecisions from './components/StoryDecisions';
-import BossesIntel from './components/BossesIntel';
-import GoonsTracker from './components/GoonsTracker';
-import FleaTracker from './components/FleaTracker';
-import HideoutModule from './components/HideoutModule';
-import ArmorSimulator from './components/ArmorSimulator';
-import TroubleshootingView from './components/TroubleshootingView';
-import ServerStatus from './components/ServerStatus';
-import LiveEvents from './components/LiveEvents';
+import LanguageSwitcher from './components/layout/LanguageSwitcher';
 
 import mapasImage from './assets/backgrounds/mapas.png';
 import kappaCaseImage from './assets/backgrounds/kappa.png';
@@ -29,6 +15,30 @@ import hideoutImage from './assets/backgrounds/hideout.png';
 import simuladorImage from './assets/backgrounds/simulador.png';
 import troubleshootingImage from './assets/backgrounds/troubleshooting.png';
 import liveEventsImage from './assets/backgrounds/liveevents.png';
+import prestigeImage from './assets/backgrounds/prestigios.png';
+import keysImage from './assets/backgrounds/llaves.png';
+import pmcProfileImage from './assets/backgrounds/pmc.png';
+
+const Auth = lazy(() => import('./components/auth/Auth'));
+const AccountSettings = lazy(() => import('./components/auth/AccountSettings'));
+const AdminPanel = lazy(() => import('./components/admin/AdminPanel'));
+const AboutView = lazy(() => import('./components/about/AboutView'));
+const AsturView = lazy(() => import('./components/about/AsturView'));
+const UserMessages = lazy(() => import('./components/communication/UserMessages'));
+const MapsView = lazy(() => import('./components/modules/MapsView'));
+const KappaTree = lazy(() => import('./components/modules/KappaTree'));
+const StoryDecisions = lazy(() => import('./components/modules/StoryDecisions'));
+const BossesIntel = lazy(() => import('./components/modules/BossesIntel'));
+const GoonsTracker = lazy(() => import('./components/modules/GoonsTracker'));
+const FleaTracker = lazy(() => import('./components/modules/FleaTracker'));
+const HideoutModule = lazy(() => import('./components/modules/HideoutModule'));
+const ArmorSimulator = lazy(() => import('./components/modules/ArmorSimulator'));
+const PrestigeModule = lazy(() => import('./components/modules/PrestigeModule'));
+const KeysModule = lazy(() => import('./components/modules/KeysModule'));
+const PmcProfileModule = lazy(() => import('./components/modules/PmcProfileModule'));
+const TroubleshootingView = lazy(() => import('./components/modules/TroubleshootingView'));
+const ServerStatus = lazy(() => import('./components/modules/ServerStatus'));
+const LiveEvents = lazy(() => import('./components/modules/LiveEvents'));
 
 const loadUserRole = async (session) => {
   if (!session?.user?.id) return null;
@@ -75,14 +85,78 @@ const getClientSessionId = () => {
   return nextId;
 };
 
+const getViewFromUrl = () => {
+  const view = new URLSearchParams(window.location.search).get('view');
+  return view || 'home';
+};
+
+const getUrlForView = (view) => {
+  if (view === 'home') return window.location.pathname;
+  return `${window.location.pathname}?view=${encodeURIComponent(view)}`;
+};
+
+function LoadingTerminal() {
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'grid',
+        placeItems: 'center',
+        background: '#0a0a0c',
+        color: '#fff',
+        fontFamily: "'Rajdhani', sans-serif",
+        letterSpacing: '2px'
+      }}
+    >
+      INICIALIZANDO TERMINAL...
+    </div>
+  );
+}
+
+function LazyView({ children }) {
+  return <Suspense fallback={<LoadingTerminal />}>{children}</Suspense>;
+}
+
 function App() {
-  const [currentView, setCurrentView] = useState('home');
+  const { t } = useTranslation();
+  const [currentView, setCurrentView] = useState(getViewFromUrl);
+  const currentViewRef = useRef(currentView);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [session, setSession] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
-  const [unreadMessages, setUnreadMessages] = useState(0);
   const [authLoading, setAuthLoading] = useState(true);
+
+  const navigateToView = useCallback((nextView, options = {}) => {
+    const targetView = nextView || 'home';
+    const shouldReplace = options.replace ?? targetView === 'home';
+    const nextUrl = getUrlForView(targetView);
+    const currentStateView = window.history.state?.view || 'home';
+
+    if (targetView !== currentStateView || window.location.search !== new URL(nextUrl, window.location.origin).search) {
+      if (shouldReplace) {
+        window.history.replaceState({ view: targetView }, '', nextUrl);
+      } else {
+        window.history.pushState({ view: targetView }, '', nextUrl);
+      }
+    }
+
+    currentViewRef.current = targetView;
+    setCurrentView(targetView);
+  }, []);
+
+  useEffect(() => {
+    window.history.replaceState({ view: currentViewRef.current }, '', getUrlForView(currentViewRef.current));
+
+    const handlePopState = (event) => {
+      const nextView = event.state?.view || 'home';
+      currentViewRef.current = nextView;
+      setCurrentView(nextView);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   useEffect(() => {
     const syncSessionData = async (nextSession) => {
@@ -114,39 +188,11 @@ function App() {
       window.setTimeout(() => {
         syncSessionData(session);
       }, 0);
-      if (session) setCurrentView('home');
+      if (session) navigateToView('home');
     });
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  const loadUnreadMessages = async () => {
-    if (!session?.user?.id) {
-      setUnreadMessages(0);
-      return;
-    }
-
-    const { count, error } = await supabase
-      .from('user_messages')
-      .select('id', { count: 'exact', head: true })
-      .is('read_at', null);
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    setUnreadMessages(count || 0);
-  };
-
-  useEffect(() => {
-    loadUnreadMessages();
-
-    if (!session?.user?.id) return undefined;
-
-    const interval = window.setInterval(loadUnreadMessages, 30000);
-    return () => window.clearInterval(interval);
-  }, [session?.user?.id]);
+  }, [navigateToView]);
 
   useEffect(() => {
     const clientSessionId = getClientSessionId();
@@ -187,21 +233,7 @@ function App() {
   }, [session?.user?.id]);
 
   if (authLoading) {
-    return (
-      <div
-        style={{
-          minHeight: '100vh',
-          display: 'grid',
-          placeItems: 'center',
-          background: '#0a0a0c',
-          color: '#fff',
-          fontFamily: "'Rajdhani', sans-serif",
-          letterSpacing: '2px'
-        }}
-      >
-        INICIALIZANDO TERMINAL...
-      </div>
-    );
+    return <LoadingTerminal />;
   }
 
   const handleMouseMoveGlobal = (e) => {
@@ -211,113 +243,163 @@ function App() {
   const modules = [
     {
       id: 'maps',
-      title: 'MAPAS TÁCTICOS',
-      desc: 'Cartografía interactiva de alto detalle, extracciones y puntos de interés.',
+      title: t('home.modules.maps.title'),
+      desc: t('home.modules.maps.desc'),
       bgImage: mapasImage,
-      imagePosition: { right: '-50px', bottom: '0px', width: '270px', maxWidth: '64%' }
+      imagePosition: { right: '-70px', bottom: '-35px', width: '270px', maxWidth: '64%' }
     },
     {
       id: 'kappa',
-      title: 'MISIONES / KAPPA',
-      desc: 'Organigrama global con filtrado de misiones, misiones para Kappa y checklist de completado.',
+      title: t('home.modules.kappa.title'),
+      desc: t('home.modules.kappa.desc'),
       bgImage: kappaCaseImage,
       imagePosition: { right: '-50px', bottom: '-30px', width: '270px', maxWidth: '68%' }
     },
     {
       id: 'story',
-      title: 'DECISIONES / FINALES',
-      desc: 'Puntos de no retorno y decisiones a tomar para llegar a los distintos finales.',
+      title: t('home.modules.story.title'),
+      desc: t('home.modules.story.desc'),
       bgImage: finalesImage,
-      imagePosition: { right: '-55px', bottom: '-5px', width: '260px', maxWidth: '65%' }
+      imagePosition: { right: '-65px', bottom: '-15px', width: '260px', maxWidth: '65%' }
     },
     {
       id: 'bosses',
-      title: 'INTEL: BOSSES',
-      desc: 'Información completa, ubicaciones, gear, puntos débiles y loot de los distintos bosses.',
+      title: t('home.modules.bosses.title'),
+      desc: t('home.modules.bosses.desc'),
       bgImage: bossesImage,
-      imagePosition: { right: '-30px', bottom: '0px', width: '235px', maxWidth: '58%' }
+      imagePosition: { right: '-40px', bottom: '-20px', width: '235px', maxWidth: '58%' }
     },
     {
       id: 'goons',
-      title: 'TRACKER DE GOONS',
-      desc: 'Estado de rotación, avistamientos de la comunidad y localización en tiempo real de los Goons.',
+      title: t('home.modules.goons.title'),
+      desc: t('home.modules.goons.desc'),
       bgImage: goonsImage,
       imagePosition: { right: '-10px', bottom: '-20px', width: '250px', maxWidth: '78%' }
     },
     {
       id: 'flea',
-      title: 'FLEA MARKET TRACKER',
-      desc: 'Buscador de precios en vivo por API, gráficas de fluctuación y cálculo de rentabilidad.',
+      title: t('home.modules.flea.title'),
+      desc: t('home.modules.flea.desc'),
       bgImage: fleaImage,
-      imagePosition: { right: '0px', bottom: '35px', width: '150px', maxWidth: '55%' }
+      imagePosition: { right: '-15px', bottom: '5px', width: '150px', maxWidth: '55%' }
     },
     {
       id: 'hideout',
-      title: 'GESTIÓN DEL REFUGIO',
-      desc: 'Planificador de infraestructura, checklist de materiales unificado y cálculo de costes con precios en vivo.',
+      title: t('home.modules.hideout.title'),
+      desc: t('home.modules.hideout.desc'),
       bgImage: hideoutImage,
-      imagePosition: { right: '-35px', bottom: '20px', width: '480px', maxWidth: '52%' }
+      imagePosition: { right: '-50px', bottom: '-20px', width: '480px', maxWidth: '52%' }
     },
     {
       id: 'simulador',
-      title: 'SIMULADOR BALÍSTICO',
-      desc: 'Cálculo de probabilidad de penetración y simulación de rotura de placas e impactos TTK.',
+      title: t('home.modules.simulator.title'),
+      desc: t('home.modules.simulator.desc'),
       bgImage: simuladorImage,
-      imagePosition: { right: '-85px', bottom: '-30px', width: '330px', maxWidth: '76%' }
+      imagePosition: { right: '-80px', bottom: '-30px', width: '280px', maxWidth: '76%' }
+    },
+    {
+      id: 'prestige',
+      title: t('home.modules.prestige.title'),
+      desc: t('home.modules.prestige.desc'),
+      bgImage: prestigeImage,
+      imagePosition: { right: '-15px', bottom: '-15px', width: '160px', maxWidth: '62%' }
+    },
+    {
+      id: 'keys',
+      title: t('home.modules.keys.title'),
+      desc: t('home.modules.keys.desc'),
+      bgImage: keysImage,
+      imagePosition: { right: '-30px', bottom: '0px', width: '200px', maxWidth: '62%' }
+    },
+    {
+      id: 'pmc-profile',
+      title: t('home.modules.pmcProfile.title'),
+      desc: t('home.modules.pmcProfile.desc'),
+      bgImage: pmcProfileImage,
+      imagePosition: { right: '-10px', bottom: '-100px', width: '180px', maxWidth: '58%' }
     },
     {
       id: 'live-events',
-      title: 'EVENTOS EN DIRECTO',
-      desc: 'Seguimiento de anuncios, eventos temporales, parches y transmisiones activas de Tarkov.',
+      title: t('home.modules.liveEvents.title'),
+      desc: t('home.modules.liveEvents.desc'),
       bgImage: liveEventsImage,
       imagePosition: { right: '-5px', bottom: '0px', width: '145px', maxWidth: '62%' }
     },
     {
       id: 'trouble',
-      title: 'TROUBLESHOOTING',
-      desc: 'Reporte de anomalías conocidas en la app, registros de depuración y soluciones aplicables.',
+      title: t('home.modules.trouble.title'),
+      desc: t('home.modules.trouble.desc'),
       bgImage: troubleshootingImage,
       imagePosition: { right: '-5px', bottom: '0px', width: '130px', maxWidth: '58%' }
     }
   ];
 
-  if (currentView === 'auth') return <Auth onViewChange={setCurrentView} />;
   if (currentView === 'account') {
     return (
-      <AccountSettings
-        onViewChange={setCurrentView}
-        session={session}
-        userProfile={userProfile}
-        userRole={userRole}
-        onProfileUpdated={setUserProfile}
-        onAccountDeleted={() => {
-          setSession(null);
-          setUserRole(null);
-          setUserProfile(null);
-        }}
-      />
+      <LazyView>
+        <AccountSettings
+          onViewChange={navigateToView}
+          session={session}
+          userProfile={userProfile}
+          userRole={userRole}
+          onProfileUpdated={setUserProfile}
+          onAccountDeleted={() => {
+            setSession(null);
+            setUserRole(null);
+            setUserProfile(null);
+          }}
+        />
+      </LazyView>
     );
   }
-  if (currentView === 'admin') return <AdminPanel onViewChange={setCurrentView} />;
+
+  if (currentView === 'admin') {
+    return (
+      <LazyView>
+        <AdminPanel onViewChange={navigateToView} />
+      </LazyView>
+    );
+  }
+
   if (currentView === 'messages') {
     return (
-      <UserMessages
-        onViewChange={setCurrentView}
-        onMessagesRead={loadUnreadMessages}
-      />
+      <LazyView>
+        <UserMessages onViewChange={navigateToView} />
+      </LazyView>
     );
   }
-  if (currentView === 'maps') return <MapsView onViewChange={setCurrentView} />;
-  if (currentView === 'kappa') return <KappaTree onViewChange={setCurrentView} session={session} userRole={userRole} />;
-  if (currentView === 'story') return <StoryDecisions onViewChange={setCurrentView} />;
-  if (currentView === 'bosses') return <BossesIntel onViewChange={setCurrentView} />;
-  if (currentView === 'goons') return <GoonsTracker onViewChange={setCurrentView} />;
-  if (currentView === 'flea') return <FleaTracker onViewChange={setCurrentView} />;
-  if (currentView === 'hideout') return <HideoutModule onViewChange={setCurrentView} />;
-  if (currentView === 'simulador') return <ArmorSimulator onViewChange={setCurrentView} />;
-  if (currentView === 'trouble') return <TroubleshootingView onViewChange={setCurrentView} />;
-  if (currentView === 'server-status') return <ServerStatus onViewChange={setCurrentView} />;
-  if (currentView === 'live-events') return <LiveEvents onViewChange={setCurrentView} />;
+
+  if (currentView === 'about') {
+    return (
+      <LazyView>
+        <AboutView onViewChange={navigateToView} />
+      </LazyView>
+    );
+  }
+
+  if (currentView === 'astur') {
+    return (
+      <LazyView>
+        <AsturView onViewChange={navigateToView} />
+      </LazyView>
+    );
+  }
+
+  if (currentView === 'maps') return <LazyView><MapsView onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'kappa') return <LazyView><KappaTree onViewChange={navigateToView} session={session} userRole={userRole} /></LazyView>;
+  if (currentView === 'story') return <LazyView><StoryDecisions onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'bosses') return <LazyView><BossesIntel onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'goons') return <LazyView><GoonsTracker onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'flea') return <LazyView><FleaTracker onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'hideout') return <LazyView><HideoutModule onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'simulador') return <LazyView><ArmorSimulator onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'prestige') return <LazyView><PrestigeModule onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'keys') return <LazyView><KeysModule onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'quest-optimizer') return <LazyView><KappaTree onViewChange={navigateToView} session={session} userRole={userRole} initialTool="optimizer" /></LazyView>;
+  if (currentView === 'pmc-profile') return <LazyView><PmcProfileModule onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'trouble') return <LazyView><TroubleshootingView onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'server-status') return <LazyView><ServerStatus onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'live-events') return <LazyView><LiveEvents onViewChange={navigateToView} /></LazyView>;
 
   return (
     <div
@@ -334,7 +416,7 @@ function App() {
       }}
     >
       <button
-        onClick={() => setCurrentView('server-status')}
+        onClick={() => navigateToView('server-status')}
         style={{
           position: 'fixed',
           top: '1.5rem',
@@ -356,12 +438,14 @@ function App() {
           transition: 'all 0.25s ease'
         }}
       >
-        Estado de Servidores
+        {t('home.serverStatus')}
       </button>
+
+      <LanguageSwitcher />
 
       {session && (
         <button
-          onClick={() => setCurrentView('account')}
+          onClick={() => navigateToView('account')}
           style={{
             position: 'fixed',
             top: '1.5rem',
@@ -383,13 +467,13 @@ function App() {
             transition: 'all 0.25s ease'
           }}
         >
-          USER: {userProfile?.username || 'CONFIGURAR'}
+          {t('home.userButton', { username: userProfile?.username || t('home.configureUser') })}
         </button>
       )}
 
       {session && userRole !== 'admin' && (
         <button
-          onClick={() => setCurrentView('messages')}
+          onClick={() => navigateToView('messages')}
           style={{
             position: 'fixed',
             top: '1.5rem',
@@ -411,13 +495,13 @@ function App() {
             transition: 'all 0.25s ease'
           }}
         >
-          REPORT
+          {t('home.report')}
         </button>
       )}
 
       {userRole === 'admin' && (
         <button
-          onClick={() => setCurrentView('admin')}
+          onClick={() => navigateToView('admin')}
           style={{
             position: 'fixed',
             top: '1.5rem',
@@ -439,7 +523,7 @@ function App() {
             transition: 'all 0.25s ease'
           }}
         >
-          ADMIN
+          {t('home.admin')}
         </button>
       )}
 
@@ -449,9 +533,9 @@ function App() {
             await supabase.auth.signOut();
             setUserRole(null);
             setUserProfile(null);
-            setCurrentView('home');
+            navigateToView('home');
           } else {
-            setCurrentView('auth');
+            navigateToView('auth');
           }
         }}
         style={{
@@ -475,7 +559,7 @@ function App() {
           transition: 'all 0.25s ease'
         }}
       >
-        {session ? 'Cerrar sesión' : 'Login / Crear cuenta'}
+        {session ? t('home.logout') : t('home.login')}
       </button>
 
       <div style={{ padding: '6rem 2rem 10rem 2rem', maxWidth: '1400px', margin: '0 auto' }}>
@@ -507,8 +591,8 @@ function App() {
               }}
             >
               {session
-                ? `SESIÓN INICIADA${userRole === 'admin' ? ' · ADMIN' : ''}`
-                : 'MODO INVITADO · PUEDES USAR LA APP SIN CUENTA'}
+                ? `${t('home.sessionStarted')}${userRole === 'admin' ? t('home.adminSuffix') : ''}`
+                : t('home.guestMode')}
             </p>
           </div>
         </header>
@@ -521,18 +605,19 @@ function App() {
           }}
         >
           {modules.map((mod, index) => (
-            <ModuleCard key={mod.id} mod={mod} index={index} onViewChange={setCurrentView} />
+            <ModuleCard key={mod.id} mod={mod} index={index} onViewChange={navigateToView} />
           ))}
         </div>
 
-        <a
-          href="https://myurls.co/juankar"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={() => navigateToView('astur')}
           style={{
             position: 'fixed',
             bottom: '2.5rem',
             right: '2.5rem',
+            background: 'transparent',
+            border: 'none',
             color: 'var(--tk-text-muted)',
             fontSize: '0.75rem',
             letterSpacing: '3px',
@@ -544,11 +629,47 @@ function App() {
             transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
             zIndex: 1000,
             borderBottom: '1px solid transparent',
-            paddingBottom: '2px'
+            padding: '0 0 2px',
+            cursor: 'pointer'
           }}
         >
           BY ASTUR
-        </a>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigateToView('about')}
+          style={{
+            position: 'fixed',
+            bottom: '2.35rem',
+            left: '2.5rem',
+            zIndex: 1000,
+            backgroundColor: 'rgba(255,255,255,0.035)',
+            border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: '8px',
+            color: 'var(--tk-text-muted)',
+            padding: '0.55rem 0.85rem',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: '0.75rem',
+            fontWeight: '900',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            transition: 'all 0.25s ease'
+          }}
+          onMouseEnter={(event) => {
+            event.currentTarget.style.color = '#fff';
+            event.currentTarget.style.borderColor = 'rgba(26,176,21,0.3)';
+          }}
+          onMouseLeave={(event) => {
+            event.currentTarget.style.color = 'var(--tk-text-muted)';
+            event.currentTarget.style.borderColor = 'rgba(255,255,255,0.09)';
+          }}
+        >
+          ABOUT
+        </button>
       </div>
     </div>
   );
@@ -632,7 +753,7 @@ function ModuleCard({ mod, index, onViewChange }) {
 
   return (
     <div
-      className={`fade-in-slide ${delayClass}`}
+      className={`fade-in-slide terminal-module-card ${delayClass}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onViewChange(mod.id)}

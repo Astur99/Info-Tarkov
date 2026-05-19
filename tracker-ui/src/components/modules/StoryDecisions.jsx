@@ -70,7 +70,7 @@ export default function StoryDecisions({ onViewChange }) {
   };
 
   return (
-    <div className="fade-in-slide" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
+    <div className="fade-in-slide terminal-panel" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
       
       {/* INYECCIÓN DE ESTILOS CSS PARA ANIMACIONES NATIVAS */}
       <style>{`

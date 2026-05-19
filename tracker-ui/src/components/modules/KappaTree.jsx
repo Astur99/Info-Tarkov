@@ -1,10 +1,67 @@
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { useTranslation } from 'react-i18next';
+import { supabase } from '../../lib/supabaseClient';
+import QuestOptimizerModule from './QuestOptimizerModule';
 
 const STORAGE_PREFIX = 'sherpa_progreso_misiones_';
 const MODE_STORAGE_KEY = 'sherpa_modo_misiones_activo';
+const COLLECTOR_STORAGE_PREFIX = 'info_tarkov_collector_items_';
+
+const collectorItemsList = [
+  { id: '42-tea', name: '42 Signature Blend English Tea', hint: 'Food spawns, ration crates' },
+  { id: 'antique-axe', name: 'Antique axe', hint: 'Scavs, safes, stashes' },
+  { id: 'evasion-armband', name: 'Armband (Evasion)', apiName: 'Armband (Evasion)', hint: 'Stashes, weapon boxes, marked rooms' },
+  { id: 'axel-parrot', name: 'Axel parrot figurine', hint: 'Safes, valuables, stashes' },
+  { id: 'bear-buddy', name: 'BEAR Buddy plush toy', hint: 'Duffles, stashes, loose loot' },
+  { id: 'baddie-beard', name: "Baddie's red beard", hint: 'Scavs, duffles, stashes' },
+  { id: 'bakeezy-book', name: 'BakeEzy cook book', hint: 'Filing cabinets, shelves, stashes' },
+  { id: 'battered-antique-book', name: 'Battered antique book', hint: 'Safes, jackets, filing cabinets' },
+  { id: 'ratcola', name: 'Can of RatCola soda', hint: 'Food spawns, ration crates' },
+  { id: 'sprats', name: 'Can of sprats', hint: 'Food spawns, ration crates' },
+  { id: 'drd-armor', name: 'DRD body armor', hint: 'Stashes, armor spawns, Scavs' },
+  { id: 'deadlyslob-beard-oil', name: 'Deadlyslob beard oil', hint: 'Interchange, shelves, stashes' },
+  { id: 'domontovich-ushanka', name: 'Domontovich ushanka hat', hint: 'Scavs, clothing spawns, stashes' },
+  { id: 'fake-mustache', name: 'Fake mustache', hint: 'Scavs, stashes, jackets' },
+  { id: 'fireklean', name: '#FireKlean gun lube', hint: 'Technical crates, shelves, stashes' },
+  { id: 'gingy-keychain', name: 'Gingy keychain', hint: 'Safes, jackets, stashes' },
+  { id: 'glorious-mask', name: 'Glorious E lightweight armored mask', hint: 'Scavs, bosses, stashes' },
+  { id: 'golden-1gphone', name: 'Golden 1GPhone smartphone', hint: 'Safes, tech spawns, filing cabinets' },
+  { id: 'golden-egg', name: 'Golden egg', hint: 'Safes, valuables, stashes' },
+  { id: 'golden-rooster', name: 'Golden rooster figurine', hint: 'Safes, valuables, Labs' },
+  { id: 'inseq-wrench', name: 'Inseq gas pipe wrench', hint: 'Technical crates, toolboxes, shelves' },
+  { id: 'devildog-mayo', name: 'Jar of DevilDog mayo', hint: 'Food spawns, ration crates' },
+  { id: 'johnb-glasses', name: 'JohnB Liquid DNB glasses', hint: 'Scavs, jackets, stashes' },
+  { id: 'kotton-beanie', name: 'Kotton beanie', hint: 'Scavs, duffles, stashes' },
+  { id: 'lvndmark-rat-poison', name: "LVNDMARK's rat poison", hint: 'Medical/valuable spawns, stashes' },
+  { id: 'loot-lord', name: 'Loot Lord plushie', hint: 'Duffles, stashes, rare loose loot' },
+  { id: 'mazoni-dumbbell', name: 'Mazoni golden dumbbell', hint: 'Safes, valuables, rare loose loot' },
+  { id: 'missam-key', name: 'Missam forklift key', hint: 'Jackets, drawers, filing cabinets' },
+  { id: 'nuct-balaclava', name: 'Nuct Salk balaclava', apiName: "Nuct's balaclava", hint: 'Scavs, clothing spawns, stashes' },
+  { id: 'old-firesteel', name: 'Old firesteel', hint: 'Reserve, safes, technical spawns' },
+  { id: 'pestily-mask', name: 'Pestily plague mask', hint: 'Scavs, cultists, stashes' },
+  { id: 'press-pass', name: 'Press pass (issued for NoiceGuy)', hint: 'Filing cabinets, jackets, Streets' },
+  { id: 'raven-figurine', name: 'Raven figurine', hint: 'Safes, valuables, stashes' },
+  { id: 'shroud-mask', name: 'Shroud half-mask', hint: 'Scavs, duffles, stashes' },
+  { id: 'silver-badge', name: 'Silver Badge', hint: 'Safes, valuables, jackets' },
+  { id: 'smoke-balaclava', name: 'Smoke balaclava', hint: 'Scavs, clothing spawns' },
+  { id: 'tamatthi-kunai', name: 'Tamatthi kunai knife replica', hint: 'Safes, valuables, stashes' },
+  { id: 'tigz-splint', name: 'Tigzresq splint', hint: 'Medical spawns, medbags, stashes' },
+  { id: 'veritas-pick', name: 'Veritas guitar pick', hint: 'Safes, filing cabinets, valuables' },
+  { id: 'cyborg-killer', name: 'Video cassette with the Cyborg Killer movie', hint: 'Drawers, shelves, stashes' },
+  { id: 'viibiin-sneaker', name: 'Viibiin sneaker', hint: 'Duffles, stashes, loose loot' },
+  { id: 'wz-wallet', name: 'WZ Wallet', hint: 'Safes, jackets, stashes' }
+];
+
+const collectorItemNames = collectorItemsList.map((item) => item.apiName || item.name);
 
 const getStorageKey = (mode) => `${STORAGE_PREFIX}${mode.toLowerCase()}`;
+const getCollectorStorageKey = (mode) => `${COLLECTOR_STORAGE_PREFIX}${mode.toLowerCase()}`;
+
+const normalizeCollectorName = (value) =>
+  String(value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 
 const readProgress = (mode) => {
   try {
@@ -18,6 +75,32 @@ const readProgress = (mode) => {
 const saveLocalProgress = (mode, progress) => {
   localStorage.setItem(getStorageKey(mode), JSON.stringify(progress));
 };
+
+const readCollectorProgress = (mode) => {
+  try {
+    const saved = localStorage.getItem(getCollectorStorageKey(mode));
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+};
+
+const saveCollectorProgress = (mode, progress) => {
+  localStorage.setItem(getCollectorStorageKey(mode), JSON.stringify(progress));
+};
+
+const collectorItemsQuery = `
+  query GetCollectorItems($names: [String]) {
+    items(names: $names) {
+      id
+      name
+      shortName
+      iconLink
+      imageLink
+      wikiLink
+    }
+  }
+`;
 
 const saveCloudProgress = async (userId, mode, progress) => {
   const { error } = await supabase
@@ -35,7 +118,13 @@ const saveCloudProgress = async (userId, mode, progress) => {
   if (error) throw error;
 };
 
-export default function KappaTree({ onViewChange, session }) {
+const getInitialTreePan = () => ({
+  x: typeof window === 'undefined' ? 900 : window.innerWidth / 2,
+  y: 120
+});
+
+export default function KappaTree({ onViewChange, session, initialTool = 'tree' }) {
+  const { t } = useTranslation();
   const [modoJuego, setModoJuego] = useState(() => {
     try {
       return localStorage.getItem(MODE_STORAGE_KEY) || 'PVP';
@@ -58,13 +147,18 @@ export default function KappaTree({ onViewChange, session }) {
   const [error, setError] = useState(null);
   const [syncLoading, setSyncLoading] = useState(false);
   const [syncError, setSyncError] = useState(null);
+  const [activeTool, setActiveTool] = useState(initialTool);
+  const [collectorOpen, setCollectorOpen] = useState(false);
+  const [collectorItems, setCollectorItems] = useState(() => readCollectorProgress('PVP'));
+  const [collectorSearch, setCollectorSearch] = useState('');
+  const [collectorItemAssets, setCollectorItemAssets] = useState({});
 
   const [completadas, setCompletadas] = useState(() => readProgress('PVP'));
 
   const matrixRef = useRef(null);
   const suppressSaveRef = useRef(false);
   const [zoom, setZoom] = useState(0.8);
-  const [pan, setPan] = useState({ x: 500, y: 120 });
+  const [pan, setPan] = useState(getInitialTreePan);
   const [isDown, setIsDown] = useState(false);
   const [startPan, setStartPan] = useState({ x: 0, y: 0 });
 
@@ -98,6 +192,52 @@ export default function KappaTree({ onViewChange, session }) {
   }, [modoJuego]);
 
   useEffect(() => {
+    setCollectorItems(readCollectorProgress(modoJuego));
+    setCollectorSearch('');
+  }, [modoJuego]);
+
+  useEffect(() => {
+    saveCollectorProgress(modoJuego, collectorItems);
+  }, [collectorItems, modoJuego]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('https://api.tarkov.dev/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      },
+      body: JSON.stringify({
+        query: collectorItemsQuery,
+        variables: { names: collectorItemNames }
+      })
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(t('kappa.errors.collectorImages'));
+        return res.json();
+      })
+      .then((response) => {
+        if (cancelled) return;
+
+        const assets = {};
+        (response.data?.items || []).forEach((item) => {
+          assets[normalizeCollectorName(item.name)] = item;
+        });
+
+        setCollectorItemAssets(assets);
+      })
+      .catch((loadError) => {
+        console.error(loadError);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [t]);
+
+  useEffect(() => {
     let cancelled = false;
 
     const loadProgress = async () => {
@@ -123,7 +263,7 @@ export default function KappaTree({ onViewChange, session }) {
       if (cancelled) return;
 
       if (loadError) {
-        setSyncError('No se pudo cargar el progreso cloud. Se mantiene la copia local.');
+        setSyncError(t('kappa.errors.cloudLoad'));
         setCompletadas(readProgress(modoJuego));
         setSyncLoading(false);
         suppressSaveRef.current = false;
@@ -145,7 +285,7 @@ export default function KappaTree({ onViewChange, session }) {
         } catch (saveError) {
           if (!cancelled) {
             console.error(saveError);
-            setSyncError('No se pudo crear el progreso cloud inicial.');
+            setSyncError(t('kappa.errors.cloudCreate'));
           }
         }
       }
@@ -163,7 +303,7 @@ export default function KappaTree({ onViewChange, session }) {
     return () => {
       cancelled = true;
     };
-  }, [session?.user?.id, modoJuego]);
+  }, [session?.user?.id, modoJuego, t]);
 
   useEffect(() => {
     if (suppressSaveRef.current || syncLoading) return;
@@ -178,13 +318,13 @@ export default function KappaTree({ onViewChange, session }) {
     saveCloudProgress(session.user.id, modoJuego, completadas).catch((saveError) => {
       if (cancelled) return;
       console.error(saveError);
-      setSyncError('No se pudo sincronizar el progreso con Supabase.');
+      setSyncError(t('kappa.errors.cloudSync'));
     });
 
     return () => {
       cancelled = true;
     };
-  }, [completadas, modoJuego, session?.user?.id, syncLoading]);
+  }, [completadas, modoJuego, session?.user?.id, syncLoading, t]);
 
   useEffect(() => {
     const query = `
@@ -219,7 +359,7 @@ export default function KappaTree({ onViewChange, session }) {
       body: JSON.stringify({ query })
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Error de comunicación con el servidor');
+        if (!res.ok) throw new Error(t('kappa.errors.serverCommunication'));
         return res.json();
       })
       .then((response) => {
@@ -231,10 +371,10 @@ export default function KappaTree({ onViewChange, session }) {
       })
       .catch((err) => {
         console.error(err);
-        setError('Error de enlace con la API central.');
+        setError(t('kappa.errors.centralApi'));
         setLoading(false);
       });
-  }, []);
+  }, [t]);
 
   const cambiarModoJuego = (nuevoModo) => {
     if (nuevoModo === modoJuego) return;
@@ -331,7 +471,7 @@ export default function KappaTree({ onViewChange, session }) {
 
   const resetearProgreso = () => {
     const confirmar = window.confirm(
-      `¿Seguro que quieres resetear todo el progreso de misiones de ${modoJuego}?`
+      t('kappa.confirm.resetProgress', { mode: modoJuego })
     );
 
     if (!confirmar) return;
@@ -341,6 +481,22 @@ export default function KappaTree({ onViewChange, session }) {
     if (!session?.user?.id) {
       saveLocalProgress(modoJuego, []);
     }
+  };
+
+  const toggleCollectorItem = (itemId) => {
+    setCollectorItems((current) => ({
+      ...current,
+      [itemId]: !current[itemId]
+    }));
+  };
+
+  const resetCollectorItems = () => {
+    const confirmar = window.confirm(
+      t('kappa.confirm.resetCollector', { mode: modoJuego })
+    );
+
+    if (!confirmar) return;
+    setCollectorItems({});
   };
 
   const handleSearchChange = (e) => {
@@ -596,6 +752,17 @@ export default function KappaTree({ onViewChange, session }) {
   const totalMisionesKappaPendientes =
     totalMisionesKappa - totalMisionesKappaCompletadas;
 
+  const totalCollectorItems = collectorItemsList.length;
+  const totalCollectorItemsCompletados = collectorItemsList.filter((item) => collectorItems[item.id]).length;
+  const collectorProgressPercent = totalCollectorItems
+    ? Math.round((totalCollectorItemsCompletados / totalCollectorItems) * 100)
+    : 0;
+  const collectorItemsFiltrados = collectorItemsList.filter((item) => {
+    const query = collectorSearch.trim().toLowerCase();
+    if (!query) return true;
+    return `${item.name} ${item.hint}`.toLowerCase().includes(query);
+  });
+
   const statPanelStyle = {
     position: 'absolute',
     right: '2rem',
@@ -671,6 +838,22 @@ export default function KappaTree({ onViewChange, session }) {
     boxShadow: active ? '0 0 18px rgba(26,176,21,0.28)' : 'none'
   });
 
+  if (activeTool === 'optimizer') {
+    return (
+      <QuestOptimizerModule
+        session={session}
+        onViewChange={(nextView) => {
+          if (nextView === 'home') {
+            setActiveTool('tree');
+            return;
+          }
+
+          onViewChange(nextView);
+        }}
+      />
+    );
+  }
+
   if (loading) {
     return (
       <div
@@ -712,6 +895,7 @@ export default function KappaTree({ onViewChange, session }) {
 
   return (
     <div
+      className="terminal-panel"
       style={{
         padding: '2rem 1rem 0 1rem',
         width: '100%',
@@ -729,7 +913,6 @@ export default function KappaTree({ onViewChange, session }) {
           maxWidth: '1600px',
           margin: '0 auto',
           zIndex: 10,
-          backgroundColor: 'var(--tk-bg)',
           paddingBottom: '1rem'
         }}
       >
@@ -749,7 +932,7 @@ export default function KappaTree({ onViewChange, session }) {
             letterSpacing: '1px'
           }}
         >
-          ← VOLVER AL TERMINAL
+          {t('common.backToTerminal')}
         </button>
 
         <div
@@ -771,7 +954,7 @@ export default function KappaTree({ onViewChange, session }) {
                 fontWeight: '700'
               }}
             >
-              ORGANIGRAMA ESTRATÉGICO DE ENCARGOS
+              {t('kappa.title')}
             </h2>
 
             <p
@@ -781,26 +964,49 @@ export default function KappaTree({ onViewChange, session }) {
                 fontSize: '0.95rem'
               }}
             >
-              Seguimiento separado para PvP y PvE. Cambia de modo sin perder el progreso de cada rama.
+              {t('kappa.subtitle')}
             </p>
           </div>
 
-          <input
-            type="text"
-            placeholder="BUSCAR GLOBAL..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            style={{
-              backgroundColor: 'rgba(15,15,15,0.8)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '8px',
-              padding: '10px 14px',
-              color: '#fff',
-              fontSize: '1rem',
-              width: '280px',
-              outline: 'none'
-            }}
-          />
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={() => setActiveTool('optimizer')}
+              style={{
+                backgroundColor: 'rgba(26,176,21,0.08)',
+                border: '1px solid rgba(26,176,21,0.24)',
+                borderRadius: '8px',
+                color: 'var(--tk-green)',
+                padding: '10px 14px',
+                cursor: 'pointer',
+                fontFamily: "'Rajdhani', sans-serif",
+                fontSize: '0.92rem',
+                fontWeight: '900',
+                letterSpacing: '1px',
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {t('kappa.optimizerButton')}
+            </button>
+
+            <input
+              type="text"
+              placeholder={t('kappa.searchPlaceholder')}
+              value={searchQuery}
+              onChange={handleSearchChange}
+              style={{
+                backgroundColor: 'rgba(15,15,15,0.8)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '8px',
+                padding: '10px 14px',
+                color: '#fff',
+                fontSize: '1rem',
+                width: '280px',
+                outline: 'none'
+              }}
+            />
+          </div>
         </div>
 
         <div
@@ -821,7 +1027,7 @@ export default function KappaTree({ onViewChange, session }) {
                 key={tName}
                 onClick={() => {
                   setCurrentTrader(tName);
-                  setPan({ x: window.innerWidth / 3, y: 100 });
+                  setPan(getInitialTreePan());
                 }}
                 style={{
                   backgroundColor: esActivo
@@ -865,6 +1071,24 @@ export default function KappaTree({ onViewChange, session }) {
           backgroundColor: '#030303'
         }}
       >
+        {collectorOpen && (
+          <CollectorPanel
+            mode={modoJuego}
+            items={collectorItemsFiltrados}
+            allItems={collectorItemsList}
+            completed={collectorItems}
+            itemAssets={collectorItemAssets}
+            search={collectorSearch}
+            progressPercent={collectorProgressPercent}
+            completedCount={totalCollectorItemsCompletados}
+            totalCount={totalCollectorItems}
+            onSearchChange={setCollectorSearch}
+            onToggleItem={toggleCollectorItem}
+            onReset={resetCollectorItems}
+            onClose={() => setCollectorOpen(false)}
+          />
+        )}
+
         <aside data-fixed-panel="true" style={statPanelStyle}>
           <div
             style={{
@@ -902,7 +1126,7 @@ export default function KappaTree({ onViewChange, session }) {
               textAlign: 'center'
             }}
           >
-            PERFIL ACTIVO: <span style={{ color: 'var(--tk-green)' }}>{modoJuego}</span>
+            {t('kappa.panel.activeProfile')}: <span style={{ color: 'var(--tk-green)' }}>{modoJuego}</span>
           </div>
 
           <div
@@ -933,10 +1157,10 @@ export default function KappaTree({ onViewChange, session }) {
           >
             {syncError ||
               (syncLoading
-                ? 'SINCRONIZANDO PROGRESO...'
+                ? t('kappa.panel.syncing')
                 : session?.user?.id
-                ? 'PROGRESO CLOUD ACTIVO'
-                : 'MODO INVITADO: PROGRESO LOCAL')}
+                ? t('kappa.panel.cloudActive')
+                : t('kappa.panel.localGuest'))}
           </div>
 
           <label
@@ -967,7 +1191,7 @@ export default function KappaTree({ onViewChange, session }) {
               }}
             />
 
-            Msiones para Kappa
+            {t('kappa.panel.kappaOnly')}
           </label>
 
           <button
@@ -975,8 +1199,8 @@ export default function KappaTree({ onViewChange, session }) {
             style={filterButtonStyle(soloPendientes)}
           >
             {soloPendientes
-              ? 'Mostrando solo incompletas'
-              : 'Mostrar solo incompletas'}
+              ? t('kappa.panel.showingIncomplete')
+              : t('kappa.panel.showIncomplete')}
           </button>
 
           <h4
@@ -988,43 +1212,43 @@ export default function KappaTree({ onViewChange, session }) {
               letterSpacing: '1px'
             }}
           >
-            Estadísticas de Misiones:
+            {t('kappa.panel.statsTitle')}
           </h4>
 
           <div style={statRowStyle}>
-            <span style={statLabelStyle}>Perfil:</span>
+            <span style={statLabelStyle}>{t('kappa.stats.profile')}:</span>
             <strong style={statValueStyle}>{modoJuego}</strong>
           </div>
 
           <div style={statRowStyle}>
-            <span style={statLabelStyle}>Cuenta total de misiones:</span>
+            <span style={statLabelStyle}>{t('kappa.stats.total')}:</span>
             <strong style={statValueStyle}>{totalMisiones}</strong>
           </div>
 
           <div style={statRowStyle}>
-            <span style={statLabelStyle}>Misiones completadas:</span>
+            <span style={statLabelStyle}>{t('kappa.stats.completed')}:</span>
             <strong style={statValueStyle}>{totalMisionesCompletadas}</strong>
           </div>
 
           <div style={statRowStyle}>
-            <span style={statLabelStyle}>Misiones Restantes:</span>
+            <span style={statLabelStyle}>{t('kappa.stats.remaining')}:</span>
             <strong style={{ ...statValueStyle, color: '#ffcf66' }}>
               {totalMisionesPendientes}
             </strong>
           </div>
 
           <div style={statRowStyle}>
-            <span style={statLabelStyle}>Misiones para Kappa:</span>
+            <span style={statLabelStyle}>{t('kappa.stats.kappaTotal')}:</span>
             <strong style={statValueStyle}>{totalMisionesKappa}</strong>
           </div>
 
           <div style={statRowStyle}>
-            <span style={statLabelStyle}>Completadas para Kappa:</span>
+            <span style={statLabelStyle}>{t('kappa.stats.kappaCompleted')}:</span>
             <strong style={statValueStyle}>{totalMisionesKappaCompletadas}</strong>
           </div>
 
           <div style={statRowStyle}>
-            <span style={statLabelStyle}>Restantes para Kappa:</span>
+            <span style={statLabelStyle}>{t('kappa.stats.kappaRemaining')}:</span>
             <strong style={{ ...statValueStyle, color: '#ffcf66' }}>
               {totalMisionesKappaPendientes}
             </strong>
@@ -1046,7 +1270,7 @@ export default function KappaTree({ onViewChange, session }) {
               padding: '0.75rem'
             }}
           >
-            Reiniciar Progreso de {modoJuego}
+            {t('kappa.panel.resetProgress', { mode: modoJuego })}
           </button>
         </aside>
 
@@ -1122,6 +1346,7 @@ export default function KappaTree({ onViewChange, session }) {
 
           {arbolEstructurado.nodos.map((mision) => {
             const esCompletada = completadas.includes(mision.id);
+            const esCollector = mision.name?.toLowerCase() === 'collector';
 
             const esDesbloqueada =
               mision.prevIds.length === 0 ||
@@ -1205,10 +1430,10 @@ export default function KappaTree({ onViewChange, session }) {
                       }}
                     >
                       {esCompletada
-                        ? `● ${modoJuego} COMPLETADA`
+                        ? t('kappa.node.completedStatus', { mode: modoJuego })
                         : esDesbloqueada
-                        ? '○ DISPONIBLE'
-                        : '🔒 REQUISITOS'}
+                        ? t('kappa.node.availableStatus')
+                        : t('kappa.node.lockedStatus')}
                     </span>
                   </div>
 
@@ -1226,6 +1451,37 @@ export default function KappaTree({ onViewChange, session }) {
                   >
                     {mision.name}
                   </h4>
+
+                  {esCollector && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCollectorOpen(true);
+                      }}
+                      style={{
+                        marginTop: '0.65rem',
+                        width: '100%',
+                        backgroundColor: 'rgba(255,207,102,0.08)',
+                        border: '1px solid rgba(255,207,102,0.28)',
+                        borderRadius: '6px',
+                        color: '#ffcf66',
+                        padding: '0.45rem 0.55rem',
+                        fontFamily: "'Rajdhani', sans-serif",
+                        fontSize: '0.78rem',
+                        fontWeight: '900',
+                        letterSpacing: '0.7px',
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                    >
+                      {t('kappa.collector.cardButton', {
+                        completed: totalCollectorItemsCompletados,
+                        total: totalCollectorItems,
+                        percent: collectorProgressPercent
+                      })}
+                    </button>
+                  )}
                 </div>
 
                 <div
@@ -1272,11 +1528,13 @@ export default function KappaTree({ onViewChange, session }) {
                     }}
                     title={
                       esCompletada
-                        ? `Desmarcar esta misión y limpiar su rama en ${modoJuego}`
-                        : `Completar esta misión y todas sus anteriores en ${modoJuego}`
+                        ? t('kappa.node.uncompleteTitle', { mode: modoJuego })
+                        : t('kappa.node.completeTitle', { mode: modoJuego })
                     }
                   >
-                    {esCompletada ? `${modoJuego} COMPLETADA` : 'COMPLETAR'}
+                    {esCompletada
+                      ? t('kappa.node.completedButton', { mode: modoJuego })
+                      : t('kappa.node.completeButton')}
                   </button>
 
                   {mision.wikiLink && (
@@ -1323,3 +1581,206 @@ export default function KappaTree({ onViewChange, session }) {
     </div>
   );
 }
+
+function CollectorPanel({
+  mode,
+  items,
+  allItems,
+  completed,
+  itemAssets,
+  search,
+  progressPercent,
+  completedCount,
+  totalCount,
+  onSearchChange,
+  onToggleItem,
+  onReset,
+  onClose
+}) {
+  const { t } = useTranslation();
+
+  return (
+    <div
+      data-fixed-panel="true"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 5000,
+        display: 'grid',
+        placeItems: 'center',
+        padding: '1.25rem',
+        background: 'rgba(0,0,0,0.58)',
+        pointerEvents: 'auto',
+        cursor: 'default'
+      }}
+      onMouseDown={(event) => event.stopPropagation()}
+      onMouseMove={(event) => event.stopPropagation()}
+      onWheel={(event) => event.stopPropagation()}
+    >
+      <section
+        style={{
+          width: 'min(1040px, 100%)',
+          height: 'min(760px, calc(100vh - 2.5rem))',
+          backgroundColor: 'rgba(10,10,10,0.97)',
+          border: '1px solid rgba(255,207,102,0.24)',
+          borderRadius: '12px',
+          boxShadow: '0 24px 70px rgba(0,0,0,0.72)',
+          backdropFilter: 'blur(22px)',
+          WebkitBackdropFilter: 'blur(22px)',
+          overflow: 'hidden',
+          display: 'grid',
+          gridTemplateRows: 'auto 1fr'
+        }}
+      >
+      <div style={{ padding: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-start' }}>
+          <div>
+            <p style={{ margin: 0, color: '#ffcf66', fontWeight: '900', letterSpacing: '2px', textTransform: 'uppercase' }}>
+              Fence - Collector
+            </p>
+            <h3 style={{ margin: '0.2rem 0 0', color: '#fff', fontSize: '1.8rem', textTransform: 'uppercase' }}>
+              {t('kappa.collector.title')}
+            </h3>
+            <p style={{ margin: '0.35rem 0 0', color: 'var(--tk-text-muted)', lineHeight: 1.45 }}>
+              {t('kappa.collector.subtitle', { mode })}
+            </p>
+          </div>
+
+          <button type="button" onClick={onClose} style={collectorIconButtonStyle} title={t('common.close')}>
+            X
+          </button>
+        </div>
+
+        <div style={{ marginTop: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--tk-text-muted)', fontWeight: '900', marginBottom: '0.45rem' }}>
+            <span>{t('kappa.collector.progress', { completed: completedCount, total: totalCount })}</span>
+            <span style={{ color: '#ffcf66' }}>{progressPercent}%</span>
+          </div>
+          <div style={{ height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '999px', overflow: 'hidden' }}>
+            <div style={{ width: `${progressPercent}%`, height: '100%', background: '#ffcf66' }} />
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0.75rem', marginTop: '1rem' }}>
+          <input
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder={t('kappa.collector.searchPlaceholder')}
+            style={{
+              backgroundColor: 'rgba(15,15,15,0.9)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '8px',
+              color: '#fff',
+              padding: '0.75rem 0.9rem',
+              fontFamily: "'Rajdhani', sans-serif",
+              fontWeight: '800',
+              minWidth: 0
+            }}
+          />
+
+          <button type="button" onClick={onReset} style={collectorSecondaryButtonStyle}>
+            {t('kappa.collector.reset')}
+          </button>
+        </div>
+      </div>
+
+      <div style={{ padding: '1rem 1.25rem 1.25rem', overflowY: 'auto', minHeight: 0 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 285px), 1fr))', gap: '0.65rem' }}>
+          {items.map((item) => {
+            const isDone = Boolean(completed[item.id]);
+            const asset = itemAssets[normalizeCollectorName(item.apiName || item.name)] || itemAssets[normalizeCollectorName(item.name)];
+            const imageSrc = asset?.iconLink || asset?.imageLink;
+
+            return (
+              <label
+                key={item.id}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '54px 18px 1fr',
+                  gap: '0.65rem',
+                  alignItems: 'center',
+                  backgroundColor: isDone ? 'rgba(26,176,21,0.08)' : 'rgba(255,255,255,0.035)',
+                  border: `1px solid ${isDone ? 'rgba(26,176,21,0.24)' : 'rgba(255,255,255,0.07)'}`,
+                  borderRadius: '8px',
+                  padding: '0.75rem',
+                  cursor: 'pointer'
+                }}
+              >
+                <span
+                  style={{
+                    width: '54px',
+                    height: '54px',
+                    display: 'grid',
+                    placeItems: 'center',
+                    background: 'rgba(0,0,0,0.34)',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                    borderRadius: '6px',
+                    padding: '5px'
+                  }}
+                >
+                  {imageSrc ? (
+                    <img
+                      src={imageSrc}
+                      alt={item.name}
+                      style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                    />
+                  ) : (
+                    <span style={{ color: '#ffcf66', fontSize: '0.68rem', fontWeight: '900' }}>ITEM</span>
+                  )}
+                </span>
+                <input
+                  type="checkbox"
+                  checked={isDone}
+                  onChange={() => onToggleItem(item.id)}
+                />
+                <span>
+                  <strong style={{ display: 'block', color: isDone ? 'var(--tk-green)' : '#fff', lineHeight: 1.25 }}>
+                    {item.name}
+                  </strong>
+                  <span style={{ display: 'block', color: 'var(--tk-text-muted)', fontSize: '0.8rem', lineHeight: 1.35, marginTop: '0.25rem' }}>
+                    {item.hint}
+                  </span>
+                </span>
+              </label>
+            );
+          })}
+        </div>
+
+        {items.length === 0 && (
+          <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>
+            {t('kappa.collector.empty')}
+          </p>
+        )}
+
+        <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.45, margin: '1rem 0 0', fontSize: '0.85rem' }}>
+          {t('kappa.collector.footer', { total: allItems.length })}
+        </p>
+      </div>
+      </section>
+    </div>
+  );
+}
+
+const collectorIconButtonStyle = {
+  width: '34px',
+  height: '34px',
+  backgroundColor: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '8px',
+  color: '#fff',
+  cursor: 'pointer',
+  fontFamily: "'Rajdhani', sans-serif",
+  fontWeight: '900'
+};
+
+const collectorSecondaryButtonStyle = {
+  backgroundColor: 'rgba(255,207,102,0.08)',
+  border: '1px solid rgba(255,207,102,0.28)',
+  borderRadius: '8px',
+  color: '#ffcf66',
+  padding: '0.75rem 0.95rem',
+  cursor: 'pointer',
+  fontFamily: "'Rajdhani', sans-serif",
+  fontWeight: '900',
+  letterSpacing: '1px'
+};

@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
-
-const PASSWORD_REQUIREMENTS =
-  'La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.';
+import { useTranslation } from 'react-i18next';
+import { supabase } from '../../lib/supabaseClient';
 
 const isSecurePassword = (value) =>
   value.length >= 8 &&
@@ -11,28 +9,28 @@ const isSecurePassword = (value) =>
   /[0-9]/.test(value) &&
   /[^A-Za-z0-9]/.test(value);
 
-const getPasswordChecks = (value) => [
-  { label: 'Mínimo 8 caracteres', ok: value.length >= 8 },
-  { label: 'Una mayúscula', ok: /[A-Z]/.test(value) },
-  { label: 'Una minúscula', ok: /[a-z]/.test(value) },
-  { label: 'Un número', ok: /[0-9]/.test(value) },
-  { label: 'Un símbolo', ok: /[^A-Za-z0-9]/.test(value) }
-];
-
 export default function Auth({ onViewChange }) {
+  const { t } = useTranslation();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [loading, setLoading] = useState(false);
-  const passwordChecks = getPasswordChecks(password);
+  const passwordRequirements = t('auth.passwordRequirements');
+  const passwordChecks = [
+    { label: t('auth.checks.length'), ok: password.length >= 8 },
+    { label: t('auth.checks.uppercase'), ok: /[A-Z]/.test(password) },
+    { label: t('auth.checks.lowercase'), ok: /[a-z]/.test(password) },
+    { label: t('auth.checks.number'), ok: /[0-9]/.test(password) },
+    { label: t('auth.checks.symbol'), ok: /[^A-Za-z0-9]/.test(password) }
+  ];
 
   const handleAuth = async (e) => {
     e.preventDefault();
     setMensaje('');
 
     if (isRegister && !isSecurePassword(password)) {
-      setMensaje(PASSWORD_REQUIREMENTS);
+      setMensaje(passwordRequirements);
       return;
     }
 
@@ -45,7 +43,7 @@ export default function Auth({ onViewChange }) {
     if (result.error) {
       setMensaje(result.error.message);
     } else {
-      setMensaje(isRegister ? 'Cuenta creada correctamente.' : 'Sesión iniciada.');
+      setMensaje(isRegister ? t('auth.created') : t('auth.loggedIn'));
     }
 
     setLoading(false);
@@ -71,7 +69,7 @@ export default function Auth({ onViewChange }) {
           letterSpacing: '1px'
         }}
       >
-        ← VOLVER AL TERMINAL
+        {t('common.backToTerminal')}
       </button>
 
       <form
@@ -86,12 +84,12 @@ export default function Auth({ onViewChange }) {
         }}
       >
         <h1 style={{ color: '#fff', marginTop: 0 }}>
-          {isRegister ? 'Crear cuenta' : 'Login'}
+          {isRegister ? t('auth.titleRegister') : t('auth.titleLogin')}
         </h1>
 
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t('auth.email')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -100,13 +98,13 @@ export default function Auth({ onViewChange }) {
 
         <input
           type="password"
-          placeholder="Contraseña"
+          placeholder={t('auth.password')}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={isRegister ? 8 : 6}
           pattern={isRegister ? '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$' : undefined}
-          title={isRegister ? PASSWORD_REQUIREMENTS : undefined}
+          title={isRegister ? passwordRequirements : undefined}
           style={{ width: '100%', marginBottom: '1rem', padding: '0.8rem' }}
         />
 
@@ -152,7 +150,7 @@ export default function Auth({ onViewChange }) {
             cursor: 'pointer'
           }}
         >
-          {loading ? 'Procesando...' : isRegister ? 'Registrarse' : 'Entrar'}
+          {loading ? t('common.processing') : isRegister ? t('auth.submitRegister') : t('auth.submitLogin')}
         </button>
 
         <button
@@ -167,7 +165,7 @@ export default function Auth({ onViewChange }) {
             cursor: 'pointer'
           }}
         >
-          {isRegister ? 'Ya tengo cuenta' : 'Crear una cuenta'}
+          {isRegister ? t('auth.switchToLogin') : t('auth.switchToRegister')}
         </button>
 
         {mensaje && (

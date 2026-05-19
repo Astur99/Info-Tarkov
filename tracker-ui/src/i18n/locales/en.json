@@ -1,0 +1,384 @@
+{
+  "common": {
+    "backToTerminal": "← BACK TO TERMINAL",
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "close": "Close",
+    "reply": "Reply",
+    "backToMenu": "BACK TO MENU"
+  },
+  "language": {
+    "label": "Language",
+    "es": "ES",
+    "en": "EN"
+  },
+  "home": {
+    "serverStatus": "Server Status",
+    "login": "Login / Create account",
+    "logout": "Log out",
+    "userButton": "{{username}}",
+    "configureUser": "SET UP",
+    "report": "REPORT",
+    "admin": "ADMIN",
+    "sessionStarted": "SESSION ACTIVE",
+    "adminSuffix": " · ADMIN",
+    "guestMode": "GUEST MODE · YOU CAN USE THE APP WITHOUT AN ACCOUNT",
+    "modules": {
+      "maps": {
+        "title": "TACTICAL MAPS",
+        "desc": "High-detail interactive cartography with extracts and points of interest."
+      },
+      "kappa": {
+        "title": "MISSIONS / KAPPA",
+        "desc": "Global quest tree with mission filters, Kappa quests and completion checklist."
+      },
+      "story": {
+        "title": "DECISIONS / ENDINGS",
+        "desc": "Points of no return and decisions needed to reach each ending."
+      },
+      "bosses": {
+        "title": "INTEL: BOSSES",
+        "desc": "Complete information, locations, gear, weak points and loot for each boss."
+      },
+      "goons": {
+        "title": "GOONS TRACKER",
+        "desc": "Rotation status, community sightings and real-time Goons location tracking."
+      },
+      "flea": {
+        "title": "FLEA MARKET TRACKER",
+        "desc": "Live API price search, fluctuation charts and profitability calculation."
+      },
+      "hideout": {
+        "title": "HIDEOUT MANAGEMENT",
+        "desc": "Infrastructure planner, unified materials checklist and live-price cost calculation."
+      },
+      "simulator": {
+        "title": "BALLISTICS SIMULATOR",
+        "desc": "Penetration probability, plate break simulation and TTK impact calculations."
+      },
+      "liveEvents": {
+        "title": "LIVE EVENTS",
+        "desc": "Tracking for announcements, temporary events, patches and active Tarkov broadcasts."
+      },
+      "prestige": {
+        "title": "PRESTIGE",
+        "desc": "Requirements, rewards and checklist for preparing each PvP prestige level."
+      },
+      "keys": {
+        "title": "KEY SYSTEM",
+        "desc": "Tactical key database with uses, linked quests and buy-or-keep priority."
+      },
+      "questOptimizer": {
+        "title": "QUEST OPTIMIZER",
+        "desc": "Analyzes pending quests and recommends the best map for your next raid."
+      },
+      "pmcProfile": {
+        "title": "PMC PROFILE",
+        "desc": "Local wipe summary with main goal, survival, economy and operational progress."
+      },
+      "trouble": {
+        "title": "TROUBLESHOOTING",
+        "desc": "Known app issues, debug notes and available fixes."
+      }
+    }
+  },
+  "account": {
+    "title": "Account",
+    "adminProfile": "Admin profile",
+    "userProfile": "User profile",
+    "username": {
+      "title": "Username",
+      "placeholder": "Your username",
+      "rules": "Username must be 3 to 20 characters. Use letters, numbers, underscore or hyphen.",
+      "helper": "3-20 characters. Letters, numbers, underscore or hyphen. It must be unique.",
+      "save": "Save username",
+      "saving": "Saving..."
+    },
+    "password": {
+      "title": "Change password",
+      "placeholder": "New password",
+      "save": "Change password",
+      "saving": "Updating..."
+    },
+    "delete": {
+      "title": "Delete account",
+      "warning": "This action will delete your account and you will lose the progress linked to it. It cannot be undone.",
+      "placeholder": "Type BORRAR",
+      "button": "Delete account",
+      "deleting": "Deleting..."
+    },
+    "messages": {
+      "loginRequired": "You need to log in to configure your username.",
+      "usernameTaken": "That username is already in use.",
+      "usernameSaveError": "The username could not be saved.",
+      "usernameSaved": "Username saved.",
+      "passwordSaveError": "The password could not be changed.",
+      "passwordSaved": "Password updated.",
+      "deleteConfirmRequired": "Type BORRAR to confirm.",
+      "deleteError": "The account could not be deleted."
+    }
+  },
+  "auth": {
+    "titleLogin": "Login",
+    "titleRegister": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "submitLogin": "Enter",
+    "submitRegister": "Register",
+    "switchToLogin": "I already have an account",
+    "switchToRegister": "Create an account",
+    "created": "Account created successfully.",
+    "loggedIn": "Session started.",
+    "passwordRequirements": "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number and one symbol.",
+    "checks": {
+      "length": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "lowercase": "One lowercase letter",
+      "number": "One number",
+      "symbol": "One symbol"
+    }
+  },
+  "report": {
+    "title": "Report",
+    "subtitle": "Report bugs, send suggestions and continue the conversation inside each ticket.",
+    "createTitle": "Create ticket",
+    "types": {
+      "bug": "Bug",
+      "suggestion": "Suggestion",
+      "other": "Other"
+    },
+    "status": {
+      "open": "Open",
+      "reviewing": "In review",
+      "closed": "Closed"
+    },
+    "subject": "Subject",
+    "bodyPlaceholder": "Describe what happened or what you would like to see...",
+    "createButton": "Create ticket",
+    "sending": "Sending...",
+    "myTickets": "My tickets",
+    "noTickets": "You have not sent any tickets.",
+    "responses": "{{count}} replies",
+    "replyPlaceholder": "Reply in this ticket...",
+    "closeTicket": "Close ticket",
+    "deleteFromList": "Remove from my list",
+    "authorUser": "You",
+    "authorAdmin": "Astur",
+    "errors": {
+      "load": "Your tickets could not be loaded.",
+      "required": "Fill in the subject and description.",
+      "send": "The ticket could not be sent.",
+      "emptyReply": "Write a reply before sending.",
+      "delete": "The ticket could not be removed."
+    },
+    "messages": {
+      "sent": "Ticket sent. You can continue the conversation in My tickets.",
+      "replySent": "Reply sent.",
+      "closed": "Ticket closed.",
+      "deleted": "Ticket removed from your list."
+    },
+    "confirm": {
+      "close": "Do you want to close the ticket \"{{subject}}\"?",
+      "delete": "Do you want to remove \"{{subject}}\" from your ticket list?"
+    }
+  },
+  "troubleshooting": {
+    "title": "KNOWN ERROR LOG",
+    "subtitle": "Known app anomalies and available workarounds. Fixes are still being worked through.",
+    "symptomLabel": "SYMPTOM",
+    "fixLabel": "FIX",
+    "incidents": [
+      {
+        "code": "ERR_GRAPH_ISO_V1",
+        "title": "Search Match Isolation",
+        "symptom": "When searching shared terms in Missions / Kappa, such as \"Crisis\", the app filters correctly but may first expose only one visible match inside the active trader.",
+        "fix": "If you are searching for a quest with a common or shared name, type the word in the search box and review the different trader tabs to see all matches."
+      },
+      {
+        "code": "SYS_GUEST_STORAGE_V2",
+        "title": "Local Progress in Guest Mode",
+        "symptom": "If you use the app without logging in, quest progress is saved in localStorage. It can be lost after clearing browser data, using aggressive cleanup, incognito mode or switching device.",
+        "fix": "Create an account and log in to save progress in Supabase. Guest mode still works, but it should not be treated as permanent persistence."
+      },
+      {
+        "code": "NET_EXTERNAL_APIS_V1",
+        "title": "External API Dependency",
+        "symptom": "Server status, live events, Goons Tracker, Flea Market and some Kappa data depend on external sources. If an API, proxy or external site fails, the module may show empty data, old data or a temporary error.",
+        "fix": "Try again after a few minutes and check your connection. Live Events includes a manual fallback when automatic sources do not respond."
+      },
+      {
+        "code": "GOONS_HTML_PARSE_V1",
+        "title": "Goons Tracker Reading",
+        "symptom": "Goons Tracker extracts information from external HTML. If the source site changes its structure, the app may not detect the active map correctly.",
+        "fix": "If a capture error appears or the map does not look reliable, validate the data with the original source until the parser is updated."
+      },
+      {
+        "code": "I18N_PARTIAL_ROLLOUT_V1",
+        "title": "Partial Interface Translation",
+        "symptom": "The ES/EN selector already works on the home screen, login, Report, Account, Server Status and Missions / Kappa, but several internal modules still keep hardcoded Spanish text.",
+        "fix": "Translation is being rolled out in phases. Current priority: admin panel and main modules."
+      },
+      {
+        "code": "DEV_LINT_REACT_V1",
+        "title": "Technical Debt Detected by Lint",
+        "symptom": "The production build compiles correctly, but ESLint detects technical debt in several modules: effects with immediate setState, pending hook dependencies and small unnecessary assignments or escapes.",
+        "fix": "It does not block current app usage, but should be fixed before a serious public deploy to reduce extra render risk and future hard-to-trace bugs."
+      },
+      {
+        "code": "DEV_HIDEOUT_FALLBACK_V1",
+        "title": "Hideout Local Fallback",
+        "symptom": "ESLint reports that the local Hideout fallback is referenced before declaration. The app can compile, but this structure is fragile if data loading is touched.",
+        "fix": "Move the fallback helper before the effect or convert it into a stable callback during the next Hideout cleanup pass."
+      }
+    ]
+  },
+  "liveEvents": {
+    "eyebrow": "Tactical feed",
+    "title": "Live events",
+    "subtitle": "Scans tarkovdata sources, classifies active or recent events and keeps a manual reference if the external feed fails.",
+    "lastSync": "LAST SYNC: {{date}} - SOURCE: {{source}}",
+    "visibleRecords": "{{count}} visible records",
+    "sourceWarning": "SOURCE WARNING: {{error}}",
+    "loading": "SYNCING EVENTS...",
+    "empty": "No active or recent events are registered right now.",
+    "noDate": "NO DATE",
+    "details": "DETAILS",
+    "sourceLabel": "SOURCE: {{source}}",
+    "actions": {
+      "scanning": "SCANNING...",
+      "refresh": "REFRESH FEED",
+      "hideEnded": "HIDE ENDED",
+      "showEnded": "SHOW ENDED"
+    },
+    "counters": {
+      "active": "Active",
+      "recent": "Recent",
+      "ended": "Ended",
+      "localTime": "Local time"
+    },
+    "status": {
+      "active": "ACTIVE",
+      "recent": "RECENT",
+      "reference": "REFERENCE",
+      "ended": "ENDED"
+    },
+    "freshness": {
+      "inProgress": "IN PROGRESS",
+      "today": "TODAY",
+      "daysAgo": "{{count}} DAYS AGO"
+    },
+    "sources": {
+      "verifiedManual": "verified manual",
+      "fallbackManual": "manual reference",
+      "none": "no source"
+    },
+    "errors": {
+      "manualActive": "The automatic feed returned no events, but there is a manually verified temporary event.",
+      "noFeed": "The automatic feed could not be confirmed. Showing a manual reference link.",
+      "unexpected": "Unexpected error while reading events. Showing a manual reference link."
+    },
+    "fallback": {
+      "title": "Escape From Tarkov Events",
+      "description": "No active event could be confirmed from automatic sources. Use the external link as a manual reference."
+    },
+    "manual": {
+      "fullSpeedAhead": {
+        "description": "Active event with Rogues outside Lighthouse, presence on Shoreline and Reserve, Peacekeeper quest chain and Awaiting Departure achievement."
+      }
+    }
+  },
+  "serverStatus": {
+    "title": "NETWORK / BATTLEYE TELEMETRY",
+    "subtitle": "Real-time status for central servers, authentication gateways and Battlestate Games logical services.",
+    "loading": "EXTRACTING SERVICE STATUS DATA / COLLECTING TELEMETRY...",
+    "refresh": "REFRESH SERVICE STATUS",
+    "resyncing": "RE-SYNCING...",
+    "warning": "WARNING: {{error}}",
+    "consoleError": "Error fetching status:",
+    "errors": {
+      "network": "Network error while connecting to the server radar."
+    },
+    "status": {
+      "operational": "OPERATIONAL",
+      "down": "DOWN",
+      "maintenance": "MAINTENANCE",
+      "degraded": "DEGRADED"
+    },
+    "services": {
+      "website": "WEBSITE",
+      "forum": "OFFICIAL FORUM",
+      "authentication": "AUTHENTICATION / LOGIN",
+      "launcher": "LAUNCHER",
+      "groupLobby": "GROUP LOBBY",
+      "trading": "TRADING / TRADERS",
+      "matchmaking": "MATCHMAKING",
+      "friends": "MESSAGING AND FRIENDS",
+      "inventory": "INVENTORY OPERATIONS"
+    },
+    "header": {
+      "localTime": "TIME // LOCAL_ZONE",
+      "serviceStatus": "SERVICE STATUS",
+      "systems": "SYSTEMS {{active}} OF {{total}}"
+    }
+  },
+  "kappa": {
+    "title": "STRATEGIC QUEST TREE",
+    "subtitle": "Separate PvP and PvE tracking. Switch mode without losing progress in either branch.",
+    "optimizerButton": "Quest Optimizer",
+    "searchPlaceholder": "GLOBAL SEARCH...",
+    "panel": {
+      "activeProfile": "ACTIVE PROFILE",
+      "syncing": "SYNCING PROGRESS...",
+      "cloudActive": "CLOUD PROGRESS ACTIVE",
+      "localGuest": "GUEST MODE: LOCAL PROGRESS",
+      "kappaOnly": "Kappa quests",
+      "showIncomplete": "Show incomplete only",
+      "showingIncomplete": "Showing incomplete only",
+      "statsTitle": "Quest Stats:",
+      "resetProgress": "Reset {{mode}} Progress"
+    },
+    "stats": {
+      "profile": "Profile",
+      "total": "Total quest count",
+      "completed": "Completed quests",
+      "remaining": "Remaining quests",
+      "kappaTotal": "Kappa quests",
+      "kappaCompleted": "Completed for Kappa",
+      "kappaRemaining": "Remaining for Kappa"
+    },
+    "node": {
+      "completedStatus": "● {{mode}} COMPLETED",
+      "availableStatus": "○ AVAILABLE",
+      "lockedStatus": "🔒 REQUIREMENTS",
+      "completeButton": "COMPLETE",
+      "completedButton": "{{mode}} COMPLETED",
+      "completeTitle": "Complete this quest and all previous quests in {{mode}}",
+      "uncompleteTitle": "Unmark this quest and clear its branch in {{mode}}"
+    },
+    "collector": {
+      "title": "Kappa Items",
+      "subtitle": "Local checklist for saving and ticking Found in Raid items before handing Collector in {{mode}}.",
+      "cardButton": "COLLECTOR ITEMS: {{completed}}/{{total}} - {{percent}}%",
+      "progress": "{{completed}}/{{total}} items marked",
+      "searchPlaceholder": "Search item, hint or spawn...",
+      "reset": "RESET",
+      "empty": "No items match your search.",
+      "footer": "Base Collector/Kappa item list. Requirements can change with patches, so double-check before handing in. Total loaded: {{total}}."
+    },
+    "confirm": {
+      "resetProgress": "Are you sure you want to reset all {{mode}} quest progress?",
+      "resetCollector": "Are you sure you want to reset the {{mode}} Collector checklist?"
+    },
+    "errors": {
+      "collectorImages": "Error loading Collector images",
+      "cloudLoad": "Cloud progress could not be loaded. Keeping the local copy.",
+      "cloudCreate": "Initial cloud progress could not be created.",
+      "cloudSync": "Progress could not be synced with Supabase.",
+      "serverCommunication": "Server communication error",
+      "centralApi": "Central API link error."
+    }
+  }
+}

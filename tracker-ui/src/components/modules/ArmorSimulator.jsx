@@ -565,7 +565,7 @@ export default function ArmorSimulator({ onViewChange }) {
 
   return (
     <div
-      className="fade-in-slide"
+      className="fade-in-slide terminal-panel"
       style={{
         padding: '6rem 2rem 8rem 2rem',
         maxWidth: '1400px',
