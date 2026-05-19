@@ -236,6 +236,14 @@ function App() {
     return <LoadingTerminal />;
   }
 
+  if (currentView === 'auth') {
+    return (
+      <LazyView>
+        <Auth onViewChange={navigateToView} />
+      </LazyView>
+    );
+  }
+
   const handleMouseMoveGlobal = (e) => {
     setMousePos({ x: e.clientX, y: e.clientY });
   };
