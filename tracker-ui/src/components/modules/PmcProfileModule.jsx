@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { loadModuleState, saveModuleState } from '../../lib/moduleStateSync';
 
 const STORAGE_KEY = 'info_tarkov_pmc_profile';
+const PMC_MODULE_KEY = 'pmc_profile';
 
 const defaultProfile = {
   nickname: '',
@@ -73,12 +75,93 @@ const formatRoubles = (value) => {
   return `${new Intl.NumberFormat('es-ES').format(amount)} RUB`;
 };
 
-export default function PmcProfileModule({ onViewChange }) {
+export default function PmcProfileModule({ onViewChange, session }) {
   const [profile, setProfile] = useState(loadProfile);
+  const [syncStatus, setSyncStatus] = useState('local');
+  const suppressSaveRef = useRef(false);
 
   useEffect(() => {
+    let cancelled = false;
+
+    const loadProfileState = async () => {
+      const localProfile = loadProfile();
+
+      if (!session?.user?.id) {
+        setProfile(localProfile);
+        setSyncStatus('local');
+        return;
+      }
+
+      suppressSaveRef.current = true;
+      setSyncStatus('syncing');
+
+      const { data, error } = await loadModuleState({
+        userId: session.user.id,
+        moduleKey: PMC_MODULE_KEY
+      });
+
+      if (cancelled) return;
+
+      if (error) {
+        console.error(error);
+        setProfile(localProfile);
+        setSyncStatus('local-error');
+      } else if (data) {
+        setProfile({ ...defaultProfile, ...data });
+        setSyncStatus('cloud');
+      } else {
+        setProfile(localProfile);
+        const { error: saveError } = await saveModuleState({
+          userId: session.user.id,
+          moduleKey: PMC_MODULE_KEY,
+          state: localProfile
+        });
+        setSyncStatus(saveError ? 'local-error' : 'cloud');
+      }
+
+      window.setTimeout(() => {
+        if (!cancelled) suppressSaveRef.current = false;
+      }, 0);
+    };
+
+    loadProfileState();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.id]);
+
+  useEffect(() => {
+    if (suppressSaveRef.current) return;
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
-  }, [profile]);
+
+    if (!session?.user?.id) {
+      setSyncStatus('local');
+      return;
+    }
+
+    let cancelled = false;
+    setSyncStatus('syncing');
+
+    saveModuleState({
+      userId: session.user.id,
+      moduleKey: PMC_MODULE_KEY,
+      state: profile
+    }).then(({ error }) => {
+      if (cancelled) return;
+      if (error) {
+        console.error(error);
+        setSyncStatus('local-error');
+      } else {
+        setSyncStatus('cloud');
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profile, session?.user?.id]);
 
   const activeGoal = goals.find((goal) => goal.id === profile.mainGoal) || goals[0];
 
@@ -126,7 +209,13 @@ export default function PmcProfileModule({ onViewChange }) {
             </p>
             <h1 style={{ color: '#fff', margin: 0, fontSize: '2.7rem', textTransform: 'uppercase' }}>Perfil de PMC</h1>
             <p style={{ color: 'var(--tk-text-muted)', maxWidth: '820px', lineHeight: 1.6 }}>
-              Panel local para resumir tu wipe, medir progreso contra un objetivo principal y decidir el siguiente bloque de trabajo.
+              Panel para resumir tu wipe, medir progreso contra un objetivo principal y decidir el siguiente bloque de trabajo.
+            </p>
+            <p style={{ color: syncStatus === 'cloud' ? 'var(--tk-green)' : '#ffcf66', marginTop: '0.45rem', fontWeight: '900', letterSpacing: '1px', textTransform: 'uppercase' }}>
+              {syncStatus === 'cloud' && 'PERFIL CLOUD ACTIVO'}
+              {syncStatus === 'syncing' && 'SINCRONIZANDO PERFIL...'}
+              {syncStatus === 'local' && 'MODO LOCAL: INICIA SESIÓN PARA SINCRONIZAR'}
+              {syncStatus === 'local-error' && 'MODO LOCAL: TABLA CLOUD NO DISPONIBLE O ERROR DE SINCRONIZACIÓN'}
             </p>
           </div>
 

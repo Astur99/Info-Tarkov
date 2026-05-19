@@ -45,6 +45,7 @@ function BossImage({ boss, style }) {
 export default function BossesView({ onViewChange }) {
   const [busqueda, setBusqueda] = useState('');
   const [mapaFiltro, setMapaFiltro] = useState('ALL');
+  const [dificultadFiltro, setDificultadFiltro] = useState('ALL');
   const [bossSeleccionado, setBossSeleccionado] = useState(null);
   const [bossesData, setBossesData] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -296,19 +297,41 @@ export default function BossesView({ onViewChange }) {
               return {
                 ...bossLocal,
                 mapa: listaMapas,
-                spawn: ratioPorcentaje
+                spawn: ratioPorcentaje,
+                spawnDetails: bossAPI.maps.map((map) => ({
+                  name: map.name,
+                  chance: Math.round(map.spawnChance * 100)
+                })).sort((a, b) => b.chance - a.chance)
               };
             }
-            return { ...bossLocal, mapa: bossLocal.mapaDefault, spawn: bossLocal.spawnDefault };
+            return {
+              ...bossLocal,
+              mapa: bossLocal.mapaDefault,
+              spawn: bossLocal.spawnDefault,
+              spawnDetails: bossLocal.mapaDefault.split(', ').map((name) => ({
+                name,
+                chance: Number.parseInt(bossLocal.spawnDefault, 10) || 0
+              }))
+            };
           });
           setBossesData(poolActualizado);
         } else {
-          setBossesData(poolBossesEstatico.map(b => ({ ...b, mapa: b.mapaDefault, spawn: b.spawnDefault })));
+          setBossesData(poolBossesEstatico.map(b => ({
+            ...b,
+            mapa: b.mapaDefault,
+            spawn: b.spawnDefault,
+            spawnDetails: b.mapaDefault.split(', ').map((name) => ({ name, chance: Number.parseInt(b.spawnDefault, 10) || 0 }))
+          })));
         }
         setCargando(false);
       })
       .catch(() => {
-        setBossesData(poolBossesEstatico.map(b => ({ ...b, mapa: b.mapaDefault, spawn: b.spawnDefault })));
+        setBossesData(poolBossesEstatico.map(b => ({
+          ...b,
+          mapa: b.mapaDefault,
+          spawn: b.spawnDefault,
+          spawnDetails: b.mapaDefault.split(', ').map((name) => ({ name, chance: Number.parseInt(b.spawnDefault, 10) || 0 }))
+        })));
         setCargando(false);
       });
   }, []);
@@ -316,8 +339,29 @@ export default function BossesView({ onViewChange }) {
   const bossesFiltrados = bossesData.filter(boss => {
     const coincideBusqueda = boss.name.toLowerCase().includes(busqueda.toLowerCase());
     const coincideMapa = mapaFiltro === 'ALL' || boss.mapa.toLowerCase().includes(mapaFiltro.toLowerCase());
-    return coincideBusqueda && coincideMapa;
+    const coincideDificultad = dificultadFiltro === 'ALL' || boss.dificultad === dificultadFiltro;
+    return coincideBusqueda && coincideMapa && coincideDificultad;
   });
+
+  const getBossPlan = (boss) => {
+    if (!boss) return [];
+
+    const base = [
+      `Prioridad de apertura: confirmar spawn en ${boss.spawnDetails?.[0]?.name || boss.mapa}.`,
+      `Evita duelos largos: ${boss.debiles}`,
+      `Municion esperada: ${boss.municion}. Entra con cobertura real y salida clara.`
+    ];
+
+    if (boss.dificultad === 'Very Hard') {
+      return ['No cruces lineas abiertas sin informacion previa.', 'Usa opticas, rango y cobertura; asumir contacto frontal suele ser muerte.', ...base].slice(0, 5);
+    }
+
+    if (boss.dificultad === 'Hard') {
+      return ['Limpia guardias o angulos secundarios antes de empujar.', 'Granadas y reposicionamiento valen mas que tradear cara a cara.', ...base].slice(0, 5);
+    }
+
+    return ['Aisla al objetivo y corta rutas de empuje.', 'No te quedes quieto tras el primer disparo; reposiciona y fuerza otro angulo.', ...base].slice(0, 5);
+  };
 
   const styles = {
     card: {
@@ -431,6 +475,22 @@ export default function BossesView({ onViewChange }) {
           <option value="Streets">STREETS OF TARKOV</option>
           <option value="Woods">WOODS</option>
         </select>
+
+        <select
+          value={dificultadFiltro}
+          onChange={(e) => { setDificultadFiltro(e.target.value); setBossSeleccionado(null); }}
+          style={styles.selector}
+          disabled={cargando}
+        >
+          <option value="ALL">TODAS LAS DIFICULTADES</option>
+          <option value="Medium">MEDIUM</option>
+          <option value="Hard">HARD</option>
+          <option value="Very Hard">VERY HARD</option>
+        </select>
+
+        <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '1px' }}>
+          {bossesFiltrados.length} objetivos visibles
+        </span>
       </section>
 
       {/* MONITOR DE CARGA */}
@@ -467,6 +527,12 @@ export default function BossesView({ onViewChange }) {
                     <h3 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#fff', letterSpacing: '0.5px' }}>{boss.name}</h3>
                     <span style={styles.badge('rgba(26,176,21,0.08)', 'var(--tk-green)')}>{boss.spawn}</span>
                   </div>
+                  <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+                    <span style={styles.badge('rgba(255,255,255,0.04)', boss.colorDificultad)}>{boss.dificultad}</span>
+                    <span style={styles.badge('rgba(255,207,102,0.07)', '#ffcf66')}>
+                      {boss.guardias?.includes('solo') ? 'SOLO' : 'SQUAD'}
+                    </span>
+                  </div>
                   <p style={{ color: 'var(--tk-text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', marginTop: '-0.3rem' }}>{boss.mapa}</p>
                 </div>
               );
@@ -497,6 +563,20 @@ export default function BossesView({ onViewChange }) {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.6rem' }}>SPAWN POR MAPA</span>
+                    <div style={{ display: 'grid', gap: '0.45rem' }}>
+                      {(bossSeleccionado.spawnDetails || []).map((spawn) => (
+                        <div key={spawn.name} style={{ display: 'grid', gridTemplateColumns: '140px 1fr 46px', alignItems: 'center', gap: '0.75rem' }}>
+                          <strong style={{ color: '#fff' }}>{spawn.name}</strong>
+                          <div style={{ height: '7px', background: 'rgba(255,255,255,0.08)', borderRadius: '999px', overflow: 'hidden' }}>
+                            <div style={{ width: `${Math.min(100, spawn.chance)}%`, height: '100%', background: 'var(--tk-green)' }} />
+                          </div>
+                          <span style={{ color: 'var(--tk-green)', fontWeight: '900', textAlign: 'right' }}>{spawn.chance}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>LOCALIZACIONES REGISTRADAS</span>
                     <p style={{ fontSize: '1.05rem', color: '#fff' }}>{bossSeleccionado.mapa}</p>
                   </div>
@@ -515,6 +595,14 @@ export default function BossesView({ onViewChange }) {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.6rem' }}>PLAN DE ENTRADA RECOMENDADO</span>
+                    <ul style={{ margin: 0, paddingLeft: '1.1rem', color: 'var(--tk-text-muted)', lineHeight: 1.55 }}>
+                      {getBossPlan(bossSeleccionado).map((step) => (
+                        <li key={step}>{step}</li>
+                      ))}
+                    </ul>
+                  </div>
                   <div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.3rem' }}>ARMAMENTO PRINCIPAL ASIGNADO</span>
                     <p style={{ fontSize: '1.05rem', color: '#fff' }}>{bossSeleccionado.armas}</p>

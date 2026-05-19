@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 
+const MARKET_MODES = {
+  PVP: 'regular',
+  PVE: 'pve'
+};
+
 export default function FleaTracker({ onViewChange }) {
   const [busqueda, setBusqueda] = useState('');
   const [itemsResultados, setItemsResultados] = useState([]);
@@ -7,6 +12,8 @@ export default function FleaTracker({ onViewChange }) {
   const [cargandoHotDeals, setCargandoHotDeals] = useState(true);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
   const [hotDeals, setHotDeals] = useState([]);
+  const [modoMercado, setModoMercado] = useState('PVP');
+  const gameMode = MARKET_MODES[modoMercado];
 
   const itemsInteres = [
     "Graphics card", "LedX", "Defibrillator", "Water filter", "Expeditionary fuel tank",
@@ -17,10 +24,13 @@ export default function FleaTracker({ onViewChange }) {
 
   // 1. RADAR AUTOMÁTICO DE ANOMALÍAS (HOT DEALS VIVO)
   useEffect(() => {
+    setCargandoHotDeals(true);
+    setHotDeals([]);
+
     const queryHotDeals = JSON.stringify({
       query: `
         query GetHotDeals {
-          items(names: ${JSON.stringify(itemsInteres)}) {
+          items(names: ${JSON.stringify(itemsInteres)}, gameMode: ${gameMode}) {
             id
             name
             shortName
@@ -66,7 +76,12 @@ export default function FleaTracker({ onViewChange }) {
         setCargandoHotDeals(false);
       })
       .catch(() => setCargandoHotDeals(false));
-  }, []);
+  }, [gameMode]);
+
+  useEffect(() => {
+    setItemSeleccionado(null);
+    setItemsResultados([]);
+  }, [modoMercado]);
 
   // 2. BUSCADOR INTELIGENTE MULTI-IDIOMA CON TOLERANCIA DE TILDES
   useEffect(() => {
@@ -80,7 +95,7 @@ export default function FleaTracker({ onViewChange }) {
       const queryBuscador = JSON.stringify({
         query: `
           query SearchItems {
-            items {
+            items(gameMode: ${gameMode}) {
               id
               name
               shortName
@@ -138,7 +153,7 @@ export default function FleaTracker({ onViewChange }) {
     }, 350);
 
     return () => clearTimeout(delayDebounce);
-  }, [busqueda]);
+  }, [busqueda, gameMode]);
 
   const formatRublos = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val);
 
@@ -180,12 +195,12 @@ export default function FleaTracker({ onViewChange }) {
 
         <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} preserveAspectRatio="none" style={{ width: '100%', height: '110px', display: 'block' }}>
           <defs>
-            <linearGradient id={`gradienteFlea-${item.id}`} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={`gradienteFlea-${modoMercado}-${item.id}`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={colorGrafica} stopOpacity="0.2" />
               <stop offset="100%" stopColor={colorGrafica} stopOpacity="0.0" />
             </linearGradient>
           </defs>
-          <path d={areaD} fill={`url(#gradienteFlea-${item.id})`} />
+          <path d={areaD} fill={`url(#gradienteFlea-${modoMercado}-${item.id})`} />
           <path d={pathD} fill="none" stroke={colorGrafica} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           {puntos.map((p, i) => (
             <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="#fff" stroke={colorGrafica} strokeWidth="2" />
@@ -210,21 +225,60 @@ export default function FleaTracker({ onViewChange }) {
         <div>
           <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>FLEA MARKET TRACKER</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
-            Análisis dinámico de precios, gráficos de fluctuación y rentabilidad por item.
+            Análisis dinámico de precios, gráficos de fluctuación y rentabilidad por item en PVP y PVE.
           </p>
         </div>
-        <button 
-          onClick={() => onViewChange('home')}
-          style={{ backgroundColor: 'rgba(255,255,255,0.02)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', padding: '12px 22px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', letterSpacing: '1px', transition: 'all 0.3s' }}
-        >
-          VOLVER AL MENÚ
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '6px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255,255,255,0.08)',
+            backgroundColor: 'rgba(0,0,0,0.32)',
+            boxShadow: 'inset 0 0 20px rgba(0,0,0,0.35)'
+          }}>
+            {Object.keys(MARKET_MODES).map((mode) => {
+              const active = modoMercado === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setModoMercado(mode)}
+                  style={{
+                    minWidth: '86px',
+                    border: active ? '1px solid rgba(187, 211, 169, 0.55)' : '1px solid rgba(255,255,255,0.06)',
+                    backgroundColor: active ? 'rgba(187, 211, 169, 0.85)' : 'rgba(255,255,255,0.03)',
+                    color: active ? '#11180f' : '#d7d7d7',
+                    padding: '10px 14px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '900',
+                    letterSpacing: '1px',
+                    fontFamily: "'Rajdhani', sans-serif",
+                    boxShadow: active ? '0 0 18px rgba(187, 211, 169, 0.18)' : 'none',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {mode}
+                </button>
+              );
+            })}
+          </div>
+          <button 
+            onClick={() => onViewChange('home')}
+            style={{ backgroundColor: 'rgba(255,255,255,0.02)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', padding: '12px 22px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', letterSpacing: '1px', transition: 'all 0.3s' }}
+          >
+            VOLVER AL MENÚ
+          </button>
+        </div>
       </header>
 
       {/* INPUT DEL BUSCADOR GENERAL */}
       <section style={{ marginBottom: '2.5rem' }}>
         <h3 style={{ fontSize: '0.9rem', color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          🔍 BUSCADOR HÍBRIDO (INGLÉS / ESPAÑOL SIN TILDES)
+          BUSCADOR HÍBRIDO ({modoMercado}) - INGLÉS / ESPAÑOL SIN TILDES
         </h3>
         <input 
           type="text" 
@@ -256,7 +310,7 @@ export default function FleaTracker({ onViewChange }) {
             fontFamily: "'Rajdhani', sans-serif",
             textTransform: 'uppercase'
           }}>
-            ⚠️ No se ha encontrado el objeto deseado
+            No se ha encontrado el objeto deseado en el mercado {modoMercado}
           </p>
         )}
       </section>
@@ -316,13 +370,13 @@ export default function FleaTracker({ onViewChange }) {
         {itemSeleccionado && (
           <section style={{ backgroundColor: 'var(--tk-glass)', backdropFilter: 'blur(20px)', border: '1px solid var(--tk-glass-border)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', height: 'fit-content' }}>
             <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px' }}>DATOS ESPECÍFICOS</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px' }}>DATOS ESPECÍFICOS - {modoMercado}</span>
               <h3 style={{ fontSize: '1.6rem', fontWeight: '700', color: '#fff', margin: '0.2rem 0 0 0' }}>{itemSeleccionado.name}</h3>
             </div>
 
             <div>
               <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.8rem', letterSpacing: '0.5px' }}>
-                📊 TENDENCIA HISTÓRICA (ÚLTIMOS 7 DÍAS)
+                TENDENCIA HISTÓRICA ({modoMercado}, ÚLTIMOS 7 DÍAS)
               </span>
               {renderRealSparkline(itemSeleccionado)}
               <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.85rem', marginTop: '0.8rem', paddingLeft: '4px' }}>
@@ -349,7 +403,7 @@ export default function FleaTracker({ onViewChange }) {
       {/* CAMBIO DE ORDEN: RADAR DE ANOMALÍAS EN LA MITAD INFERIOR */}
       <section style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '3rem' }}>
         <h3 style={{ fontSize: '0.9rem', color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          📡 RADAR DE ITEMS MÁS FLUCTUANTES EN CADA MOMENTO:
+          RADAR DE ITEMS MÁS FLUCTUANTES EN EL MERCADO {modoMercado}:
         </h3>
         
         {cargandoHotDeals ? (
@@ -382,7 +436,7 @@ export default function FleaTracker({ onViewChange }) {
                     color: esSubida ? '#ff4444' : 'var(--tk-green)',
                     fontSize: '0.65rem', fontWeight: '800', padding: '2px 6px', borderRadius: '4px', position: 'absolute', top: '12px', right: '12px', letterSpacing: '0.5px'
                   }}>
-                    {esSubida ? `⬆️ INFLADO ${pctText}` : `⬇️ GANGA ${pctText}`}
+                    {esSubida ? `SUBE ${pctText}` : `BAJA ${pctText}`}
                   </span>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.4rem' }}>

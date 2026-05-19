@@ -66,6 +66,7 @@ Main app:
 - `src/App.jsx`
 - `src/main.jsx`
 - `src/lib/supabaseClient.js`
+- `src/lib/moduleStateSync.js`
 
 Global visual layer:
 
@@ -87,6 +88,8 @@ Layout/about:
 - `src/components/layout/LanguageSwitcher.jsx`
 - `src/components/about/AboutView.jsx`
 - `src/components/about/AsturView.jsx`
+- `src/components/about/ChangelogView.jsx`
+- `src/data/changelog.js`
 
 Modules:
 
@@ -249,6 +252,16 @@ File: `src/components/modules/BossesIntel.jsx`
 
 Boss intelligence module with boss data, gear, locations, loot and weak points.
 
+Features:
+
+- boss search
+- map filter
+- difficulty filter
+- visible target counter
+- local boss images through Vite asset glob
+- spawn chance breakdown per map from `tarkov.dev`
+- tactical entry plan based on boss difficulty and local intel
+
 ### Tracker de Goons
 
 File: `src/components/modules/GoonsTracker.jsx`
@@ -261,11 +274,41 @@ File: `src/components/modules/FleaTracker.jsx`
 
 Market/economy module for prices and profitability style workflows.
 
+Features:
+
+- PVP/PVE market switch
+- uses `tarkov.dev` GraphQL `items(gameMode: regular)` for PVP prices
+- uses `tarkov.dev` GraphQL `items(gameMode: pve)` for PVE prices
+- hot-deal/anomaly radar per selected mode
+- item search per selected mode
+- selected item detail with historical price sparkline and trader sell values
+
 ### Gestion del Refugio
 
 File: `src/components/modules/HideoutModule.jsx`
 
-Hideout planning module. ESLint currently flags a fallback helper ordering issue, but build passes.
+Hideout planning module.
+
+Features:
+
+- PVP/PVE market switch
+- uses `tarkov.dev` GraphQL `hideoutStations(gameMode: regular)` for PVP prices
+- uses `tarkov.dev` GraphQL `hideoutStations(gameMode: pve)` for PVE prices
+- local checklist per mode/station/level for marking gathered item requirements
+- cloud sync for checklist and built station levels when `user_module_state` exists
+- built-level tracking per station
+- total hideout progress and count of unlocked next upgrades
+- pending budget subtracts already marked requirements
+- labels item requirements as FIR when requirement attributes indicate found-in-raid
+- shows required hideout stations/levels, trader requirements and skill requirements
+- station sidebar is ordered by natural progression rather than alphabetically
+
+Local storage keys:
+
+- `info_tarkov_hideout_items_pvp`
+- `info_tarkov_hideout_items_pve`
+- `info_tarkov_hideout_levels_pvp`
+- `info_tarkov_hideout_levels_pve`
 
 ### Simulador Balistico
 
@@ -349,11 +392,12 @@ Route compatibility:
 
 File: `src/components/modules/PmcProfileModule.jsx`
 
-New local-first module for summarizing player wipe status.
+Module for summarizing player wipe status.
 
 Features:
 
 - localStorage guest persistence
+- Supabase cloud sync when `user_module_state` exists
 - PMC nickname/callsign
 - faction and PVP/PVE mode
 - level, survival rate, raids, stash value, completed quests, Kappa items and hideout progress
@@ -567,6 +611,29 @@ Social links:
 - X: `https://x.com/juankar_hh`
 - Instagram: `https://www.instagram.com/juankar_hh/`
 
+## Changelog / Versioning
+
+Files:
+
+- `src/components/about/ChangelogView.jsx`
+- `src/data/changelog.js`
+
+Route:
+
+- `?view=changelog`
+
+Current app version:
+
+- `0.11.1`
+
+Behavior:
+
+- Public ChangeLog is available from the home bottom-left button.
+- Version entries are grouped as public product milestones rather than one entry per tiny commit.
+- `APP_VERSION` in `src/data/changelog.js` should stay aligned with `package.json`.
+- Changelog data is localization-ready: each entry stores text per language key (`es`, `en`, future `ru`, `de`, `fr`, `it`, etc.).
+- While the app is beta, use `0.x` versions. Patch number for small fixes, minor number for visible features or module changes, and reserve `1.0.0` for the first stable public release.
+
 ## i18n
 
 Base multilingual support exists.
@@ -611,7 +678,10 @@ Expected env vars:
 ```txt
 VITE_SUPABASE_URL
 VITE_SUPABASE_ANON_KEY
+VITE_PUBLIC_SITE_URL
 ```
+
+`VITE_PUBLIC_SITE_URL` is used for Supabase email confirmation redirects. It should be the public app origin, for example `https://infotarkov.com`. `Auth.jsx` falls back to `https://infotarkov.com` if the env var is missing, so email verification should not redirect to localhost from production signups.
 
 Known major tables/RPCs used:
 
@@ -625,6 +695,13 @@ Known major tables/RPCs used:
 - admin stats/list users RPCs
 - ticket RPCs listed above
 - account deletion RPC
+- optional generic module sync table: `user_module_state`
+
+SQL files:
+
+- `docs/supabase-user-module-state.sql`
+
+Run that SQL in Supabase to enable cloud sync for newer modules such as Hideout and PMC Profile. Without it, those modules keep working locally and show a local/cloud warning.
 
 ## Known Technical Debt
 
@@ -656,6 +733,15 @@ This does not block build, but should be cleaned before serious public launch.
 - Improved Admin ticket buttons.
 - Updated Troubleshooting.
 - Updated About to explain only main user-facing tools.
+- Added PVP/PVE market mode switch to Flea Market Tracker.
+- Added public Patch Notes / Changelog view and started versioning at `0.9.0`.
+- Improved Hideout Management with PVP/PVE prices, item checklist, FIR labels and station/trader/skill requirements.
+- Fixed Hideout FIR detection so normal buyable requirements are not marked FIR unless the API exposes an explicit positive found-in-raid attribute.
+- Reordered Hideout station sidebar to follow natural construction progression instead of alphabetical order.
+- Added Hideout 2.0 built-level tracking, total progress and unlocked/blocked upgrade status.
+- Added generic `user_module_state` sync helper and SQL for cloud-syncing Hideout and PMC Profile.
+- Added Bosses 2.0 difficulty filter, spawn breakdown by map and tactical entry plans.
+- Added Hideout auto-checklist behavior: marking a station as built to level X marks material requirements for all levels up to X.
 
 ## Next Good Steps
 

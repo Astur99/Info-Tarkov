@@ -17,6 +17,7 @@
   },
   "home": {
     "serverStatus": "Estado de Servidores",
+    "patchNotes": "ChangeLog",
     "login": "Login / Crear cuenta",
     "logout": "Cerrar sesión",
     "userButton": "{{username}}",
@@ -131,6 +132,7 @@
     "switchToLogin": "Ya tengo cuenta",
     "switchToRegister": "Crear una cuenta",
     "created": "Cuenta creada correctamente.",
+    "confirmEmail": "Cuenta creada. Revisa tu correo para confirmar el email.",
     "loggedIn": "Sesión iniciada.",
     "passwordRequirements": "La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.",
     "checks": {

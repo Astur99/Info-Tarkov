@@ -17,6 +17,7 @@
   },
   "home": {
     "serverStatus": "Server Status",
+    "patchNotes": "ChangeLog",
     "login": "Login / Create account",
     "logout": "Log out",
     "userButton": "{{username}}",
@@ -131,6 +132,7 @@
     "switchToLogin": "I already have an account",
     "switchToRegister": "Create an account",
     "created": "Account created successfully.",
+    "confirmEmail": "Account created. Check your email to confirm your address.",
     "loggedIn": "Session started.",
     "passwordRequirements": "Password must have at least 8 characters, one uppercase letter, one lowercase letter, one number and one symbol.",
     "checks": {

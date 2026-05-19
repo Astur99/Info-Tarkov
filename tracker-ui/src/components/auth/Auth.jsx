@@ -2,6 +2,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 
+const DEFAULT_PUBLIC_SITE_URL = 'https://infotarkov.com';
+
+const getAuthRedirectUrl = () => {
+  const configuredUrl = import.meta.env.VITE_PUBLIC_SITE_URL;
+  const baseUrl = configuredUrl || DEFAULT_PUBLIC_SITE_URL;
+  return `${baseUrl.replace(/\/$/, '')}/`;
+};
+
 const isSecurePassword = (value) =>
   value.length >= 8 &&
   /[A-Z]/.test(value) &&
@@ -37,13 +45,19 @@ export default function Auth({ onViewChange }) {
     setLoading(true);
 
     const result = isRegister
-      ? await supabase.auth.signUp({ email, password })
+      ? await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: getAuthRedirectUrl()
+          }
+        })
       : await supabase.auth.signInWithPassword({ email, password });
 
     if (result.error) {
       setMensaje(result.error.message);
     } else {
-      setMensaje(isRegister ? t('auth.created') : t('auth.loggedIn'));
+      setMensaje(isRegister ? t('auth.confirmEmail') : t('auth.loggedIn'));
     }
 
     setLoading(false);

@@ -24,6 +24,7 @@ const AccountSettings = lazy(() => import('./components/auth/AccountSettings'));
 const AdminPanel = lazy(() => import('./components/admin/AdminPanel'));
 const AboutView = lazy(() => import('./components/about/AboutView'));
 const AsturView = lazy(() => import('./components/about/AsturView'));
+const ChangelogView = lazy(() => import('./components/about/ChangelogView'));
 const UserMessages = lazy(() => import('./components/communication/UserMessages'));
 const MapsView = lazy(() => import('./components/modules/MapsView'));
 const KappaTree = lazy(() => import('./components/modules/KappaTree'));
@@ -393,18 +394,26 @@ function App() {
     );
   }
 
+  if (currentView === 'changelog') {
+    return (
+      <LazyView>
+        <ChangelogView onViewChange={navigateToView} />
+      </LazyView>
+    );
+  }
+
   if (currentView === 'maps') return <LazyView><MapsView onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'kappa') return <LazyView><KappaTree onViewChange={navigateToView} session={session} userRole={userRole} /></LazyView>;
   if (currentView === 'story') return <LazyView><StoryDecisions onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'bosses') return <LazyView><BossesIntel onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'goons') return <LazyView><GoonsTracker onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'flea') return <LazyView><FleaTracker onViewChange={navigateToView} /></LazyView>;
-  if (currentView === 'hideout') return <LazyView><HideoutModule onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'hideout') return <LazyView><HideoutModule onViewChange={navigateToView} session={session} /></LazyView>;
   if (currentView === 'simulador') return <LazyView><ArmorSimulator onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'prestige') return <LazyView><PrestigeModule onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'keys') return <LazyView><KeysModule onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'quest-optimizer') return <LazyView><KappaTree onViewChange={navigateToView} session={session} userRole={userRole} initialTool="optimizer" /></LazyView>;
-  if (currentView === 'pmc-profile') return <LazyView><PmcProfileModule onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'pmc-profile') return <LazyView><PmcProfileModule onViewChange={navigateToView} session={session} /></LazyView>;
   if (currentView === 'trouble') return <LazyView><TroubleshootingView onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'server-status') return <LazyView><ServerStatus onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'live-events') return <LazyView><LiveEvents onViewChange={navigateToView} /></LazyView>;
@@ -644,40 +653,54 @@ function App() {
           BY ASTUR
         </button>
 
-        <button
-          type="button"
-          onClick={() => navigateToView('about')}
+        <div
           style={{
             position: 'fixed',
             bottom: '2.35rem',
             left: '2.5rem',
             zIndex: 1000,
-            backgroundColor: 'rgba(255,255,255,0.035)',
-            border: '1px solid rgba(255,255,255,0.09)',
-            borderRadius: '8px',
-            color: 'var(--tk-text-muted)',
-            padding: '0.55rem 0.85rem',
-            fontFamily: "'Rajdhani', sans-serif",
-            fontSize: '0.75rem',
-            fontWeight: '900',
-            letterSpacing: '2px',
-            textTransform: 'uppercase',
-            cursor: 'pointer',
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            transition: 'all 0.25s ease'
-          }}
-          onMouseEnter={(event) => {
-            event.currentTarget.style.color = '#fff';
-            event.currentTarget.style.borderColor = 'rgba(26,176,21,0.3)';
-          }}
-          onMouseLeave={(event) => {
-            event.currentTarget.style.color = 'var(--tk-text-muted)';
-            event.currentTarget.style.borderColor = 'rgba(255,255,255,0.09)';
+            display: 'flex',
+            gap: '0.6rem',
+            flexWrap: 'wrap'
           }}
         >
-          ABOUT
-        </button>
+          {[
+            { label: 'ABOUT', view: 'about' },
+            { label: t('home.patchNotes'), view: 'changelog' }
+          ].map((button) => (
+            <button
+              key={button.view}
+              type="button"
+              onClick={() => navigateToView(button.view)}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.035)',
+                border: '1px solid rgba(255,255,255,0.09)',
+                borderRadius: '8px',
+                color: 'var(--tk-text-muted)',
+                padding: '0.55rem 0.85rem',
+                fontFamily: "'Rajdhani', sans-serif",
+                fontSize: '0.75rem',
+                fontWeight: '900',
+                letterSpacing: '2px',
+                textTransform: 'uppercase',
+                cursor: 'pointer',
+                backdropFilter: 'blur(14px)',
+                WebkitBackdropFilter: 'blur(14px)',
+                transition: 'all 0.25s ease'
+              }}
+              onMouseEnter={(event) => {
+                event.currentTarget.style.color = '#fff';
+                event.currentTarget.style.borderColor = 'rgba(26,176,21,0.3)';
+              }}
+              onMouseLeave={(event) => {
+                event.currentTarget.style.color = 'var(--tk-text-muted)';
+                event.currentTarget.style.borderColor = 'rgba(255,255,255,0.09)';
+              }}
+            >
+              {button.label}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
