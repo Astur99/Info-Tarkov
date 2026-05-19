@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './index.css';
+
+import { supabase } from './lib/supabaseClient';
+import Auth from './components/Auth';
 
 import MapsView from './components/MapsView';
 import KappaTree from './components/KappaTree';
@@ -27,6 +30,42 @@ import liveEventsImage from './assets/backgrounds/liveevents.png';
 function App() {
   const [currentView, setCurrentView] = useState('home');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [session, setSession] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setAuthLoading(false);
+    });
+
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) setCurrentView('home');
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (authLoading) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          display: 'grid',
+          placeItems: 'center',
+          background: '#0a0a0c',
+          color: '#fff',
+          fontFamily: "'Rajdhani', sans-serif",
+          letterSpacing: '2px'
+        }}
+      >
+        INICIALIZANDO TERMINAL...
+      </div>
+    );
+  }
 
   const handleMouseMoveGlobal = (e) => {
     setMousePos({ x: e.clientX, y: e.clientY });
@@ -87,7 +126,7 @@ function App() {
       title: 'SIMULADOR BALÍSTICO',
       desc: 'Cálculo de probabilidad de penetración y simulación de rotura de placas e impactos TTK.',
       bgImage: simuladorImage,
-      imagePosition: { right: '-85px', bottom: '-20px', width: '330px', maxWidth: '76%' }
+      imagePosition: { right: '-85px', bottom: '-30px', width: '330px', maxWidth: '76%' }
     },
     {
       id: 'live-events',
@@ -105,8 +144,9 @@ function App() {
     }
   ];
 
+  if (currentView === 'auth') return <Auth onViewChange={setCurrentView} />;
   if (currentView === 'maps') return <MapsView onViewChange={setCurrentView} />;
-  if (currentView === 'kappa') return <KappaTree onViewChange={setCurrentView} />;
+  if (currentView === 'kappa') return <KappaTree onViewChange={setCurrentView} session={session} />;
   if (currentView === 'story') return <StoryDecisions onViewChange={setCurrentView} />;
   if (currentView === 'bosses') return <BossesIntel onViewChange={setCurrentView} />;
   if (currentView === 'goons') return <GoonsTracker onViewChange={setCurrentView} />;
@@ -157,6 +197,39 @@ function App() {
         Estado de Servidores
       </button>
 
+      <button
+        onClick={async () => {
+          if (session) {
+            await supabase.auth.signOut();
+            setCurrentView('home');
+          } else {
+            setCurrentView('auth');
+          }
+        }}
+        style={{
+          position: 'fixed',
+          top: '1.5rem',
+          right: '12.5rem',
+          zIndex: 2000,
+          backgroundColor: 'rgba(255,255,255,0.035)',
+          border: '1px solid rgba(255,255,255,0.09)',
+          borderRadius: '8px',
+          color: session ? 'var(--tk-green)' : 'var(--tk-text-muted)',
+          padding: '0.55rem 0.85rem',
+          fontFamily: "'Rajdhani', sans-serif",
+          fontSize: '0.75rem',
+          fontWeight: '800',
+          letterSpacing: '1.5px',
+          textTransform: 'uppercase',
+          cursor: 'pointer',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          transition: 'all 0.25s ease'
+        }}
+      >
+        {session ? 'Cerrar sesión' : 'Login / Crear cuenta'}
+      </button>
+
       <div style={{ padding: '6rem 2rem 10rem 2rem', maxWidth: '1400px', margin: '0 auto' }}>
         <header className="fade-in-slide" style={{ marginBottom: '6rem', textAlign: 'center' }}>
           <TitleGlowPro />
@@ -166,10 +239,12 @@ function App() {
               style={{
                 width: '7px',
                 height: '7px',
-                backgroundColor: 'var(--tk-green)',
+                backgroundColor: session ? 'var(--tk-green)' : '#ffcf66',
                 borderRadius: '50%',
                 display: 'inline-block',
-                boxShadow: '0 0 10px var(--tk-green)'
+                boxShadow: session
+                  ? '0 0 10px var(--tk-green)'
+                  : '0 0 10px rgba(255,207,102,0.45)'
               }}
             />
 
@@ -183,10 +258,34 @@ function App() {
                 fontFamily: "'Rajdhani', sans-serif"
               }}
             >
-              TODO LO QUE NECESITAS DE TARKOV CENTRALIZADO EN UN ÚNICO LUGAR.
+              {session
+                ? `SESIÓN INICIADA · ${session.user?.email || 'USUARIO AUTENTICADO'}`
+                : 'MODO INVITADO · EL PROGRESO LOCAL PUEDE PERDERSE'}
             </p>
           </div>
         </header>
+
+        {!session && (
+          <div
+            style={{
+              margin: '-3.5rem auto 3rem auto',
+              maxWidth: '900px',
+              padding: '1rem 1.25rem',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(255,207,102,0.075)',
+              border: '1px solid rgba(255,207,102,0.28)',
+              color: '#ffcf66',
+              fontFamily: "'Rajdhani', sans-serif",
+              fontSize: '0.95rem',
+              fontWeight: '800',
+              letterSpacing: '0.5px',
+              textAlign: 'center',
+              boxShadow: '0 0 24px rgba(255,207,102,0.05)'
+            }}
+          >
+            ⚠ AVISO: Estás en modo invitado. El progreso de las quests se guardará en la información local del navegador y puede perderse. Crea una cuenta para tener progreso persistente.
+          </div>
+        )}
 
         <div
           style={{
