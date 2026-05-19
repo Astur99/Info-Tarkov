@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 const STORAGE_PREFIX = 'sherpa_progreso_misiones_';
 const MODE_STORAGE_KEY = 'sherpa_modo_misiones_activo';
@@ -14,7 +15,27 @@ const readProgress = (mode) => {
   }
 };
 
-export default function KappaTree({ onViewChange }) {
+const saveLocalProgress = (mode, progress) => {
+  localStorage.setItem(getStorageKey(mode), JSON.stringify(progress));
+};
+
+const saveCloudProgress = async (userId, mode, progress) => {
+  const { error } = await supabase
+    .from('quest_progress')
+    .upsert(
+      {
+        user_id: userId,
+        mode,
+        completed_task_ids: progress,
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: 'user_id,mode' }
+    );
+
+  if (error) throw error;
+};
+
+export default function KappaTree({ onViewChange, session }) {
   const [modoJuego, setModoJuego] = useState(() => {
     try {
       return localStorage.getItem(MODE_STORAGE_KEY) || 'PVP';
@@ -35,10 +56,13 @@ export default function KappaTree({ onViewChange }) {
   const [soloPendientes, setSoloPendientes] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [syncLoading, setSyncLoading] = useState(false);
+  const [syncError, setSyncError] = useState(null);
 
   const [completadas, setCompletadas] = useState(() => readProgress('PVP'));
 
   const matrixRef = useRef(null);
+  const suppressSaveRef = useRef(false);
   const [zoom, setZoom] = useState(0.8);
   const [pan, setPan] = useState({ x: 500, y: 120 });
   const [isDown, setIsDown] = useState(false);
@@ -70,15 +94,97 @@ export default function KappaTree({ onViewChange }) {
   };
 
   useEffect(() => {
-    const savedMode = localStorage.getItem(MODE_STORAGE_KEY) || 'PVP';
-    setModoJuego(savedMode);
-    setCompletadas(readProgress(savedMode));
-  }, []);
+    localStorage.setItem(MODE_STORAGE_KEY, modoJuego);
+  }, [modoJuego]);
 
   useEffect(() => {
-    localStorage.setItem(getStorageKey(modoJuego), JSON.stringify(completadas));
-    localStorage.setItem(MODE_STORAGE_KEY, modoJuego);
-  }, [completadas, modoJuego]);
+    let cancelled = false;
+
+    const loadProgress = async () => {
+      setSyncError(null);
+
+      if (!session?.user?.id) {
+        suppressSaveRef.current = false;
+        setSyncLoading(false);
+        setCompletadas(readProgress(modoJuego));
+        return;
+      }
+
+      suppressSaveRef.current = true;
+      setSyncLoading(true);
+
+      const { data, error: loadError } = await supabase
+        .from('quest_progress')
+        .select('completed_task_ids')
+        .eq('user_id', session.user.id)
+        .eq('mode', modoJuego)
+        .maybeSingle();
+
+      if (cancelled) return;
+
+      if (loadError) {
+        setSyncError('No se pudo cargar el progreso cloud. Se mantiene la copia local.');
+        setCompletadas(readProgress(modoJuego));
+        setSyncLoading(false);
+        suppressSaveRef.current = false;
+        return;
+      }
+
+      const cloudProgress = Array.isArray(data?.completed_task_ids)
+        ? data.completed_task_ids
+        : null;
+
+      if (cloudProgress) {
+        setCompletadas(cloudProgress);
+      } else {
+        const localProgress = readProgress(modoJuego);
+        setCompletadas(localProgress);
+
+        try {
+          await saveCloudProgress(session.user.id, modoJuego, localProgress);
+        } catch (saveError) {
+          if (!cancelled) {
+            console.error(saveError);
+            setSyncError('No se pudo crear el progreso cloud inicial.');
+          }
+        }
+      }
+
+      if (!cancelled) {
+        setSyncLoading(false);
+        window.setTimeout(() => {
+          if (!cancelled) suppressSaveRef.current = false;
+        }, 0);
+      }
+    };
+
+    loadProgress();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.id, modoJuego]);
+
+  useEffect(() => {
+    if (suppressSaveRef.current || syncLoading) return;
+
+    if (!session?.user?.id) {
+      saveLocalProgress(modoJuego, completadas);
+      return;
+    }
+
+    let cancelled = false;
+
+    saveCloudProgress(session.user.id, modoJuego, completadas).catch((saveError) => {
+      if (cancelled) return;
+      console.error(saveError);
+      setSyncError('No se pudo sincronizar el progreso con Supabase.');
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [completadas, modoJuego, session?.user?.id, syncLoading]);
 
   useEffect(() => {
     const query = `
@@ -133,11 +239,17 @@ export default function KappaTree({ onViewChange }) {
   const cambiarModoJuego = (nuevoModo) => {
     if (nuevoModo === modoJuego) return;
 
-    localStorage.setItem(getStorageKey(modoJuego), JSON.stringify(completadas));
+    if (session?.user?.id) {
+      suppressSaveRef.current = true;
+      setSyncLoading(true);
+    } else {
+      saveLocalProgress(modoJuego, completadas);
+      setCompletadas(readProgress(nuevoModo));
+    }
+
     localStorage.setItem(MODE_STORAGE_KEY, nuevoModo);
 
     setModoJuego(nuevoModo);
-    setCompletadas(readProgress(nuevoModo));
     setSoloPendientes(false);
     setSearchQuery('');
   };
@@ -225,7 +337,10 @@ export default function KappaTree({ onViewChange }) {
     if (!confirmar) return;
 
     setCompletadas([]);
-    localStorage.setItem(getStorageKey(modoJuego), JSON.stringify([]));
+
+    if (!session?.user?.id) {
+      saveLocalProgress(modoJuego, []);
+    }
   };
 
   const handleSearchChange = (e) => {
@@ -788,6 +903,40 @@ export default function KappaTree({ onViewChange }) {
             }}
           >
             PERFIL ACTIVO: <span style={{ color: 'var(--tk-green)' }}>{modoJuego}</span>
+          </div>
+
+          <div
+            style={{
+              marginBottom: '1rem',
+              padding: '0.55rem 0.7rem',
+              borderRadius: '8px',
+              backgroundColor: session?.user?.id
+                ? 'rgba(26,176,21,0.07)'
+                : 'rgba(255,207,102,0.075)',
+              border: `1px solid ${
+                syncError
+                  ? 'rgba(255,107,107,0.35)'
+                  : session?.user?.id
+                  ? 'rgba(26,176,21,0.18)'
+                  : 'rgba(255,207,102,0.22)'
+              }`,
+              color: syncError
+                ? '#ff6b6b'
+                : session?.user?.id
+                ? 'var(--tk-green)'
+                : '#ffcf66',
+              fontSize: '0.72rem',
+              fontWeight: '900',
+              letterSpacing: '0.7px',
+              textAlign: 'center'
+            }}
+          >
+            {syncError ||
+              (syncLoading
+                ? 'SINCRONIZANDO PROGRESO...'
+                : session?.user?.id
+                ? 'PROGRESO CLOUD ACTIVO'
+                : 'MODO INVITADO: PROGRESO LOCAL')}
           </div>
 
           <label

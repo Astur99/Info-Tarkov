@@ -3,6 +3,9 @@ import './index.css';
 
 import { supabase } from './lib/supabaseClient';
 import Auth from './components/Auth';
+import AccountSettings from './components/AccountSettings';
+import AdminPanel from './components/AdminPanel';
+import UserMessages from './components/UserMessages';
 
 import MapsView from './components/MapsView';
 import KappaTree from './components/KappaTree';
@@ -27,27 +30,161 @@ import simuladorImage from './assets/backgrounds/simulador.png';
 import troubleshootingImage from './assets/backgrounds/troubleshooting.png';
 import liveEventsImage from './assets/backgrounds/liveevents.png';
 
+const loadUserRole = async (session) => {
+  if (!session?.user?.id) return null;
+
+  const { data, error } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', session.user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return data?.role || 'user';
+};
+
+const loadUserProfile = async (session) => {
+  if (!session?.user?.id) return null;
+
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('username')
+    .eq('user_id', session.user.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+  return data;
+};
+
+const getClientSessionId = () => {
+  const storageKey = 'info_tarkov_client_session_id';
+  const saved = localStorage.getItem(storageKey);
+
+  if (saved) return saved;
+
+  const nextId = crypto.randomUUID();
+  localStorage.setItem(storageKey, nextId);
+  return nextId;
+};
+
 function App() {
   const [currentView, setCurrentView] = useState('home');
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [session, setSession] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
+    const syncSessionData = async (nextSession) => {
+      if (!nextSession) {
+        setUserRole(null);
+        setUserProfile(null);
+        return;
+      }
+
+      const [role, profile] = await Promise.all([
+        loadUserRole(nextSession),
+        loadUserProfile(nextSession)
+      ]);
+
+      setUserRole(role);
+      setUserProfile(profile);
+    };
+
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setAuthLoading(false);
+      syncSessionData(data.session);
     });
 
     const {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      window.setTimeout(() => {
+        syncSessionData(session);
+      }, 0);
       if (session) setCurrentView('home');
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const loadUnreadMessages = async () => {
+    if (!session?.user?.id) {
+      setUnreadMessages(0);
+      return;
+    }
+
+    const { count, error } = await supabase
+      .from('user_messages')
+      .select('id', { count: 'exact', head: true })
+      .is('read_at', null);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setUnreadMessages(count || 0);
+  };
+
+  useEffect(() => {
+    loadUnreadMessages();
+
+    if (!session?.user?.id) return undefined;
+
+    const interval = window.setInterval(loadUnreadMessages, 30000);
+    return () => window.clearInterval(interval);
+  }, [session?.user?.id]);
+
+  useEffect(() => {
+    const clientSessionId = getClientSessionId();
+
+    const trackActivity = async (trackVisit = false) => {
+      const userId = session?.user?.id || null;
+
+      if (trackVisit) {
+        supabase
+          .from('app_visits')
+          .insert({
+            client_session_id: clientSessionId,
+            user_id: userId
+          })
+          .then(({ error }) => {
+            if (error) console.error(error);
+          });
+      }
+
+      const { error } = await supabase
+        .from('app_active_sessions')
+        .upsert(
+          {
+            client_session_id: clientSessionId,
+            user_id: userId,
+            last_seen: new Date().toISOString()
+          },
+          { onConflict: 'client_session_id' }
+        );
+
+      if (error) console.error(error);
+    };
+
+    trackActivity(true);
+    const interval = window.setInterval(() => trackActivity(false), 60000);
+
+    return () => window.clearInterval(interval);
+  }, [session?.user?.id]);
 
   if (authLoading) {
     return (
@@ -145,8 +282,33 @@ function App() {
   ];
 
   if (currentView === 'auth') return <Auth onViewChange={setCurrentView} />;
+  if (currentView === 'account') {
+    return (
+      <AccountSettings
+        onViewChange={setCurrentView}
+        session={session}
+        userProfile={userProfile}
+        userRole={userRole}
+        onProfileUpdated={setUserProfile}
+        onAccountDeleted={() => {
+          setSession(null);
+          setUserRole(null);
+          setUserProfile(null);
+        }}
+      />
+    );
+  }
+  if (currentView === 'admin') return <AdminPanel onViewChange={setCurrentView} />;
+  if (currentView === 'messages') {
+    return (
+      <UserMessages
+        onViewChange={setCurrentView}
+        onMessagesRead={loadUnreadMessages}
+      />
+    );
+  }
   if (currentView === 'maps') return <MapsView onViewChange={setCurrentView} />;
-  if (currentView === 'kappa') return <KappaTree onViewChange={setCurrentView} session={session} />;
+  if (currentView === 'kappa') return <KappaTree onViewChange={setCurrentView} session={session} userRole={userRole} />;
   if (currentView === 'story') return <StoryDecisions onViewChange={setCurrentView} />;
   if (currentView === 'bosses') return <BossesIntel onViewChange={setCurrentView} />;
   if (currentView === 'goons') return <GoonsTracker onViewChange={setCurrentView} />;
@@ -176,7 +338,7 @@ function App() {
         style={{
           position: 'fixed',
           top: '1.5rem',
-          right: '1.5rem',
+          left: '1.5rem',
           zIndex: 2000,
           backgroundColor: 'rgba(255,255,255,0.035)',
           border: '1px solid rgba(255,255,255,0.09)',
@@ -197,10 +359,96 @@ function App() {
         Estado de Servidores
       </button>
 
+      {session && (
+        <button
+          onClick={() => setCurrentView('account')}
+          style={{
+            position: 'fixed',
+            top: '1.5rem',
+            right: '10.5rem',
+            zIndex: 2000,
+            backgroundColor: 'rgba(255,255,255,0.035)',
+            border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: '8px',
+            color: 'var(--tk-green)',
+            padding: '0.55rem 0.85rem',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: '0.75rem',
+            fontWeight: '900',
+            letterSpacing: '1.2px',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            transition: 'all 0.25s ease'
+          }}
+        >
+          USER: {userProfile?.username || 'CONFIGURAR'}
+        </button>
+      )}
+
+      {session && userRole !== 'admin' && (
+        <button
+          onClick={() => setCurrentView('messages')}
+          style={{
+            position: 'fixed',
+            top: '1.5rem',
+            right: '19.5rem',
+            zIndex: 2000,
+          backgroundColor: 'rgba(255,255,255,0.035)',
+          border: '1px solid rgba(255,255,255,0.09)',
+          borderRadius: '8px',
+          color: 'var(--tk-text-muted)',
+            padding: '0.55rem 0.85rem',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: '0.75rem',
+            fontWeight: '900',
+            letterSpacing: '1.2px',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            transition: 'all 0.25s ease'
+          }}
+        >
+          REPORT
+        </button>
+      )}
+
+      {userRole === 'admin' && (
+        <button
+          onClick={() => setCurrentView('admin')}
+          style={{
+            position: 'fixed',
+            top: '1.5rem',
+            right: '19.5rem',
+            zIndex: 2000,
+            backgroundColor: 'rgba(26,176,21,0.08)',
+            border: '1px solid rgba(26,176,21,0.28)',
+            borderRadius: '8px',
+            color: 'var(--tk-green)',
+            padding: '0.55rem 0.85rem',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: '0.75rem',
+            fontWeight: '900',
+            letterSpacing: '1.2px',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            transition: 'all 0.25s ease'
+          }}
+        >
+          ADMIN
+        </button>
+      )}
+
       <button
         onClick={async () => {
           if (session) {
             await supabase.auth.signOut();
+            setUserRole(null);
+            setUserProfile(null);
             setCurrentView('home');
           } else {
             setCurrentView('auth');
@@ -209,7 +457,7 @@ function App() {
         style={{
           position: 'fixed',
           top: '1.5rem',
-          right: '12.5rem',
+          right: '1.5rem',
           zIndex: 2000,
           backgroundColor: 'rgba(255,255,255,0.035)',
           border: '1px solid rgba(255,255,255,0.09)',
@@ -259,33 +507,11 @@ function App() {
               }}
             >
               {session
-                ? `SESIÓN INICIADA · ${session.user?.email || 'USUARIO AUTENTICADO'}`
-                : 'MODO INVITADO · EL PROGRESO LOCAL PUEDE PERDERSE'}
+                ? `SESIÓN INICIADA${userRole === 'admin' ? ' · ADMIN' : ''}`
+                : 'MODO INVITADO · PUEDES USAR LA APP SIN CUENTA'}
             </p>
           </div>
         </header>
-
-        {!session && (
-          <div
-            style={{
-              margin: '-3.5rem auto 3rem auto',
-              maxWidth: '900px',
-              padding: '1rem 1.25rem',
-              borderRadius: '10px',
-              backgroundColor: 'rgba(255,207,102,0.075)',
-              border: '1px solid rgba(255,207,102,0.28)',
-              color: '#ffcf66',
-              fontFamily: "'Rajdhani', sans-serif",
-              fontSize: '0.95rem',
-              fontWeight: '800',
-              letterSpacing: '0.5px',
-              textAlign: 'center',
-              boxShadow: '0 0 24px rgba(255,207,102,0.05)'
-            }}
-          >
-            ⚠ AVISO: Estás en modo invitado. El progreso de las quests se guardará en la información local del navegador y puede perderse. Crea una cuenta para tener progreso persistente.
-          </div>
-        )}
 
         <div
           style={{
