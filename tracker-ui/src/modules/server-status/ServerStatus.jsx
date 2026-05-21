@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const SERVICES = [
@@ -47,7 +47,7 @@ export default function ServerStatus({ onViewChange }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const loadStatus = () => {
+  const loadStatus = useCallback(() => {
     setLoading(true);
     setError(null);
 
@@ -83,11 +83,12 @@ export default function ServerStatus({ onViewChange }) {
         setError(t('serverStatus.errors.network'));
         setLoading(false);
       });
-  };
+  }, [t]);
 
   useEffect(() => {
-    loadStatus();
-  }, []);
+    const initialLoad = window.setTimeout(loadStatus, 0);
+    return () => window.clearTimeout(initialLoad);
+  }, [loadStatus]);
 
   const parsedServices = useMemo(() => {
     return SERVICES.map((serviceName) => {

@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
+import { GAME_MODE_OPTIONS, GAME_MODE_PVP, saveDefaultGameModePreference } from '../../lib/gameModePreferences';
+import {
+  checkUsernameAvailability,
+  isValidTarkovUsername,
+  normalizeTarkovUsername,
+  saveUserProfilePreferences
+} from '../../lib/userProfilePreferences';
 
 const DEFAULT_PUBLIC_SITE_URL = 'https://infotarkov.com';
 
@@ -20,6 +27,8 @@ const isSecurePassword = (value) =>
 export default function Auth({ onViewChange }) {
   const { t } = useTranslation();
   const [isRegister, setIsRegister] = useState(false);
+  const [tarkovUsername, setTarkovUsername] = useState('');
+  const [primaryGameMode, setPrimaryGameMode] = useState(GAME_MODE_PVP);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mensaje, setMensaje] = useState('');
@@ -42,14 +51,43 @@ export default function Auth({ onViewChange }) {
       return;
     }
 
+    const cleanTarkovUsername = normalizeTarkovUsername(tarkovUsername);
+
+    if (isRegister && !isValidTarkovUsername(cleanTarkovUsername)) {
+      setMensaje(t('auth.tarkovUsernameRules'));
+      return;
+    }
+
     setLoading(true);
+
+    if (isRegister) {
+      const { available, error } = await checkUsernameAvailability(cleanTarkovUsername);
+
+      if (error) {
+        console.error(error);
+        setMensaje(t('account.messages.usernameSaveError'));
+        setLoading(false);
+        return;
+      }
+
+      if (!available) {
+        setMensaje(t('account.messages.usernameTaken'));
+        setLoading(false);
+        return;
+      }
+    }
 
     const result = isRegister
       ? await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: getAuthRedirectUrl()
+            emailRedirectTo: getAuthRedirectUrl(),
+            data: {
+              username: cleanTarkovUsername,
+              tarkov_username: cleanTarkovUsername,
+              primary_game_mode: primaryGameMode
+            }
           }
         })
       : await supabase.auth.signInWithPassword({ email, password });
@@ -57,7 +95,26 @@ export default function Auth({ onViewChange }) {
     if (result.error) {
       setMensaje(result.error.message);
     } else {
-      setMensaje(isRegister ? t('auth.confirmEmail') : t('auth.loggedIn'));
+      if (isRegister) {
+        saveDefaultGameModePreference(primaryGameMode);
+
+        if (result.data?.session?.user?.id) {
+          const { error: profileError } = await saveUserProfilePreferences({
+            userId: result.data.session.user.id,
+            username: cleanTarkovUsername,
+            tarkovUsername: cleanTarkovUsername,
+            primaryGameMode
+          });
+
+          if (profileError) console.error(profileError);
+        }
+      }
+
+      setMensaje(isRegister && result.data?.session ? t('auth.createdLoggedIn') : isRegister ? t('auth.confirmEmail') : t('auth.loggedIn'));
+
+      if (result.data?.session || !isRegister) {
+        window.setTimeout(() => onViewChange('home'), 450);
+      }
     }
 
     setLoading(false);
@@ -100,6 +157,49 @@ export default function Auth({ onViewChange }) {
         <h1 style={{ color: '#fff', marginTop: 0 }}>
           {isRegister ? t('auth.titleRegister') : t('auth.titleLogin')}
         </h1>
+
+        {isRegister && (
+          <>
+            <input
+              type="text"
+              placeholder={t('auth.tarkovUsername')}
+              value={tarkovUsername}
+              onChange={(e) => setTarkovUsername(e.target.value)}
+              required
+              minLength={3}
+              maxLength={20}
+              pattern="[A-Za-z0-9_-]{3,20}"
+              title={t('auth.tarkovUsernameRules')}
+              style={{ width: '100%', marginBottom: '0.75rem', padding: '0.8rem' }}
+            />
+
+            <label
+              style={{
+                display: 'grid',
+                gap: '0.45rem',
+                color: 'var(--tk-text-muted)',
+                fontSize: '0.78rem',
+                fontWeight: '900',
+                letterSpacing: '1px',
+                textTransform: 'uppercase',
+                marginBottom: '1rem'
+              }}
+            >
+              {t('auth.mainGameMode')}
+              <select
+                value={primaryGameMode}
+                onChange={(e) => setPrimaryGameMode(e.target.value)}
+                style={{ width: '100%', padding: '0.8rem' }}
+              >
+                {GAME_MODE_OPTIONS.map((mode) => (
+                  <option key={mode.value} value={mode.value}>
+                    {t(`auth.modes.${mode.value.toLowerCase()}`)}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </>
+        )}
 
         <input
           type="email"

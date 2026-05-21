@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useMemo, useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
 const panelStyle = {
@@ -70,6 +70,21 @@ const replyAuthorLabels = {
   admin: 'Astur'
 };
 
+const getAdminDisplayUsername = (user) =>
+  user.username ||
+  user.tarkov_username ||
+  user.auth_username ||
+  user.auth_tarkov_username ||
+  'Sin configurar';
+
+const isRecentlyOnline = (lastSeen) => {
+  if (!lastSeen) return false;
+  return Date.now() - new Date(lastSeen).getTime() < 120000;
+};
+
+const getUserProfileStatus = (user) =>
+  user.username || user.tarkov_username || user.auth_username || user.auth_tarkov_username ? 'Completo' : 'Pendiente';
+
 const getTicketButtonStyle = ({ color, border, background, active = false, danger = false, disabled = false }) => ({
   display: 'inline-flex',
   alignItems: 'center',
@@ -92,8 +107,14 @@ export default function AdminPanel({ onViewChange }) {
   const [feedback, setFeedback] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [activityFilter, setActivityFilter] = useState('all');
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUserProgress, setSelectedUserProgress] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
-  const loadAdminData = async () => {
+  const loadAdminData = useCallback(async () => {
     setLoading(true);
     setMessage('');
 
@@ -118,17 +139,67 @@ export default function AdminPanel({ onViewChange }) {
     setStats(Array.isArray(statsData) ? statsData[0] : statsData);
     setUsers(usersData || []);
     setFeedback(feedbackData || []);
+  }, []);
+
+  const onlineUsers = useMemo(
+    () => users.filter((user) => isRecentlyOnline(user.last_seen)).length,
+    [users]
+  );
+
+  const filteredUsers = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return users.filter((user) => {
+      const username = getAdminDisplayUsername(user).toLowerCase();
+      const email = String(user.email || '').toLowerCase();
+      const role = user.role || 'user';
+      const matchesQuery = !query || username.includes(query) || email.includes(query);
+      const matchesRole = roleFilter === 'all' || role === roleFilter;
+      const matchesActivity =
+        activityFilter === 'all' ||
+        (activityFilter === 'online' && isRecentlyOnline(user.last_seen)) ||
+        (activityFilter === 'offline' && !isRecentlyOnline(user.last_seen));
+
+      return matchesQuery && matchesRole && matchesActivity;
+    });
+  }, [activityFilter, roleFilter, searchQuery, users]);
+
+  const openUserDetail = async (user) => {
+    setSelectedUser(user);
+    setSelectedUserProgress(null);
+    setDetailLoading(true);
+
+    const { data, error } = await supabase.rpc('admin_get_user_progress', {
+      target_user_id: user.user_id
+    });
+
+    setDetailLoading(false);
+
+    if (error) {
+      console.error(error);
+      setSelectedUserProgress({
+        module_states: [],
+        quest_progress: [],
+        error: `No se pudo cargar el progreso cloud: ${error.message || 'RPC no disponible'}. Ejecuta el SQL actualizado si falta la RPC.`
+      });
+      return;
+    }
+
+    setSelectedUserProgress(data || {});
   };
 
   useEffect(() => {
-    loadAdminData();
+    const initialLoad = window.setTimeout(loadAdminData, 0);
 
     const interval = window.setInterval(() => {
       loadAdminData();
     }, 15000);
 
-    return () => window.clearInterval(interval);
-  }, []);
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.clearInterval(interval);
+    };
+  }, [loadAdminData]);
 
   const handleRoleChange = async (user, nextRole) => {
     const confirmed = window.confirm(`¿Quieres convertir a ${user.email} en ${nextRole}?`);
@@ -320,7 +391,10 @@ export default function AdminPanel({ onViewChange }) {
 
             <article style={panelStyle}>
               <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>Usuarios online</span>
-              <p style={statValueStyle}>{stats.active_users ?? 0}</p>
+              <p style={statValueStyle}>{onlineUsers}</p>
+              <span style={{ color: 'var(--tk-text-muted)', fontSize: '0.78rem', fontWeight: '800' }}>
+                Activos en los ultimos 2 min
+              </span>
             </article>
           </section>
         )}
@@ -354,6 +428,69 @@ export default function AdminPanel({ onViewChange }) {
             </button>
           </div>
 
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(220px, 1fr) 150px 170px',
+              gap: '0.75rem',
+              marginBottom: '1rem'
+            }}
+          >
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Buscar usuario o email..."
+              style={{
+                background: '#111214',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '8px',
+                color: '#fff',
+                padding: '0.65rem 0.8rem',
+                fontFamily: "'Rajdhani', sans-serif",
+                fontWeight: '800'
+              }}
+            />
+            <select
+              value={roleFilter}
+              onChange={(event) => setRoleFilter(event.target.value)}
+              style={{
+                background: '#111214',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '8px',
+                color: '#fff',
+                padding: '0.65rem 0.8rem',
+                fontFamily: "'Rajdhani', sans-serif",
+                fontWeight: '800'
+              }}
+            >
+              <option value="all">Todos los roles</option>
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
+            <select
+              value={activityFilter}
+              onChange={(event) => setActivityFilter(event.target.value)}
+              style={{
+                background: '#111214',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '8px',
+                color: '#fff',
+                padding: '0.65rem 0.8rem',
+                fontFamily: "'Rajdhani', sans-serif",
+                fontWeight: '800'
+              }}
+            >
+              <option value="all">Todos</option>
+              <option value="online">Online</option>
+              <option value="offline">Offline</option>
+            </select>
+          </div>
+
+          <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 0.75rem', fontWeight: '800' }}>
+            Mostrando {filteredUsers.length} de {users.length} usuarios
+          </p>
+
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', color: '#fff' }}>
               <thead>
@@ -368,10 +505,10 @@ export default function AdminPanel({ onViewChange }) {
               </thead>
 
               <tbody>
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <tr key={user.user_id}>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      {user.username || 'Sin configurar'}
+                      {getAdminDisplayUsername(user)}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       {user.email}
@@ -384,6 +521,9 @@ export default function AdminPanel({ onViewChange }) {
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       {user.last_seen ? new Date(user.last_seen).toLocaleString() : '-'}
+                      {isRecentlyOnline(user.last_seen) && (
+                        <span style={{ color: 'var(--tk-green)', marginLeft: '0.45rem', fontWeight: '900' }}>ONLINE</span>
+                      )}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       {user.email === OWNER_EMAIL ? (
@@ -402,6 +542,14 @@ export default function AdminPanel({ onViewChange }) {
                         </span>
                       ) : (
                         <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+                          <button
+                            type="button"
+                            onClick={() => openUserDetail(user)}
+                            style={actionButtonStyle}
+                          >
+                            Detalle
+                          </button>
+
                           <button
                             type="button"
                             onClick={() => handleRoleChange(user, user.role === 'admin' ? 'user' : 'admin')}
@@ -433,6 +581,15 @@ export default function AdminPanel({ onViewChange }) {
                             Borrar
                           </button>
                         </div>
+                      )}
+                      {user.email === OWNER_EMAIL && (
+                        <button
+                          type="button"
+                          onClick={() => openUserDetail(user)}
+                          style={{ ...actionButtonStyle, marginLeft: '0.45rem' }}
+                        >
+                          Detalle
+                        </button>
                       )}
                     </td>
                   </tr>
@@ -602,7 +759,105 @@ export default function AdminPanel({ onViewChange }) {
             })}
           </div>
         </section>
+
+        {selectedUser && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 5000,
+              background: 'rgba(0,0,0,0.72)',
+              display: 'grid',
+              placeItems: 'center',
+              padding: '1.5rem'
+            }}
+          >
+            <section
+              style={{
+                width: 'min(780px, 100%)',
+                maxHeight: '86vh',
+                overflow: 'auto',
+                ...panelStyle,
+                background: '#111214'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                <div>
+                  <p style={{ color: 'var(--tk-green)', margin: 0, fontWeight: '900', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                    Detalle de usuario
+                  </p>
+                  <h2 style={{ color: '#fff', margin: '0.25rem 0 0' }}>{getAdminDisplayUsername(selectedUser)}</h2>
+                  <p style={{ color: 'var(--tk-text-muted)', margin: '0.35rem 0 0' }}>{selectedUser.email}</p>
+                </div>
+
+                <button type="button" onClick={() => setSelectedUser(null)} style={actionButtonStyle}>
+                  Cerrar
+                </button>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
+                <DetailStat label="Rol" value={selectedUser.role || 'user'} />
+                <DetailStat label="Perfil" value={getUserProfileStatus(selectedUser)} />
+                <DetailStat label="Estado" value={isRecentlyOnline(selectedUser.last_seen) ? 'Online' : 'Offline'} />
+                <DetailStat label="Ultima actividad" value={selectedUser.last_seen ? new Date(selectedUser.last_seen).toLocaleString() : '-'} />
+              </div>
+
+              {detailLoading && <p style={{ color: 'var(--tk-green)' }}>Cargando progreso...</p>}
+
+              {selectedUserProgress?.error && (
+                <p style={{ color: '#ffcf66', fontWeight: '800' }}>{selectedUserProgress.error}</p>
+              )}
+
+              {!detailLoading && selectedUserProgress && (
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  <div>
+                    <h3 style={{ color: '#fff', margin: '0 0 0.65rem' }}>Progreso cloud por modulos</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.6rem' }}>
+                      {(selectedUserProgress.module_states || []).length === 0 && (
+                        <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>Sin estados cloud guardados.</p>
+                      )}
+                      {(selectedUserProgress.module_states || []).map((state) => (
+                        <DetailStat
+                          key={`${state.module_key}-${state.mode}`}
+                          label={`${state.module_key} / ${state.mode}`}
+                          value={state.updated_at ? new Date(state.updated_at).toLocaleString() : 'Guardado'}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 style={{ color: '#fff', margin: '0 0 0.65rem' }}>Misiones</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.6rem' }}>
+                      {(selectedUserProgress.quest_progress || []).length === 0 && (
+                        <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>Sin progreso de misiones cloud.</p>
+                      )}
+                      {(selectedUserProgress.quest_progress || []).map((progress) => (
+                        <DetailStat
+                          key={progress.mode}
+                          label={`Misiones ${progress.mode}`}
+                          value={`${progress.completed_count || 0} completadas`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+          </div>
+        )}
       </main>
+    </div>
+  );
+}
+
+function DetailStat({ label, value }) {
+  return (
+    <div style={{ background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px', padding: '0.85rem' }}>
+      <span style={{ color: 'var(--tk-text-muted)', display: 'block', fontWeight: '900', textTransform: 'uppercase' }}>{label}</span>
+      <strong style={{ color: '#fff', display: 'block', marginTop: '0.25rem', overflowWrap: 'anywhere' }}>{value}</strong>
     </div>
   );
 }

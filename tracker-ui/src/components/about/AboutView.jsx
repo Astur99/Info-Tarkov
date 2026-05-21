@@ -2,17 +2,17 @@ const sections = [
   {
     title: 'Que es Info Tarkov',
     body:
-      'Info Tarkov es un hub modular para Escape From Tarkov pensado como centro tactico de consulta, seguimiento y decision. La idea es reunir en una sola interfaz herramientas que normalmente estarian dispersas: progreso de misiones, informacion de bosses, eventos activos, estado de servidores, calculos de combate y utilidades de planificacion.'
+      'Info Tarkov es un hub modular para Escape From Tarkov pensado como centro tactico de consulta, seguimiento y decision. La idea es reunir en una sola interfaz herramientas que normalmente estarian dispersas: progreso de misiones, informacion de bosses, eventos activos, estado de servidores, calculos de combate, utilidades de planificacion y datos publicos del PMC.'
   },
   {
     title: 'Que se puede hacer',
     body:
-      'La app permite consultar mapas tacticos, seguir el progreso de misiones para Kappa, revisar decisiones y finales del modo historia, investigar bosses, consultar rotaciones de Goons, explorar precios del flea market, planificar el hideout, simular enfrentamientos balisticos, revisar eventos en directo, mantener un perfil local de PMC con objetivo de wipe y comunicar bugs o sugerencias mediante tickets.'
+      'La app permite consultar mapas tacticos, seguir el progreso de misiones para Kappa, revisar decisiones y finales del modo historia, investigar bosses, consultar rotaciones de Goons, explorar precios del flea market en PVP/PVE, planificar el hideout con costes separados por modo, simular enfrentamientos balisticos, revisar eventos en directo, mantener perfiles de PMC separados para PVP/PVE y comunicar bugs o sugerencias mediante tickets.'
   },
   {
     title: 'Sistema de usuarios',
     body:
-      'Info Tarkov funciona tanto en modo invitado como con cuenta. En modo invitado el progreso se guarda localmente en el navegador. Con cuenta, Supabase Auth permite iniciar sesion y asociar progreso persistente en la nube por usuario, con separacion de perfiles PVP y PVE.'
+      'Info Tarkov funciona tanto en modo invitado como con cuenta. En modo invitado el progreso se guarda localmente en el navegador. Con cuenta, Supabase Auth permite iniciar sesion, guardar usuario de Tarkov, modo principal PVP/PVE/Ambos y asociar progreso persistente en la nube por usuario, con separacion de perfiles PVP y PVE.'
   },
   {
     title: 'Panel de administracion',
@@ -42,7 +42,7 @@ const sections = [
   {
     title: 'Estado actual',
     body:
-      'El proyecto ya cuenta con autenticacion, roles, panel admin, tickets, lazy loading, primeras bases multilenguaje ES/EN, tarjetas visuales de modulos y herramientas principales funcionales, incluido Perfil de PMC con persistencia local. Las siguientes fases naturales son completar la traduccion, limpiar deuda tecnica detectada por lint y seguir ampliando cada modulo con datos mas fiables.'
+      'El proyecto ya cuenta con autenticacion, roles, panel admin, tickets, lazy loading, primeras bases multilenguaje ES/EN, tarjetas visuales de modulos, preferencia global de modo PVP/PVE y una capa hibrida en misiones, Goons, flea market, llaves, hideout y Perfil de PMC conectado a tarkov.dev/players. Prestigios queda identificado como PVP ONLY. Las siguientes fases naturales son completar la traduccion y seguir ampliando cada modulo con datos mas fiables.'
   }
 ];
 
@@ -71,9 +71,9 @@ const moduleDetails = [
   {
     name: 'Intel: Bosses',
     purpose:
-      'Ficha de inteligencia de bosses con informacion de ubicaciones, equipo, comportamiento, puntos debiles y loot. Esta pensado para preparar enfrentamientos y decidir si una raid merece asumir riesgo de boss.',
-    actions: ['Consultar bosses por mapa', 'Ver informacion de combate', 'Revisar loot y amenazas', 'Preparar estrategia antes de entrar'],
-    status: 'Modulo informativo ampliable con spawn rates, rutas y builds recomendadas.'
+      'Ficha de inteligencia de bosses con informacion de ubicaciones, equipo, comportamiento, puntos debiles, loot, dificultad y escuadras. Esta pensado para preparar enfrentamientos y decidir si una raid merece asumir riesgo de boss.',
+    actions: ['Consultar bosses por mapa', 'Ver informacion de combate', 'Filtrar por dificultad', 'Revisar loot y amenazas', 'Preparar estrategia antes de entrar'],
+    status: 'Bosses 2.0 aporta desglose tactico, contador de objetivos visibles y plan de entrada por boss. Se mantiene como intel comun porque no depende de progreso ni mercado PVP/PVE.'
   },
   {
     name: 'Tracker de Goons',
@@ -85,16 +85,16 @@ const moduleDetails = [
   {
     name: 'Flea Market Tracker',
     purpose:
-      'Modulo economico para consultar precios, fluctuaciones y rentabilidad. Sirve para decidir compras, ventas y oportunidades relacionadas con items, hideout o barters.',
-    actions: ['Buscar items', 'Consultar precios aproximados', 'Evaluar rentabilidad', 'Detectar oportunidades de mercado'],
-    status: 'Preparado para crecer hacia watchlist, alertas y calculadora de barters.'
+      'Modulo economico para consultar precios, fluctuaciones y rentabilidad con mercados separados para PVP y PVE. Sirve para decidir compras, ventas y oportunidades relacionadas con items, hideout o barters sin mezclar economias.',
+    actions: ['Cambiar mercado PVP/PVE', 'Buscar items', 'Consultar precios aproximados', 'Evaluar rentabilidad', 'Detectar oportunidades de mercado'],
+    status: 'Tracker economico hibrido conectado a tarkov.dev mediante gameMode regular/pve, preparado para crecer hacia watchlist, alertas y calculadora de barters.'
   },
   {
     name: 'Gestion del Refugio',
     purpose:
-      'Planificador de hideout para organizar estaciones, niveles objetivo, materiales necesarios y progreso. Su objetivo es convertir la mejora del refugio en una checklist clara y accionable.',
-    actions: ['Revisar estaciones', 'Planificar upgrades', 'Identificar materiales necesarios', 'Priorizar mejoras segun progreso'],
-    status: 'Modulo funcional con fallback local; pendiente de limpieza tecnica detectada por lint.'
+      'Planificador de hideout para organizar estaciones, niveles objetivo, materiales necesarios, requisitos previos, skills, traders y progreso construido. Su objetivo es convertir la mejora del refugio en una checklist clara y accionable tanto en PVP como en PVE.',
+    actions: ['Cambiar precios PVP/PVE', 'Marcar materiales conseguidos', 'Marcar niveles construidos', 'Autocompletar materiales previos', 'Ver bloqueos por estaciones requeridas', 'Detectar requisitos FIR reales'],
+    status: 'Hideout 2.0 con orden natural de progresion, costes separados PVP/PVE, checklist local/cloud preparada y autocompletado al marcar niveles construidos.'
   },
   {
     name: 'Simulador balistico',
@@ -115,14 +115,14 @@ const moduleDetails = [
     purpose:
       'Modulo de progresion endgame PVP con requisitos de Prestige 1 a 6. Incluye nivel PMC, dinero, quests, historia, skills, hideout, recompensas y checklist local por prestigio.',
     actions: ['Seleccionar nivel de prestigio', 'Marcar requisitos completados', 'Consultar recompensas', 'Preparar el siguiente reset de progresion'],
-    status: 'Nuevo modulo independiente con checklist local y datos base revisados contra la wiki oficial.'
+    status: 'Modulo independiente PVP ONLY con checklist local y datos base revisados contra la wiki oficial.'
   },
   {
     name: 'Sistema de llaves',
     purpose:
-      'Motor de busqueda de llaves y keycards conectado a tarkov.dev, con una capa tactica encima para destacar llaves importantes. Permite encontrar cualquier llave del catalogo vivo y entender cuales conviene guardar, comprar o llevar.',
-    actions: ['Buscar cualquier llave', 'Filtrar por mapa', 'Filtrar por tipo', 'Ver llaves importantes', 'Consultar precio e icono', 'Abrir wiki externa'],
-    status: 'Buscador vivo con fallback local de llaves prioritarias si la API externa falla.'
+      'Motor de busqueda de llaves y keycards conectado a tarkov.dev, con una capa tactica encima para destacar llaves importantes. Permite encontrar cualquier llave del catalogo vivo, comparar precio PVP/PVE y entender cuales conviene guardar, comprar o llevar.',
+    actions: ['Cambiar mercado PVP/PVE', 'Buscar cualquier llave', 'Filtrar por mapa', 'Filtrar por tipo', 'Ver llaves importantes', 'Consultar precio e icono', 'Abrir wiki externa'],
+    status: 'Buscador vivo hibrido con precios separados por modo y fallback local de llaves prioritarias si la API externa falla.'
   },
   {
     name: 'Quest Optimizer',
@@ -134,9 +134,9 @@ const moduleDetails = [
   {
     name: 'Perfil de PMC',
     purpose:
-      'Panel local para resumir el estado del wipe del jugador. Reune nivel, faccion, modo, supervivencia, economia, quests, progreso de hideout e items Kappa para dar una lectura rapida del objetivo principal desde una tarjeta propia con imagen PMC.',
-    actions: ['Guardar callsign local', 'Elegir objetivo principal', 'Medir progreso operativo', 'Ver prioridades recomendadas', 'Consultar resumen visual desde el menu'],
-    status: 'Modulo local-first con persistencia en el navegador e imagen pmc.png integrada en la tarjeta principal, preparado para sincronizacion futura con cuenta.'
+      'Panel conectado a los JSON publicos de players.tarkov.dev. Usa el usuario de Tarkov guardado en la cuenta para resolver perfiles ya indexados en PVP o PVE y mostrar datos reales del PMC sin depender de la busqueda protegida por Turnstile.',
+    actions: ['Cambiar perfil PVP/PVE', 'Leer usuario de Tarkov desde la cuenta', 'Buscar otros PMCs por nombre', 'Consultar indice estatico players.tarkov.dev', 'Ver nivel calculado igual que tarkov.dev, faccion, experiencia, raids, supervivencia, kills, equipo, favoritos, skills, ultima actividad y logros', 'Refrescar datos manualmente'],
+    status: 'PMC Profile conectado mediante JSON estatico, con buscador interno de jugadores, proxy Netlify sin cache, logros recientes/raros y equipo visible. Si un usuario no aparece, debe abrirse antes en tarkov.dev/players y esperar la actualizacion diaria del indice.'
   }
 ];
 
@@ -151,7 +151,7 @@ const techGroups = [
   },
   {
     title: 'Persistencia',
-    items: ['localStorage', 'Supabase por usuario', 'Progreso separado PVP/PVE', 'Sesiones persistentes']
+    items: ['localStorage', 'Supabase por usuario', 'user_module_state', 'Progreso separado PVP/PVE', 'Sesiones persistentes']
   },
   {
     title: 'Producto',

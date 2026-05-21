@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
+import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 
 const STORAGE_PREFIX = 'sherpa_progreso_misiones_';
 const MODE_STORAGE_KEY = 'sherpa_modo_misiones_activo';
@@ -135,7 +136,7 @@ const taskQuery = `
 `;
 
 export default function QuestOptimizerModule({ onViewChange, session }) {
-  const [mode, setMode] = useState(() => localStorage.getItem(MODE_STORAGE_KEY) || 'PVP');
+  const [mode, setMode] = useState(() => localStorage.getItem(MODE_STORAGE_KEY) || readDefaultPlayableMode());
   const [tasks, setTasks] = useState([]);
   const [completedIds, setCompletedIds] = useState(() => readLocalProgress(mode));
   const [selectedMap, setSelectedMap] = useState('Todos');

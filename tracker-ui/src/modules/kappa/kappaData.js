@@ -1,0 +1,71 @@
+export const TRADERS = [
+  'Prapor',
+  'Therapist',
+  'Skier',
+  'Peacekeeper',
+  'Mechanic',
+  'Ragman',
+  'Jaeger',
+  'Fence',
+  'Lightkeeper'
+];
+
+export const TRADER_STYLES = {
+  Prapor: { color: '#8F9F7F', bgGradient: 'rgba(143, 159, 127, 0.06)' },
+  Therapist: { color: '#4A90E2', bgGradient: 'rgba(74, 144, 226, 0.06)' },
+  Skier: { color: '#D4AF37', bgGradient: 'rgba(212, 175, 55, 0.06)' },
+  Peacekeeper: { color: '#50E3C2', bgGradient: 'rgba(80, 227, 194, 0.06)' },
+  Mechanic: { color: '#9B9B9B', bgGradient: 'rgba(155, 155, 155, 0.06)' },
+  Ragman: { color: '#A5673F', bgGradient: 'rgba(165, 103, 63, 0.06)' },
+  Jaeger: { color: '#7ED321', bgGradient: 'rgba(126, 211, 33, 0.06)' },
+  Fence: { color: '#9013FE', bgGradient: 'rgba(144, 19, 254, 0.06)' },
+  Lightkeeper: { color: '#D16E41', bgGradient: 'rgba(209, 110, 65, 0.06)' },
+  DEFAULT: { color: '#8F9F7F', bgGradient: 'rgba(143, 159, 127, 0.06)' }
+};
+
+export const collectorItemsList = [
+  { id: '42-tea', name: '42 Signature Blend English Tea', hint: 'Food spawns, ration crates' },
+  { id: 'antique-axe', name: 'Antique axe', hint: 'Scavs, safes, stashes' },
+  { id: 'evasion-armband', name: 'Armband (Evasion)', apiName: 'Armband (Evasion)', hint: 'Stashes, weapon boxes, marked rooms' },
+  { id: 'axel-parrot', name: 'Axel parrot figurine', hint: 'Safes, valuables, stashes' },
+  { id: 'bear-buddy', name: 'BEAR Buddy plush toy', hint: 'Duffles, stashes, loose loot' },
+  { id: 'baddie-beard', name: "Baddie's red beard", hint: 'Scavs, duffles, stashes' },
+  { id: 'bakeezy-book', name: 'BakeEzy cook book', hint: 'Filing cabinets, shelves, stashes' },
+  { id: 'battered-antique-book', name: 'Battered antique book', hint: 'Safes, jackets, filing cabinets' },
+  { id: 'ratcola', name: 'Can of RatCola soda', hint: 'Food spawns, ration crates' },
+  { id: 'sprats', name: 'Can of sprats', hint: 'Food spawns, ration crates' },
+  { id: 'drd-armor', name: 'DRD body armor', hint: 'Stashes, armor spawns, Scavs' },
+  { id: 'deadlyslob-beard-oil', name: 'Deadlyslob beard oil', hint: 'Interchange, shelves, stashes' },
+  { id: 'domontovich-ushanka', name: 'Domontovich ushanka hat', hint: 'Scavs, clothing spawns, stashes' },
+  { id: 'fake-mustache', name: 'Fake mustache', hint: 'Scavs, stashes, jackets' },
+  { id: 'fireklean', name: '#FireKlean gun lube', hint: 'Technical crates, shelves, stashes' },
+  { id: 'gingy-keychain', name: 'Gingy keychain', hint: 'Safes, jackets, stashes' },
+  { id: 'glorious-mask', name: 'Glorious E lightweight armored mask', hint: 'Scavs, bosses, stashes' },
+  { id: 'golden-1gphone', name: 'Golden 1GPhone smartphone', hint: 'Safes, tech spawns, filing cabinets' },
+  { id: 'golden-egg', name: 'Golden egg', hint: 'Safes, valuables, stashes' },
+  { id: 'golden-rooster', name: 'Golden rooster figurine', hint: 'Safes, valuables, Labs' },
+  { id: 'inseq-wrench', name: 'Inseq gas pipe wrench', hint: 'Technical crates, toolboxes, shelves' },
+  { id: 'devildog-mayo', name: 'Jar of DevilDog mayo', hint: 'Food spawns, ration crates' },
+  { id: 'johnb-glasses', name: 'JohnB Liquid DNB glasses', hint: 'Scavs, jackets, stashes' },
+  { id: 'kotton-beanie', name: 'Kotton beanie', hint: 'Scavs, duffles, stashes' },
+  { id: 'lvndmark-rat-poison', name: "LVNDMARK's rat poison", hint: 'Medical/valuable spawns, stashes' },
+  { id: 'loot-lord', name: 'Loot Lord plushie', hint: 'Duffles, stashes, rare loose loot' },
+  { id: 'mazoni-dumbbell', name: 'Mazoni golden dumbbell', hint: 'Safes, valuables, rare loose loot' },
+  { id: 'missam-key', name: 'Missam forklift key', hint: 'Jackets, drawers, filing cabinets' },
+  { id: 'nuct-balaclava', name: 'Nuct Salk balaclava', apiName: "Nuct's balaclava", hint: 'Scavs, clothing spawns, stashes' },
+  { id: 'old-firesteel', name: 'Old firesteel', hint: 'Reserve, safes, technical spawns' },
+  { id: 'pestily-mask', name: 'Pestily plague mask', hint: 'Scavs, cultists, stashes' },
+  { id: 'press-pass', name: 'Press pass (issued for NoiceGuy)', hint: 'Filing cabinets, jackets, Streets' },
+  { id: 'raven-figurine', name: 'Raven figurine', hint: 'Safes, valuables, stashes' },
+  { id: 'shroud-mask', name: 'Shroud half-mask', hint: 'Scavs, duffles, stashes' },
+  { id: 'silver-badge', name: 'Silver Badge', hint: 'Safes, valuables, jackets' },
+  { id: 'smoke-balaclava', name: 'Smoke balaclava', hint: 'Scavs, clothing spawns' },
+  { id: 'tamatthi-kunai', name: 'Tamatthi kunai knife replica', hint: 'Safes, valuables, stashes' },
+  { id: 'tigz-splint', name: 'Tigzresq splint', hint: 'Medical spawns, medbags, stashes' },
+  { id: 'veritas-pick', name: 'Veritas guitar pick', hint: 'Safes, filing cabinets, valuables' },
+  { id: 'cyborg-killer', name: 'Video cassette with the Cyborg Killer movie', hint: 'Drawers, shelves, stashes' },
+  { id: 'viibiin-sneaker', name: 'Viibiin sneaker', hint: 'Duffles, stashes, loose loot' },
+  { id: 'wz-wallet', name: 'WZ Wallet', hint: 'Safes, jackets, stashes' }
+];
+
+export const collectorItemNames = collectorItemsList.map((item) => item.apiName || item.name);

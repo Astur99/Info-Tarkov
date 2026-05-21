@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const POOL_AMMO_LOCAL = [
   { id: 'm1', name: '7.62x54mmR SNB gzh', shortName: '7.62x54 R SNB', penetration: 62, damage: 75, armorDamage: 88 },
@@ -446,6 +446,9 @@ export default function ArmorSimulator({ onViewChange }) {
   });
 
   useEffect(() => {
+    let cancelled = false;
+
+    const runSimulation = window.setTimeout(() => {
     if (!selectedAmmo || !selectedArmor) {
       setLogSimulacion([]);
       setTtkResult(0);
@@ -478,7 +481,7 @@ export default function ArmorSimulator({ onViewChange }) {
 
       const factorDefensa = claseArmor * 10 * ratioDurabilidad;
 
-      let probabilidadPenetracion = 0;
+      let probabilidadPenetracion;
 
       if (ammoPen > factorDefensa) {
         probabilidadPenetracion = 100 - (factorDefensa / ammoPen) * 15;
@@ -496,8 +499,8 @@ export default function ArmorSimulator({ onViewChange }) {
         ammoPen > factorDefensa ||
         Math.random() * 100 < probabilidadPenetracion;
 
-      let danoRecibido = 0;
-      let danoAArmadura = 0;
+      let danoRecibido;
+      let danoAArmadura;
 
       if (penetra) {
         danoRecibido = Math.round(
@@ -542,8 +545,16 @@ export default function ArmorSimulator({ onViewChange }) {
       });
     }
 
-    setLogSimulacion(registros);
-    setTtkResult(contadorTiros);
+      if (!cancelled) {
+        setLogSimulacion(registros);
+        setTtkResult(contadorTiros);
+      }
+    }, 0);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(runSimulation);
+    };
   }, [selectedAmmo, selectedArmor]);
 
   if (cargando) {

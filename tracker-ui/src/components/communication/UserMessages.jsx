@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -34,7 +34,7 @@ export default function UserMessages({ onViewChange }) {
   const [loading, setLoading] = useState(true);
   const [sendingFeedback, setSendingFeedback] = useState(false);
 
-  const loadTickets = async () => {
+  const loadTickets = useCallback(async () => {
     setLoading(true);
     setStatus('');
 
@@ -53,11 +53,12 @@ export default function UserMessages({ onViewChange }) {
     }
 
     setTickets(data || []);
-  };
+  }, [t]);
 
   useEffect(() => {
-    loadTickets();
-  }, []);
+    const initialLoad = window.setTimeout(loadTickets, 0);
+    return () => window.clearTimeout(initialLoad);
+  }, [loadTickets]);
 
   const handleFeedbackSubmit = async (event) => {
     event.preventDefault();

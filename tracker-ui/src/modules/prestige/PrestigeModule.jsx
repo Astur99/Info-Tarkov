@@ -1,82 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-
-const STORAGE_KEY = 'info_tarkov_prestige_checklist';
-
-const prestigeLevels = [
-  {
-    id: 'prestige-1',
-    level: 1,
-    pmcLevel: 25,
-    money: '10,000,000 rublos',
-    quests: ['New Beginning (Prestige 1)'],
-    story: ['No requerido'],
-    skills: ['No requerido'],
-    hideout: ['Intelligence Center nivel 1', 'Security nivel 2', 'Rest Space nivel 2'],
-    rewards: ['Dogtag y armband Prestige 1', 'Logro Prestigious', '+1 Charisma', '5% de skills y weapon mastery', 'Ventana de transferencia 8x3']
-  },
-  {
-    id: 'prestige-2',
-    level: 2,
-    pmcLevel: 30,
-    money: '15,000,000 rublos',
-    quests: ['New Beginning (Prestige 2)'],
-    story: ['Completar Tour'],
-    skills: ['Strength nivel 10', 'Endurance nivel 10', 'Charisma nivel 7'],
-    hideout: ['Intelligence Center nivel 1', 'Security nivel 2', 'Rest Space nivel 2'],
-    rewards: ['Dogtag y armband Prestige 2', 'Logro More Prestigious', '10% de skills y weapon mastery', 'Ventana de transferencia 8x4', '+1 daily y +1 weekly operational task']
-  },
-  {
-    id: 'prestige-3',
-    level: 3,
-    pmcLevel: 35,
-    money: '15,000,000 rublos',
-    quests: ['New Beginning (Prestige 3)'],
-    story: ['Completar Tour', 'Completar Falling Skies'],
-    skills: ['Strength nivel 10', 'Endurance nivel 10', 'Charisma nivel 7'],
-    hideout: ['Intelligence Center nivel 1', 'Security nivel 2', 'Rest Space nivel 2'],
-    rewards: ['Dogtag y armband Prestige 3', 'Logro Keeping Up the Pace', '15% de skills y weapon mastery', 'Ventana de transferencia 8x5', 'Voces BEAR/USEC desbloqueables']
-  },
-  {
-    id: 'prestige-4',
-    level: 4,
-    pmcLevel: 40,
-    money: '15,000,000 rublos',
-    quests: ['New Beginning (Prestige 4)'],
-    story: ['Completar Tour', 'Obtener Ticket from Tarkov'],
-    skills: ['Strength nivel 15', 'Endurance nivel 15', 'Charisma nivel 12'],
-    hideout: ['Intelligence Center nivel 1', 'Security nivel 2', 'Rest Space nivel 2'],
-    rewards: ['Dogtag y armband Prestige 4', 'Logro Higher and Higher', '20% de skills y weapon mastery', 'Ventana de transferencia 8x6', 'Ropa BEAR/USEC Hawaii']
-  },
-  {
-    id: 'prestige-5',
-    level: 5,
-    pmcLevel: 47,
-    money: '20,000,000 rublos',
-    quests: ['New Beginning (Prestige 5)', 'Collector'],
-    story: ['Completar Tour', 'Completar They Are Already Here', 'Obtener Ticket from Tarkov'],
-    skills: ['Strength nivel 20', 'Endurance nivel 20', 'Charisma nivel 20'],
-    hideout: ['Intelligence Center nivel 2', 'Security nivel 3', 'Rest Space nivel 3'],
-    rewards: ['Dogtag y armband Prestige 5', 'Logro Five Plus', '25% de skills y weapon mastery', 'Ventana de transferencia 8x7', 'NKVD Finka knife']
-  },
-  {
-    id: 'prestige-6',
-    level: 6,
-    pmcLevel: 47,
-    money: '20,000,000 rublos',
-    quests: ['New Beginning (Prestige 6)', 'Collector'],
-    story: ['Completar The Ticket'],
-    skills: ['Strength nivel 20', 'Endurance nivel 20', 'Charisma nivel 20'],
-    hideout: ['Intelligence Center nivel 2', 'Security nivel 3', 'Rest Space nivel 3'],
-    rewards: ['Dogtag y armband Prestige 6', 'Logro No Limit to Perfection', '30% de skills y weapon mastery', 'Ventana de transferencia 8x8', 'Secure container Gamma (Loui Peeton)']
-  }
-];
-
-const requirementGroups = [
-  { key: 'quests', label: 'Quests' },
-  { key: 'story', label: 'Historia' },
-  { key: 'skills', label: 'Skills' },
-  { key: 'hideout', label: 'Hideout' }
-];
+import { useTranslation } from 'react-i18next';
+import { prestigeIcons, prestigeLevels, requirementGroups, STORAGE_KEY } from './prestigeData';
 
 const panelStyle = {
   background: 'rgba(255,255,255,0.035)',
@@ -86,9 +10,10 @@ const panelStyle = {
   WebkitBackdropFilter: 'blur(20px)'
 };
 
-const getRequirementId = (prestigeId, groupKey, item) => `${prestigeId}:${groupKey}:${item}`;
+const getRequirementId = (prestigeId, groupKey, itemKey) => `${prestigeId}:${groupKey}:${itemKey}`;
 
 export default function PrestigeModule({ onViewChange }) {
+  const { t } = useTranslation();
   const [selectedPrestigeId, setSelectedPrestigeId] = useState(prestigeLevels[0].id);
   const [completed, setCompleted] = useState(() => {
     try {
@@ -99,6 +24,7 @@ export default function PrestigeModule({ onViewChange }) {
   });
 
   const selectedPrestige = prestigeLevels.find((prestige) => prestige.id === selectedPrestigeId) || prestigeLevels[0];
+  const selectedPrestigeIcon = prestigeIcons[selectedPrestige.level];
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(completed));
@@ -106,10 +32,11 @@ export default function PrestigeModule({ onViewChange }) {
 
   const progress = useMemo(() => {
     const allRequirements = requirementGroups.flatMap((group) =>
-      selectedPrestige[group.key].map((item) => getRequirementId(selectedPrestige.id, group.key, item))
+      selectedPrestige.groups[group.key].map((itemKey) => getRequirementId(selectedPrestige.id, group.key, itemKey))
     );
-    const realRequirements = allRequirements.filter((id) => !id.endsWith(':No requerido'));
+    const realRequirements = allRequirements.filter((id) => !id.endsWith(':notRequired'));
     const done = realRequirements.filter((id) => completed[id]).length;
+
     return {
       done,
       total: realRequirements.length,
@@ -156,13 +83,29 @@ export default function PrestigeModule({ onViewChange }) {
                 textTransform: 'uppercase'
               }}
             >
-              Progresion endgame PVP
+              {t('prestigeModule.eyebrow')}
             </p>
+            <div
+              style={{
+                display: 'inline-flex',
+                marginBottom: '0.6rem',
+                color: '#ffcf66',
+                background: 'rgba(255,207,102,0.08)',
+                border: '1px solid rgba(255,207,102,0.28)',
+                borderRadius: '999px',
+                padding: '0.25rem 0.65rem',
+                fontWeight: '900',
+                letterSpacing: '1px',
+                textTransform: 'uppercase'
+              }}
+            >
+              {t('prestigeModule.pvpOnly')}
+            </div>
             <h1 style={{ color: '#fff', margin: 0, fontSize: '2.7rem', textTransform: 'uppercase' }}>
-              Prestigios
+              {t('prestigeModule.title')}
             </h1>
             <p style={{ color: 'var(--tk-text-muted)', maxWidth: '820px', lineHeight: 1.6 }}>
-              Requisitos, recompensas y checklist local para preparar cada nivel de prestigio. El sistema de prestigio solo esta disponible en modo PVP.
+              {t('prestigeModule.subtitle')}
             </p>
           </div>
 
@@ -181,13 +124,14 @@ export default function PrestigeModule({ onViewChange }) {
               whiteSpace: 'nowrap'
             }}
           >
-            VOLVER AL MENU
+            {t('common.backToMenu')}
           </button>
         </header>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
           {prestigeLevels.map((prestige) => {
             const isActive = prestige.id === selectedPrestige.id;
+
             return (
               <button
                 key={prestige.id}
@@ -204,8 +148,12 @@ export default function PrestigeModule({ onViewChange }) {
                   fontFamily: "'Rajdhani', sans-serif"
                 }}
               >
-                <strong style={{ display: 'block', fontSize: '1.2rem' }}>Prestige {prestige.level}</strong>
-                <span style={{ fontWeight: '800', opacity: 0.78 }}>PMC {prestige.pmcLevel}</span>
+                <strong style={{ display: 'block', fontSize: '1.2rem' }}>
+                  {t('prestigeModule.cardTitle', { level: prestige.level })}
+                </strong>
+                <span style={{ fontWeight: '800', opacity: 0.78 }}>
+                  {t('prestigeModule.pmcLevel', { level: prestige.pmcLevel })}
+                </span>
               </button>
             );
           })}
@@ -215,9 +163,14 @@ export default function PrestigeModule({ onViewChange }) {
           <article style={{ ...panelStyle, padding: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
               <div>
-                <h2 style={{ color: '#fff', margin: 0, fontSize: '1.6rem' }}>Prestige {selectedPrestige.level}</h2>
+                <h2 style={{ color: '#fff', margin: 0, fontSize: '1.6rem' }}>
+                  {t('prestigeModule.cardTitle', { level: selectedPrestige.level })}
+                </h2>
                 <p style={{ color: 'var(--tk-text-muted)', margin: '0.25rem 0 0' }}>
-                  Nivel PMC {selectedPrestige.pmcLevel} · {selectedPrestige.money}
+                  {t('prestigeModule.detailSubtitle', {
+                    level: selectedPrestige.pmcLevel,
+                    money: t(`prestigeModule.money.${selectedPrestige.moneyKey}`)
+                  })}
                 </p>
               </div>
               <strong style={{ color: 'var(--tk-green)', fontSize: '1.6rem' }}>{progress.percent}%</strong>
@@ -230,11 +183,13 @@ export default function PrestigeModule({ onViewChange }) {
             <div style={{ display: 'grid', gap: '1rem' }}>
               {requirementGroups.map((group) => (
                 <div key={group.key}>
-                  <h3 style={{ color: '#fff', margin: '0 0 0.65rem', fontSize: '1rem', textTransform: 'uppercase' }}>{group.label}</h3>
+                  <h3 style={{ color: '#fff', margin: '0 0 0.65rem', fontSize: '1rem', textTransform: 'uppercase' }}>
+                    {t(`prestigeModule.groups.${group.labelKey}`)}
+                  </h3>
                   <div style={{ display: 'grid', gap: '0.5rem' }}>
-                    {selectedPrestige[group.key].map((item) => {
-                      const id = getRequirementId(selectedPrestige.id, group.key, item);
-                      const isDisabled = item === 'No requerido';
+                    {selectedPrestige.groups[group.key].map((itemKey) => {
+                      const id = getRequirementId(selectedPrestige.id, group.key, itemKey);
+                      const isDisabled = itemKey === 'notRequired';
                       const isDone = Boolean(completed[id]) || isDisabled;
 
                       return (
@@ -258,7 +213,7 @@ export default function PrestigeModule({ onViewChange }) {
                             disabled={isDisabled}
                             onChange={() => toggleRequirement(id)}
                           />
-                          <span>{item}</span>
+                          <span>{t(`prestigeModule.requirements.${itemKey}`)}</span>
                         </label>
                       );
                     })}
@@ -270,26 +225,78 @@ export default function PrestigeModule({ onViewChange }) {
 
           <aside style={{ display: 'grid', gap: '1rem' }}>
             <article style={{ ...panelStyle, padding: '1.25rem' }}>
-              <h3 style={{ color: '#fff', marginTop: 0 }}>Resumen</h3>
+              <h3 style={{ color: '#fff', marginTop: 0 }}>{t('prestigeModule.summaryTitle')}</h3>
               <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.55, margin: 0 }}>
-                {progress.done} de {progress.total} requisitos marcados. El dinero requerido se muestra aparte porque no se trackea automaticamente.
+                {t('prestigeModule.summaryBody', { done: progress.done, total: progress.total })}
               </p>
             </article>
 
             <article style={{ ...panelStyle, padding: '1.25rem' }}>
-              <h3 style={{ color: '#fff', marginTop: 0 }}>Recompensas destacadas</h3>
+              <h3 style={{ color: '#fff', marginTop: 0 }}>{t('prestigeModule.rewardsTitle')}</h3>
               <ul style={{ color: 'var(--tk-text-muted)', paddingLeft: '1.1rem', lineHeight: 1.55, marginBottom: 0 }}>
-                {selectedPrestige.rewards.map((reward) => (
-                  <li key={reward}>{reward}</li>
+                {selectedPrestige.rewards.map((rewardKey) => (
+                  <li key={rewardKey}>{t(`prestigeModule.rewards.${rewardKey}`)}</li>
                 ))}
               </ul>
             </article>
 
             <article style={{ ...panelStyle, padding: '1.25rem' }}>
-              <h3 style={{ color: '#fff', marginTop: 0 }}>Nota</h3>
+              <h3 style={{ color: '#fff', marginTop: 0 }}>{t('prestigeModule.noteTitle')}</h3>
               <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.55, margin: 0 }}>
-                Los requisitos pueden cambiar con parches. Datos base revisados contra la wiki oficial de Escape From Tarkov.
+                {t('prestigeModule.noteBody')}
               </p>
+            </article>
+
+            <article
+              style={{
+                ...panelStyle,
+                minHeight: '270px',
+                padding: '1.25rem',
+                display: 'grid',
+                placeItems: 'center',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+            >
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: '18% 12%',
+                  background: 'radial-gradient(circle, rgba(187,211,169,0.14), transparent 62%)',
+                  filter: 'blur(16px)'
+                }}
+              />
+              <div style={{ position: 'relative', display: 'grid', justifyItems: 'center', gap: '0.65rem', textAlign: 'center' }}>
+                <span style={{ color: 'var(--tk-green)', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1.5px' }}>
+                  {t('prestigeModule.insigniaTitle')}
+                </span>
+                <div
+                  style={{
+                    width: 'min(220px, 70vw)',
+                    aspectRatio: '1',
+                    display: 'grid',
+                    placeItems: 'center',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(145deg, rgba(255,255,255,0.04), rgba(0,0,0,0.18))',
+                    border: '1px solid rgba(255,255,255,0.07)'
+                  }}
+                >
+                  <img
+                    src={selectedPrestigeIcon}
+                    alt={t('prestigeModule.insigniaAlt', { level: selectedPrestige.level })}
+                    style={{
+                      width: '88%',
+                      height: '88%',
+                      objectFit: 'contain',
+                      filter: 'drop-shadow(0 0 18px rgba(187,211,169,0.18))'
+                    }}
+                  />
+                </div>
+                <strong style={{ color: '#fff', fontSize: '1.25rem' }}>
+                  {t('prestigeModule.cardTitle', { level: selectedPrestige.level })}
+                </strong>
+              </div>
             </article>
           </aside>
         </section>

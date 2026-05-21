@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const bossImageModules = import.meta.glob('../../assets/bosses/*', {
   eager: true,
@@ -51,7 +51,7 @@ export default function BossesView({ onViewChange }) {
   const [cargando, setCargando] = useState(true);
 
   // BASE DE DATOS LOCAL CON REFERENCIAS RELATIVAS A SRC/ASSETS/BOSSES/
-  const poolBossesEstatico = [
+  const poolBossesEstatico = useMemo(() => [
     {
       id: 'bigpipe',
       name: 'BIG PIPE',
@@ -260,7 +260,7 @@ export default function BossesView({ onViewChange }) {
       debiles: 'Inmóvil en su puesto defensivo, vulnerable si consigues romper su línea visual inicial.',
       loot: 'Rifle táctico AXMC .338, munición Lapua AP de coleccionista, telemetría militar.'
     }
-  ];
+  ], []);
 
   // FETCH GRAPHQL PARA MAPAS Y SPAWNS
   useEffect(() => {
@@ -334,7 +334,7 @@ export default function BossesView({ onViewChange }) {
         })));
         setCargando(false);
       });
-  }, []);
+  }, [poolBossesEstatico]);
 
   const bossesFiltrados = bossesData.filter(boss => {
     const coincideBusqueda = boss.name.toLowerCase().includes(busqueda.toLowerCase());

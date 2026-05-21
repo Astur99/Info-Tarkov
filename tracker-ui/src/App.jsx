@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import './index.css';
 
 import { supabase } from './lib/supabaseClient';
+import { buildProfileFromSessionMetadata, hydrateGameModePreference } from './lib/userProfilePreferences';
 import LanguageSwitcher from './components/layout/LanguageSwitcher';
 
 import mapasImage from './assets/backgrounds/mapas.png';
@@ -25,21 +26,22 @@ const AdminPanel = lazy(() => import('./components/admin/AdminPanel'));
 const AboutView = lazy(() => import('./components/about/AboutView'));
 const AsturView = lazy(() => import('./components/about/AsturView'));
 const ChangelogView = lazy(() => import('./components/about/ChangelogView'));
+const ProjectDossierView = lazy(() => import('./components/about/ProjectDossierView'));
 const UserMessages = lazy(() => import('./components/communication/UserMessages'));
-const MapsView = lazy(() => import('./components/modules/MapsView'));
-const KappaTree = lazy(() => import('./components/modules/KappaTree'));
-const StoryDecisions = lazy(() => import('./components/modules/StoryDecisions'));
-const BossesIntel = lazy(() => import('./components/modules/BossesIntel'));
-const GoonsTracker = lazy(() => import('./components/modules/GoonsTracker'));
-const FleaTracker = lazy(() => import('./components/modules/FleaTracker'));
-const HideoutModule = lazy(() => import('./components/modules/HideoutModule'));
-const ArmorSimulator = lazy(() => import('./components/modules/ArmorSimulator'));
-const PrestigeModule = lazy(() => import('./components/modules/PrestigeModule'));
-const KeysModule = lazy(() => import('./components/modules/KeysModule'));
-const PmcProfileModule = lazy(() => import('./components/modules/PmcProfileModule'));
-const TroubleshootingView = lazy(() => import('./components/modules/TroubleshootingView'));
-const ServerStatus = lazy(() => import('./components/modules/ServerStatus'));
-const LiveEvents = lazy(() => import('./components/modules/LiveEvents'));
+const MapsView = lazy(() => import('./modules/maps/MapsView'));
+const KappaTree = lazy(() => import('./modules/kappa/KappaTree'));
+const StoryDecisions = lazy(() => import('./modules/story/StoryDecisions'));
+const BossesIntel = lazy(() => import('./modules/bosses/BossesIntel'));
+const GoonsTracker = lazy(() => import('./modules/goons/GoonsTracker'));
+const FleaTracker = lazy(() => import('./modules/flea/FleaTracker'));
+const HideoutModule = lazy(() => import('./modules/hideout/HideoutModule'));
+const ArmorSimulator = lazy(() => import('./modules/armor/ArmorSimulator'));
+const PrestigeModule = lazy(() => import('./modules/prestige/PrestigeModule'));
+const KeysModule = lazy(() => import('./modules/keys/KeysModule'));
+const PmcProfileModule = lazy(() => import('./modules/pmc/PmcProfileModule'));
+const TroubleshootingView = lazy(() => import('./modules/troubleshooting/TroubleshootingView'));
+const ServerStatus = lazy(() => import('./modules/server-status/ServerStatus'));
+const LiveEvents = lazy(() => import('./modules/live-events/LiveEvents'));
 
 const loadUserRole = async (session) => {
   if (!session?.user?.id) return null;
@@ -63,16 +65,16 @@ const loadUserProfile = async (session) => {
 
   const { data, error } = await supabase
     .from('user_profiles')
-    .select('username')
+    .select('*')
     .eq('user_id', session.user.id)
     .maybeSingle();
 
   if (error) {
     console.error(error);
-    return null;
+    return buildProfileFromSessionMetadata(session);
   }
 
-  return data;
+  return data || buildProfileFromSessionMetadata(session);
 };
 
 const getClientSessionId = () => {
@@ -174,6 +176,7 @@ function App() {
 
       setUserRole(role);
       setUserProfile(profile);
+      hydrateGameModePreference(profile, nextSession);
     };
 
     supabase.auth.getSession().then(({ data }) => {
@@ -402,6 +405,14 @@ function App() {
     );
   }
 
+  if (currentView === 'project-dossier' && userRole === 'admin') {
+    return (
+      <LazyView>
+        <ProjectDossierView onViewChange={navigateToView} />
+      </LazyView>
+    );
+  }
+
   if (currentView === 'maps') return <LazyView><MapsView onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'kappa') return <LazyView><KappaTree onViewChange={navigateToView} session={session} userRole={userRole} /></LazyView>;
   if (currentView === 'story') return <LazyView><StoryDecisions onViewChange={navigateToView} /></LazyView>;
@@ -413,7 +424,7 @@ function App() {
   if (currentView === 'prestige') return <LazyView><PrestigeModule onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'keys') return <LazyView><KeysModule onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'quest-optimizer') return <LazyView><KappaTree onViewChange={navigateToView} session={session} userRole={userRole} initialTool="optimizer" /></LazyView>;
-  if (currentView === 'pmc-profile') return <LazyView><PmcProfileModule onViewChange={navigateToView} session={session} /></LazyView>;
+  if (currentView === 'pmc-profile') return <LazyView><PmcProfileModule onViewChange={navigateToView} session={session} userProfile={userProfile} /></LazyView>;
   if (currentView === 'trouble') return <LazyView><TroubleshootingView onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'server-status') return <LazyView><ServerStatus onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'live-events') return <LazyView><LiveEvents onViewChange={navigateToView} /></LazyView>;
@@ -666,7 +677,8 @@ function App() {
         >
           {[
             { label: 'ABOUT', view: 'about' },
-            { label: t('home.patchNotes'), view: 'changelog' }
+            { label: t('home.patchNotes'), view: 'changelog' },
+            ...(userRole === 'admin' ? [{ label: 'DOSSIER', view: 'project-dossier' }] : [])
           ].map((button) => (
             <button
               key={button.view}

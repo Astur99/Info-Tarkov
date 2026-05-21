@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 
 const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
+const MARKET_MODES = {
+  PVP: 'regular',
+  PVE: 'pve'
+};
 
 const maps = ['Todos', 'Customs', 'Shoreline', 'Reserve', 'Streets', 'Interchange', 'Woods', 'Lighthouse', 'Factory', 'Labs', 'Ground Zero'];
 const categories = ['Todas', 'Importantes', 'Quest', 'Loot', 'High value', 'Utility', 'Sin clasificar'];
@@ -11,9 +16,9 @@ const priorityStyles = {
   Baja: { color: 'var(--tk-text-muted)', border: 'rgba(255,255,255,0.12)', bg: 'rgba(255,255,255,0.04)' }
 };
 
-const keyQuery = `
+const getKeyQuery = (gameMode) => `
   query GetKeyItems {
-    items {
+    items(gameMode: ${gameMode}) {
       id
       name
       shortName
@@ -299,6 +304,8 @@ export default function KeysModule({ onViewChange }) {
   const [rawKeys, setRawKeys] = useState(fallbackKeys);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
+  const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
+  const gameMode = MARKET_MODES[modoMercado];
 
   useEffect(() => {
     let cancelled = false;
@@ -314,7 +321,7 @@ export default function KeysModule({ onViewChange }) {
             'Content-Type': 'application/json',
             Accept: 'application/json'
           },
-          body: JSON.stringify({ query: keyQuery })
+          body: JSON.stringify({ query: getKeyQuery(gameMode) })
         });
 
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -346,7 +353,7 @@ export default function KeysModule({ onViewChange }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [gameMode]);
 
   const allKeys = useMemo(() => rawKeys.map(enrichKey), [rawKeys]);
 
@@ -411,27 +418,55 @@ export default function KeysModule({ onViewChange }) {
               Sistema de llaves
             </h1>
             <p style={{ color: 'var(--tk-text-muted)', maxWidth: '860px', lineHeight: 1.6 }}>
-              Buscador vivo de llaves y keycards de Tarkov con capa tactica para destacar las mas importantes por quest, ruta, valor y utilidad.
+              Buscador vivo de llaves y keycards de Tarkov con precios separados para PVP/PVE y capa tactica para destacar las mas importantes.
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onViewChange('home')}
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.04)',
-              color: '#fff',
-              border: '1px solid rgba(255,255,255,0.1)',
-              padding: '0.8rem 1.2rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '900',
-              letterSpacing: '1px',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            VOLVER AL MENU
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: '6px', padding: '6px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)', backgroundColor: 'rgba(0,0,0,0.32)' }}>
+              {Object.keys(MARKET_MODES).map((mode) => {
+                const active = modoMercado === mode;
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setModoMercado(mode)}
+                    style={{
+                      minWidth: '76px',
+                      border: active ? '1px solid rgba(187, 211, 169, 0.55)' : '1px solid rgba(255,255,255,0.06)',
+                      backgroundColor: active ? 'rgba(187, 211, 169, 0.85)' : 'rgba(255,255,255,0.03)',
+                      color: active ? '#11180f' : '#d7d7d7',
+                      padding: '9px 12px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontWeight: '900',
+                      fontFamily: "'Rajdhani', sans-serif"
+                    }}
+                  >
+                    {mode}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onViewChange('home')}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                color: '#fff',
+                border: '1px solid rgba(255,255,255,0.1)',
+                padding: '0.8rem 1.2rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '900',
+                letterSpacing: '1px',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              VOLVER AL MENU
+            </button>
+          </div>
         </header>
 
         <section
@@ -492,18 +527,18 @@ export default function KeysModule({ onViewChange }) {
         </section>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          <StatCard label="Llaves visibles" value={filteredKeys.length} />
+          <StatCard label={`Llaves visibles ${modoMercado}`} value={filteredKeys.length} />
           <StatCard label="Catalogo cargado" value={allKeys.length} />
           <StatCard label="Importantes visibles" value={`${visibleImportantCount}/${importantCount}`} />
           <StatCard label="Mapas cubiertos" value={new Set(filteredKeys.map((key) => key.map)).size} />
         </section>
 
-        {loading && <p style={{ color: 'var(--tk-green)', marginBottom: '1rem' }}>Cargando llaves desde tarkov.dev...</p>}
+        {loading && <p style={{ color: 'var(--tk-green)', marginBottom: '1rem' }}>Cargando llaves {modoMercado} desde tarkov.dev...</p>}
         {status && <p style={{ color: '#ffcf66', marginBottom: '1rem' }}>{status}</p>}
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1rem' }}>
           {filteredKeys.map((key) => (
-            <KeyCard key={key.id} keyItem={key} />
+          <KeyCard key={key.id} keyItem={key} mode={modoMercado} />
           ))}
         </section>
 
@@ -550,7 +585,7 @@ const buttonStyle = {
   textTransform: 'uppercase'
 };
 
-function KeyCard({ keyItem }) {
+function KeyCard({ keyItem, mode }) {
   const priorityStyle = getPriorityStyle(keyItem.priority);
 
   return (
@@ -601,7 +636,7 @@ function KeyCard({ keyItem }) {
 
       <div style={{ display: 'grid', gap: '0.65rem' }}>
         <InfoRow label="Tipo" value={keyItem.isImportant ? `${keyItem.category} - Importante` : keyItem.category} />
-        <InfoRow label="Precio" value={formatRoubles(keyItem.price)} />
+        <InfoRow label={`Precio ${mode}`} value={formatRoubles(keyItem.price)} />
         <InfoRow label="Tamaño" value={`${keyItem.width || 1}x${keyItem.height || 1}`} />
         <InfoRow label="Quests" value={keyItem.quests.length ? keyItem.quests.join(', ') : 'Sin quest directa marcada'} />
       </div>

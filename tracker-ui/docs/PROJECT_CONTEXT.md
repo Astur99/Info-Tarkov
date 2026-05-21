@@ -1,6 +1,6 @@
 # Info Tarkov - Project Context
 
-Last updated: 2026-05-19
+Last updated: 2026-05-21
 
 This document is the working context for continuing development in a fresh Codex/ChatGPT thread.
 
@@ -24,7 +24,7 @@ npm.cmd run lint
 
 `npm.cmd run build` currently passes.
 
-`npm.cmd run lint` currently reports pre-existing technical debt, mainly React hook lint rules and small cleanup issues. Build is the reliable verification command for now.
+`npm.cmd run lint` currently passes with no errors or warnings.
 
 ## Stack
 
@@ -44,6 +44,8 @@ Backend:
 - Supabase Auth
 - Row Level Security
 - SQL RPC functions
+
+Email confirmation is currently disabled in Supabase because the email quota is too low for testing and public onboarding. Signup should create a session immediately and the UI should message "account created / session started" instead of asking the user to confirm email.
 
 Persistence:
 
@@ -65,8 +67,15 @@ Main app:
 
 - `src/App.jsx`
 - `src/main.jsx`
+- `vite.config.js`
+- `netlify.toml`
+- `netlify/functions/pmc-profile.js`
 - `src/lib/supabaseClient.js`
 - `src/lib/moduleStateSync.js`
+- `src/modules/`
+- `src/components/ui/`
+- `src/hooks/`
+- `src/services/`
 
 Global visual layer:
 
@@ -89,24 +98,36 @@ Layout/about:
 - `src/components/about/AboutView.jsx`
 - `src/components/about/AsturView.jsx`
 - `src/components/about/ChangelogView.jsx`
+- `src/components/about/ProjectDossierView.jsx`
 - `src/data/changelog.js`
 
 Modules:
 
-- `src/components/modules/MapsView.jsx`
-- `src/components/modules/KappaTree.jsx`
-- `src/components/modules/StoryDecisions.jsx`
-- `src/components/modules/BossesIntel.jsx`
-- `src/components/modules/GoonsTracker.jsx`
-- `src/components/modules/FleaTracker.jsx`
-- `src/components/modules/HideoutModule.jsx`
-- `src/components/modules/ArmorSimulator.jsx`
-- `src/components/modules/PrestigeModule.jsx`
-- `src/components/modules/KeysModule.jsx`
-- `src/components/modules/QuestOptimizerModule.jsx`
-- `src/components/modules/LiveEvents.jsx`
-- `src/components/modules/TroubleshootingView.jsx`
-- `src/components/modules/ServerStatus.jsx`
+- `src/modules/maps/MapsView.jsx`
+- `src/modules/kappa/KappaTree.jsx`
+- `src/modules/kappa/QuestOptimizerModule.jsx`
+- `src/modules/kappa/kappaApi.js`
+- `src/modules/kappa/kappaData.js`
+- `src/modules/kappa/kappaStorage.js`
+- `src/modules/kappa/kappaUtils.js`
+- `src/modules/story/StoryDecisions.jsx`
+- `src/modules/bosses/BossesIntel.jsx`
+- `src/modules/goons/GoonsTracker.jsx`
+- `src/modules/flea/FleaTracker.jsx`
+- `src/modules/hideout/HideoutModule.jsx`
+- `src/modules/hideout/HideoutHeader.jsx`
+- `src/modules/hideout/HideoutStationList.jsx`
+- `src/modules/hideout/HideoutStationDetail.jsx`
+- `src/modules/hideout/hideoutApi.js`
+- `src/modules/hideout/hideoutStorage.js`
+- `src/modules/hideout/hideoutUtils.js`
+- `src/modules/armor/ArmorSimulator.jsx`
+- `src/modules/prestige/PrestigeModule.jsx`
+- `src/modules/keys/KeysModule.jsx`
+- `src/modules/pmc/PmcProfileModule.jsx`
+- `src/modules/live-events/LiveEvents.jsx`
+- `src/modules/troubleshooting/TroubleshootingView.jsx`
+- `src/modules/server-status/ServerStatus.jsx`
 
 Translations:
 
@@ -137,9 +158,9 @@ Current known background files include:
 - `simulador.png`
 - `troubleshooting.png`
 
-## Current Component Organization
+## Current Source Organization
 
-Components were reorganized from a flat `components/` folder into grouped folders:
+Components and modules are now separated by responsibility:
 
 ```txt
 src/components/
@@ -148,10 +169,29 @@ src/components/
   auth/
   communication/
   layout/
-  modules/
+  ui/
+
+src/modules/
+  armor/
+  bosses/
+  flea/
+  goons/
+  hideout/
+  kappa/
+  keys/
+  live-events/
+  maps/
+  pmc/
+  prestige/
+  server-status/
+  story/
+  troubleshooting/
+
+src/hooks/
+src/services/
 ```
 
-This caused Git to show old component files as deleted and the new folders as untracked/moved. This is expected after the reorganization.
+`components/` is for app-wide UI, layout, auth/admin/about/communication surfaces. `modules/` is for domain modules opened from the home menu. `hooks/` and `services/` are prepared for the next cleanup phase, where repeated state and API logic will be extracted from large modules.
 
 ## App Navigation
 
@@ -171,6 +211,12 @@ This means:
 - Browser Back returns to the app menu instead of leaving the app.
 - Internal "back to menu" buttons replace history cleanly.
 - Direct URLs like `?view=kappa`, `?view=keys`, `?view=about` work.
+
+Admin-only internal documentation:
+
+- `?view=project-dossier` renders `src/components/about/ProjectDossierView.jsx`.
+- The bottom-left `DOSSIER` button is only shown when `userRole === 'admin'`.
+- The route is also guarded in `App.jsx`, so non-admin users do not render the dossier even if they force the URL manually.
 
 ## Code Splitting
 
@@ -208,7 +254,14 @@ Module for map consultation. Intended to grow into tactical maps with extra laye
 
 ### Misiones / Kappa
 
-File: `src/components/modules/KappaTree.jsx`
+File: `src/modules/kappa/KappaTree.jsx`
+
+Support files:
+
+- `src/modules/kappa/kappaApi.js`
+- `src/modules/kappa/kappaData.js`
+- `src/modules/kappa/kappaStorage.js`
+- `src/modules/kappa/kappaUtils.js`
 
 Uses `tarkov.dev` GraphQL to load tasks.
 
@@ -227,6 +280,9 @@ Features:
 - local Collector item checklist separated by PVP/PVE
 - 42 Collector/Kappa required items based on the current Collector handover list
 - attempts to load Collector item icons/wiki data from `tarkov.dev`
+- Collector data, trader config, local/cloud progress persistence and tarkov.dev queries are separated into helper files
+- quest graph layout is derived through `buildQuestGraph` instead of being stored as separate state
+- KappaTree no longer appears in the current ESLint error list; remaining lint debt is in other modules/components
 
 Local storage keys:
 
@@ -242,13 +298,13 @@ Supabase table:
 
 ### Decisiones / Finales
 
-File: `src/components/modules/StoryDecisions.jsx`
+File: `src/modules/story/StoryDecisions.jsx`
 
 Contains story/endings and point-of-no-return information.
 
 ### Intel: Bosses
 
-File: `src/components/modules/BossesIntel.jsx`
+File: `src/modules/bosses/BossesIntel.jsx`
 
 Boss intelligence module with boss data, gear, locations, loot and weak points.
 
@@ -264,13 +320,13 @@ Features:
 
 ### Tracker de Goons
 
-File: `src/components/modules/GoonsTracker.jsx`
+File: `src/modules/goons/GoonsTracker.jsx`
 
 Uses external tracker information and HTML parsing. Can break if source HTML changes.
 
 ### Flea Market Tracker
 
-File: `src/components/modules/FleaTracker.jsx`
+File: `src/modules/flea/FleaTracker.jsx`
 
 Market/economy module for prices and profitability style workflows.
 
@@ -285,7 +341,16 @@ Features:
 
 ### Gestion del Refugio
 
-File: `src/components/modules/HideoutModule.jsx`
+File: `src/modules/hideout/HideoutModule.jsx`
+
+Support files:
+
+- `src/modules/hideout/hideoutApi.js`
+- `src/modules/hideout/hideoutStorage.js`
+- `src/modules/hideout/hideoutUtils.js`
+- `src/modules/hideout/HideoutHeader.jsx`
+- `src/modules/hideout/HideoutStationList.jsx`
+- `src/modules/hideout/HideoutStationDetail.jsx`
 
 Hideout planning module.
 
@@ -302,6 +367,11 @@ Features:
 - labels item requirements as FIR when requirement attributes indicate found-in-raid
 - shows required hideout stations/levels, trader requirements and skill requirements
 - station sidebar is ordered by natural progression rather than alphabetically
+- internal API/query logic is separated from the component in `hideoutApi.js`
+- local/cloud persistence is separated in `hideoutStorage.js`
+- pure helpers for storage keys, progress, availability, FIR detection, prices and formatting live in `hideoutUtils.js`
+- header, station sidebar and station detail UI are separated into dedicated components while preserving the same visible interface
+- Hideout no longer appears in the current ESLint error list; remaining lint debt is in other modules/components.
 
 Local storage keys:
 
@@ -312,13 +382,17 @@ Local storage keys:
 
 ### Simulador Balistico
 
-File: `src/components/modules/ArmorSimulator.jsx`
+File: `src/modules/armor/ArmorSimulator.jsx`
 
 Ballistics/armor simulator. ESLint reports some technical debt around effects and unused assignments.
 
 ### Prestigios
 
-File: `src/components/modules/PrestigeModule.jsx`
+File: `src/modules/prestige/PrestigeModule.jsx`
+
+Support file:
+
+- `src/modules/prestige/prestigeData.js`
 
 New module for prestige requirements.
 
@@ -334,22 +408,28 @@ Features:
 - rewards
 - local checklist per requirement
 - progress percentage
+- visual insignia panel using `src/assets/prestiges/prestige_1.png` through `prestige_6.png`
+- ES/EN i18n wiring for UI, requirement labels and reward labels
+- separated prestige data/icons in `prestigeData.js` for easier maintenance and future languages
+- optimized prestige insignias at practical in-app sizes to keep the bundle lighter
 
 Image:
 
 - `src/assets/backgrounds/prestigios.png`
+- `src/assets/prestiges/prestige_1.png` through `prestige_6.png`
 
 Data was checked against the official Escape From Tarkov Wiki prestige page.
 
 ### Sistema de Llaves
 
-File: `src/components/modules/KeysModule.jsx`
+File: `src/modules/keys/KeysModule.jsx`
 
 Tactical key search engine with a live catalog from `tarkov.dev` and a curated important-key intel layer.
 
 Features:
 
 - loads all key/keycard-like items from `tarkov.dev`
+- PVP/PVE market switch for key prices through `items(gameMode)`
 - fallback curated key set if external API fails
 - search by key, quest, map, tag, recommendation
 - filter by map
@@ -368,7 +448,7 @@ This module is intentionally prepared to grow into a full key database.
 
 ### Quest Optimizer
 
-File: `src/components/modules/QuestOptimizerModule.jsx`
+File: `src/modules/kappa/QuestOptimizerModule.jsx`
 
 Subtool integrated inside `Misiones / Kappa` for recommending the best map for the next raid. It is no longer shown as a standalone home card.
 
@@ -390,32 +470,58 @@ Route compatibility:
 
 ### Perfil de PMC
 
-File: `src/components/modules/PmcProfileModule.jsx`
+File: `src/modules/pmc/PmcProfileModule.jsx`
 
 Module for summarizing player wipe status.
 
 Features:
 
-- localStorage guest persistence
-- Supabase cloud sync when `user_module_state` exists
-- PMC nickname/callsign
-- faction and PVP/PVE mode
-- level, survival rate, raids, stash value, completed quests, Kappa items and hideout progress
-- main objective selection: Kappa, Lightkeeper, Prestige, Economy
-- weighted progress score
-- tactical next-priority recommendations
+- uses the Tarkov username stored in `user_profiles` or Supabase Auth metadata
+- separated PVP/PVE lookup
+- includes an in-module search bar for looking up other indexed players without changing the account-linked username
+- stores a small local search history under `info_tarkov_pmc_profile_history`
+- uses static public JSON indexes instead of the Turnstile-protected search endpoint:
+- PVP: `https://players.tarkov.dev/profile/index.json`
+- PVE: `https://players.tarkov.dev/pve/index.json`
+- fetches the resolved profile from `https://players.tarkov.dev/profile/{accountId}.json` or `/pve/{accountId}.json`
+- calculates PMC level from experience with `https://json.tarkov.dev/regular/items` playerLevels by accumulating each level's required experience step, matching tarkov.dev behavior
+- displays normalized public fields when available: nickname, level, faction, experience, PMC time, raids, survival rate, kills, deaths, PMC kills, prestige, account type, last active estimate, equipment, favorites, skills, all completed achievements, rare achievements and public updated time
+- shows the top stat band as a wrapped responsive block, not as a horizontally scrolling strip
+- includes sync status, top achievement in the main profile sheet, main tarkov.dev link in the search bar, AccID copy action and PNG public card export
+- shows equipment as tactical slot cards and achievements as one full-width filtered panel with rare-achievement showcase
+- has a clear error state if the player is not in the daily static index yet
+- includes direct access to `https://tarkov.dev/players` so users can open/search a profile there before waiting for the static index update
+- includes a manual refresh action
+
+Support file:
+
+- `src/modules/pmc/pmcApi.js`
+- `netlify/functions/pmc-profile.js`
 
 Local storage key:
 
-- `info_tarkov_pmc_profile`
+- `info_tarkov_pmc_profile_mode`
+- `info_tarkov_pmc_profile_history`
 
 Image:
 
 - `src/assets/backgrounds/pmc.png`
 
+Production note:
+
+- `/api/pmc-profile` is redirected by Netlify to `/.netlify/functions/pmc-profile`.
+- `vite.config.js` also registers a local middleware for `/api/pmc-profile` during `npm.cmd run dev`.
+- This proxy exists because `players.tarkov.dev` JSON responds server-side but may not expose browser CORS headers.
+- `/api/pmc-profile` uses no-store cache headers and the frontend adds a timestamp query param so corrected profile calculations are not stuck behind stale browser/CDN cache.
+- The Function must not parse the full PVP `players.tarkov.dev/profile/index.json` into an object. That index is large enough to inflate heap heavily in Netlify; resolve the accountId with text matching instead.
+- The Function must not load full `json.tarkov.dev/regular/items`, `items_es` or translated task bundles in production. That caused Netlify `Runtime.OutOfMemory` / 502 on large PVP profiles.
+- The production-safe path fetches the static profile first, extracts only visible/favorite item template IDs, then uses `api.tarkov.dev/graphql` for `playerLevels` and `items(ids: ...)`.
+- Achievement metadata comes from the lighter static tasks endpoint plus English translations, avoiding the high-memory GraphQL achievements catalog path.
+- The Function returns `allAchievements` for the complete player achievement table and `rareAchievements` limited to the most exclusive entries.
+
 ### Eventos en Directo
 
-File: `src/components/modules/LiveEvents.jsx`
+File: `src/modules/live-events/LiveEvents.jsx`
 
 Detects active/recent Tarkov events from `tarkov-dev/tarkovdata`.
 
@@ -437,7 +543,7 @@ Current verified manual event:
 
 ### Troubleshooting
 
-File: `src/components/modules/TroubleshootingView.jsx`
+File: `src/modules/troubleshooting/TroubleshootingView.jsx`
 
 Known issues and current technical/user-facing limitations.
 
@@ -624,12 +730,25 @@ Route:
 
 Current app version:
 
-- `0.11.1`
+- `0.14.11`
 
 Behavior:
 
 - Public ChangeLog is available from the home bottom-left button.
 - Version entries are grouped as public product milestones rather than one entry per tiny commit.
+- The technical rebuild is tracked as subversions `0.13.0` through `0.13.6` instead of one overloaded umbrella entry.
+- The PMC account connection and global PVP/PVE preference are tracked as `0.14.0`.
+- `0.14.1` documents the Turnstile limitation for automatic player extraction.
+- `0.14.2` hardens registration usernames and admin user listing.
+- `0.14.3` polishes no-email-verification signup, Admin Panel 2.0 filters/detail, and Account Hub.
+- `0.14.4` switches PMC Profile to the static players.tarkov.dev indexes and public profile JSONs.
+- `0.14.5` adds the PMC in-module player search and fixes level calculation to match tarkov.dev cumulative XP.
+- `0.14.6` disables PMC profile caching and expands visible profile intel with last activity, account flags, skills, achievements, equipment and favorites.
+- `0.14.7` compacts the PMC layout and fixes production 502/OutOfMemory by replacing full JSON catalog loads with targeted GraphQL calls.
+- `0.14.8` removes horizontal scrolling from the PMC stat block, adds PMC search history/actions/export card, shows all completed achievements in a filtered panel while keeping rare achievements limited, and reduces PMC Function memory by matching the player index as text instead of parsing it fully.
+- `0.14.9` adds visual Prestige insignias and transparent-background Prestige 4 asset.
+- `0.14.10` removes the duplicated PMC tarkov.dev action button and keeps only Copy AccID / Export card in the lower actions panel.
+- `0.14.11` cleans the Prestige module by separating data/icons, wiring UI copy to ES/EN i18n, optimizing prestige insignia assets, removing an accidental old App copy and adding a pre-production checklist.
 - `APP_VERSION` in `src/data/changelog.js` should stay aligned with `package.json`.
 - Changelog data is localization-ready: each entry stores text per language key (`es`, `en`, future `ru`, `de`, `fr`, `it`, etc.).
 - While the app is beta, use `0.x` versions. Patch number for small fixes, minor number for visible features or module changes, and reserve `1.0.0` for the first stable public release.
@@ -648,13 +767,14 @@ Currently translated:
 - Server status UI
 - Troubleshooting UI
 - Live events UI
+- Prestige UI
 - some shared text
 
 Still pending:
 
 - most internal module text
 - admin panel
-- major data-heavy modules such as PMC Profile, Keys, Bosses, Flea, Hideout, Prestige and simulator
+- major data-heavy modules such as PMC Profile, Keys, Bosses, Flea, Hideout and simulator
 
 Approach:
 
@@ -700,19 +820,26 @@ Known major tables/RPCs used:
 SQL files:
 
 - `docs/supabase-user-module-state.sql`
+- `docs/supabase-user-profile-preferences.sql`
+- `docs/PRE_PRODUCTION_CHECKLIST.md`
 
-Run that SQL in Supabase to enable cloud sync for newer modules such as Hideout and PMC Profile. Without it, those modules keep working locally and show a local/cloud warning.
+Run `supabase-user-module-state.sql` in Supabase to enable cloud sync for newer modules such as Hideout. Without it, those modules keep working locally and show a local/cloud warning.
+
+Run `supabase-user-profile-preferences.sql` to add:
+
+- `user_profiles.tarkov_username`
+- `user_profiles.primary_game_mode`
+- unique case-insensitive username indexes
+- `is_username_available(candidate_username)`
+- `handle_new_user_profile()` trigger for confirmed/unconfirmed signups
+- updated `list_admin_users()` fallback to Auth metadata
+- `admin_get_user_progress(target_user_id)` for Admin Panel user detail
+
+Registration stores those values in Supabase Auth metadata as a fallback. The app also keeps the selected main mode in localStorage under `info_tarkov_default_game_mode`.
 
 ## Known Technical Debt
 
-`npm.cmd run lint` currently reports:
-
-- `react-hooks/set-state-in-effect` in several modules
-- missing effect dependencies
-- `HideoutModule` fallback helper referenced before declaration
-- `ArmorSimulator` unused assignments
-
-This does not block build, but should be cleaned before serious public launch.
+`npm.cmd run lint` currently passes with no errors or warnings after the `0.14.3` Account/Admin update. Re-run after the `0.14.8` PMC readability pass before deploy.
 
 ## Recent Completed Work
 
@@ -742,6 +869,12 @@ This does not block build, but should be cleaned before serious public launch.
 - Added generic `user_module_state` sync helper and SQL for cloud-syncing Hideout and PMC Profile.
 - Added Bosses 2.0 difficulty filter, spawn breakdown by map and tactical entry plans.
 - Added Hideout auto-checklist behavior: marking a station as built to level X marks material requirements for all levels up to X.
+- Completed hybrid PVP/PVE pass: Keys now has PVP/PVE prices, PMC Profile stores separated PVP/PVE profiles and Prestige is explicitly marked PVP-only.
+- Switched PMC Profile from the Turnstile-protected player search endpoint to the static `players.tarkov.dev` PVP/PVE profile indexes.
+- Added PMC Profile search for other players and corrected level calculation using cumulative playerLevels XP.
+- Expanded PMC Profile with no-cache sync, account flags, last activity estimate, skill levels, recent/rare achievements, visible equipment and favorites.
+- Fixed production PMC Function memory usage by querying only required item IDs and compact achievement/player level data through GraphQL.
+- Optimized Prestige insignia assets, removed an accidental old App copy, wired Prestige to i18n and added `docs/PRE_PRODUCTION_CHECKLIST.md`.
 
 ## Next Good Steps
 

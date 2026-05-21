@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 
 const PERFILES_GOONS = [
   {
@@ -87,7 +88,7 @@ export default function GoonsTracker({ onViewChange }) {
   const [goonData, setGoonData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorRadar, setErrorRadar] = useState(null);
-  const [modoJuego, setModoJuego] = useState('pvp');
+  const [modoJuego, setModoJuego] = useState(() => readDefaultPlayableMode().toLowerCase());
 
   useEffect(() => {
     const controller = new AbortController();
@@ -133,13 +134,16 @@ export default function GoonsTracker({ onViewChange }) {
       }
     };
 
-    setLoading(true);
-    escanearUbicacionGoons();
+    const initialScan = window.setTimeout(() => {
+      setLoading(true);
+      escanearUbicacionGoons();
+    }, 0);
 
     const intervaloRadar = setInterval(escanearUbicacionGoons, 120000);
 
     return () => {
       controller.abort();
+      window.clearTimeout(initialScan);
       clearInterval(intervaloRadar);
     };
   }, [modoJuego]);

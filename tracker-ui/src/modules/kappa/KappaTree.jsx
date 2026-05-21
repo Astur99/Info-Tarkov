@@ -1,145 +1,32 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '../../lib/supabaseClient';
+import { fetchCollectorItemAssets, fetchKappaTasks } from './kappaApi';
+import { TRADERS, TRADER_STYLES, collectorItemsList } from './kappaData';
+import {
+  readActiveMode,
+  readCollectorProgress,
+  readProgress,
+  saveActiveMode,
+  saveCloudProgress,
+  loadCloudProgress,
+  saveCollectorProgress,
+  saveLocalProgress
+} from './kappaStorage';
+import {
+  QUEST_CARD_HEIGHT,
+  QUEST_CARD_WIDTH,
+  buildQuestGraph,
+  getInitialTreePan,
+  normalizeCollectorName
+} from './kappaUtils';
 import QuestOptimizerModule from './QuestOptimizerModule';
-
-const STORAGE_PREFIX = 'sherpa_progreso_misiones_';
-const MODE_STORAGE_KEY = 'sherpa_modo_misiones_activo';
-const COLLECTOR_STORAGE_PREFIX = 'info_tarkov_collector_items_';
-
-const collectorItemsList = [
-  { id: '42-tea', name: '42 Signature Blend English Tea', hint: 'Food spawns, ration crates' },
-  { id: 'antique-axe', name: 'Antique axe', hint: 'Scavs, safes, stashes' },
-  { id: 'evasion-armband', name: 'Armband (Evasion)', apiName: 'Armband (Evasion)', hint: 'Stashes, weapon boxes, marked rooms' },
-  { id: 'axel-parrot', name: 'Axel parrot figurine', hint: 'Safes, valuables, stashes' },
-  { id: 'bear-buddy', name: 'BEAR Buddy plush toy', hint: 'Duffles, stashes, loose loot' },
-  { id: 'baddie-beard', name: "Baddie's red beard", hint: 'Scavs, duffles, stashes' },
-  { id: 'bakeezy-book', name: 'BakeEzy cook book', hint: 'Filing cabinets, shelves, stashes' },
-  { id: 'battered-antique-book', name: 'Battered antique book', hint: 'Safes, jackets, filing cabinets' },
-  { id: 'ratcola', name: 'Can of RatCola soda', hint: 'Food spawns, ration crates' },
-  { id: 'sprats', name: 'Can of sprats', hint: 'Food spawns, ration crates' },
-  { id: 'drd-armor', name: 'DRD body armor', hint: 'Stashes, armor spawns, Scavs' },
-  { id: 'deadlyslob-beard-oil', name: 'Deadlyslob beard oil', hint: 'Interchange, shelves, stashes' },
-  { id: 'domontovich-ushanka', name: 'Domontovich ushanka hat', hint: 'Scavs, clothing spawns, stashes' },
-  { id: 'fake-mustache', name: 'Fake mustache', hint: 'Scavs, stashes, jackets' },
-  { id: 'fireklean', name: '#FireKlean gun lube', hint: 'Technical crates, shelves, stashes' },
-  { id: 'gingy-keychain', name: 'Gingy keychain', hint: 'Safes, jackets, stashes' },
-  { id: 'glorious-mask', name: 'Glorious E lightweight armored mask', hint: 'Scavs, bosses, stashes' },
-  { id: 'golden-1gphone', name: 'Golden 1GPhone smartphone', hint: 'Safes, tech spawns, filing cabinets' },
-  { id: 'golden-egg', name: 'Golden egg', hint: 'Safes, valuables, stashes' },
-  { id: 'golden-rooster', name: 'Golden rooster figurine', hint: 'Safes, valuables, Labs' },
-  { id: 'inseq-wrench', name: 'Inseq gas pipe wrench', hint: 'Technical crates, toolboxes, shelves' },
-  { id: 'devildog-mayo', name: 'Jar of DevilDog mayo', hint: 'Food spawns, ration crates' },
-  { id: 'johnb-glasses', name: 'JohnB Liquid DNB glasses', hint: 'Scavs, jackets, stashes' },
-  { id: 'kotton-beanie', name: 'Kotton beanie', hint: 'Scavs, duffles, stashes' },
-  { id: 'lvndmark-rat-poison', name: "LVNDMARK's rat poison", hint: 'Medical/valuable spawns, stashes' },
-  { id: 'loot-lord', name: 'Loot Lord plushie', hint: 'Duffles, stashes, rare loose loot' },
-  { id: 'mazoni-dumbbell', name: 'Mazoni golden dumbbell', hint: 'Safes, valuables, rare loose loot' },
-  { id: 'missam-key', name: 'Missam forklift key', hint: 'Jackets, drawers, filing cabinets' },
-  { id: 'nuct-balaclava', name: 'Nuct Salk balaclava', apiName: "Nuct's balaclava", hint: 'Scavs, clothing spawns, stashes' },
-  { id: 'old-firesteel', name: 'Old firesteel', hint: 'Reserve, safes, technical spawns' },
-  { id: 'pestily-mask', name: 'Pestily plague mask', hint: 'Scavs, cultists, stashes' },
-  { id: 'press-pass', name: 'Press pass (issued for NoiceGuy)', hint: 'Filing cabinets, jackets, Streets' },
-  { id: 'raven-figurine', name: 'Raven figurine', hint: 'Safes, valuables, stashes' },
-  { id: 'shroud-mask', name: 'Shroud half-mask', hint: 'Scavs, duffles, stashes' },
-  { id: 'silver-badge', name: 'Silver Badge', hint: 'Safes, valuables, jackets' },
-  { id: 'smoke-balaclava', name: 'Smoke balaclava', hint: 'Scavs, clothing spawns' },
-  { id: 'tamatthi-kunai', name: 'Tamatthi kunai knife replica', hint: 'Safes, valuables, stashes' },
-  { id: 'tigz-splint', name: 'Tigzresq splint', hint: 'Medical spawns, medbags, stashes' },
-  { id: 'veritas-pick', name: 'Veritas guitar pick', hint: 'Safes, filing cabinets, valuables' },
-  { id: 'cyborg-killer', name: 'Video cassette with the Cyborg Killer movie', hint: 'Drawers, shelves, stashes' },
-  { id: 'viibiin-sneaker', name: 'Viibiin sneaker', hint: 'Duffles, stashes, loose loot' },
-  { id: 'wz-wallet', name: 'WZ Wallet', hint: 'Safes, jackets, stashes' }
-];
-
-const collectorItemNames = collectorItemsList.map((item) => item.apiName || item.name);
-
-const getStorageKey = (mode) => `${STORAGE_PREFIX}${mode.toLowerCase()}`;
-const getCollectorStorageKey = (mode) => `${COLLECTOR_STORAGE_PREFIX}${mode.toLowerCase()}`;
-
-const normalizeCollectorName = (value) =>
-  String(value || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-
-const readProgress = (mode) => {
-  try {
-    const saved = localStorage.getItem(getStorageKey(mode));
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveLocalProgress = (mode, progress) => {
-  localStorage.setItem(getStorageKey(mode), JSON.stringify(progress));
-};
-
-const readCollectorProgress = (mode) => {
-  try {
-    const saved = localStorage.getItem(getCollectorStorageKey(mode));
-    return saved ? JSON.parse(saved) : {};
-  } catch {
-    return {};
-  }
-};
-
-const saveCollectorProgress = (mode, progress) => {
-  localStorage.setItem(getCollectorStorageKey(mode), JSON.stringify(progress));
-};
-
-const collectorItemsQuery = `
-  query GetCollectorItems($names: [String]) {
-    items(names: $names) {
-      id
-      name
-      shortName
-      iconLink
-      imageLink
-      wikiLink
-    }
-  }
-`;
-
-const saveCloudProgress = async (userId, mode, progress) => {
-  const { error } = await supabase
-    .from('quest_progress')
-    .upsert(
-      {
-        user_id: userId,
-        mode,
-        completed_task_ids: progress,
-        updated_at: new Date().toISOString()
-      },
-      { onConflict: 'user_id,mode' }
-    );
-
-  if (error) throw error;
-};
-
-const getInitialTreePan = () => ({
-  x: typeof window === 'undefined' ? 900 : window.innerWidth / 2,
-  y: 120
-});
 
 export default function KappaTree({ onViewChange, session, initialTool = 'tree' }) {
   const { t } = useTranslation();
-  const [modoJuego, setModoJuego] = useState(() => {
-    try {
-      return localStorage.getItem(MODE_STORAGE_KEY) || 'PVP';
-    } catch {
-      return 'PVP';
-    }
-  });
+  const [modoJuego, setModoJuego] = useState(readActiveMode);
 
   const [todasLasMisiones, setTodasLasMisiones] = useState([]);
   const [currentTrader, setCurrentTrader] = useState('Prapor');
-  const [arbolEstructurado, setArbolEstructurado] = useState({
-    nodos: [],
-    conexiones: []
-  });
-
   const [searchQuery, setSearchQuery] = useState('');
   const [soloKappa, setSoloKappa] = useState(false);
   const [soloPendientes, setSoloPendientes] = useState(false);
@@ -149,7 +36,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   const [syncError, setSyncError] = useState(null);
   const [activeTool, setActiveTool] = useState(initialTool);
   const [collectorOpen, setCollectorOpen] = useState(false);
-  const [collectorItems, setCollectorItems] = useState(() => readCollectorProgress('PVP'));
+  const [collectorItems, setCollectorItems] = useState(() => readCollectorProgress(readActiveMode()));
   const [collectorSearch, setCollectorSearch] = useState('');
   const [collectorItemAssets, setCollectorItemAssets] = useState({});
 
@@ -162,38 +49,8 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   const [isDown, setIsDown] = useState(false);
   const [startPan, setStartPan] = useState({ x: 0, y: 0 });
 
-  const traders = [
-    'Prapor',
-    'Therapist',
-    'Skier',
-    'Peacekeeper',
-    'Mechanic',
-    'Ragman',
-    'Jaeger',
-    'Fence',
-    'Lightkeeper'
-  ];
-
-  const traderStyles = {
-    Prapor: { color: '#8F9F7F', bgGradient: 'rgba(143, 159, 127, 0.06)' },
-    Therapist: { color: '#4A90E2', bgGradient: 'rgba(74, 144, 226, 0.06)' },
-    Skier: { color: '#D4AF37', bgGradient: 'rgba(212, 175, 55, 0.06)' },
-    Peacekeeper: { color: '#50E3C2', bgGradient: 'rgba(80, 227, 194, 0.06)' },
-    Mechanic: { color: '#9B9B9B', bgGradient: 'rgba(155, 155, 155, 0.06)' },
-    Ragman: { color: '#A5673F', bgGradient: 'rgba(165, 103, 63, 0.06)' },
-    Jaeger: { color: '#7ED321', bgGradient: 'rgba(126, 211, 33, 0.06)' },
-    Fence: { color: '#9013FE', bgGradient: 'rgba(144, 19, 254, 0.06)' },
-    Lightkeeper: { color: '#D16E41', bgGradient: 'rgba(209, 110, 65, 0.06)' },
-    DEFAULT: { color: '#8F9F7F', bgGradient: 'rgba(143, 159, 127, 0.06)' }
-  };
-
   useEffect(() => {
-    localStorage.setItem(MODE_STORAGE_KEY, modoJuego);
-  }, [modoJuego]);
-
-  useEffect(() => {
-    setCollectorItems(readCollectorProgress(modoJuego));
-    setCollectorSearch('');
+    saveActiveMode(modoJuego);
   }, [modoJuego]);
 
   useEffect(() => {
@@ -203,29 +60,9 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   useEffect(() => {
     let cancelled = false;
 
-    fetch('https://api.tarkov.dev/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify({
-        query: collectorItemsQuery,
-        variables: { names: collectorItemNames }
-      })
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error(t('kappa.errors.collectorImages'));
-        return res.json();
-      })
-      .then((response) => {
+    fetchCollectorItemAssets()
+      .then((assets) => {
         if (cancelled) return;
-
-        const assets = {};
-        (response.data?.items || []).forEach((item) => {
-          assets[normalizeCollectorName(item.name)] = item;
-        });
-
         setCollectorItemAssets(assets);
       })
       .catch((loadError) => {
@@ -253,16 +90,12 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
       suppressSaveRef.current = true;
       setSyncLoading(true);
 
-      const { data, error: loadError } = await supabase
-        .from('quest_progress')
-        .select('completed_task_ids')
-        .eq('user_id', session.user.id)
-        .eq('mode', modoJuego)
-        .maybeSingle();
-
-      if (cancelled) return;
-
-      if (loadError) {
+      let cloudProgress;
+      try {
+        cloudProgress = await loadCloudProgress(session.user.id, modoJuego);
+      } catch (loadError) {
+        if (cancelled) return;
+        console.error(loadError);
         setSyncError(t('kappa.errors.cloudLoad'));
         setCompletadas(readProgress(modoJuego));
         setSyncLoading(false);
@@ -270,9 +103,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
         return;
       }
 
-      const cloudProgress = Array.isArray(data?.completed_task_ids)
-        ? data.completed_task_ids
-        : null;
+      if (cancelled) return;
 
       if (cloudProgress) {
         setCompletadas(cloudProgress);
@@ -327,46 +158,9 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   }, [completadas, modoJuego, session?.user?.id, syncLoading, t]);
 
   useEffect(() => {
-    const query = `
-      {
-        tasks {
-          id
-          name
-          wikiLink
-          kappaRequired
-          trader {
-            name
-          }
-          taskRequirements {
-            task {
-              id
-              name
-              trader {
-                name
-              }
-            }
-          }
-        }
-      }
-    `;
-
-    fetch('https://api.tarkov.dev/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify({ query })
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error(t('kappa.errors.serverCommunication'));
-        return res.json();
-      })
-      .then((response) => {
-        if (response.data?.tasks) {
-          setTodasLasMisiones(response.data.tasks);
-        }
-
+    fetchKappaTasks()
+      .then((tasks) => {
+        setTodasLasMisiones(tasks);
         setLoading(false);
       })
       .catch((err) => {
@@ -387,9 +181,11 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
       setCompletadas(readProgress(nuevoModo));
     }
 
-    localStorage.setItem(MODE_STORAGE_KEY, nuevoModo);
+    saveActiveMode(nuevoModo);
 
     setModoJuego(nuevoModo);
+    setCollectorItems(readCollectorProgress(nuevoModo));
+    setCollectorSearch('');
     setSoloPendientes(false);
     setSearchQuery('');
   };
@@ -516,155 +312,29 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
     if (misionEncontrada?.trader?.name) {
       const traderDestino = misionEncontrada.trader.name;
 
-      if (traders.includes(traderDestino) && traderDestino !== currentTrader) {
+      if (TRADERS.includes(traderDestino) && traderDestino !== currentTrader) {
         setCurrentTrader(traderDestino);
       }
     }
   };
 
+  const arbolEstructurado = useMemo(() => {
+    if (!todasLasMisiones.length) return { nodos: [], conexiones: [] };
+
+    return buildQuestGraph({
+      tasks: todasLasMisiones,
+      currentTrader,
+      soloKappa,
+      soloPendientes,
+      completadas
+    });
+  }, [completadas, currentTrader, soloKappa, soloPendientes, todasLasMisiones]);
+
   useEffect(() => {
-    if (!todasLasMisiones.length) return;
-
-    let misionesDelTrader = todasLasMisiones.filter(
-      (m) => m.trader?.name === currentTrader
-    );
-
-    if (soloKappa) {
-      misionesDelTrader = misionesDelTrader.filter((m) => m.kappaRequired);
-    }
-
-    if (soloPendientes) {
-      misionesDelTrader = misionesDelTrader.filter(
-        (m) => !completadas.includes(m.id)
-      );
-    }
-
-    const mapaMisiones = new Map(misionesDelTrader.map((m) => [m.id, m]));
-    const niveles = {};
-
-    misionesDelTrader.forEach((m) => {
-      niveles[m.id] = 0;
-    });
-
-    misionesDelTrader.forEach((m) => {
-      const prevIds = m.taskRequirements
-        ? m.taskRequirements
-            .map((req) => req?.task?.id)
-            .filter((id) => mapaMisiones.has(id))
-        : [];
-
-      m._prevIds = prevIds;
-    });
-
-    let cambio = true;
-
-    for (let i = 0; i < 20 && cambio; i++) {
-      cambio = false;
-
-      misionesDelTrader.forEach((m) => {
-        m._prevIds.forEach((pId) => {
-          if (niveles[m.id] <= niveles[pId]) {
-            niveles[m.id] = niveles[pId] + 1;
-            cambio = true;
-          }
-        });
-      });
-    }
-
-    const misionesPorNivel = {};
-
-    misionesDelTrader.forEach((m) => {
-      const lvl = niveles[m.id];
-
-      if (!misionesPorNivel[lvl]) misionesPorNivel[lvl] = [];
-
-      if (!misionesPorNivel[lvl].some((x) => x.id === m.id)) {
-        misionesPorNivel[lvl].push(m);
-      }
-    });
-
-    const nivelesOrdenados = Object.keys(misionesPorNivel).sort(
-      (a, b) => Number(a) - Number(b)
-    );
-
-    nivelesOrdenados.forEach((lvl, idx) => {
-      if (idx === 0) return;
-
-      const nivelAnterior = misionesPorNivel[nivelesOrdenados[idx - 1]];
-
-      misionesPorNivel[lvl].sort((a, b) => {
-        const primerPadreA = a._prevIds
-          .map((pId) => nivelAnterior.findIndex((n) => n.id === pId))
-          .filter((index) => index !== -1)[0];
-
-        const primerPadreB = b._prevIds
-          .map((pId) => nivelAnterior.findIndex((n) => n.id === pId))
-          .filter((index) => index !== -1)[0];
-
-        if (primerPadreA !== undefined && primerPadreB !== undefined) {
-          return primerPadreA - primerPadreB;
-        }
-
-        return 0;
-      });
-    });
-
-    const CARD_WIDTH = 340;
-    const CARD_HEIGHT = 160;
-    const GAP_X = 60;
-    const GAP_Y = 120;
-
-    const nodosCalculados = [];
-    const conexionesCalculadas = [];
-
-    Object.keys(misionesPorNivel).forEach((lvl) => {
-      const lista = misionesPorNivel[lvl];
-      const totalNivel = lista.length;
-      const anchoTotalNivel =
-        totalNivel * CARD_WIDTH + (totalNivel - 1) * GAP_X;
-      const inicioX = -anchoTotalNivel / 2;
-
-      lista.forEach((mision, index) => {
-        const posX = inicioX + index * (CARD_WIDTH + GAP_X);
-        const posY = lvl * (CARD_HEIGHT + GAP_Y);
-
-        nodosCalculados.push({
-          ...mision,
-          x: posX,
-          y: posY,
-          prevIds: mision._prevIds
-        });
-      });
-    });
-
-    nodosCalculados.forEach((nodo) => {
-      nodo.prevIds.forEach((pId) => {
-        const padre = nodosCalculados.find((n) => n.id === pId);
-
-        if (padre) {
-          conexionesCalculadas.push({
-            id: `${padre.id}-${nodo.id}`,
-            from: {
-              x: padre.x + CARD_WIDTH / 2,
-              y: padre.y + CARD_HEIGHT
-            },
-            to: {
-              x: nodo.x + CARD_WIDTH / 2,
-              y: nodo.y
-            },
-            activo: completadas.includes(padre.id)
-          });
-        }
-      });
-    });
-
-    setArbolEstructurado({
-      nodos: nodosCalculados,
-      conexiones: conexionesCalculadas
-    });
+    let animationFrame = null;
 
     if (searchQuery.trim() !== '') {
-      const nodoMatch = nodosCalculados.find(
+      const nodoMatch = arbolEstructurado.nodos.find(
         (n) =>
           n.name &&
           n.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -674,21 +344,19 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
         const centroPantallaX = window.innerWidth / 2;
         const centroPantallaY = window.innerHeight / 2;
 
-        setPan({
-          x: centroPantallaX - (nodoMatch.x + CARD_WIDTH / 2) * zoom,
-          y: centroPantallaY - (nodoMatch.y + CARD_HEIGHT / 2) * zoom
+        animationFrame = window.requestAnimationFrame(() => {
+          setPan({
+            x: centroPantallaX - (nodoMatch.x + QUEST_CARD_WIDTH / 2) * zoom,
+            y: centroPantallaY - (nodoMatch.y + QUEST_CARD_HEIGHT / 2) * zoom
+          });
         });
       }
     }
-  }, [
-    currentTrader,
-    todasLasMisiones,
-    searchQuery,
-    soloKappa,
-    soloPendientes,
-    completadas,
-    zoom
-  ]);
+
+    return () => {
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
+  }, [arbolEstructurado.nodos, searchQuery, zoom]);
 
   const handleWheel = (e) => {
     e.preventDefault();
@@ -731,7 +399,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
     });
   };
 
-  const activeStyle = traderStyles[currentTrader] || traderStyles.DEFAULT;
+  const activeStyle = TRADER_STYLES[currentTrader] || TRADER_STYLES.DEFAULT;
 
   const totalMisiones = todasLasMisiones.length;
 
@@ -1018,9 +686,9 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
             paddingBottom: '0.5rem'
           }}
         >
-          {traders.map((tName) => {
+          {TRADERS.map((tName) => {
             const esActivo = currentTrader === tName;
-            const tStyle = traderStyles[tName] || traderStyles.DEFAULT;
+            const tStyle = TRADER_STYLES[tName] || TRADER_STYLES.DEFAULT;
 
             return (
               <button

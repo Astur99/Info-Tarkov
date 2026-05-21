@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const EVENT_SOURCES = [
@@ -42,7 +42,7 @@ const VERIFIED_MANUAL_EVENTS = [
 
 function cleanTitle(value) {
   return String(value || '')
-    .replace(/^\s*\d+[\).\-\s]+/g, '')
+    .replace(/^\s*\d+[).\s-]+/g, '')
     .replace(/^\s*[•\-–—]+\s*/g, '')
     .replace(/\s+/g, ' ')
     .trim();
@@ -279,7 +279,7 @@ export default function LiveEvents({ onViewChange }) {
     return () => window.clearInterval(timer);
   }, []);
 
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     const controller = new AbortController();
     setLoading(true);
     setError(null);
@@ -313,7 +313,7 @@ export default function LiveEvents({ onViewChange }) {
     }
 
     return () => controller.abort();
-  };
+  }, [t]);
 
   useEffect(() => {
     let cancelled = false;
@@ -322,12 +322,13 @@ export default function LiveEvents({ onViewChange }) {
       if (!cancelled) await loadEvents();
     };
 
-    run();
+    const initialLoad = window.setTimeout(run, 0);
 
     return () => {
       cancelled = true;
+      window.clearTimeout(initialLoad);
     };
-  }, []);
+  }, [loadEvents]);
 
   const counts = useMemo(() => ({
     active: events.filter((event) => event.status === 'active').length,

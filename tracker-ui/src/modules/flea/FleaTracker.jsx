@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
+import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 
 const MARKET_MODES = {
   PVP: 'regular',
   PVE: 'pve'
 };
+
+const ITEMS_INTERES = [
+  "Graphics card", "LedX", "Defibrillator", "Water filter", "Expeditionary fuel tank",
+  "Physical bitcoin", "Moonshine", "Sugar", "Tetriz", "Ophthalmoscope", "GPU",
+  "Military corrugated tube", "Prokill", "Alenka", "Sledgehammer", "M.U.L.E. stimulant",
+  "Obdolbos", "SJ6 TGLabs", "Intelligence folder", "Keycard Blue", "Keycard Green"
+];
 
 export default function FleaTracker({ onViewChange }) {
   const [busqueda, setBusqueda] = useState('');
@@ -12,25 +20,17 @@ export default function FleaTracker({ onViewChange }) {
   const [cargandoHotDeals, setCargandoHotDeals] = useState(true);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
   const [hotDeals, setHotDeals] = useState([]);
-  const [modoMercado, setModoMercado] = useState('PVP');
+  const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
   const gameMode = MARKET_MODES[modoMercado];
-
-  const itemsInteres = [
-    "Graphics card", "LedX", "Defibrillator", "Water filter", "Expeditionary fuel tank",
-    "Physical bitcoin", "Moonshine", "Sugar", "Tetriz", "Ophthalmoscope", "GPU", 
-    "Military corrugated tube", "Prokill", "Alenka", "Sledgehammer", "M.U.L.E. stimulant", 
-    "Obdolbos", "SJ6 TGLabs", "Intelligence folder", "Keycard Blue", "Keycard Green"
-  ];
 
   // 1. RADAR AUTOMÁTICO DE ANOMALÍAS (HOT DEALS VIVO)
   useEffect(() => {
-    setCargandoHotDeals(true);
-    setHotDeals([]);
+    const controller = new AbortController();
 
     const queryHotDeals = JSON.stringify({
       query: `
         query GetHotDeals {
-          items(names: ${JSON.stringify(itemsInteres)}, gameMode: ${gameMode}) {
+          items(names: ${JSON.stringify(ITEMS_INTERES)}, gameMode: ${gameMode}) {
             id
             name
             shortName
@@ -52,7 +52,8 @@ export default function FleaTracker({ onViewChange }) {
     fetch('https://api.tarkov.dev/graphql', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: queryHotDeals
+      body: queryHotDeals,
+      signal: controller.signal
     })
       .then(res => res.json())
       .then(result => {
@@ -75,23 +76,32 @@ export default function FleaTracker({ onViewChange }) {
         }
         setCargandoHotDeals(false);
       })
-      .catch(() => setCargandoHotDeals(false));
+      .catch((error) => {
+        if (error.name !== 'AbortError') setCargandoHotDeals(false);
+      });
+
+    return () => controller.abort();
   }, [gameMode]);
 
-  useEffect(() => {
+  const cambiarModoMercado = (mode) => {
+    setModoMercado(mode);
     setItemSeleccionado(null);
     setItemsResultados([]);
-  }, [modoMercado]);
+  };
 
   // 2. BUSCADOR INTELIGENTE MULTI-IDIOMA CON TOLERANCIA DE TILDES
   useEffect(() => {
     if (busqueda.length < 3) {
-      setItemsResultados([]);
-      return;
+      const resetResults = window.setTimeout(() => {
+        setItemsResultados([]);
+        setCargando(false);
+      }, 0);
+      return () => window.clearTimeout(resetResults);
     }
 
-    setCargando(true);
     const delayDebounce = setTimeout(() => {
+      setCargando(true);
+
       const queryBuscador = JSON.stringify({
         query: `
           query SearchItems {
@@ -245,7 +255,7 @@ export default function FleaTracker({ onViewChange }) {
                 <button
                   key={mode}
                   type="button"
-                  onClick={() => setModoMercado(mode)}
+                  onClick={() => cambiarModoMercado(mode)}
                   style={{
                     minWidth: '86px',
                     border: active ? '1px solid rgba(187, 211, 169, 0.55)' : '1px solid rgba(255,255,255,0.06)',
