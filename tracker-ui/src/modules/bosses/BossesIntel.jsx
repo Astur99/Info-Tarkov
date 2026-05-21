@@ -8,6 +8,70 @@ const bossImageModules = import.meta.glob('../../assets/bosses/*', {
 
 const getBossImage = (boss) => bossImageModules[`../../assets/bosses/${boss.fileName}`] || '';
 
+const BOSS_SPAWN_ZONES = {
+  bigpipe: {
+    Customs: ['Stronghold', 'New gas station', 'Dorms approach', 'Crackhouse route'],
+    Lighthouse: ['Water treatment plant', 'Chalet ridge', 'Village approach'],
+    Shoreline: ['Weather station', 'Cottages', 'Pier approach'],
+    Woods: ['Scav bunker', 'USEC camp route', 'Sawmill outskirts']
+  },
+  birdeye: {
+    Customs: ['Stronghold overwatch', 'Crackhouse sightlines', 'Dorms approach'],
+    Lighthouse: ['Long road cliffs', 'Water treatment overwatch', 'Chalet ridge'],
+    Shoreline: ['Weather station ridge', 'Cottages sightlines', 'Pier approach'],
+    Woods: ['Sawmill ridges', 'USEC camp route', 'Scav bunker woods']
+  },
+  knight: {
+    Customs: ['Stronghold', 'Crackhouse push', 'Dorms approach'],
+    Lighthouse: ['Water treatment plant', 'Chalet', 'Long road approach'],
+    Shoreline: ['Weather station', 'Cottages', 'Pier approach'],
+    Woods: ['Sawmill edge', 'USEC camp route', 'Scav bunker']
+  },
+  glukhar: {
+    Reserve: ['Train station', 'Knight buildings', 'Pawn buildings', 'K buildings', 'Underground bunker access']
+  },
+  kaban: {
+    'Streets of Tarkov': ['LexOs dealership', 'LexOs courtyard', 'Machine gun positions', 'Collapsed crane side']
+  },
+  killa: {
+    Interchange: ['Goshan', 'IDEA', 'OLI', 'Central mall', 'Parking transitions']
+  },
+  kollontay: {
+    'Streets of Tarkov': ['Klimov shopping mall', 'Pinewood hotel', 'Police areas', 'Central streets patrol']
+  },
+  partisan: {
+    Customs: ['Wooded approaches', 'Dorms exterior', 'Smuggler routes'],
+    Woods: ['Forest traps', 'Sawmill outskirts', 'USEC camp route'],
+    Shoreline: ['Village woods', 'Cottages approach', 'Weather station route'],
+    Factory: ['Expansion tunnels', 'Gate routes', 'Office approaches']
+  },
+  reshala: {
+    Customs: ['Dorms', 'New gas station', 'Stronghold', 'Scav checkpoint routes']
+  },
+  sanitar: {
+    Shoreline: ['Health resort', 'Cottages', 'Pier', 'Ambulance routes']
+  },
+  shturman: {
+    Woods: ['Sawmill', 'Wood piles', 'Sniper rock sightlines', 'Outer lumber routes']
+  },
+  tagilla: {
+    Factory: ['Office area', 'Underground', 'Gate 0/3 routes', 'Expansion corridors']
+  },
+  Zryachiy: {
+    Lighthouse: ['Lightkeeper island', 'Bridge approach', 'Island ridgelines']
+  }
+};
+
+const getBossSpawnZones = (boss) => {
+  if (!boss) return [];
+  const zoneMap = BOSS_SPAWN_ZONES[boss.id] || {};
+
+  return (boss.spawnDetails || []).map((spawn) => ({
+    ...spawn,
+    zones: zoneMap[spawn.name] || zoneMap[spawn.name.replace('The Lab', 'Laboratory')] || ['Zona exacta pendiente de confirmar']
+  }));
+};
+
 function BossImage({ boss, style }) {
   const [failed, setFailed] = useState(false);
   const src = getBossImage(boss);
@@ -572,6 +636,58 @@ export default function BossesView({ onViewChange }) {
                             <div style={{ width: `${Math.min(100, spawn.chance)}%`, height: '100%', background: 'var(--tk-green)' }} />
                           </div>
                           <span style={{ color: 'var(--tk-green)', fontWeight: '900', textAlign: 'right' }}>{spawn.chance}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '1px', display: 'block', marginBottom: '0.6rem' }}>ZONAS DE SPAWN CONOCIDAS</span>
+                    <div style={{ display: 'grid', gap: '0.8rem' }}>
+                      {getBossSpawnZones(bossSeleccionado).map((spawn) => (
+                        <div
+                          key={`${spawn.name}-zones`}
+                          style={{
+                            background: 'rgba(0,0,0,0.22)',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            borderRadius: '8px',
+                            padding: '0.85rem'
+                          }}
+                        >
+                          <div style={{ marginBottom: '0.65rem' }}>
+                            <strong style={{ color: '#fff', fontSize: '1rem' }}>{spawn.name}</strong>
+                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: '88px 1fr', gap: '0.8rem', alignItems: 'stretch' }}>
+                            <div
+                              aria-hidden="true"
+                              style={{
+                                minHeight: '72px',
+                                borderRadius: '6px',
+                                border: '1px solid rgba(255,255,255,0.06)',
+                                background:
+                                  'linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), radial-gradient(circle at 62% 38%, rgba(26,176,21,0.38), transparent 9px), rgba(0,0,0,0.28)',
+                                backgroundSize: '22px 22px, 22px 22px, auto, auto',
+                                boxShadow: 'inset 0 0 18px rgba(0,0,0,0.35)'
+                              }}
+                            />
+                            <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', alignContent: 'flex-start' }}>
+                              {spawn.zones.map((zone) => (
+                                <span
+                                  key={zone}
+                                  style={{
+                                    color: '#d7d7d7',
+                                    background: 'rgba(255,255,255,0.045)',
+                                    border: '1px solid rgba(255,255,255,0.075)',
+                                    borderRadius: '999px',
+                                    padding: '0.28rem 0.55rem',
+                                    fontSize: '0.82rem',
+                                    fontWeight: '800'
+                                  }}
+                                >
+                                  {zone}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>

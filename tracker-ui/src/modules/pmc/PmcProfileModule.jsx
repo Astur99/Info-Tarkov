@@ -49,6 +49,19 @@ const buttonBaseStyle = {
   letterSpacing: '1px'
 };
 
+const tableHeadStyle = {
+  color: 'var(--tk-text-muted)',
+  textAlign: 'left',
+  fontSize: '0.82rem',
+  textTransform: 'uppercase',
+  padding: '0.45rem 0.55rem',
+  borderBottom: '1px solid rgba(255,255,255,0.08)',
+  position: 'sticky',
+  top: 0,
+  zIndex: 1,
+  background: '#141416'
+};
+
 const formatNumber = (value) => {
   if (value === null || value === undefined || value === '') return '-';
   const parsed = Number(value);
@@ -84,6 +97,160 @@ const formatSyncAge = (value) => {
   const diffHours = Math.round(diffMinutes / 60);
   if (diffHours < 48) return `Actualizado hace ${diffHours} h`;
   return `Actualizado hace ${Math.round(diffHours / 24)} dias`;
+};
+
+const formatSkillName = (value) => {
+  if (!value) return 'Skill';
+  return String(value)
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/[_-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
+const formatSkillLevel = (value) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return '-';
+  return Math.min(51, parsed).toFixed(2);
+};
+
+const getExportImageUrl = (src) => {
+  if (!src) return '';
+  try {
+    const url = new URL(src, window.location.origin);
+    if (url.hostname === 'assets.tarkov.dev' || url.hostname === 'static.tarkov.dev') {
+      return `/api/image-proxy?url=${encodeURIComponent(url.href)}`;
+    }
+    return url.href;
+  } catch {
+    return src;
+  }
+};
+
+const loadExportImage = (src) => new Promise((resolve) => {
+  if (!src) {
+    resolve(null);
+    return;
+  }
+  const image = new Image();
+  const timeout = window.setTimeout(() => resolve(null), 2500);
+  image.crossOrigin = 'anonymous';
+  image.onload = () => {
+    window.clearTimeout(timeout);
+    resolve(image);
+  };
+  image.onerror = () => {
+    window.clearTimeout(timeout);
+    resolve(null);
+  };
+  image.src = src;
+});
+
+const drawRoundedRect = (ctx, x, y, width, height, radius = 10) => {
+  ctx.beginPath();
+  ctx.roundRect(x, y, width, height, radius);
+  ctx.fill();
+  ctx.stroke();
+};
+
+const drawClampedText = (ctx, text, x, y, maxWidth, lineHeight, maxLines = 2) => {
+  const words = String(text || '-').split(/\s+/);
+  const lines = [];
+  let currentLine = '';
+  words.forEach((word) => {
+    const nextLine = currentLine ? `${currentLine} ${word}` : word;
+    if (ctx.measureText(nextLine).width <= maxWidth || !currentLine) {
+      currentLine = nextLine;
+      return;
+    }
+    lines.push(currentLine);
+    currentLine = word;
+  });
+  if (currentLine) lines.push(currentLine);
+
+  lines.slice(0, maxLines).forEach((line, index) => {
+    const finalLine = index === maxLines - 1 && lines.length > maxLines ? `${line.replace(/\s+\S+$/, '')}...` : line;
+    ctx.fillText(finalLine, x, y + index * lineHeight);
+  });
+};
+
+const drawStatIcon = (ctx, icon, x, y) => {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(187,211,169,0.82)';
+  ctx.fillStyle = 'rgba(187,211,169,0.14)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(x, y, 30, 30, 8);
+  ctx.fill();
+  ctx.stroke();
+  ctx.strokeStyle = '#9fb48f';
+  ctx.fillStyle = '#9fb48f';
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  if (icon === 'shield') {
+    ctx.beginPath();
+    ctx.moveTo(x + 15, y + 7);
+    ctx.lineTo(x + 22, y + 10);
+    ctx.lineTo(x + 20, y + 21);
+    ctx.lineTo(x + 15, y + 24);
+    ctx.lineTo(x + 10, y + 21);
+    ctx.lineTo(x + 8, y + 10);
+    ctx.closePath();
+    ctx.stroke();
+  } else if (icon === 'xp') {
+    [0, 1, 2].forEach((bar) => {
+      ctx.fillRect(x + 8 + bar * 5, y + 20 - bar * 4, 3, 5 + bar * 4);
+    });
+  } else if (icon === 'raid') {
+    ctx.beginPath();
+    ctx.arc(x + 15, y + 15, 8, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + 15, y + 7);
+    ctx.lineTo(x + 15, y + 23);
+    ctx.moveTo(x + 7, y + 15);
+    ctx.lineTo(x + 23, y + 15);
+    ctx.stroke();
+  } else if (icon === 'extract') {
+    ctx.beginPath();
+    ctx.moveTo(x + 9, y + 18);
+    ctx.lineTo(x + 15, y + 24);
+    ctx.lineTo(x + 23, y + 8);
+    ctx.stroke();
+  } else if (icon === 'percent') {
+    ctx.font = '900 16px Rajdhani, Arial';
+    ctx.fillText('%', x + 10, y + 20);
+  } else if (icon === 'kill') {
+    ctx.beginPath();
+    ctx.moveTo(x + 9, y + 21);
+    ctx.lineTo(x + 21, y + 9);
+    ctx.moveTo(x + 10, y + 9);
+    ctx.lineTo(x + 22, y + 21);
+    ctx.stroke();
+  } else if (icon === 'target') {
+    ctx.beginPath();
+    ctx.arc(x + 15, y + 15, 8, 0, Math.PI * 2);
+    ctx.arc(x + 15, y + 15, 3, 0, Math.PI * 2);
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(x + 15, y + 7);
+    ctx.lineTo(x + 17.5, y + 13);
+    ctx.lineTo(x + 24, y + 13);
+    ctx.lineTo(x + 19, y + 17);
+    ctx.lineTo(x + 21, y + 24);
+    ctx.lineTo(x + 15, y + 20);
+    ctx.lineTo(x + 9, y + 24);
+    ctx.lineTo(x + 11, y + 17);
+    ctx.lineTo(x + 6, y + 13);
+    ctx.lineTo(x + 12.5, y + 13);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  ctx.restore();
 };
 
 const readSearchHistory = () => {
@@ -189,58 +356,206 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
     window.setTimeout(() => setCopyStatus(''), 1600);
   };
 
-  const handleExportCard = () => {
+  const handleExportCard = async () => {
     if (!remoteProfile) return;
+    const achievements = remoteProfile.allAchievements || remoteProfile.recentAchievements || [];
+    const rareAchievements = remoteProfile.rareAchievements || [];
+    const skills = remoteProfile.skillsSummary || [];
+    const equipment = remoteProfile.equipmentItems || [];
+    const favorites = remoteProfile.favoriteItems || [];
+    const imageSources = [
+      ...rareAchievements.slice(0, 3).map((achievement) => achievement.imageLink),
+      ...achievements.slice(0, 8).map((achievement) => achievement.imageLink),
+      ...skills.slice(0, 8).map((skill) => skill.imageLink),
+      ...equipment.slice(0, 4).map((item) => item.iconLink || item.gridImageLink || item.baseImageLink),
+      ...favorites.slice(0, 4).map((item) => item.iconLink || item.gridImageLink || item.baseImageLink)
+    ].filter(Boolean);
+    const loadedImages = new Map();
+    await Promise.all([...new Set(imageSources)].map(async (src) => {
+      loadedImages.set(src, await loadExportImage(getExportImageUrl(src)));
+    }));
+
     const canvas = document.createElement('canvas');
     const scale = 2;
-    canvas.width = 900 * scale;
-    canvas.height = 480 * scale;
+    const width = 1080;
+    const height = 1480;
+    canvas.width = width * scale;
+    canvas.height = height * scale;
     const ctx = canvas.getContext('2d');
     ctx.scale(scale, scale);
     ctx.fillStyle = '#090b0c';
-    ctx.fillRect(0, 0, 900, 480);
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = 'rgba(187,211,169,0.035)';
+    ctx.fillRect(0, 0, width, 260);
+    ctx.fillStyle = 'rgba(255,255,255,0.018)';
+    for (let x = 0; x < width; x += 48) ctx.fillRect(x, 0, 1, height);
+    for (let y = 0; y < height; y += 48) ctx.fillRect(0, y, width, 1);
+
     ctx.fillStyle = '#121514';
-    ctx.fillRect(24, 24, 852, 432);
     ctx.strokeStyle = 'rgba(187,211,169,0.35)';
     ctx.lineWidth = 2;
-    ctx.strokeRect(24, 24, 852, 432);
+    drawRoundedRect(ctx, 28, 28, width - 56, height - 56, 18);
+
+    ctx.strokeStyle = 'rgba(187,211,169,0.35)';
+    ctx.lineWidth = 2;
     ctx.fillStyle = '#9fb48f';
-    ctx.font = '700 20px Rajdhani, Arial';
-    ctx.fillText(`${activeMode} / INFOTARKOV`, 52, 72);
+    ctx.font = '800 20px Rajdhani, Arial';
+    ctx.fillText(`${activeMode} / INFOTARKOV PMC DOSSIER`, 62, 74);
+
     ctx.fillStyle = '#ffffff';
-    ctx.font = '900 52px Rajdhani, Arial';
-    ctx.fillText(remoteProfile.nickname || profileUsername || 'PMC', 52, 130);
+    ctx.font = '900 62px Rajdhani, Arial';
+    ctx.fillText(remoteProfile.nickname || profileUsername || 'PMC', 62, 146);
     ctx.fillStyle = '#9fb48f';
-    ctx.font = '900 72px Rajdhani, Arial';
-    ctx.fillText(remoteProfile.level ? `L${remoteProfile.level}` : 'L--', 700, 130);
-    const rows = [
-      ['Faccion', remoteProfile.faction || '-'],
-      ['XP', formatNumber(remoteProfile.experience)],
-      ['Raids', formatNumber(remoteProfile.raids)],
-      ['Extracted', formatNumber(remoteProfile.survivedRaids)],
-      ['SR', remoteProfile.survivalRate !== null && remoteProfile.survivalRate !== undefined ? `${remoteProfile.survivalRate}%` : '-'],
-      ['Logros', formatNumber(remoteProfile.achievementsCount)]
+    ctx.font = '900 86px Rajdhani, Arial';
+    ctx.fillText(remoteProfile.level ? `L${remoteProfile.level}` : 'L--', 840, 146);
+    ctx.fillStyle = '#ffcf66';
+    ctx.font = '900 22px Rajdhani, Arial';
+    ctx.fillText(rareAchievements[0] ? `TOP LOGRO: ${rareAchievements[0].name}` : 'TOP LOGRO: -', 62, 190);
+    ctx.fillStyle = '#8d8f8c';
+    ctx.font = '800 18px Rajdhani, Arial';
+    ctx.fillText(`Sincronizado: ${formatDateTime(remoteProfile.updatedAt)} · Account ID: ${remoteProfile.accountId || '-'}`, 62, 226);
+
+    const statRows = [
+      ['Faccion', remoteProfile.faction || '-', 'shield'],
+      ['XP', formatNumber(remoteProfile.experience), 'xp'],
+      ['Raids', formatNumber(remoteProfile.raids), 'raid'],
+      ['Extracted', formatNumber(remoteProfile.survivedRaids), 'extract'],
+      ['SR', remoteProfile.survivalRate !== null && remoteProfile.survivalRate !== undefined ? `${remoteProfile.survivalRate}%` : '-', 'percent'],
+      ['Kills', formatNumber(remoteProfile.kills), 'kill'],
+      ['PMC kills', formatNumber(remoteProfile.killedPmcs), 'target'],
+      ['Logros', formatNumber(remoteProfile.achievementsCount), 'star']
     ];
-    rows.forEach(([label, value], index) => {
-      const x = 52 + (index % 3) * 270;
-      const y = 210 + Math.floor(index / 3) * 92;
+    statRows.forEach(([label, value, icon], index) => {
+      const x = 62 + (index % 4) * 245;
+      const y = 292 + Math.floor(index / 4) * 92;
       ctx.fillStyle = 'rgba(255,255,255,0.05)';
-      ctx.fillRect(x, y, 230, 64);
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      drawRoundedRect(ctx, x, y, 220, 66, 10);
+      drawStatIcon(ctx, icon, x + 12, y + 18);
       ctx.fillStyle = '#8d8f8c';
-      ctx.font = '800 17px Rajdhani, Arial';
-      ctx.fillText(label.toUpperCase(), x + 14, y + 24);
+      ctx.font = '800 15px Rajdhani, Arial';
+      ctx.fillText(label.toUpperCase(), x + 54, y + 24);
       ctx.fillStyle = '#ffffff';
       ctx.font = '900 25px Rajdhani, Arial';
-      ctx.fillText(String(value), x + 14, y + 52);
+      drawClampedText(ctx, String(value), x + 54, y + 52, 150, 25, 1);
     });
+
+    const drawSectionTitle = (title, y) => {
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 26px Rajdhani, Arial';
+      ctx.fillText(title.toUpperCase(), 62, y);
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.beginPath();
+      ctx.moveTo(62, y + 16);
+      ctx.lineTo(width - 62, y + 16);
+      ctx.stroke();
+    };
+
+    const drawItemCard = (item, x, y, cardWidth) => {
+      const src = item?.iconLink || item?.gridImageLink || item?.baseImageLink;
+      const image = loadedImages.get(src);
+      ctx.fillStyle = 'rgba(255,255,255,0.04)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      drawRoundedRect(ctx, x, y, cardWidth, 76, 10);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(x + 12, y + 14, 48, 48);
+      if (image) {
+        ctx.drawImage(image, x + 12, y + 14, 48, 48);
+      } else {
+        ctx.fillStyle = 'rgba(187,211,169,0.12)';
+        ctx.fillRect(x + 12, y + 14, 48, 48);
+        ctx.fillStyle = '#9fb48f';
+        ctx.font = '900 16px Rajdhani, Arial';
+        ctx.fillText(String(item?.shortName || item?.name || '?').slice(0, 2).toUpperCase(), x + 25, y + 44);
+      }
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 18px Rajdhani, Arial';
+      drawClampedText(ctx, item?.shortName || item?.name || '-', x + 72, y + 30, cardWidth - 86, 18, 1);
+      ctx.fillStyle = '#8d8f8c';
+      ctx.font = '800 15px Rajdhani, Arial';
+      drawClampedText(ctx, item?.name || '-', x + 72, y + 52, cardWidth - 86, 16, 2);
+    };
+
+    drawSectionTitle('Equipo tactico', 515);
+    equipment.slice(0, 4).forEach((item, index) => drawItemCard(item, 62 + (index % 2) * 490, 548 + Math.floor(index / 2) * 88, 455));
+
+    drawSectionTitle('Favoritos', 760);
+    favorites.slice(0, 4).forEach((item, index) => drawItemCard(item, 62 + (index % 2) * 490, 793 + Math.floor(index / 2) * 88, 455));
+
+    drawSectionTitle('Logros destacados', 1005);
+    const featuredAchievements = (rareAchievements.length ? rareAchievements : achievements).slice(0, 6);
+    featuredAchievements.forEach((achievement, index) => {
+      const x = 62 + (index % 2) * 490;
+      const y = 1038 + Math.floor(index / 2) * 68;
+      const image = loadedImages.get(achievement.imageLink);
+      ctx.fillStyle = 'rgba(255,207,102,0.045)';
+      ctx.strokeStyle = 'rgba(255,207,102,0.18)';
+      drawRoundedRect(ctx, x, y, 455, 56, 10);
+      if (image) {
+        ctx.drawImage(image, x + 12, y + 10, 36, 36);
+      } else {
+        ctx.fillStyle = 'rgba(255,207,102,0.12)';
+        ctx.beginPath();
+        ctx.arc(x + 30, y + 28, 18, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffcf66';
+        ctx.font = '900 18px Rajdhani, Arial';
+        ctx.fillText('★', x + 24, y + 34);
+      }
+      ctx.fillStyle = '#ffcf66';
+      ctx.font = '900 13px Rajdhani, Arial';
+      ctx.fillText(`${achievement.rarityLabel || achievement.rarity || 'Logro'} · ${formatPercent(achievement.playersCompletedPercent)}`, x + 60, y + 20);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 17px Rajdhani, Arial';
+      drawClampedText(ctx, achievement.name, x + 60, y + 42, 370, 17, 1);
+    });
+
+    drawSectionTitle('Skills farmeadas', 1260);
+    skills.slice(0, 8).forEach((skill, index) => {
+      const x = 62 + (index % 4) * 245;
+      const y = 1293 + Math.floor(index / 4) * 64;
+      const image = loadedImages.get(skill.imageLink);
+      ctx.fillStyle = 'rgba(255,255,255,0.04)';
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      drawRoundedRect(ctx, x, y, 220, 48, 9);
+      if (image) {
+        ctx.drawImage(image, x + 10, y + 8, 32, 32);
+      } else {
+        ctx.fillStyle = 'rgba(187,211,169,0.12)';
+        ctx.fillRect(x + 10, y + 8, 32, 32);
+        ctx.fillStyle = '#9fb48f';
+        ctx.font = '900 12px Rajdhani, Arial';
+        ctx.fillText(String(skill.name || skill.id || '?').slice(0, 2).toUpperCase(), x + 17, y + 28);
+      }
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 16px Rajdhani, Arial';
+      drawClampedText(ctx, skill.name || formatSkillName(skill.id), x + 52, y + 22, 112, 16, 1);
+      ctx.fillStyle = '#9fb48f';
+      ctx.font = '900 17px Rajdhani, Arial';
+      ctx.fillText(`L${formatSkillLevel(skill.level)}`, x + 164, y + 31);
+    });
+
     ctx.fillStyle = '#ffcf66';
     ctx.font = '900 18px Rajdhani, Arial';
-    ctx.fillText(`Account ID: ${remoteProfile.accountId || '-'}`, 52, 414);
+    ctx.fillText('INFOTARKOV.COM', 62, 1420);
     ctx.fillStyle = '#8d8f8c';
-    ctx.fillText(formatSyncAge(remoteProfile.updatedAt), 52, 438);
+    ctx.fillText(formatSyncAge(remoteProfile.updatedAt), 820, 1420);
+
     const link = document.createElement('a');
     link.download = `infotarkov-${remoteProfile.nickname || profileUsername || 'pmc'}-${activeMode}.png`;
-    link.href = canvas.toDataURL('image/png');
+    try {
+      link.href = canvas.toDataURL('image/png');
+    } catch {
+      ctx.fillStyle = '#090b0c';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '900 42px Rajdhani, Arial';
+      ctx.fillText(remoteProfile.nickname || profileUsername || 'PMC', 62, 120);
+      ctx.fillStyle = '#9fb48f';
+      ctx.font = '900 24px Rajdhani, Arial';
+      ctx.fillText('No se pudieron incrustar imagenes externas en esta exportacion.', 62, 170);
+      link.href = canvas.toDataURL('image/png');
+    }
     link.click();
   };
 
@@ -393,6 +708,8 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
             setAchievementSearch={setAchievementSearch}
             setAchievementSort={setAchievementSort}
           />
+
+          <SkillsPanel skills={remoteProfile?.skillsSummary || []} />
 
           <DataPanel remoteProfile={remoteProfile} skillText={skillText} topKeys={topKeys} />
         </section>
@@ -874,6 +1191,71 @@ function AchievementRow({ achievement }) {
       <td style={{ color: 'var(--tk-text-muted)', fontWeight: '800', padding: '0.52rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{formatPercent(achievement.playersCompletedPercent)}</td>
       <td style={{ color: 'var(--tk-text-muted)', fontWeight: '800', padding: '0.52rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{formatDateTime(achievement.completedAt)}</td>
     </tr>
+  );
+}
+
+function SkillsPanel({ skills }) {
+  if (!skills.length) return null;
+
+  return (
+    <article style={{ ...panelStyle, padding: '1rem' }}>
+      <div style={{ marginBottom: '0.9rem' }}>
+        <h3 style={{ color: '#fff', margin: 0, textTransform: 'uppercase' }}>Habilidades farmeadas</h3>
+        <p style={{ color: 'var(--tk-text-muted)', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
+          {formatNumber(skills.length)} skills detectadas en el perfil publico. Ordenadas por progreso.
+        </p>
+      </div>
+
+      <div style={{ overflowX: 'auto', maxHeight: '520px', overflowY: 'auto', paddingRight: '0.2rem' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '520px' }}>
+          <thead>
+            <tr>
+              <th style={tableHeadStyle}>Skill</th>
+              <th style={tableHeadStyle}>Nivel</th>
+              <th style={tableHeadStyle}>Ultimo acceso</th>
+            </tr>
+          </thead>
+          <tbody>
+            {skills.map((skill) => (
+              <tr key={`${skill.id}-${skill.lastAccess || skill.progress}`}>
+                <td style={{ padding: '0.58rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '38px 1fr', gap: '0.65rem', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: '8px',
+                        background: 'rgba(0,0,0,0.35)',
+                        border: '1px solid rgba(187,211,169,0.16)',
+                        display: 'grid',
+                        placeItems: 'center',
+                        color: 'var(--tk-green)',
+                        fontWeight: '900',
+                        textTransform: 'uppercase',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {skill.imageLink ? (
+                        <img src={skill.imageLink} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        String(skill.name || skill.id || '?').slice(0, 2)
+                      )}
+                    </div>
+                    <strong style={{ color: '#fff', overflowWrap: 'anywhere' }}>{formatSkillName(skill.name || skill.id)}</strong>
+                  </div>
+                </td>
+                <td style={{ color: 'var(--tk-green)', fontWeight: '900', padding: '0.58rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  {formatSkillLevel(skill.level)}
+                </td>
+                <td style={{ color: 'var(--tk-text-muted)', fontWeight: '800', padding: '0.58rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  {formatDateTime(skill.lastAccess)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </article>
   );
 }
 

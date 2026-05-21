@@ -21,6 +21,7 @@ export default function FleaTracker({ onViewChange }) {
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
   const [hotDeals, setHotDeals] = useState([]);
   const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
+  const [hoverSparkline, setHoverSparkline] = useState(null);
   const gameMode = MARKET_MODES[modoMercado];
 
   // 1. RADAR AUTOMÁTICO DE ANOMALÍAS (HOT DEALS VIVO)
@@ -166,6 +167,23 @@ export default function FleaTracker({ onViewChange }) {
   }, [busqueda, gameMode]);
 
   const formatRublos = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val);
+  const formatMarketDate = (timestamp) => {
+    if (!timestamp) return 'Sin fecha';
+
+    const numericTimestamp = Number(timestamp);
+    const date = Number.isFinite(numericTimestamp)
+      ? new Date(numericTimestamp < 10000000000 ? numericTimestamp * 1000 : numericTimestamp)
+      : new Date(timestamp);
+
+    if (Number.isNaN(date.getTime())) return 'Sin fecha';
+
+    return date.toLocaleString('es-ES', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
   // RENDERIZADOR DE GRÁFICAS REALES
   const renderRealSparkline = (item) => {
@@ -189,7 +207,9 @@ export default function FleaTracker({ onViewChange }) {
     const puntos = datosFinales.map((d, index) => {
       const x = (index / (datosFinales.length - 1)) * svgWidth;
       const y = svgHeight - paddingY - ((d.price - minPrecio) / rango) * (svgHeight - 2 * paddingY);
-      return { x, y };
+      const previousPrice = datosFinales[index - 1]?.price || null;
+      const delta = previousPrice ? d.price - previousPrice : 0;
+      return { x, y, price: d.price, timestamp: d.timestamp, delta };
     });
 
     const pathD = puntos.reduce((acc, p, i) => i === 0 ? `M ${p.x},${p.y}` : `${acc} L ${p.x},${p.y}`, '');
@@ -199,7 +219,7 @@ export default function FleaTracker({ onViewChange }) {
     const colorGrafica = esInflado ? '#ff4444' : '#1ab015';
 
     return (
-      <div style={{ position: 'relative', width: '100%', backgroundColor: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '6px', padding: '12px', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', width: '100%', backgroundColor: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '6px', padding: '12px', overflow: 'visible' }}>
         <div style={{ position: 'absolute', top: '20px', left: 0, right: 0, borderTop: '1px dashed rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, borderTop: '1px dashed rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
 
@@ -213,9 +233,53 @@ export default function FleaTracker({ onViewChange }) {
           <path d={areaD} fill={`url(#gradienteFlea-${modoMercado}-${item.id})`} />
           <path d={pathD} fill="none" stroke={colorGrafica} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
           {puntos.map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="#fff" stroke={colorGrafica} strokeWidth="2" />
+            <g
+              key={i}
+              onMouseEnter={() => setHoverSparkline({ ...p, index: i, total: puntos.length })}
+              onMouseLeave={() => setHoverSparkline(null)}
+              style={{ cursor: 'crosshair' }}
+            >
+              <circle cx={p.x} cy={p.y} r="11" fill="transparent" />
+              <circle cx={p.x} cy={p.y} r="3.5" fill="#fff" stroke={colorGrafica} strokeWidth="2" />
+            </g>
           ))}
         </svg>
+
+        {hoverSparkline && (
+          <div
+            style={{
+              position: 'absolute',
+              left: `clamp(8px, calc(${(hoverSparkline.x / svgWidth) * 100}% - 78px), calc(100% - 164px))`,
+              top: '-76px',
+              width: '156px',
+              padding: '0.65rem 0.75rem',
+              borderRadius: '6px',
+              background: 'rgba(8,8,10,0.96)',
+              border: `1px solid ${colorGrafica}`,
+              boxShadow: `0 0 22px ${colorGrafica}22`,
+              pointerEvents: 'none',
+              zIndex: 4,
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ color: '#fff', fontWeight: '900', fontSize: '1rem' }}>{formatRublos(hoverSparkline.price)}</div>
+            <div style={{ color: 'var(--tk-text-muted)', fontWeight: '800', fontSize: '0.78rem', marginTop: '0.15rem' }}>
+              {formatMarketDate(hoverSparkline.timestamp)}
+            </div>
+            <div
+              style={{
+                color: hoverSparkline.delta >= 0 ? '#ffcf66' : 'var(--tk-green)',
+                fontWeight: '900',
+                fontSize: '0.78rem',
+                marginTop: '0.3rem'
+              }}
+            >
+              {hoverSparkline.index === 0
+                ? 'Primer registro'
+                : `${hoverSparkline.delta >= 0 ? '+' : ''}${formatRublos(hoverSparkline.delta)} vs anterior`}
+            </div>
+          </div>
+        )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.6rem', fontSize: '0.75rem', color: 'var(--tk-text-muted)', fontFamily: "'Rajdhani', sans-serif", fontWeight: '700', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '8px' }}>
           <span>HACE 7 DÍAS</span>

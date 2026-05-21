@@ -394,6 +394,161 @@
       "centralApi": "Error de enlace con la API central."
     }
   },
+  "storyModule": {
+    "title": "STORY DECISIONS",
+    "subtitle": "Todas las rutas, decisiones y puntos de no retorno que debes tener en cuenta para llegar a los distintos finales del modo historia de Tarkov.",
+    "noReturn": "Punto de no retorno",
+    "armoredCaseQuestion": "Que haces con el Armored Case?",
+    "kermanQuestion": "Trabajar con Kerman o no trabajar con Kerman?",
+    "evidenceQuestion": "Recaba evidencias contra TerraGroup",
+    "difficulty": {
+      "medium": "Medium",
+      "hard": "Hard",
+      "veryHard": "Very Hard"
+    },
+    "initial": {
+      "fallingSkies": {
+        "badge": "Objetivo de campana",
+        "title": "FALLING SKIES",
+        "body": "Progresar el capitulo Falling Skies."
+      },
+      "armoredCase": {
+        "badge": "Objetivo de recoleccion",
+        "title": "RECUPERAR ARMORED CASE",
+        "body": "Recuperar el Armored Case del avion estrellado en Woods."
+      }
+    },
+    "armoredChoices": {
+      "keep": "OPCION: QUEDARTE EL ARMORED CASE",
+      "prapor": "OPCION: ENTREGARSELO A PRAPOR"
+    },
+    "keepPath": {
+      "badge": "Capitulo: The Ticket",
+      "title": "CONTENEDOR EN TUS MANOS",
+      "body": "El Armored Case esta en tus manos. Avanzas de forma directa hacia su apertura."
+    },
+    "praporPath": {
+      "badge": "Capitulo: The Ticket",
+      "connectionBadge": "Conexion de puntos",
+      "connectionTitle": "EL ARMORED CASE ESTA EN TUS MANOS",
+      "steps": {
+        "lighthouse": { "label": "Lighthouse", "body": "Encuentra material comprometedor de Prapor en Lighthouse." },
+        "access": { "label": "Requisito de acceso", "body": "Consigue acceso a Lightkeeper. Network Provider 1 debe estar disponible." },
+        "bribe": { "label": "Soborno de tradeo", "body": "Habla con Lightkeeper y pagale tres TerraGroup Blue Folders." },
+        "signal": { "label": "Senalizacion", "body": "Dispara una bengala amarilla frente al Ultra Mall en Interchange." },
+        "raidCondition": { "label": "Condicion en raid", "body": "Mata a 15 objetivos sin morir en la misma raid de la bengala." },
+        "pickup": { "label": "Recogida", "body": "Recoge el Armored Case de Lightkeeper. Se guarda en el slot especial." }
+      }
+    },
+    "containerOpening": {
+      "decryptBadge": "Desencriptacion",
+      "decryptTitle": "APERTURA DEL CONTENEDOR",
+      "decryptBody": "Encuentra el Signal Jammer en LABS.",
+      "completeBadge": "Estado completo",
+      "completeTitle": "EL ARMORED CASE ESTA ABIERTO",
+      "completeBody": "Planos internos expuestos."
+    },
+    "kermanChoices": {
+      "noKerman": "RAMA: NO TRABAJAR CON KERMAN",
+      "kerman": "RAMA: TRABAJAR CON KERMAN"
+    },
+    "noKerman": {
+      "accessBadge": "Acceso al puerto",
+      "easyWayTitle": "LOGRO EASY WAY",
+      "easyWayBody": "Ve a la entrada del puerto, usa el intercom y pasa la Keycard.",
+      "terminalBadge": "Respuesta del terminal",
+      "terminalTitle": "LA TARJETA NO FUNCIONO",
+      "terminalBody": "Tarjeta rechazada. Pidele ayuda a Prapor para buscar una alternativa.",
+      "showRequirements": "MOSTRAR REQUISITOS DE AYUDA",
+      "hideRequirements": "OCULTAR REQUISITOS DE AYUDA",
+      "standby": "Sistema en espera. Activa el calculo para proyectar la ventana de escape.",
+      "terminalPathBadge": "Camino a Terminal",
+      "terminalPathBody": "Ve a Shoreline entre las 21:00 y las 06:00, habla en el intercom de la torre y pasa la Keycard. Acercate al porton de Terminal sin el arma en la mano y empieza tu intento de escapar de Tarkov.",
+      "terminalRetry": "Si el intento falla, necesitaras comprar una nueva nota a Prapor por 5M de rublos.",
+      "prapor": {
+        "prapor": {
+          "badge": "Historial: case entregado a Prapor",
+          "title": "TASA: 300M DE RUBLOS",
+          "body": "Prapor quiere 300M de rublos si le diste el Armored Case. A cambio te dara una nota para los soldados de Terminal."
+        },
+        "keep": {
+          "badge": "Historial: contenedor retenido",
+          "title": "TASA: 500M DE RUBLOS + CONDICIONES",
+          "body": "Prapor quiere 500M de rublos si no le diste el Armored Case. Tambien exige tareas a contrarreloj.",
+          "items": [
+            "Encuentra 4 TerraGroup Report Folders en LABS.",
+            "Dale a Prapor el Flash Drive con datos.",
+            "Mata 50 objetivos en Streets of Tarkov.",
+            "Mata 4 PMCs y sobrevive en una unica raid."
+          ]
+        }
+      }
+    },
+    "kermanIntro": {
+      "badge": "Primera fase con Kerman",
+      "steps": {
+        "labs": { "label": "Infiltracion LABS", "body": "Busca la Masterkeycard y el dispositivo RFID en LABS." },
+        "mechanic": { "label": "Ayuda de Mechanic", "body": "Si falta el RFID, habla con Mechanic y pagale 40 Bitcoins." },
+        "streets": { "label": "Streets", "body": "Obtén la llave de Elektroniks y ve a su apartamento en Streets para recuperar el RFID." },
+        "rfid": { "label": "Activacion de tarjeta RFID", "body": "Activa la tarjeta RFID desde el Armored Case y pasala por el lector del puerto." }
+      }
+    },
+    "evidenceChoices": {
+      "fullEvidence": "OPCION A: ENTREGAR TODAS LAS EVIDENCIAS A KERMAN",
+      "lightkeeperTurn": "OPCION A-2: ENTREGAR 2 EVIDENCIAS E IRTE CON LIGHTKEEPER",
+      "noEvidence": "OPCION B: NEGARSE A AYUDAR A KERMAN"
+    },
+    "routes": {
+      "fullEvidence": {
+        "badge": "Requisitos para completar esta ruta",
+        "items": [
+          "Construye Intelligence Center nivel 3 en el Hideout.",
+          "Entrega las 8 Major Evidence a Kerman.",
+          "Alcanza reputacion 4.0 con Fence.",
+          "Sube la reputacion con el BTR Driver a 0.4.",
+          "Construye Solar Power en el Hideout.",
+          "Craftea la blank RFID en Intelligence Center nivel 3.",
+          "Raid final: Shoreline entre 21:00 y 06:00, intercom, Keycard y porton de Terminal sin armas."
+        ]
+      },
+      "lightkeeperTurn": {
+        "badge": "Requisitos para cambiar de bando",
+        "items": [
+          "Construye Intelligence Center nivel 3 en el Hideout.",
+          "Entrega solo 2 Major Evidence a Kerman y corta lazos.",
+          "Encuentra 5 mapas de reconocimiento.",
+          "Entrega un Flash Drive especial a Lightkeeper.",
+          "Mata 30 PMCs en Woods y entrega 100 dogtags de PMC.",
+          "Localiza Cultist Amulets en las Marked Rooms.",
+          "Lightkeeper te da la Keycard de Terminal.",
+          "Raid final: Shoreline entre 21:00 y 06:00, intercom, Keycard y porton desarmado."
+        ]
+      },
+      "noEvidence": {
+        "badge": "Comprobacion de costes",
+        "history": {
+          "prapor": "Acciones pasadas: le diste el Armored Case a Prapor. Te lo devuelve tras recuperarlo de Lightkeeper sin penalizaciones.",
+          "keep": "Acciones pasadas: no le diste el Case a Prapor. Te exige Repair Kits, contenedor seguro y Military Components."
+        },
+        "items": [
+          "No entregues ninguna evidencia a Kerman.",
+          "Ve a hablar con Prapor.",
+          "Recupera el maletin con cargamento peligroso y entregaselo a Prapor.",
+          "Paga 1.000.000 de dolares a Prapor.",
+          "Prapor te da un USB con codigos Hash.",
+          "Construye Solar Power en el Hideout.",
+          "Craftea la blank RFID en Intelligence Center nivel 3.",
+          "Raid final: Shoreline entre 21:00 y 06:00, intercom, Keycard y Terminal sin armas."
+        ]
+      }
+    },
+    "finals": {
+      "survivor": { "title": "FINAL SURVIVOR", "body": "Huiste esperando escapar, pero el infierno estallo a tus espaldas. Sobreviviste, aunque la ciudad quedo atras envuelta en cenizas." },
+      "savior": { "title": "FINAL SAVIOR", "body": "Escapaste de Tarkov por la humanidad. El golpe contra TerraGroup expuso sus secretos y libero la verdad." },
+      "debtor": { "title": "FINAL DEBTOR", "body": "Escapaste de Tarkov, pero no de ti mismo. Cambiaste de bando y quedaste ligado a una deuda dificil de borrar." },
+      "fallen": { "title": "FINAL FALLEN", "body": "Escapaste de Tarkov para caer en la oscuridad. TerraGroup sobrevivio y el mundo empezo a agrietarse." }
+    }
+  },
   "prestigeModule": {
     "eyebrow": "Progresion endgame PVP",
     "pvpOnly": "PVP ONLY",

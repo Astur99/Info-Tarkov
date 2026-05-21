@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.14.11';
+export const APP_VERSION = '0.14.17';
 
 export const VERSION_POLICY = {
   current: '0.x',
@@ -17,6 +17,200 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '0.14.17',
+    date: '2026-05-21',
+    codename: 'Export Image Icons',
+    type: 'fixed',
+    title: {
+      es: 'Iconos visibles en la exportacion PMC',
+      en: 'Visible icons in PMC export'
+    },
+    summary: {
+      es: 'La exportacion PNG del Perfil PMC carga iconos mediante un proxy seguro y anade pictogramas propios a las stats principales.',
+      en: 'The PMC Profile PNG export now loads icons through a safe proxy and adds custom pictograms to the main stats.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'Anadido `/api/image-proxy` para que los iconos externos de items, logros y skills puedan incrustarse en canvas sin aparecer como cuadrados negros.',
+          en: 'Added `/api/image-proxy` so external item, achievement and skill icons can be embedded into canvas without showing as black squares.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'El proxy de imagenes queda limitado por host permitido, tipo image/* y tamano maximo para evitar picos de memoria en produccion.',
+          en: 'The image proxy is constrained by allowed host, image/* content type and maximum size to avoid production memory spikes.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'Las stats del dossier exportado ahora incluyen pequenos iconos dibujados para faccion, XP, raids, extracciones, SR, kills, PMC kills y logros.',
+          en: 'The exported dossier stats now include small drawn icons for faction, XP, raids, extractions, SR, kills, PMC kills and achievements.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.16',
+    date: '2026-05-21',
+    codename: 'PMC Dossier Export',
+    type: 'improvement',
+    title: {
+      es: 'Exportacion ampliada de Perfil PMC',
+      en: 'Expanded PMC Profile export'
+    },
+    summary: {
+      es: 'La tarjeta exportada del Perfil PMC pasa a ser un mini-dossier vertical con mas datos del jugador, logros, equipo, favoritos y skills.',
+      en: 'The exported PMC Profile card is now a vertical mini dossier with more player data, achievements, gear, favorites and skills.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Exportar tarjeta genera una imagen mas larga con identidad, stats principales, equipo tactico, favoritos, logros destacados y habilidades farmeadas.',
+          en: 'Export card now generates a taller image with identity, core stats, tactical gear, favorites, highlighted achievements and farmed skills.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'La exportacion intenta incrustar iconos externos de items, logros y skills con carga segura y fallback si algun asset no responde.',
+          en: 'The export attempts to embed external item, achievement and skill icons with safe loading and fallback if an asset does not respond.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.15',
+    date: '2026-05-21',
+    codename: 'PMC Skill Icons',
+    type: 'improvement',
+    title: {
+      es: 'Iconos reales de skills PMC',
+      en: 'Real PMC skill icons'
+    },
+    summary: {
+      es: 'El panel de habilidades del Perfil PMC usa ahora los iconos oficiales expuestos por tarkov.dev, igual que el panel de logros.',
+      en: 'The PMC Profile skills panel now uses the official icons exposed by tarkov.dev, matching the achievements panel.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'La Function de PMC consulta el catálogo ligero `skills { id name imageLink }` de tarkov.dev y cruza cada skill farmeada con su nombre e imagen.',
+          en: 'The PMC Function now queries the lightweight tarkov.dev `skills { id name imageLink }` catalog and enriches each farmed skill with its name and image.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'La tabla de habilidades reemplaza las iniciales por imágenes lazy-loaded cuando el icono está disponible, manteniendo fallback textual si falta algún asset.',
+          en: 'The skills table replaces initials with lazy-loaded images when an icon is available, while keeping a text fallback if any asset is missing.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.14',
+    date: '2026-05-21',
+    codename: 'PMC Skills Panel',
+    type: 'improvement',
+    title: {
+      es: 'Skills farmeadas en Perfil PMC',
+      en: 'Farmed skills in PMC Profile'
+    },
+    summary: {
+      es: 'Perfil PMC muestra ahora las habilidades detectadas en el perfil publico, con nivel decimal y ultimo acceso, justo debajo del panel de logros.',
+      en: 'PMC Profile now shows detected public profile skills with decimal level and last access, directly below the achievements panel.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'Anadido panel de habilidades farmeadas en Perfil PMC, ordenado por progreso y con formato compacto similar a tarkov.dev.',
+          en: 'Added a farmed skills panel in PMC Profile, sorted by progress and presented in a compact tarkov.dev-like format.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'La Function de PMC ya no recorta las skills principales a un resumen corto: devuelve todas las habilidades con progreso real para que el frontend las liste.',
+          en: 'The PMC Function no longer trims main skills into a short summary: it returns every skill with real progress so the frontend can list them.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.13',
+    date: '2026-05-21',
+    codename: 'Ticket Notifications',
+    type: 'improvement',
+    title: {
+      es: 'Notificaciones de tickets',
+      en: 'Ticket notifications'
+    },
+    summary: {
+      es: 'El sistema de reportes gana contadores visuales para avisar al admin de tickets pendientes y a los usuarios de respuestas nuevas.',
+      en: 'The report system now has visual counters to notify admins about pending tickets and users about new replies.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'El boton ADMIN muestra un badge amarillo con tickets abiertos o en revision cuya ultima actividad viene del usuario.',
+          en: 'The ADMIN button now shows a yellow badge for open or reviewing tickets whose latest activity came from the user.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'El boton REPORT muestra un badge amarillo al usuario cuando hay respuestas admin nuevas desde la ultima vez que abrio Report.',
+          en: 'The REPORT button now shows a yellow badge when the user has new admin replies since the last time they opened Report.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.12',
+    date: '2026-05-21',
+    codename: 'Ticket Suggestions Pass',
+    type: 'improvement',
+    title: {
+      es: 'Mejoras sugeridas por usuarios',
+      en: 'User-suggested improvements'
+    },
+    summary: {
+      es: 'Se atienden sugerencias del panel de reportes con tooltips de precio en Flea Market y zonas de spawn mas claras en Bosses.',
+      en: 'Suggestions from the report panel were addressed with price tooltips in Flea Market and clearer spawn zones in Bosses.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'El grafico historico del Flea Market muestra tooltip al pasar el raton por cada punto, con precio, fecha y variacion frente al punto anterior.',
+          en: 'The Flea Market historical chart now shows a tooltip on each hovered point with price, date and variation from the previous point.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'Bosses incorpora zonas de spawn conocidas por mapa y un minimapa esquematico inicial para orientar la busqueda sin depender aun de assets cartograficos completos.',
+          en: 'Bosses now includes known spawn zones per map and an initial schematic minimap to guide searches without depending on full cartographic assets yet.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Decisiones / Finales queda reestructurado con datos separados y claves ES/EN para no dejar la pantalla a medias durante la fase de traduccion.',
+          en: 'Decisions / Endings was restructured with separated data and ES/EN keys so the screen is not left halfway through the translation phase.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.11',
     date: '2026-05-21',

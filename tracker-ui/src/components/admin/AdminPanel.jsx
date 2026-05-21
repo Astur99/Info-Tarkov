@@ -101,7 +101,7 @@ const getTicketButtonStyle = ({ color, border, background, active = false, dange
   fontFamily: "'Rajdhani', sans-serif"
 });
 
-export default function AdminPanel({ onViewChange }) {
+export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [feedback, setFeedback] = useState([]);
@@ -282,6 +282,7 @@ export default function AdminPanel({ onViewChange }) {
 
     setMessage('Reporte actualizado.');
     loadAdminData();
+    onNotificationsChanged?.();
   };
 
   const handleReplyFeedback = async (feedbackItem) => {
@@ -301,6 +302,7 @@ export default function AdminPanel({ onViewChange }) {
 
     setMessage('Respuesta enviada.');
     loadAdminData();
+    onNotificationsChanged?.();
   };
 
   const handleDeleteFeedback = async (feedbackItem) => {
@@ -322,6 +324,7 @@ export default function AdminPanel({ onViewChange }) {
 
     setMessage('Reporte borrado.');
     loadAdminData();
+    onNotificationsChanged?.();
   };
 
   return (

@@ -120,6 +120,48 @@ function LazyView({ children }) {
   return <Suspense fallback={<LoadingTerminal />}>{children}</Suspense>;
 }
 
+function NotificationBadge({ count }) {
+  if (!count) return null;
+
+  return (
+    <span
+      style={{
+        position: 'absolute',
+        top: '-8px',
+        right: '-8px',
+        minWidth: '18px',
+        height: '18px',
+        padding: '0 5px',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '999px',
+        background: '#ffcf66',
+        color: '#111',
+        border: '1px solid rgba(255,255,255,0.28)',
+        fontSize: '0.72rem',
+        fontWeight: '900',
+        lineHeight: 1,
+        boxShadow: '0 0 14px rgba(255,207,102,0.35)'
+      }}
+    >
+      {count > 9 ? '9+' : count}
+    </span>
+  );
+}
+
+const getUserReportSeenKey = (userId) => `info_tarkov_report_seen_at_${userId}`;
+
+const getTicketLastActivity = (ticket, repliesKey = 'replies') => {
+  const replies = ticket?.[repliesKey] || [];
+  const latestReply = replies.reduce((latest, reply) => {
+    const replyTime = new Date(reply.created_at || 0).getTime();
+    return replyTime > latest.time ? { time: replyTime, role: reply.author_role } : latest;
+  }, { time: new Date(ticket?.created_at || 0).getTime(), role: 'user' });
+
+  return latestReply;
+};
+
 function App() {
   const { t } = useTranslation();
   const [currentView, setCurrentView] = useState(getViewFromUrl);
@@ -129,6 +171,9 @@ function App() {
   const [userRole, setUserRole] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [adminNotificationCount, setAdminNotificationCount] = useState(0);
+  const [reportNotificationCount, setReportNotificationCount] = useState(0);
+  const userId = session?.user?.id || null;
 
   const navigateToView = useCallback((nextView, options = {}) => {
     const targetView = nextView || 'home';
@@ -235,6 +280,77 @@ function App() {
 
     return () => window.clearInterval(interval);
   }, [session?.user?.id]);
+
+  const loadNotificationCounts = useCallback(async () => {
+    if (!userId || !userRole) {
+      setAdminNotificationCount(0);
+      setReportNotificationCount(0);
+      return;
+    }
+
+    if (userRole === 'admin') {
+      const { data, error } = await supabase.rpc('list_admin_feedback');
+      if (error) {
+        console.error(error);
+        setAdminNotificationCount(0);
+        return;
+      }
+
+      const needsAdmin = (data || []).filter((ticket) => {
+        if (ticket.status === 'closed') return false;
+        const latest = getTicketLastActivity(ticket, 'replies');
+        return latest.role !== 'admin';
+      });
+
+      setAdminNotificationCount(needsAdmin.length);
+      setReportNotificationCount(0);
+      return;
+    }
+
+    const seenAt = Number(localStorage.getItem(getUserReportSeenKey(userId)) || 0);
+    const { data, error } = await supabase
+      .from('user_feedback')
+      .select('id, created_at, feedback_replies(id, author_role, created_at)')
+      .is('user_deleted_at', null);
+
+    if (error) {
+      console.error(error);
+      setReportNotificationCount(0);
+      return;
+    }
+
+    const unreadAdminReplies = (data || []).reduce((count, ticket) => {
+      const replies = ticket.feedback_replies || [];
+      return count + replies.filter((reply) => (
+        reply.author_role === 'admin' && new Date(reply.created_at).getTime() > seenAt
+      )).length;
+    }, 0);
+
+    setReportNotificationCount(unreadAdminReplies);
+    setAdminNotificationCount(0);
+  }, [userId, userRole]);
+
+  useEffect(() => {
+    if (!userId || !userRole) return;
+
+    const initialLoad = window.setTimeout(loadNotificationCounts, 0);
+    const interval = window.setInterval(loadNotificationCounts, 45000);
+    return () => {
+      window.clearTimeout(initialLoad);
+      window.clearInterval(interval);
+    };
+  }, [loadNotificationCounts, userId, userRole]);
+
+  const markReportsAsSeen = useCallback(() => {
+    if (!userId) return;
+    localStorage.setItem(getUserReportSeenKey(userId), String(Date.now()));
+    setReportNotificationCount(0);
+  }, [userId]);
+
+  const navigateAndRefreshNotifications = useCallback((view) => {
+    navigateToView(view);
+    window.setTimeout(loadNotificationCounts, 600);
+  }, [loadNotificationCounts, navigateToView]);
 
   if (authLoading) {
     return <LoadingTerminal />;
@@ -368,7 +484,7 @@ function App() {
   if (currentView === 'admin') {
     return (
       <LazyView>
-        <AdminPanel onViewChange={navigateToView} />
+        <AdminPanel onViewChange={navigateToView} onNotificationsChanged={loadNotificationCounts} />
       </LazyView>
     );
   }
@@ -376,7 +492,7 @@ function App() {
   if (currentView === 'messages') {
     return (
       <LazyView>
-        <UserMessages onViewChange={navigateToView} />
+        <UserMessages onViewChange={navigateToView} onReportsSeen={markReportsAsSeen} onNotificationsChanged={loadNotificationCounts} />
       </LazyView>
     );
   }
@@ -501,7 +617,10 @@ function App() {
 
       {session && userRole !== 'admin' && (
         <button
-          onClick={() => navigateToView('messages')}
+          onClick={() => {
+            markReportsAsSeen();
+            navigateToView('messages');
+          }}
           style={{
             position: 'fixed',
             top: '1.5rem',
@@ -524,12 +643,13 @@ function App() {
           }}
         >
           {t('home.report')}
+          <NotificationBadge count={reportNotificationCount} />
         </button>
       )}
 
       {userRole === 'admin' && (
         <button
-          onClick={() => navigateToView('admin')}
+          onClick={() => navigateAndRefreshNotifications('admin')}
           style={{
             position: 'fixed',
             top: '1.5rem',
@@ -552,6 +672,7 @@ function App() {
           }}
         >
           {t('home.admin')}
+          <NotificationBadge count={adminNotificationCount} />
         </button>
       )}
 

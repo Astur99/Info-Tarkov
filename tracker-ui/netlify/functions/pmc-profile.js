@@ -157,21 +157,27 @@ const getCounter = (profile, counterKeys) => {
   return toNumber(counter?.Value);
 };
 
-const getSkillsSummary = (profile) => {
+const getSkillsSummary = (profile, skillsCatalog = new Map()) => {
   const commonSkills = profile?.skills?.Common;
   if (!Array.isArray(commonSkills)) return [];
 
   return commonSkills
-    .map((skill) => ({
-      id: skill?.Id || skill?.id || 'Skill',
-      progress: toNumber(skill?.Progress ?? skill?.progress) || 0,
-      lastAccess: normalizeTimestamp(skill?.LastAccess)
-    }))
+    .map((skill) => {
+      const id = skill?.Id || skill?.id || 'Skill';
+      const catalogSkill = skillsCatalog.get(id) || skillsCatalog.get(String(id).toLowerCase());
+      return {
+        id,
+        name: catalogSkill?.name || id,
+        imageLink: catalogSkill?.imageLink || null,
+        progress: toNumber(skill?.Progress ?? skill?.progress) || 0,
+        lastAccess: normalizeTimestamp(skill?.LastAccess)
+      };
+    })
+    .filter((skill) => skill.progress > 0)
     .sort((a, b) => b.progress - a.progress)
-    .slice(0, 8)
     .map((skill) => ({
       ...skill,
-      level: Math.min(51, Math.floor(skill.progress / 100))
+      level: Math.min(51, skill.progress / 100)
     }));
 };
 
@@ -288,6 +294,29 @@ const fetchPlayerLevels = async () => {
   return data.playerLevels || [];
 };
 
+const fetchSkillsCatalog = async () => {
+  const data = await fetchGraphql(`
+    query GetSkillsCatalog {
+      skills {
+        id
+        name
+        imageLink
+      }
+    }
+  `);
+
+  return new Map((data.skills || []).flatMap((skill) => {
+    const normalizedSkill = {
+      name: skill.name,
+      imageLink: skill.imageLink
+    };
+    return [
+      [skill.id, normalizedSkill],
+      [String(skill.id || '').toLowerCase(), normalizedSkill]
+    ];
+  }));
+};
+
 const fetchItemsByIds = async (ids) => {
   if (!ids.length) return new Map();
 
@@ -369,7 +398,7 @@ const normalizeProfile = (payload, context, dataCatalog = {}) => {
     allAchievements: achievementSummary.all,
     recentAchievements: achievementSummary.recent,
     rareAchievements: achievementSummary.rarest,
-    skillsSummary: getSkillsSummary(payload),
+    skillsSummary: getSkillsSummary(payload, dataCatalog.skillsCatalog || new Map()),
     topLevelKeys: Object.keys(payload || {}).slice(0, 12),
     fetchedAt: new Date().toISOString()
   };
@@ -400,10 +429,11 @@ export const loadPmcProfile = async ({ username, mode }) => {
   const [accountId, indexedName] = indexedPlayer;
   const profilePayload = await fetchJson(`${baseUrl}/${encodeURIComponent(accountId)}.json`);
   const relevantItemIds = getRelevantItemTemplates(profilePayload);
-  const [playerLevels, itemMap, achievementsCatalog] = await Promise.all([
+  const [playerLevels, itemMap, achievementsCatalog, skillsCatalog] = await Promise.all([
     fetchPlayerLevels().catch(() => []),
     fetchItemsByIds(relevantItemIds).catch(() => new Map()),
-    fetchAchievementsCatalog().catch(() => ({}))
+    fetchAchievementsCatalog().catch(() => ({})),
+    fetchSkillsCatalog().catch(() => new Map())
   ]);
 
   const profile = normalizeProfile(profilePayload, {
@@ -414,7 +444,8 @@ export const loadPmcProfile = async ({ username, mode }) => {
   }, {
     playerLevels,
     itemMap,
-    achievementsCatalog
+    achievementsCatalog,
+    skillsCatalog
   });
 
   return jsonResponse(200, { profile });

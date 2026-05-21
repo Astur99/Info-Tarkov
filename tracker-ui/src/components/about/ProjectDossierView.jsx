@@ -55,12 +55,12 @@ const structure = [
   {
     path: 'src/components/admin/',
     role:
-      'Panel admin para metricas, usuarios, roles, tickets y operaciones internas.'
+      'Panel admin para metricas, usuarios, roles, tickets y operaciones internas. El boton ADMIN muestra contador de tickets que necesitan respuesta.'
   },
   {
     path: 'src/components/communication/',
     role:
-      'Sistema de tickets y comunicacion usuario/desarrollador.'
+      'Sistema de tickets y comunicacion usuario/desarrollador, con badges de notificacion en Report cuando hay respuestas admin nuevas.'
   },
   {
     path: 'src/components/layout/',
@@ -121,7 +121,7 @@ const modules = [
     name: 'Flea Market Tracker',
     files: 'src/modules/flea/',
     body:
-      'Consulta items en tarkov.dev con gameMode regular/pve, permite busqueda, radar de oportunidades y detalle economico por item.'
+      'Consulta items en tarkov.dev con gameMode regular/pve, permite busqueda, radar de oportunidades, detalle economico por item y tooltip de precio/fecha/variacion en el grafico historico.'
   },
   {
     name: 'Sistema de Llaves',
@@ -133,7 +133,7 @@ const modules = [
     name: 'Bosses',
     files: 'src/modules/bosses/',
     body:
-      'Intel comun para PVP/PVE. Combina datos locales, imagenes empaquetadas, filtros, dificultad, spawn breakdown y plan tactico.'
+      'Intel comun para PVP/PVE. Combina datos locales, imagenes empaquetadas, filtros, dificultad, spawn breakdown, zonas conocidas por mapa, minimapa esquematico y plan tactico.'
   },
   {
     name: 'Goons',
@@ -145,7 +145,7 @@ const modules = [
     name: 'Perfil de PMC',
     files: 'src/modules/pmc/',
     body:
-      'Lee el usuario Tarkov guardado en la cuenta y permite buscar otros PMCs por nombre, con historial local de busquedas. El frontend llama a /api/pmc-profile, una Netlify Function sin cache que busca accountId en players.tarkov.dev/profile/index.json o /pve/index.json sin parsear el indice completo en memoria, normaliza el JSON publico del perfil y calcula el nivel acumulando los tramos de playerLevels como hace tarkov.dev. Para evitar OutOfMemory en producción no carga catálogos JSON completos: usa GraphQL solo para playerLevels e items visibles/favoritos necesarios, y toma los metadatos de logros desde el JSON estatico de tasks/traducciones. Devuelve todos los logros completados para el panel filtrable, una lista limitada de logros raros/exclusivos, top logro integrado en la ficha principal, boton principal a tarkov.dev en la barra de busqueda, acciones para copiar AccID/exportar tarjeta publica PNG y estado de sincronizacion claro. No usa el endpoint de busqueda protegido por Turnstile.'
+      'Lee el usuario Tarkov guardado en la cuenta y permite buscar otros PMCs por nombre, con historial local de busquedas. El frontend llama a /api/pmc-profile, una Netlify Function sin cache que busca accountId en players.tarkov.dev/profile/index.json o /pve/index.json sin parsear el indice completo en memoria, normaliza el JSON publico del perfil y calcula el nivel acumulando los tramos de playerLevels como hace tarkov.dev. Para evitar OutOfMemory en producción no carga catálogos JSON completos: usa GraphQL solo para playerLevels, skills e items visibles/favoritos necesarios, y toma los metadatos de logros desde el JSON estatico de tasks/traducciones. Devuelve todos los logros completados para el panel filtrable, una lista limitada de logros raros/exclusivos, habilidades farmeadas con icono oficial, nivel decimal y ultimo acceso, top logro integrado en la ficha principal, boton principal a tarkov.dev en la barra de busqueda, acciones para copiar AccID/exportar un dossier publico PNG con stats/equipo/favoritos/logros/skills y estado de sincronizacion claro. El PNG usa /api/image-proxy para incrustar iconos externos en canvas sin problemas CORS. No usa el endpoint de busqueda protegido por Turnstile.'
   },
   {
     name: 'Prestigios',

@@ -394,6 +394,161 @@
       "centralApi": "Central API link error."
     }
   },
+  "storyModule": {
+    "title": "STORY DECISIONS",
+    "subtitle": "All routes, decisions and points of no return you should track to reach the different Tarkov story endings.",
+    "noReturn": "Point of no return",
+    "armoredCaseQuestion": "What do you do with the Armored Case?",
+    "kermanQuestion": "Work with Kerman or refuse Kerman?",
+    "evidenceQuestion": "Gather evidence against TerraGroup",
+    "difficulty": {
+      "medium": "Medium",
+      "hard": "Hard",
+      "veryHard": "Very Hard"
+    },
+    "initial": {
+      "fallingSkies": {
+        "badge": "Campaign objective",
+        "title": "FALLING SKIES",
+        "body": "Progress through the Falling Skies chapter."
+      },
+      "armoredCase": {
+        "badge": "Recovery objective",
+        "title": "RECOVER ARMORED CASE",
+        "body": "Recover the Armored Case from the crashed plane in Woods."
+      }
+    },
+    "armoredChoices": {
+      "keep": "OPTION: KEEP THE ARMORED CASE",
+      "prapor": "OPTION: HAND IT OVER TO PRAPOR"
+    },
+    "keepPath": {
+      "badge": "Chapter: The Ticket",
+      "title": "CONTAINER IN YOUR HANDS",
+      "body": "The Armored Case is in your hands. You move directly toward opening it."
+    },
+    "praporPath": {
+      "badge": "Chapter: The Ticket",
+      "connectionBadge": "Connecting the dots",
+      "connectionTitle": "THE ARMORED CASE IS IN YOUR HANDS",
+      "steps": {
+        "lighthouse": { "label": "Lighthouse", "body": "Find compromising material about Prapor on Lighthouse." },
+        "access": { "label": "Access requirement", "body": "Gain access to Lightkeeper. Network Provider 1 must be available." },
+        "bribe": { "label": "Trade bribe", "body": "Talk to Lightkeeper and pay him three TerraGroup Blue Folders." },
+        "signal": { "label": "Signal", "body": "Fire a yellow flare in front of Ultra Mall on Interchange." },
+        "raidCondition": { "label": "Raid condition", "body": "Kill 15 targets without dying in the same flare raid." },
+        "pickup": { "label": "Pickup", "body": "Collect the Armored Case from Lightkeeper. It is stored in the special slot." }
+      }
+    },
+    "containerOpening": {
+      "decryptBadge": "Decryption",
+      "decryptTitle": "OPENING THE CONTAINER",
+      "decryptBody": "Find the Signal Jammer in LABS.",
+      "completeBadge": "Complete state",
+      "completeTitle": "THE ARMORED CASE IS OPEN",
+      "completeBody": "Internal blueprints exposed."
+    },
+    "kermanChoices": {
+      "noKerman": "BRANCH: DO NOT WORK WITH KERMAN",
+      "kerman": "BRANCH: WORK WITH KERMAN"
+    },
+    "noKerman": {
+      "accessBadge": "Port access",
+      "easyWayTitle": "EASY WAY ACHIEVEMENT",
+      "easyWayBody": "Go to the port entrance, use the intercom and swipe the Keycard.",
+      "terminalBadge": "Terminal response",
+      "terminalTitle": "THE CARD DID NOT WORK",
+      "terminalBody": "Card rejected. Ask Prapor for help finding an alternative.",
+      "showRequirements": "SHOW HELP REQUIREMENTS",
+      "hideRequirements": "HIDE HELP REQUIREMENTS",
+      "standby": "System on standby. Activate calculation to project the escape window.",
+      "terminalPathBadge": "Path to Terminal",
+      "terminalPathBody": "Go to Shoreline between 21:00 and 06:00, use the tower intercom and swipe the Keycard. Approach the Terminal gate without a weapon in your hands and begin your escape attempt.",
+      "terminalRetry": "If the attempt fails, you will need to buy a new note from Prapor for 5M roubles.",
+      "prapor": {
+        "prapor": {
+          "badge": "History: case handed to Prapor",
+          "title": "FEE: 300M ROUBLES",
+          "body": "Prapor asks for 300M roubles if you gave him the Armored Case. In return, he gives you a note for Terminal soldiers."
+        },
+        "keep": {
+          "badge": "History: container kept",
+          "title": "FEE: 500M ROUBLES + CONDITIONS",
+          "body": "Prapor asks for 500M roubles if you did not give him the Armored Case. He also demands timed tasks.",
+          "items": [
+            "Find 4 TerraGroup Report Folders in LABS.",
+            "Give Prapor the Flash Drive with data.",
+            "Kill 50 targets in Streets of Tarkov.",
+            "Kill 4 PMCs and survive in a single raid."
+          ]
+        }
+      }
+    },
+    "kermanIntro": {
+      "badge": "First Kerman phase",
+      "steps": {
+        "labs": { "label": "LABS infiltration", "body": "Search for the Masterkeycard and RFID device in LABS." },
+        "mechanic": { "label": "Mechanic help", "body": "If the RFID is missing, talk to Mechanic and pay him 40 Bitcoins." },
+        "streets": { "label": "Streets", "body": "Get Elektroniks' key and go to his apartment on Streets to recover the RFID." },
+        "rfid": { "label": "RFID card activation", "body": "Activate the RFID card from the Armored Case and swipe it at the port reader." }
+      }
+    },
+    "evidenceChoices": {
+      "fullEvidence": "OPTION A: GIVE ALL EVIDENCE TO KERMAN",
+      "lightkeeperTurn": "OPTION A-2: GIVE 2 EVIDENCE ITEMS AND SIDE WITH LIGHTKEEPER",
+      "noEvidence": "OPTION B: REFUSE TO HELP KERMAN"
+    },
+    "routes": {
+      "fullEvidence": {
+        "badge": "Requirements for this route",
+        "items": [
+          "Build Intelligence Center level 3 in the Hideout.",
+          "Hand over all 8 Major Evidence items to Kerman.",
+          "Reach Fence reputation 4.0.",
+          "Raise BTR Driver reputation to 0.4.",
+          "Build Solar Power in the Hideout.",
+          "Craft the blank RFID in Intelligence Center level 3.",
+          "Final raid: Shoreline between 21:00 and 06:00, intercom, Keycard and Terminal gate unarmed."
+        ]
+      },
+      "lightkeeperTurn": {
+        "badge": "Requirements to switch sides",
+        "items": [
+          "Build Intelligence Center level 3 in the Hideout.",
+          "Give only 2 Major Evidence items to Kerman and cut ties.",
+          "Find 5 reconnaissance maps.",
+          "Hand a special Flash Drive to Lightkeeper.",
+          "Kill 30 PMCs in Woods and hand over 100 PMC dogtags.",
+          "Locate Cultist Amulets in Marked Rooms.",
+          "Lightkeeper gives you the Terminal Keycard.",
+          "Final raid: Shoreline between 21:00 and 06:00, intercom, Keycard and unarmed gate approach."
+        ]
+      },
+      "noEvidence": {
+        "badge": "Cost check",
+        "history": {
+          "prapor": "Past actions: you gave the Armored Case to Prapor. He returns it after recovering it from Lightkeeper without extra penalties.",
+          "keep": "Past actions: you did not give the Case to Prapor. He demands Repair Kits, a secure container and Military Components."
+        },
+        "items": [
+          "Do not hand over any evidence to Kerman.",
+          "Go talk to Prapor.",
+          "Recover the briefcase with dangerous cargo and hand it to Prapor.",
+          "Pay Prapor 1,000,000 dollars.",
+          "Prapor gives you a USB with Hash codes.",
+          "Build Solar Power in the Hideout.",
+          "Craft the blank RFID in Intelligence Center level 3.",
+          "Final raid: Shoreline between 21:00 and 06:00, intercom, Keycard and Terminal unarmed."
+        ]
+      }
+    },
+    "finals": {
+      "survivor": { "title": "SURVIVOR ENDING", "body": "You ran hoping to escape, but the city burned behind you. You survived, though Tarkov was left in ashes." },
+      "savior": { "title": "SAVIOR ENDING", "body": "You escaped Tarkov for humanity. The strike against TerraGroup exposed its secrets and released the truth." },
+      "debtor": { "title": "DEBTOR ENDING", "body": "You escaped Tarkov, but not yourself. You switched sides and remained tied to a debt that is hard to erase." },
+      "fallen": { "title": "FALLEN ENDING", "body": "You escaped Tarkov only to fall into darkness. TerraGroup survived and the world began to crack." }
+    }
+  },
   "prestigeModule": {
     "eyebrow": "PVP endgame progression",
     "pvpOnly": "PVP ONLY",

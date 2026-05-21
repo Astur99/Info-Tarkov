@@ -22,7 +22,7 @@ const actionButtonStyle = {
 
 const feedbackTypes = ['bug', 'suggestion', 'other'];
 
-export default function UserMessages({ onViewChange }) {
+export default function UserMessages({ onViewChange, onReportsSeen, onNotificationsChanged }) {
   const { t } = useTranslation();
   const [tickets, setTickets] = useState([]);
   const [openTicketId, setOpenTicketId] = useState(null);
@@ -56,9 +56,10 @@ export default function UserMessages({ onViewChange }) {
   }, [t]);
 
   useEffect(() => {
+    onReportsSeen?.();
     const initialLoad = window.setTimeout(loadTickets, 0);
     return () => window.clearTimeout(initialLoad);
-  }, [loadTickets]);
+  }, [loadTickets, onReportsSeen]);
 
   const handleFeedbackSubmit = async (event) => {
     event.preventDefault();
@@ -91,6 +92,7 @@ export default function UserMessages({ onViewChange }) {
     setFeedbackBody('');
     setStatus(t('report.messages.sent'));
     loadTickets();
+    onNotificationsChanged?.();
   };
 
   const handleReplyTicket = async (ticket) => {
@@ -115,6 +117,7 @@ export default function UserMessages({ onViewChange }) {
     setReplyDrafts((current) => ({ ...current, [ticket.id]: '' }));
     setStatus(t('report.messages.replySent'));
     loadTickets();
+    onNotificationsChanged?.();
   };
 
   const handleCloseTicket = async (ticket) => {

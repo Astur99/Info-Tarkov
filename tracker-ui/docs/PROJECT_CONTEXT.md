@@ -485,10 +485,11 @@ Features:
 - PVE: `https://players.tarkov.dev/pve/index.json`
 - fetches the resolved profile from `https://players.tarkov.dev/profile/{accountId}.json` or `/pve/{accountId}.json`
 - calculates PMC level from experience with `https://json.tarkov.dev/regular/items` playerLevels by accumulating each level's required experience step, matching tarkov.dev behavior
-- displays normalized public fields when available: nickname, level, faction, experience, PMC time, raids, survival rate, kills, deaths, PMC kills, prestige, account type, last active estimate, equipment, favorites, skills, all completed achievements, rare achievements and public updated time
+- displays normalized public fields when available: nickname, level, faction, experience, PMC time, raids, survival rate, kills, deaths, PMC kills, prestige, account type, last active estimate, equipment, favorites, farmed skills with official icons, all completed achievements, rare achievements and public updated time
 - shows the top stat band as a wrapped responsive block, not as a horizontally scrolling strip
-- includes sync status, top achievement in the main profile sheet, main tarkov.dev link in the search bar, AccID copy action and PNG public card export
+- includes sync status, top achievement in the main profile sheet, main tarkov.dev link in the search bar, AccID copy action and expanded PNG public dossier export
 - shows equipment as tactical slot cards and achievements as one full-width filtered panel with rare-achievement showcase
+- shows a farmed-skills panel below achievements with official skill icon, skill name, decimal level and last access, based on the public profile skill progress
 - has a clear error state if the player is not in the daily static index yet
 - includes direct access to `https://tarkov.dev/players` so users can open/search a profile there before waiting for the static index update
 - includes a manual refresh action
@@ -513,6 +514,7 @@ Production note:
 - `vite.config.js` also registers a local middleware for `/api/pmc-profile` during `npm.cmd run dev`.
 - This proxy exists because `players.tarkov.dev` JSON responds server-side but may not expose browser CORS headers.
 - `/api/pmc-profile` uses no-store cache headers and the frontend adds a timestamp query param so corrected profile calculations are not stuck behind stale browser/CDN cache.
+- `/api/image-proxy` only allows `assets.tarkov.dev` and `static.tarkov.dev`, requires `image/*` content type, caps proxied images at 1.5 MB and is used only for canvas export icons.
 - The Function must not parse the full PVP `players.tarkov.dev/profile/index.json` into an object. That index is large enough to inflate heap heavily in Netlify; resolve the accountId with text matching instead.
 - The Function must not load full `json.tarkov.dev/regular/items`, `items_es` or translated task bundles in production. That caused Netlify `Runtime.OutOfMemory` / 502 on large PVP profiles.
 - The production-safe path fetches the static profile first, extracts only visible/favorite item template IDs, then uses `api.tarkov.dev/graphql` for `playerLevels` and `items(ids: ...)`.
@@ -730,7 +732,7 @@ Route:
 
 Current app version:
 
-- `0.14.11`
+- `0.14.17`
 
 Behavior:
 
@@ -749,6 +751,12 @@ Behavior:
 - `0.14.9` adds visual Prestige insignias and transparent-background Prestige 4 asset.
 - `0.14.10` removes the duplicated PMC tarkov.dev action button and keeps only Copy AccID / Export card in the lower actions panel.
 - `0.14.11` cleans the Prestige module by separating data/icons, wiring UI copy to ES/EN i18n, optimizing prestige insignia assets, removing an accidental old App copy and adding a pre-production checklist.
+- `0.14.12` adds Flea Market chart tooltips, Bosses spawn-zone intel with schematic minimaps, and keeps Decisions / Endings on the ES/EN i18n path.
+- `0.14.13` adds ticket notification badges: admin sees tickets needing response and users see new admin replies on Report.
+- `0.14.14` adds the PMC farmed-skills panel below achievements and returns all skills with real progress from the PMC Function.
+- `0.14.15` enriches PMC farmed skills with official tarkov.dev skill names/icons and lazy-loads them in the table.
+- `0.14.16` expands the PMC exported card into a taller public dossier with stats, gear, favorites, achievements and skills.
+- `0.14.17` adds `/api/image-proxy` for PMC export icons and stat pictograms so exported PNGs do not lose external images.
 - `APP_VERSION` in `src/data/changelog.js` should stay aligned with `package.json`.
 - Changelog data is localization-ready: each entry stores text per language key (`es`, `en`, future `ru`, `de`, `fr`, `it`, etc.).
 - While the app is beta, use `0.x` versions. Patch number for small fixes, minor number for visible features or module changes, and reserve `1.0.0` for the first stable public release.
@@ -875,6 +883,12 @@ Registration stores those values in Supabase Auth metadata as a fallback. The ap
 - Expanded PMC Profile with no-cache sync, account flags, last activity estimate, skill levels, recent/rare achievements, visible equipment and favorites.
 - Fixed production PMC Function memory usage by querying only required item IDs and compact achievement/player level data through GraphQL.
 - Optimized Prestige insignia assets, removed an accidental old App copy, wired Prestige to i18n and added `docs/PRE_PRODUCTION_CHECKLIST.md`.
+- Added user-requested Flea Market point tooltips and Bosses spawn-zone/minimap intel.
+- Added notification badges for Admin/Report ticket workflows.
+- Added PMC Profile farmed-skills panel with decimal level and last-access data.
+- Added official tarkov.dev skill icons to the PMC farmed-skills panel.
+- Expanded PMC Profile PNG export into a fuller public dossier image.
+- Added image proxy support and stat pictograms for PMC Profile PNG export.
 
 ## Next Good Steps
 
