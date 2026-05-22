@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 
 const panelStyle = {
@@ -75,7 +76,7 @@ const getAdminDisplayUsername = (user) =>
   user.tarkov_username ||
   user.auth_username ||
   user.auth_tarkov_username ||
-  'Sin configurar';
+  null;
 
 const isRecentlyOnline = (lastSeen) => {
   if (!lastSeen) return false;
@@ -83,7 +84,7 @@ const isRecentlyOnline = (lastSeen) => {
 };
 
 const getUserProfileStatus = (user) =>
-  user.username || user.tarkov_username || user.auth_username || user.auth_tarkov_username ? 'Completo' : 'Pendiente';
+  user.username || user.tarkov_username || user.auth_username || user.auth_tarkov_username ? 'complete' : 'pending';
 
 const getTicketButtonStyle = ({ color, border, background, active = false, danger = false, disabled = false }) => ({
   display: 'inline-flex',
@@ -102,6 +103,7 @@ const getTicketButtonStyle = ({ color, border, background, active = false, dange
 });
 
 export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
+  const { t } = useTranslation();
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [feedback, setFeedback] = useState([]);
@@ -113,6 +115,9 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserProgress, setSelectedUserProgress] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const feedbackTypeLabel = (type) => t(`admin.feedback.types.${type}`, { defaultValue: feedbackTypeLabels[type] || type });
+  const feedbackStatusLabel = (status) => t(`admin.feedback.status.${status}`, { defaultValue: feedbackStatusLabels[status] || status });
+  const feedbackStatusAction = (status) => t(`admin.feedback.statusActions.${status}`, { defaultValue: feedbackStatusActions[status] || status });
 
   const loadAdminData = useCallback(async () => {
     setLoading(true);
@@ -132,14 +137,14 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
     if (statsError || usersError || feedbackError) {
       console.error(statsError || usersError || feedbackError);
-      setMessage('No se pudieron cargar las métricas admin.');
+      setMessage(t('admin.messages.loadError'));
       return;
     }
 
     setStats(Array.isArray(statsData) ? statsData[0] : statsData);
     setUsers(usersData || []);
     setFeedback(feedbackData || []);
-  }, []);
+  }, [t]);
 
   const onlineUsers = useMemo(
     () => users.filter((user) => isRecentlyOnline(user.last_seen)).length,
@@ -150,7 +155,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
     const query = searchQuery.trim().toLowerCase();
 
     return users.filter((user) => {
-      const username = getAdminDisplayUsername(user).toLowerCase();
+      const username = (getAdminDisplayUsername(user) || '').toLowerCase();
       const email = String(user.email || '').toLowerCase();
       const role = user.role || 'user';
       const matchesQuery = !query || username.includes(query) || email.includes(query);
@@ -180,7 +185,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
       setSelectedUserProgress({
         module_states: [],
         quest_progress: [],
-        error: `No se pudo cargar el progreso cloud: ${error.message || 'RPC no disponible'}. Ejecuta el SQL actualizado si falta la RPC.`
+        error: t('admin.messages.progressLoadError', { error: error.message || t('admin.messages.rpcUnavailable') })
       });
       return;
     }
@@ -202,7 +207,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
   }, [loadAdminData]);
 
   const handleRoleChange = async (user, nextRole) => {
-    const confirmed = window.confirm(`¿Quieres convertir a ${user.email} en ${nextRole}?`);
+    const confirmed = window.confirm(t('admin.prompts.roleChange', { email: user.email, role: nextRole }));
     if (!confirmed) return;
 
     const { error } = await supabase.rpc('admin_set_user_role', {
@@ -212,23 +217,23 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
     if (error) {
       console.error(error);
-      setMessage('No se pudo cambiar el rol del usuario.');
+      setMessage(t('admin.messages.roleError'));
       return;
     }
 
-    setMessage('Rol actualizado.');
+    setMessage(t('admin.messages.roleUpdated'));
     loadAdminData();
   };
 
   const handleDeleteUser = async (user) => {
     const confirmed = window.confirm(
-      `Vas a borrar la cuenta de ${user.email}. Perderá su progreso cloud. ¿Continuar?`
+      t('admin.prompts.deleteUser', { email: user.email })
     );
     if (!confirmed) return;
 
-    const secondConfirm = window.prompt('Escribe BORRAR para confirmar.');
+    const secondConfirm = window.prompt(t('admin.prompts.typeDelete'));
     if (secondConfirm !== 'BORRAR') {
-      setMessage('Borrado cancelado.');
+      setMessage(t('admin.messages.deleteCancelled'));
       return;
     }
 
@@ -238,19 +243,19 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
     if (error) {
       console.error(error);
-      setMessage('No se pudo borrar la cuenta.');
+      setMessage(t('admin.messages.deleteError'));
       return;
     }
 
-    setMessage('Cuenta borrada.');
+    setMessage(t('admin.messages.deleteSuccess'));
     loadAdminData();
   };
 
   const handleSendMessage = async (user) => {
-    const subject = window.prompt('Asunto del mensaje');
+    const subject = window.prompt(t('admin.prompts.messageSubject'));
     if (!subject) return;
 
-    const body = window.prompt('Mensaje');
+    const body = window.prompt(t('admin.prompts.messageBody'));
     if (!body) return;
 
     const { error } = await supabase.rpc('admin_send_user_message', {
@@ -261,11 +266,11 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
     if (error) {
       console.error(error);
-      setMessage(`No se pudo enviar el mensaje: ${error.message}`);
+      setMessage(t('admin.messages.sendMessageError', { error: error.message }));
       return;
     }
 
-    setMessage('Mensaje enviado.');
+    setMessage(t('admin.messages.messageSent'));
   };
 
   const handleFeedbackStatusChange = async (feedbackItem, nextStatus) => {
@@ -276,17 +281,17 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
     if (error) {
       console.error(error);
-      setMessage(`No se pudo actualizar el reporte: ${error.message}`);
+      setMessage(t('admin.messages.feedbackUpdateError', { error: error.message }));
       return;
     }
 
-    setMessage('Reporte actualizado.');
+    setMessage(t('admin.messages.feedbackUpdated'));
     loadAdminData();
     onNotificationsChanged?.();
   };
 
   const handleReplyFeedback = async (feedbackItem) => {
-    const body = window.prompt('Respuesta para el usuario');
+    const body = window.prompt(t('admin.prompts.replyBody'));
     if (!body) return;
 
     const { error } = await supabase.rpc('admin_reply_feedback', {
@@ -296,18 +301,18 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
     if (error) {
       console.error(error);
-      setMessage(`No se pudo responder el reporte: ${error.message}`);
+      setMessage(t('admin.messages.feedbackReplyError', { error: error.message }));
       return;
     }
 
-    setMessage('Respuesta enviada.');
+    setMessage(t('admin.messages.replySent'));
     loadAdminData();
     onNotificationsChanged?.();
   };
 
   const handleDeleteFeedback = async (feedbackItem) => {
     const confirmed = window.confirm(
-      `¿Quieres borrar el ticket "${feedbackItem.subject}"?`
+      t('admin.prompts.deleteTicket', { subject: feedbackItem.subject })
     );
 
     if (!confirmed) return;
@@ -318,11 +323,11 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
     if (error) {
       console.error(error);
-      setMessage(`No se pudo borrar el reporte: ${error.message}`);
+      setMessage(t('admin.messages.feedbackDeleteError', { error: error.message }));
       return;
     }
 
-    setMessage('Reporte borrado.');
+    setMessage(t('admin.messages.feedbackDeleted'));
     loadAdminData();
     onNotificationsChanged?.();
   };
@@ -354,18 +359,18 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
           letterSpacing: '1px'
         }}
       >
-        ← VOLVER AL TERMINAL
+        {t('common.backToTerminal')}
       </button>
 
       <main style={{ width: 'min(1100px, 100%)', margin: '0 auto' }}>
         <header style={{ marginBottom: '2rem' }}>
-          <h1 style={{ color: '#fff', margin: 0, fontSize: '2.4rem' }}>Panel Admin</h1>
+          <h1 style={{ color: '#fff', margin: 0, fontSize: '2.4rem' }}>{t('admin.title')}</h1>
           <p style={{ color: 'var(--tk-text-muted)', marginTop: '0.45rem' }}>
-            Métricas internas de uso y usuarios registrados.
+            {t('admin.subtitle')}
           </p>
         </header>
 
-        {loading && <p style={{ color: 'var(--tk-green)' }}>Cargando métricas...</p>}
+        {loading && <p style={{ color: 'var(--tk-green)' }}>{t('admin.loading')}</p>}
         {message && <p style={{ color: '#ffcf66' }}>{message}</p>}
 
         {stats && (
@@ -378,25 +383,25 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
             }}
           >
             <article style={panelStyle}>
-              <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>Visitas totales</span>
+              <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>{t('admin.stats.totalVisits')}</span>
               <p style={statValueStyle}>{stats.total_visits ?? 0}</p>
             </article>
 
             <article style={panelStyle}>
-              <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>Visitas hoy</span>
+              <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>{t('admin.stats.todayVisits')}</span>
               <p style={statValueStyle}>{stats.today_visits ?? 0}</p>
             </article>
 
             <article style={panelStyle}>
-              <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>Usuarios registrados</span>
+              <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>{t('admin.stats.registeredUsers')}</span>
               <p style={statValueStyle}>{stats.registered_users ?? 0}</p>
             </article>
 
             <article style={panelStyle}>
-              <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>Usuarios online</span>
+              <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>{t('admin.stats.onlineUsers')}</span>
               <p style={statValueStyle}>{onlineUsers}</p>
               <span style={{ color: 'var(--tk-text-muted)', fontSize: '0.78rem', fontWeight: '800' }}>
-                Activos en los ultimos 2 min
+                {t('admin.stats.onlineWindow')}
               </span>
             </article>
           </section>
@@ -412,7 +417,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
               marginBottom: '1rem'
             }}
           >
-            <h2 style={{ color: '#fff', margin: 0 }}>Usuarios</h2>
+            <h2 style={{ color: '#fff', margin: 0 }}>{t('admin.users.title')}</h2>
 
             <button
               type="button"
@@ -427,7 +432,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                 fontWeight: '900'
               }}
             >
-              Actualizar
+              {t('admin.actions.refresh')}
             </button>
           </div>
 
@@ -443,7 +448,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Buscar usuario o email..."
+              placeholder={t('admin.users.searchPlaceholder')}
               style={{
                 background: '#111214',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -467,9 +472,9 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                 fontWeight: '800'
               }}
             >
-              <option value="all">Todos los roles</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
+              <option value="all">{t('admin.filters.allRoles')}</option>
+              <option value="admin">{t('admin.roles.admin')}</option>
+              <option value="user">{t('admin.roles.user')}</option>
             </select>
             <select
               value={activityFilter}
@@ -484,26 +489,26 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                 fontWeight: '800'
               }}
             >
-              <option value="all">Todos</option>
-              <option value="online">Online</option>
-              <option value="offline">Offline</option>
+              <option value="all">{t('admin.filters.allActivity')}</option>
+              <option value="online">{t('admin.filters.online')}</option>
+              <option value="offline">{t('admin.filters.offline')}</option>
             </select>
           </div>
 
           <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 0.75rem', fontWeight: '800' }}>
-            Mostrando {filteredUsers.length} de {users.length} usuarios
+            {t('admin.users.showing', { filtered: filteredUsers.length, total: users.length })}
           </p>
 
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', color: '#fff' }}>
               <thead>
                 <tr style={{ color: 'var(--tk-text-muted)', textAlign: 'left' }}>
-                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Usuario</th>
-                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Email</th>
-                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Rol</th>
-                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Registro</th>
-                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Última actividad</th>
-                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>Acciones</th>
+                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{t('admin.users.columns.username')}</th>
+                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{t('admin.users.columns.email')}</th>
+                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{t('admin.users.columns.role')}</th>
+                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{t('admin.users.columns.registered')}</th>
+                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{t('admin.users.columns.lastActivity')}</th>
+                  <th style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{t('admin.users.columns.actions')}</th>
                 </tr>
               </thead>
 
@@ -511,13 +516,13 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                 {filteredUsers.map((user) => (
                   <tr key={user.user_id}>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      {getAdminDisplayUsername(user)}
+                      {getAdminDisplayUsername(user) || t('admin.users.unconfigured')}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       {user.email}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)', color: user.role === 'admin' ? 'var(--tk-green)' : '#fff' }}>
-                      {user.role || 'user'}
+                      {t(`admin.roles.${user.role || 'user'}`)}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       {user.created_at ? new Date(user.created_at).toLocaleString() : '-'}
@@ -525,7 +530,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                       {user.last_seen ? new Date(user.last_seen).toLocaleString() : '-'}
                       {isRecentlyOnline(user.last_seen) && (
-                        <span style={{ color: 'var(--tk-green)', marginLeft: '0.45rem', fontWeight: '900' }}>ONLINE</span>
+                        <span style={{ color: 'var(--tk-green)', marginLeft: '0.45rem', fontWeight: '900' }}>{t('admin.users.onlineBadge')}</span>
                       )}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
@@ -541,7 +546,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                             letterSpacing: '1px'
                           }}
                         >
-                          OWNER
+                          {t('admin.roles.owner')}
                         </span>
                       ) : (
                         <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
@@ -550,7 +555,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                             onClick={() => openUserDetail(user)}
                             style={actionButtonStyle}
                           >
-                            Detalle
+                            {t('admin.actions.detail')}
                           </button>
 
                           <button
@@ -561,7 +566,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                               color: user.role === 'admin' ? '#ffcf66' : 'var(--tk-green)'
                             }}
                           >
-                            {user.role === 'admin' ? 'Quitar admin' : 'Hacer admin'}
+                            {user.role === 'admin' ? t('admin.actions.removeAdmin') : t('admin.actions.makeAdmin')}
                           </button>
 
                           <button
@@ -569,7 +574,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                             onClick={() => handleSendMessage(user)}
                             style={actionButtonStyle}
                           >
-                            Mensaje
+                            {t('admin.actions.message')}
                           </button>
 
                           <button
@@ -581,7 +586,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                               borderColor: 'rgba(255,107,107,0.35)'
                             }}
                           >
-                            Borrar
+                            {t('common.delete')}
                           </button>
                         </div>
                       )}
@@ -591,7 +596,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                           onClick={() => openUserDetail(user)}
                           style={{ ...actionButtonStyle, marginLeft: '0.45rem' }}
                         >
-                          Detalle
+                          {t('admin.actions.detail')}
                         </button>
                       )}
                     </td>
@@ -612,17 +617,17 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
               marginBottom: '1rem'
             }}
           >
-            <h2 style={{ color: '#fff', margin: 0 }}>Reportes</h2>
+            <h2 style={{ color: '#fff', margin: 0 }}>{t('admin.feedback.title')}</h2>
 
             <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>
-              {feedback.length} tickets
+              {t('admin.feedback.ticketCount', { count: feedback.length })}
             </span>
           </div>
 
           <div style={{ display: 'grid', gap: '0.8rem' }}>
             {feedback.length === 0 && (
               <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>
-                No hay reportes ni sugerencias.
+                {t('admin.feedback.empty')}
               </p>
             )}
 
@@ -652,17 +657,17 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                   <div>
                     <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.45rem' }}>
                       <span style={{ color: 'var(--tk-green)', fontWeight: '900', textTransform: 'uppercase' }}>
-                        {feedbackTypeLabels[item.type] || item.type}
+                        {feedbackTypeLabel(item.type)}
                       </span>
                       <span style={{ color: '#ffcf66', fontWeight: '900', textTransform: 'uppercase' }}>
-                        {feedbackStatusLabels[item.status] || item.status}
+                        {feedbackStatusLabel(item.status)}
                       </span>
                     </div>
 
                     <h3 style={{ color: '#fff', margin: '0 0 0.35rem 0' }}>{item.subject}</h3>
 
                     <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 0.7rem 0' }}>
-                      {item.username || 'Sin usuario'} · {item.email || 'sin email'} ·{' '}
+                      {item.username || t('admin.feedback.noUser')} · {item.email || t('admin.feedback.noEmail')} ·{' '}
                       {item.created_at ? new Date(item.created_at).toLocaleString() : '-'}
                     </p>
 
@@ -711,7 +716,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                             type="button"
                             onClick={() => handleFeedbackStatusChange(item, status)}
                             disabled={isActive}
-                            title={isActive ? `Estado actual: ${feedbackStatusLabels[status]}` : feedbackStatusActions[status]}
+                            title={isActive ? t('admin.feedback.currentStatus', { status: feedbackStatusLabel(status) }) : feedbackStatusAction(status)}
                             style={getTicketButtonStyle({
                               ...statusStyle,
                               active: isActive,
@@ -719,7 +724,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                             })}
                           >
                             <span>{isActive ? '●' : '○'}</span>
-                            {isActive ? feedbackStatusLabels[status] : feedbackStatusActions[status]}
+                            {isActive ? feedbackStatusLabel(status) : feedbackStatusAction(status)}
                           </button>
                         );
                       })}
@@ -730,7 +735,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                         type="button"
                         onClick={() => handleReplyFeedback(item)}
                         disabled={item.status === 'closed'}
-                        title={item.status === 'closed' ? 'No se puede responder a un ticket cerrado' : 'Responder al usuario'}
+                        title={item.status === 'closed' ? t('admin.feedback.closedReplyTitle') : t('admin.feedback.replyTitle')}
                         style={getTicketButtonStyle({
                           color: 'var(--tk-green)',
                           border: 'rgba(26,176,21,0.35)',
@@ -738,13 +743,13 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                           disabled: item.status === 'closed'
                         })}
                       >
-                        ↩ Responder al usuario
+                        ↩ {t('admin.feedback.replyUser')}
                       </button>
 
                       <button
                         type="button"
                         onClick={() => handleDeleteFeedback(item)}
-                        title="Borrar este ticket para todos"
+                        title={t('admin.feedback.deleteForAllTitle')}
                         style={getTicketButtonStyle({
                           color: '#ff6b6b',
                           border: 'rgba(255,107,107,0.35)',
@@ -752,7 +757,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                           danger: true
                         })}
                       >
-                        ✕ Borrar para todos
+                        ✕ {t('admin.feedback.deleteForAll')}
                       </button>
                     </div>
                   </div>
@@ -789,25 +794,25 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-start', marginBottom: '1rem' }}>
                 <div>
                   <p style={{ color: 'var(--tk-green)', margin: 0, fontWeight: '900', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                    Detalle de usuario
+                    {t('admin.detail.title')}
                   </p>
-                  <h2 style={{ color: '#fff', margin: '0.25rem 0 0' }}>{getAdminDisplayUsername(selectedUser)}</h2>
+                  <h2 style={{ color: '#fff', margin: '0.25rem 0 0' }}>{getAdminDisplayUsername(selectedUser) || t('admin.users.unconfigured')}</h2>
                   <p style={{ color: 'var(--tk-text-muted)', margin: '0.35rem 0 0' }}>{selectedUser.email}</p>
                 </div>
 
                 <button type="button" onClick={() => setSelectedUser(null)} style={actionButtonStyle}>
-                  Cerrar
+                  {t('common.close')}
                 </button>
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
-                <DetailStat label="Rol" value={selectedUser.role || 'user'} />
-                <DetailStat label="Perfil" value={getUserProfileStatus(selectedUser)} />
-                <DetailStat label="Estado" value={isRecentlyOnline(selectedUser.last_seen) ? 'Online' : 'Offline'} />
-                <DetailStat label="Ultima actividad" value={selectedUser.last_seen ? new Date(selectedUser.last_seen).toLocaleString() : '-'} />
+                <DetailStat label={t('admin.detail.role')} value={t(`admin.roles.${selectedUser.role || 'user'}`)} />
+                <DetailStat label={t('admin.detail.profile')} value={t(`admin.detail.profileStatus.${getUserProfileStatus(selectedUser)}`)} />
+                <DetailStat label={t('admin.detail.status')} value={isRecentlyOnline(selectedUser.last_seen) ? t('admin.filters.online') : t('admin.filters.offline')} />
+                <DetailStat label={t('admin.detail.lastActivity')} value={selectedUser.last_seen ? new Date(selectedUser.last_seen).toLocaleString() : '-'} />
               </div>
 
-              {detailLoading && <p style={{ color: 'var(--tk-green)' }}>Cargando progreso...</p>}
+              {detailLoading && <p style={{ color: 'var(--tk-green)' }}>{t('admin.detail.loadingProgress')}</p>}
 
               {selectedUserProgress?.error && (
                 <p style={{ color: '#ffcf66', fontWeight: '800' }}>{selectedUserProgress.error}</p>
@@ -816,32 +821,32 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
               {!detailLoading && selectedUserProgress && (
                 <div style={{ display: 'grid', gap: '1rem' }}>
                   <div>
-                    <h3 style={{ color: '#fff', margin: '0 0 0.65rem' }}>Progreso cloud por modulos</h3>
+                    <h3 style={{ color: '#fff', margin: '0 0 0.65rem' }}>{t('admin.detail.cloudProgress')}</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.6rem' }}>
                       {(selectedUserProgress.module_states || []).length === 0 && (
-                        <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>Sin estados cloud guardados.</p>
+                        <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>{t('admin.detail.noModuleStates')}</p>
                       )}
                       {(selectedUserProgress.module_states || []).map((state) => (
                         <DetailStat
                           key={`${state.module_key}-${state.mode}`}
                           label={`${state.module_key} / ${state.mode}`}
-                          value={state.updated_at ? new Date(state.updated_at).toLocaleString() : 'Guardado'}
+                          value={state.updated_at ? new Date(state.updated_at).toLocaleString() : t('admin.detail.saved')}
                         />
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <h3 style={{ color: '#fff', margin: '0 0 0.65rem' }}>Misiones</h3>
+                    <h3 style={{ color: '#fff', margin: '0 0 0.65rem' }}>{t('admin.detail.missions')}</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.6rem' }}>
                       {(selectedUserProgress.quest_progress || []).length === 0 && (
-                        <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>Sin progreso de misiones cloud.</p>
+                        <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>{t('admin.detail.noQuestProgress')}</p>
                       )}
                       {(selectedUserProgress.quest_progress || []).map((progress) => (
                         <DetailStat
                           key={progress.mode}
-                          label={`Misiones ${progress.mode}`}
-                          value={`${progress.completed_count || 0} completadas`}
+                          label={t('admin.detail.missionsMode', { mode: progress.mode })}
+                          value={t('admin.detail.completedCount', { count: progress.completed_count || 0 })}
                         />
                       ))}
                     </div>

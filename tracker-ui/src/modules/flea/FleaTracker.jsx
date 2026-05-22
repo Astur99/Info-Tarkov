@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 
 const MARKET_MODES = {
@@ -14,6 +15,7 @@ const ITEMS_INTERES = [
 ];
 
 export default function FleaTracker({ onViewChange }) {
+  const { t, i18n } = useTranslation();
   const [busqueda, setBusqueda] = useState('');
   const [itemsResultados, setItemsResultados] = useState([]);
   const [cargando, setCargando] = useState(false);
@@ -168,16 +170,16 @@ export default function FleaTracker({ onViewChange }) {
 
   const formatRublos = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val);
   const formatMarketDate = (timestamp) => {
-    if (!timestamp) return 'Sin fecha';
+    if (!timestamp) return t('fleaModule.noDate');
 
     const numericTimestamp = Number(timestamp);
     const date = Number.isFinite(numericTimestamp)
       ? new Date(numericTimestamp < 10000000000 ? numericTimestamp * 1000 : numericTimestamp)
       : new Date(timestamp);
 
-    if (Number.isNaN(date.getTime())) return 'Sin fecha';
+    if (Number.isNaN(date.getTime())) return t('fleaModule.noDate');
 
-    return date.toLocaleString('es-ES', {
+    return date.toLocaleString(i18n.language === 'en' ? 'en-US' : 'es-ES', {
       day: '2-digit',
       month: 'short',
       hour: '2-digit',
@@ -275,17 +277,19 @@ export default function FleaTracker({ onViewChange }) {
               }}
             >
               {hoverSparkline.index === 0
-                ? 'Primer registro'
-                : `${hoverSparkline.delta >= 0 ? '+' : ''}${formatRublos(hoverSparkline.delta)} vs anterior`}
+                ? t('fleaModule.chart.firstRecord')
+                : t('fleaModule.chart.deltaVsPrevious', {
+                  delta: `${hoverSparkline.delta >= 0 ? '+' : ''}${formatRublos(hoverSparkline.delta)}`
+                })}
             </div>
           </div>
         )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.6rem', fontSize: '0.75rem', color: 'var(--tk-text-muted)', fontFamily: "'Rajdhani', sans-serif", fontWeight: '700', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '8px' }}>
-          <span>HACE 7 DÍAS</span>
-          <div><span style={{ color: '#fff' }}>MÍN:</span> {formatRublos(minPrecio)}</div>
-          <div><span style={{ color: '#fff' }}>MÁX:</span> {formatRublos(maxPrecio)}</div>
-          <span>AHORA</span>
+          <span>{t('fleaModule.chart.sevenDaysAgo')}</span>
+          <div><span style={{ color: '#fff' }}>{t('fleaModule.chart.min')}</span> {formatRublos(minPrecio)}</div>
+          <div><span style={{ color: '#fff' }}>{t('fleaModule.chart.max')}</span> {formatRublos(maxPrecio)}</div>
+          <span>{t('fleaModule.chart.now')}</span>
         </div>
       </div>
     );
@@ -297,9 +301,9 @@ export default function FleaTracker({ onViewChange }) {
       {/* CABECERA */}
       <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div>
-          <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>FLEA MARKET TRACKER</h2>
+          <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>{t('fleaModule.title')}</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
-            Análisis dinámico de precios, gráficos de fluctuación y rentabilidad por item en PVP y PVE.
+            {t('fleaModule.subtitle')}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
@@ -344,7 +348,7 @@ export default function FleaTracker({ onViewChange }) {
             onClick={() => onViewChange('home')}
             style={{ backgroundColor: 'rgba(255,255,255,0.02)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', padding: '12px 22px', borderRadius: '6px', cursor: 'pointer', fontWeight: '700', letterSpacing: '1px', transition: 'all 0.3s' }}
           >
-            VOLVER AL MENÚ
+            {t('common.backToMenu')}
           </button>
         </div>
       </header>
@@ -352,11 +356,11 @@ export default function FleaTracker({ onViewChange }) {
       {/* INPUT DEL BUSCADOR GENERAL */}
       <section style={{ marginBottom: '2.5rem' }}>
         <h3 style={{ fontSize: '0.9rem', color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          BUSCADOR HÍBRIDO ({modoMercado}) - INGLÉS / ESPAÑOL SIN TILDES
+          {t('fleaModule.search.title', { mode: modoMercado })}
         </h3>
         <input 
           type="text" 
-          placeholder="EJ: sugar, ledx, graphics card..." 
+          placeholder={t('fleaModule.search.placeholder')}
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           style={{
@@ -372,7 +376,7 @@ export default function FleaTracker({ onViewChange }) {
             boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)'
           }}
         />
-        {cargando && <p style={{ color: 'var(--tk-green)', marginTop: '0.5rem', fontSize: '0.9rem', letterSpacing: '1px' }}>BUSCANDO EN LA BASE DE DATOS...</p>}
+        {cargando && <p style={{ color: 'var(--tk-green)', marginTop: '0.5rem', fontSize: '0.9rem', letterSpacing: '1px' }}>{t('fleaModule.search.loading')}</p>}
         
         {!cargando && busqueda.length >= 3 && itemsResultados.length === 0 && (
           <p style={{ 
@@ -384,7 +388,7 @@ export default function FleaTracker({ onViewChange }) {
             fontFamily: "'Rajdhani', sans-serif",
             textTransform: 'uppercase'
           }}>
-            No se ha encontrado el objeto deseado en el mercado {modoMercado}
+            {t('fleaModule.search.empty', { mode: modoMercado })}
           </p>
         )}
       </section>
@@ -421,7 +425,7 @@ export default function FleaTracker({ onViewChange }) {
                   </div>
                   <div>
                     <h4 style={{ color: '#fff', fontSize: '1.2rem', fontWeight: '700', margin: 0 }}>{item.name}</h4>
-                    <span style={{ color: 'var(--tk-text-muted)', fontSize: '0.85rem' }}>Espacio: {item.width}x{item.height} ({slots} slots)</span>
+                    <span style={{ color: 'var(--tk-text-muted)', fontSize: '0.85rem' }}>{t('fleaModule.item.space', { width: item.width, height: item.height, slots })}</span>
                   </div>
                 </div>
 
@@ -432,7 +436,7 @@ export default function FleaTracker({ onViewChange }) {
                     color: inflado ? '#ff4444' : 'var(--tk-green)', 
                     fontSize: '0.75rem', fontWeight: '800', padding: '3px 8px', borderRadius: '4px' 
                   }}>
-                    {pricePerSlot ? `${formatRublos(pricePerSlot)} / Slot` : 'SIN REGISTRO'}
+                    {pricePerSlot ? t('fleaModule.item.pricePerSlot', { price: formatRublos(pricePerSlot) }) : t('fleaModule.item.noRecord')}
                   </span>
                 </div>
               </div>
@@ -444,23 +448,23 @@ export default function FleaTracker({ onViewChange }) {
         {itemSeleccionado && (
           <section style={{ backgroundColor: 'var(--tk-glass)', backdropFilter: 'blur(20px)', border: '1px solid var(--tk-glass-border)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', height: 'fit-content' }}>
             <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px' }}>DATOS ESPECÍFICOS - {modoMercado}</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px' }}>{t('fleaModule.detail.specificData', { mode: modoMercado })}</span>
               <h3 style={{ fontSize: '1.6rem', fontWeight: '700', color: '#fff', margin: '0.2rem 0 0 0' }}>{itemSeleccionado.name}</h3>
             </div>
 
             <div>
               <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.8rem', letterSpacing: '0.5px' }}>
-                TENDENCIA HISTÓRICA ({modoMercado}, ÚLTIMOS 7 DÍAS)
+                {t('fleaModule.detail.historicalTrend', { mode: modoMercado })}
               </span>
               {renderRealSparkline(itemSeleccionado)}
               <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.85rem', marginTop: '0.8rem', paddingLeft: '4px' }}>
-                <div><span style={{ color: 'var(--tk-text-muted)' }}>Media global 24h:</span> <span style={{ color: '#fff', fontWeight: '700', marginLeft: '4px' }}>{formatRublos(itemSeleccionado.avg24hPrice)}</span></div>
-                <div><span style={{ color: 'var(--tk-text-muted)' }}>Precio actual bajo:</span> <span style={{ color: '#fff', fontWeight: '700', marginLeft: '4px' }}>{formatRublos(itemSeleccionado.lastLowPrice)}</span></div>
+                <div><span style={{ color: 'var(--tk-text-muted)' }}>{t('fleaModule.detail.avg24h')}</span> <span style={{ color: '#fff', fontWeight: '700', marginLeft: '4px' }}>{formatRublos(itemSeleccionado.avg24hPrice)}</span></div>
+                <div><span style={{ color: 'var(--tk-text-muted)' }}>{t('fleaModule.detail.currentLow')}</span> <span style={{ color: '#fff', fontWeight: '700', marginLeft: '4px' }}>{formatRublos(itemSeleccionado.lastLowPrice)}</span></div>
               </div>
             </div>
 
             <div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.6rem', letterSpacing: '0.5px' }}>VALOR DE COMPRA EN TRADERS</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.6rem', letterSpacing: '0.5px' }}>{t('fleaModule.detail.traderValue')}</span>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 {itemSeleccionado.sellFor && itemSeleccionado.sellFor.slice(0, 4).map((trader, i) => (
                   <div key={i} style={{ backgroundColor: 'rgba(0,0,0,0.25)', padding: '0.75rem 1rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.02)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -477,11 +481,11 @@ export default function FleaTracker({ onViewChange }) {
       {/* CAMBIO DE ORDEN: RADAR DE ANOMALÍAS EN LA MITAD INFERIOR */}
       <section style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '3rem' }}>
         <h3 style={{ fontSize: '0.9rem', color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          RADAR DE ITEMS MÁS FLUCTUANTES EN EL MERCADO {modoMercado}:
+          {t('fleaModule.hotDeals.title', { mode: modoMercado })}
         </h3>
         
         {cargandoHotDeals ? (
-          <div style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', letterSpacing: '1px' }}>LISTANDO ITEMS...</div>
+          <div style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', letterSpacing: '1px' }}>{t('fleaModule.hotDeals.loading')}</div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {hotDeals.map((deal) => {
@@ -510,7 +514,7 @@ export default function FleaTracker({ onViewChange }) {
                     color: esSubida ? '#ff4444' : 'var(--tk-green)',
                     fontSize: '0.65rem', fontWeight: '800', padding: '2px 6px', borderRadius: '4px', position: 'absolute', top: '12px', right: '12px', letterSpacing: '0.5px'
                   }}>
-                    {esSubida ? `SUBE ${pctText}` : `BAJA ${pctText}`}
+                    {esSubida ? t('fleaModule.hotDeals.up', { pct: pctText }) : t('fleaModule.hotDeals.down', { pct: pctText })}
                   </span>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.4rem' }}>

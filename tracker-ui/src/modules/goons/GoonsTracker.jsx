@@ -1,32 +1,30 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 
 const PERFILES_GOONS = [
   {
+    id: 'knight',
     name: 'KNIGHT',
-    role: 'LÍDER DE ESCUADRA / ASALTO',
-    desc: 'El cerebro táctico del grupo. Es extremadamente agresivo, viste una icónica máscara de calavera y cargará directo hacia tu posición flanqueando con fuego de sumisión implacable en cuanto detecte tu presencia o la de tu escuadra.',
     avatar: 'https://assets.tarkov.dev/knight-portrait.png'
   },
   {
+    id: 'bigPipe',
     name: 'BIG PIPE',
-    role: 'SOPORTE PESADO / ARTILLERÍA',
-    desc: 'Especialista en demoliciones y fuego de cobertura. Va armado habitualmente con un lanzagranadas múltiple de 40mm M32A1 o ametralladoras pesadas. Proporciona fuego de supresión devastador mientras Knight avanza.',
     avatar: 'https://assets.tarkov.dev/big-pipe-portrait.png'
   },
   {
+    id: 'birdeye',
     name: 'BIRDEYE',
-    role: 'RECONOCIMIENTO / TIRADOR',
-    desc: 'El francotirador silencioso del trío. Sus pasos se oyen muy poco y abrirá fuego desde largas distancias.',
     avatar: 'https://assets.tarkov.dev/birdeye-portrait.png'
   }
 ];
 
 const MAPAS_OBJETIVO = [
-  { id: 'customs', name: 'Customs', label: 'ZONA: FORTALEZA / DORMITORIOS' },
-  { id: 'woods', name: 'Woods', label: 'ZONA: ANTENA / CAMPAMENTO SCAV' },
-  { id: 'shoreline', name: 'Shoreline', label: 'ZONA: ESTACIÓN DE RADAR / RESORT' },
-  { id: 'lighthouse', name: 'Lighthouse', label: 'ZONA: CHALETS / PLANTA DE TRATAMIENTO' }
+  { id: 'customs', name: 'Customs' },
+  { id: 'woods', name: 'Woods' },
+  { id: 'shoreline', name: 'Shoreline' },
+  { id: 'lighthouse', name: 'Lighthouse' }
 ];
 
 const URLS_TRACKER = {
@@ -85,6 +83,7 @@ function extraerUltimoReporteDesdeHtml(html) {
 }
 
 export default function GoonsTracker({ onViewChange }) {
+  const { t } = useTranslation();
   const [goonData, setGoonData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [errorRadar, setErrorRadar] = useState(null);
@@ -114,7 +113,7 @@ export default function GoonsTracker({ onViewChange }) {
         const lastDetected = extraerUltimoReporteDesdeHtml(html);
 
         if (!activeMapId) {
-          throw new Error('No se pudo extraer el mapa activo desde el HTML del tracker');
+          throw new Error(t('goonsModule.errors.mapParse'));
         }
 
         setGoonData({
@@ -124,7 +123,7 @@ export default function GoonsTracker({ onViewChange }) {
         });
       } catch (err) {
         if (err.name !== 'AbortError') {
-          console.error(`Fallo de captura en modo ${modoJuego.toUpperCase()}:`, err);
+          console.error(t('goonsModule.consoleCaptureError', { mode: modoJuego.toUpperCase() }), err);
           setErrorRadar(err.message);
         }
       } finally {
@@ -146,18 +145,18 @@ export default function GoonsTracker({ onViewChange }) {
       window.clearTimeout(initialScan);
       clearInterval(intervaloRadar);
     };
-  }, [modoJuego]);
+  }, [modoJuego, t]);
 
   const comprobarPresencia = (mapId) => {
     return goonData?.activeMapId === mapId;
   };
 
   const obtenerUltimoReporte = () => {
-    if (!goonData?.lastDetected) return 'SIN REPORTES OPERATIVOS';
+    if (!goonData?.lastDetected) return t('goonsModule.noReports');
 
     const fecha = new Date(goonData.lastDetected);
 
-    return fecha.toLocaleString('es-ES', {
+    return fecha.toLocaleString(t('goonsModule.dateLocale'), {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
@@ -168,7 +167,7 @@ export default function GoonsTracker({ onViewChange }) {
 
   const mapaActivoActualmente = () => {
     const mapa = MAPAS_OBJETIVO.find(m => m.id === goonData?.activeMapId);
-    return mapa ? mapa.name.toUpperCase() : 'DESCONOCIDO (FUERA DE COBERTURA)';
+    return mapa ? mapa.name.toUpperCase() : t('goonsModule.unknownMap');
   };
 
   if (loading) {
@@ -186,7 +185,7 @@ export default function GoonsTracker({ onViewChange }) {
           fontSize: '1.5rem',
           textTransform: 'uppercase'
         }}>
-          Extrayendo datos de los Goons en modo {modoJuego.toUpperCase()}...
+          {t('goonsModule.loading', { mode: modoJuego.toUpperCase() })}
         </p>
       </div>
     );
@@ -219,7 +218,7 @@ export default function GoonsTracker({ onViewChange }) {
             fontWeight: '700',
             color: '#fff'
           }}>
-            GOONS TRACKER
+            {t('goonsModule.title')}
           </h2>
 
           <p style={{
@@ -227,7 +226,7 @@ export default function GoonsTracker({ onViewChange }) {
             fontSize: '1rem',
             marginTop: '0.3rem'
           }}>
-            Información de los Goons y de su última ubicación conocida.
+            {t('goonsModule.subtitle')}
           </p>
         </div>
 
@@ -255,7 +254,7 @@ export default function GoonsTracker({ onViewChange }) {
                 boxShadow: modoJuego === 'pvp' ? '0 0 15px rgba(176,21,21,0.4)' : 'none'
               }}
             >
-              CANAL PVP
+              {t('goonsModule.channel', { mode: 'PVP' })}
             </button>
 
             <button
@@ -274,7 +273,7 @@ export default function GoonsTracker({ onViewChange }) {
                 boxShadow: modoJuego === 'pve' ? '0 0 15px rgba(26,176,21,0.3)' : 'none'
               }}
             >
-              CANAL PVE
+              {t('goonsModule.channel', { mode: 'PVE' })}
             </button>
           </div>
 
@@ -295,7 +294,7 @@ export default function GoonsTracker({ onViewChange }) {
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
           >
-            VOLVER
+            {t('common.backToMenu')}
           </button>
         </div>
       </header>
@@ -366,7 +365,7 @@ export default function GoonsTracker({ onViewChange }) {
                 fontWeight: '700',
                 letterSpacing: '1px'
               }}>
-                {goon.role}
+                {t(`goonsModule.profiles.${goon.id}.role`)}
               </span>
             </div>
 
@@ -376,7 +375,7 @@ export default function GoonsTracker({ onViewChange }) {
               lineHeight: '1.6',
               margin: 0
             }}>
-              {goon.desc}
+              {t(`goonsModule.profiles.${goon.id}.desc`)}
             </p>
           </div>
         ))}
@@ -391,7 +390,7 @@ export default function GoonsTracker({ onViewChange }) {
           textTransform: 'uppercase',
           color: '#fff'
         }}>
-          GEOLOCALIZACIÓN EN CANAL ACTIVO
+          {t('goonsModule.activeChannelGeolocation')}
         </h3>
 
         <div style={{
@@ -413,7 +412,7 @@ export default function GoonsTracker({ onViewChange }) {
               letterSpacing: '1.5px',
               textTransform: 'uppercase'
             }}>
-              UBICACIÓN ACTUAL DETECTADA
+              {t('goonsModule.detectedLocation')}
             </span>
 
             <div style={{
@@ -436,7 +435,7 @@ export default function GoonsTracker({ onViewChange }) {
               letterSpacing: '1.5px',
               textTransform: 'uppercase'
             }}>
-              MODO DE JUEGO:
+              {t('goonsModule.gameMode')}:
             </span>
 
             <div style={{
@@ -451,8 +450,8 @@ export default function GoonsTracker({ onViewChange }) {
               letterSpacing: '0.5px'
             }}>
               {errorRadar
-                ? '⚠ ERROR DE TELEMETRÍA'
-                : `✓ ${modoJuego.toUpperCase()}`}
+                ? t('goonsModule.telemetryError')
+                : t('goonsModule.telemetryOk', { mode: modoJuego.toUpperCase() })}
             </div>
 
             <div style={{
@@ -460,7 +459,7 @@ export default function GoonsTracker({ onViewChange }) {
               color: 'var(--tk-text-muted)',
               marginTop: '0.2rem'
             }}>
-              {errorRadar ? errorRadar : `Último Reporte: ${obtenerUltimoReporte()}`}
+              {errorRadar ? errorRadar : t('goonsModule.lastReport', { report: obtenerUltimoReporte() })}
             </div>
           </div>
         </div>
@@ -511,7 +510,7 @@ export default function GoonsTracker({ onViewChange }) {
                   fontWeight: '700',
                   letterSpacing: '1px'
                 }}>
-                  {mapa.label}
+                  {t(`goonsModule.maps.${mapa.id}.label`)}
                 </span>
 
                 <h4 style={{
@@ -545,7 +544,7 @@ export default function GoonsTracker({ onViewChange }) {
                   color: bajoAtaque ? 'var(--tk-red)' : 'var(--tk-text-muted)',
                   letterSpacing: '1px'
                 }}>
-                  {bajoAtaque ? '⚠️ REPORTE: UBICACIÓN CONFIRMADA' : '✓ TRANSMISIÓN LIMPIA'}
+                  {bajoAtaque ? t('goonsModule.confirmedLocation') : t('goonsModule.cleanTransmission')}
                 </span>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 
@@ -24,29 +25,26 @@ const normalizedMapNames = {
   terminal: 'Terminal'
 };
 
-const fallbackPlans = [
+const fallbackPlanDefinitions = [
   {
     map: 'Customs',
-    reason: 'Mapa temprano con muchas cadenas de Prapor, Therapist y Skier.',
+    copyKey: 'customs',
     tasks: ['Checking', 'Operation Aquarius - Part 1', 'Pharmacist', 'Delivery from the Past'],
     keys: ['Machinery key', 'Dorm room 206 key', 'Dorm room 114 key', 'Factory emergency exit key'],
-    risk: 'Alto en Dorms y construccion',
     score: 18
   },
   {
     map: 'Shoreline',
-    reason: 'Fuerte concentracion de quests de resort y progresion de Peacekeeper/Therapist.',
+    copyKey: 'shoreline',
     tasks: ['Health Care Privacy', 'Spa Tour', 'Colleagues', 'Anesthesia'],
     keys: ['Health Resort west wing 216', 'West wing 220', 'Cottage back door key'],
-    risk: 'Alto en resort',
     score: 16
   },
   {
     map: 'Interchange',
-    reason: 'Buen mapa para Ragman, items de hideout y rutas de tiendas.',
+    copyKey: 'interchange',
     tasks: ['Database - Part 1', 'Vitamins - Part 1', 'Big Sale', 'Make ULTRA Great Again'],
     keys: ['OLI logistics key', 'EMERCOM medical unit key'],
-    risk: 'Medio/alto en centro comercial',
     score: 14
   }
 ];
@@ -62,19 +60,31 @@ const keyHintsByMap = {
   Labs: ['Labs access keycard', 'TerraGroup Labs keycards']
 };
 
-const riskByMap = {
-  Customs: 'Alto en Dorms, construccion y gasolinera',
-  Shoreline: 'Alto en resort, medio en exteriores',
-  Reserve: 'Alto por raiders, bunker y jugadores de loot',
-  Interchange: 'Medio/alto por KIBA, tech stores y extracciones',
-  Woods: 'Medio, peligro por lineas largas y bosses',
-  Lighthouse: 'Alto en water treatment y chalets',
-  Streets: 'Alto por densidad de jugadores y rutas interiores',
-  Factory: 'Muy alto, combate inmediato',
-  Labs: 'Muy alto, raiders y jugadores endgame',
-  'Ground Zero': 'Medio, concentrado para progresion temprana',
-  Terminal: 'Pendiente de datos estables'
+const riskMapKeys = {
+  Customs: 'customs',
+  Shoreline: 'shoreline',
+  Reserve: 'reserve',
+  Interchange: 'interchange',
+  Woods: 'woods',
+  Lighthouse: 'lighthouse',
+  Streets: 'streets',
+  Factory: 'factory',
+  Labs: 'labs',
+  'Ground Zero': 'groundZero',
+  Terminal: 'terminal'
 };
+
+const getFallbackPlans = (t) =>
+  fallbackPlanDefinitions.map((plan) => ({
+    ...plan,
+    reason: t(`questOptimizer.fallbackPlans.${plan.copyKey}.reason`),
+    risk: t(`questOptimizer.fallbackPlans.${plan.copyKey}.risk`)
+  }));
+
+const getRiskForMap = (map, t) =>
+  riskMapKeys[map]
+    ? t(`questOptimizer.risks.${riskMapKeys[map]}`)
+    : t('questOptimizer.variableRisk');
 
 const getStorageKey = (mode) => `${STORAGE_PREFIX}${mode.toLowerCase()}`;
 
@@ -136,6 +146,7 @@ const taskQuery = `
 `;
 
 export default function QuestOptimizerModule({ onViewChange, session }) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState(() => localStorage.getItem(MODE_STORAGE_KEY) || readDefaultPlayableMode());
   const [tasks, setTasks] = useState([]);
   const [completedIds, setCompletedIds] = useState(() => readLocalProgress(mode));
@@ -197,12 +208,12 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
 
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const payload = await response.json();
-        if (!payload.data?.tasks) throw new Error('Respuesta sin tasks');
+        if (!payload.data?.tasks) throw new Error('Missing tasks response');
 
         if (!cancelled) setTasks(payload.data.tasks);
       } catch (error) {
         console.error(error);
-        if (!cancelled) setStatus('No se pudo conectar con tarkov.dev. Mostrando recomendaciones base.');
+        if (!cancelled) setStatus(t('questOptimizer.status.connectionError'));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -213,10 +224,10 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t]);
 
   const plans = useMemo(() => {
-    if (!tasks.length) return fallbackPlans;
+    if (!tasks.length) return getFallbackPlans(t);
 
     const completed = new Set(completedIds);
     const byMap = new Map();
@@ -232,12 +243,12 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
         if (!byMap.has(map)) {
           byMap.set(map, {
             map,
-            reason: 'Agrupa quests pendientes detectadas por mapa desde tarkov.dev.',
+            reason: t('questOptimizer.dynamicReason'),
             tasks: [],
             kappaCount: 0,
             traders: new Set(),
             keys: keyHintsByMap[map] || [],
-            risk: riskByMap[map] || 'Riesgo variable segun ruta',
+            risk: getRiskForMap(map, t),
             score: 0
           });
         }
@@ -259,7 +270,7 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
           .slice(0, 8)
       }))
       .sort((a, b) => b.score - a.score);
-  }, [completedIds, kappaOnly, tasks]);
+  }, [completedIds, kappaOnly, t, tasks]);
 
   const visiblePlans = selectedMap === 'Todos'
     ? plans
@@ -292,13 +303,13 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
         >
           <div>
             <p style={{ color: 'var(--tk-green)', margin: '0 0 0.45rem', fontWeight: '900', letterSpacing: '2px', textTransform: 'uppercase' }}>
-              Siguiente mejor raid
+              {t('questOptimizer.eyebrow')}
             </p>
             <h1 style={{ color: '#fff', margin: 0, fontSize: '2.7rem', textTransform: 'uppercase' }}>
-              Quest Optimizer
+              {t('questOptimizer.title')}
             </h1>
             <p style={{ color: 'var(--tk-text-muted)', maxWidth: '820px', lineHeight: 1.6 }}>
-              Analiza quests pendientes, mapas, Kappa y llaves recomendadas para sugerirte donde aprovechar mejor la siguiente raid.
+              {t('questOptimizer.subtitle')}
             </p>
           </div>
 
@@ -317,7 +328,7 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
               whiteSpace: 'nowrap'
             }}
           >
-            VOLVER AL MENU
+            {t('common.backToMenu')}
           </button>
         </header>
 
@@ -337,7 +348,7 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
             style={selectStyle}
           >
             {availableMaps.map((map) => (
-              <option key={map} value={map}>{map}</option>
+              <option key={map} value={map}>{t(`questOptimizer.maps.${map}`, { defaultValue: map })}</option>
             ))}
           </select>
 
@@ -351,11 +362,11 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
               borderColor: kappaOnly ? 'var(--tk-green)' : 'rgba(255,255,255,0.1)'
             }}
           >
-            {kappaOnly ? 'Solo Kappa activo' : 'Priorizar Kappa'}
+            {kappaOnly ? t('questOptimizer.actions.kappaOnlyActive') : t('questOptimizer.actions.prioritizeKappa')}
           </button>
         </section>
 
-        {loading && <p style={{ color: 'var(--tk-green)' }}>Analizando quests...</p>}
+        {loading && <p style={{ color: 'var(--tk-green)' }}>{t('questOptimizer.status.loading')}</p>}
         {status && <p style={{ color: '#ffcf66' }}>{status}</p>}
 
         {bestPlan && (
@@ -369,11 +380,11 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
             }}
           >
             <span style={{ color: 'var(--tk-green)', fontWeight: '900', letterSpacing: '2px', textTransform: 'uppercase' }}>
-              Recomendacion principal
+              {t('questOptimizer.mainRecommendation')}
             </span>
             <h2 style={{ color: '#fff', margin: '0.35rem 0' }}>{bestPlan.map}</h2>
             <p style={{ color: 'var(--tk-text-muted)', margin: 0, lineHeight: 1.55 }}>
-              {bestPlan.reason} Score tactico: {bestPlan.score}. Riesgo: {bestPlan.risk}.
+              {t('questOptimizer.bestPlanSummary', { reason: bestPlan.reason, score: bestPlan.score, risk: bestPlan.risk })}
             </p>
           </section>
         )}
@@ -395,7 +406,7 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
                 <div>
                   <h2 style={{ color: '#fff', margin: 0 }}>{plan.map}</h2>
                   <p style={{ color: 'var(--tk-text-muted)', margin: '0.25rem 0 0' }}>
-                    {plan.tasks.length} quests visibles · {plan.kappaCount || 0} Kappa
+                    {t('questOptimizer.planMeta', { tasks: plan.tasks.length, kappa: plan.kappaCount || 0 })}
                   </p>
                 </div>
                 <strong style={{ color: 'var(--tk-green)', fontSize: '1.5rem' }}>{plan.score}</strong>
@@ -403,7 +414,7 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
 
               <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.55 }}>{plan.risk}</p>
 
-              <InfoBlock title="Quests sugeridas">
+              <InfoBlock title={t('questOptimizer.blocks.suggestedQuests')}>
                 {plan.tasks.map((task) => (
                   <li key={task.id}>
                     {task.name}
@@ -413,8 +424,8 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
                 ))}
               </InfoBlock>
 
-              <InfoBlock title="Llaves a revisar">
-                {(plan.keys.length ? plan.keys : ['Sin llaves criticas detectadas para esta ruta']).map((key) => (
+              <InfoBlock title={t('questOptimizer.blocks.keysToReview')}>
+                {(plan.keys.length ? plan.keys : [t('questOptimizer.noCriticalKeys')]).map((key) => (
                   <li key={key}>{key}</li>
                 ))}
               </InfoBlock>
@@ -432,7 +443,7 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
 
         {!loading && visiblePlans.length === 0 && (
           <p style={{ color: 'var(--tk-text-muted)', marginTop: '2rem' }}>
-            No hay rutas disponibles con estos filtros. Prueba a desactivar Kappa o cambiar de mapa.
+            {t('questOptimizer.empty')}
           </p>
         )}
       </main>

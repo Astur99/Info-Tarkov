@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const POOL_AMMO_LOCAL = [
   { id: 'm1', name: '7.62x54mmR SNB gzh', shortName: '7.62x54 R SNB', penetration: 62, damage: 75, armorDamage: 88 },
@@ -332,6 +333,7 @@ function getMaterialFactor(material, materialData) {
 }
 
 export default function ArmorSimulator({ onViewChange }) {
+  const { t } = useTranslation();
   const [municiones, setMuniciones] = useState([]);
   const [armaduras, setArmaduras] = useState([]);
   const [selectedAmmo, setSelectedAmmo] = useState(null);
@@ -536,8 +538,8 @@ export default function ArmorSimulator({ onViewChange }) {
         tiro: contadorTiros,
         probabilidad: Math.round(probabilidadPenetracion),
         resultado: penetra
-          ? '💥 PENETRACIÓN CRÍTICA'
-          : '🛡️ IMPACTO RETENIDO',
+          ? t('armorModule.simulation.criticalPenetration')
+          : t('armorModule.simulation.stoppedImpact'),
         danoLetal: danoRecibido,
         danoPlaca: danoAArmadura,
         hpRestante: hpTorax,
@@ -555,7 +557,7 @@ export default function ArmorSimulator({ onViewChange }) {
       cancelled = true;
       window.clearTimeout(runSimulation);
     };
-  }, [selectedAmmo, selectedArmor]);
+  }, [selectedAmmo, selectedArmor, t]);
 
   if (cargando) {
     return (
@@ -569,7 +571,7 @@ export default function ArmorSimulator({ onViewChange }) {
           letterSpacing: '2px'
         }}
       >
-        CARGANDO ENTORNO BALÍSTICO...
+        {t('armorModule.loading')}
       </div>
     );
   }
@@ -605,7 +607,7 @@ export default function ArmorSimulator({ onViewChange }) {
               color: '#fff'
             }}
           >
-            ARMOR TTK SIMULATOR
+            {t('armorModule.title')}
           </h2>
 
           <p
@@ -615,7 +617,7 @@ export default function ArmorSimulator({ onViewChange }) {
               marginTop: '0.3rem'
             }}
           >
-            Simulador balístico interactivo basado en las físicas de perforación e impactos del inventario.
+            {t('armorModule.subtitle')}
           </p>
         </div>
 
@@ -632,7 +634,7 @@ export default function ArmorSimulator({ onViewChange }) {
             letterSpacing: '1px'
           }}
         >
-          VOLVER AL MENÚ
+          {t('common.backToMenu')}
         </button>
       </header>
 
@@ -656,14 +658,14 @@ export default function ArmorSimulator({ onViewChange }) {
               textTransform: 'uppercase'
             }}
           >
-            BUSCAR BALA
+            {t('armorModule.searchAmmo')}
           </label>
 
           <input
             type="text"
             value={busquedaAmmo}
             onChange={(e) => setBusquedaAmmo(e.target.value)}
-            placeholder="Ej: M61, SNB, M855A1, 5.56, BP..."
+            placeholder={t('armorModule.searchAmmoExample')}
             style={{
               width: '100%',
               backgroundColor: 'rgba(0,0,0,0.5)',
@@ -704,7 +706,7 @@ export default function ArmorSimulator({ onViewChange }) {
               ))
             ) : (
               <option value="" style={{ backgroundColor: '#0e0e11' }}>
-                Sin resultados
+                {t('armorModule.noResults')}
               </option>
             )}
           </select>
@@ -722,14 +724,14 @@ export default function ArmorSimulator({ onViewChange }) {
               textTransform: 'uppercase'
             }}
           >
-            BUSCAR BLINDAJE
+            {t('armorModule.searchArmor')}
           </label>
 
           <input
             type="text"
             value={busquedaArmor}
             onChange={(e) => setBusquedaArmor(e.target.value)}
-            placeholder="Ej: Slick, Gen4, clase 6, ceramic..."
+            placeholder={t('armorModule.searchArmorExample')}
             style={{
               width: '100%',
               backgroundColor: 'rgba(0,0,0,0.5)',
@@ -770,7 +772,7 @@ export default function ArmorSimulator({ onViewChange }) {
               ))
             ) : (
               <option value="" style={{ backgroundColor: '#0e0e11' }}>
-                Sin resultados
+                {t('armorModule.noResults')}
               </option>
             )}
           </select>
@@ -807,7 +809,7 @@ export default function ArmorSimulator({ onViewChange }) {
                 marginBottom: '0.5rem'
               }}
             >
-              RESULTADO DE SIMULACIÓN
+              {t('armorModule.resultTitle')}
             </span>
 
             <div
@@ -828,7 +830,7 @@ export default function ArmorSimulator({ onViewChange }) {
                   color: 'var(--tk-text-muted)'
                 }}
               >
-                {ttkResult === 1 ? 'TIRO' : 'TIROS'}
+                {ttkResult === 1 ? t('armorModule.shotSingular') : t('armorModule.shotPlural')}
               </span>
             </div>
 
@@ -841,7 +843,7 @@ export default function ArmorSimulator({ onViewChange }) {
                 maxWidth: '280px'
               }}
             >
-              Cantidad de impactos requeridos en el tórax para neutralizar al sujeto en fuego sostenido.
+              {t('armorModule.resultDescription')}
             </p>
 
             <span
@@ -863,12 +865,12 @@ export default function ArmorSimulator({ onViewChange }) {
               }}
             >
               {!ttkResult
-                ? 'ESPERANDO PARÁMETROS'
+                ? t('armorModule.states.waiting')
                 : ttkResult <= 2
-                  ? '🔴 LETALIDAD INMEDIATA'
+                  ? t('armorModule.states.immediateLethality')
                   : ttkResult <= 4
-                    ? '🟠 ENFRENTAMIENTO DIRECTO'
-                    : '🟢 PROTECCIÓN EFICIENTE'}
+                    ? t('armorModule.states.directFight')
+                    : t('armorModule.states.efficientProtection')}
             </span>
 
             {selectedArmor && (
@@ -882,12 +884,12 @@ export default function ArmorSimulator({ onViewChange }) {
                   lineHeight: '1.6'
                 }}
               >
-                Blindaje:{' '}
+                {t('armorModule.armorLabel')}:{' '}
                 <strong style={{ color: '#fff' }}>
                   {selectedArmor.shortName}
                 </strong>
                 <br />
-                Clase {selectedArmor.clase} / {selectedArmor.durabilidad} dur. / {selectedArmor.material}
+                {t('armorModule.armorMeta', { class: selectedArmor.clase, durability: selectedArmor.durabilidad, material: selectedArmor.material })}
               </div>
             )}
           </div>
@@ -917,7 +919,7 @@ export default function ArmorSimulator({ onViewChange }) {
               margin: '0 0 0.5rem 0'
             }}
           >
-            📋 TELEMETRÍA DE IMPACTOS (LOG OPERATIVO)
+            {t('armorModule.telemetryTitle')}
           </h3>
 
           {logSimulacion.map((log) => (
@@ -944,7 +946,7 @@ export default function ArmorSimulator({ onViewChange }) {
                     marginRight: '1rem'
                   }}
                 >
-                  # DISPARO {log.tiro}
+                  {t('armorModule.shotLog', { shot: log.tiro })}
                 </span>
 
                 <span
@@ -966,13 +968,13 @@ export default function ArmorSimulator({ onViewChange }) {
                     marginTop: '4px'
                   }}
                 >
-                  Probabilidad de perforación: {log.probabilidad}%
+                  {t('armorModule.penChance', { chance: log.probabilidad })}
                 </div>
               </div>
 
               <div style={{ textAlign: 'right', fontSize: '0.9rem' }}>
                 <div style={{ color: '#fff' }}>
-                  Tórax:{' '}
+                  {t('armorModule.thorax')}:{' '}
                   <span style={{ fontWeight: '700', color: '#ff4444' }}>
                     -{log.danoLetal} HP
                   </span>
@@ -985,7 +987,7 @@ export default function ArmorSimulator({ onViewChange }) {
                     marginTop: '2px'
                   }}
                 >
-                  Placa: {Math.round(log.durabilidadRestante)} rem. (-{log.danoPlaca})
+                  {t('armorModule.plateRemaining', { remaining: Math.round(log.durabilidadRestante), damage: log.danoPlaca })}
                 </div>
               </div>
             </div>

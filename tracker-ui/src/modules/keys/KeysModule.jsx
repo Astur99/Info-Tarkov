@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 
 const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
@@ -262,10 +263,10 @@ const inferCategory = (itemName, intel) => {
   return 'Sin clasificar';
 };
 
-const formatRoubles = (value) => {
+const formatRoubles = (value, locale, emptyLabel) => {
   const price = Number(value) || 0;
-  if (!price) return 'Sin precio';
-  return `${new Intl.NumberFormat('es-ES').format(price)} RUB`;
+  if (!price) return emptyLabel;
+  return `${new Intl.NumberFormat(locale).format(price)} RUB`;
 };
 
 const getIntelForItem = (item) => {
@@ -273,7 +274,7 @@ const getIntelForItem = (item) => {
   return importantKeyIntel.find((intel) => intel.aliases.some((alias) => normalize(alias) === itemName));
 };
 
-const enrichKey = (item) => {
+const enrichKey = (item, t) => {
   const intel = getIntelForItem(item);
   const map = intel?.map || getMapFromName(item.name);
   const category = inferCategory(item.name, intel);
@@ -286,8 +287,8 @@ const enrichKey = (item) => {
     category,
     priority: intel?.priority || 'Baja',
     quests: intel?.quests || [],
-    use: intel?.use || 'Llave detectada desde la base de datos de tarkov.dev. Consulta su wiki para ubicacion exacta, puertas y loot asociado.',
-    recommendation: intel?.recommendation || 'No esta marcada como prioritaria en la capa tactica. Buscala si una quest, ruta de loot o barter te la pide.',
+    use: intel?.use || t('keysModule.defaults.use'),
+    recommendation: intel?.recommendation || t('keysModule.defaults.recommendation'),
     tags: intel?.tags || [map.toLowerCase(), category.toLowerCase(), 'tarkov.dev'],
     isImportant,
     price: item.lastLowPrice || item.avg24hPrice || item.basePrice || 0
@@ -297,6 +298,7 @@ const enrichKey = (item) => {
 const getPriorityStyle = (priority) => priorityStyles[priority] || priorityStyles.Baja;
 
 export default function KeysModule({ onViewChange }) {
+  const { i18n, t } = useTranslation();
   const [search, setSearch] = useState('');
   const [selectedMap, setSelectedMap] = useState('Todos');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
@@ -306,6 +308,7 @@ export default function KeysModule({ onViewChange }) {
   const [status, setStatus] = useState('');
   const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
   const gameMode = MARKET_MODES[modoMercado];
+  const locale = i18n.resolvedLanguage === 'en' ? 'en-US' : 'es-ES';
 
   useEffect(() => {
     let cancelled = false;
@@ -335,13 +338,13 @@ export default function KeysModule({ onViewChange }) {
 
         if (!cancelled) {
           setRawKeys(keys.length ? keys : fallbackKeys);
-          setStatus(keys.length ? '' : 'No se detectaron llaves en tarkov.dev. Mostrando capa tactica local.');
+          setStatus(keys.length ? '' : t('keysModule.status.noKeys'));
         }
       } catch (error) {
         console.error(error);
         if (!cancelled) {
           setRawKeys(fallbackKeys);
-          setStatus('No se pudo conectar con tarkov.dev. Mostrando llaves importantes guardadas localmente.');
+          setStatus(t('keysModule.status.connectionError'));
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -353,9 +356,9 @@ export default function KeysModule({ onViewChange }) {
     return () => {
       cancelled = true;
     };
-  }, [gameMode]);
+  }, [gameMode, t]);
 
-  const allKeys = useMemo(() => rawKeys.map(enrichKey), [rawKeys]);
+  const allKeys = useMemo(() => rawKeys.map((key) => enrichKey(key, t)), [rawKeys, t]);
 
   const filteredKeys = useMemo(() => {
     const normalizedSearch = normalize(search.trim());
@@ -412,13 +415,13 @@ export default function KeysModule({ onViewChange }) {
         >
           <div>
             <p style={{ color: 'var(--tk-green)', margin: '0 0 0.45rem', fontWeight: '900', letterSpacing: '2px', textTransform: 'uppercase' }}>
-              Motor de busqueda de acceso
+              {t('keysModule.eyebrow')}
             </p>
             <h1 style={{ color: '#fff', margin: 0, fontSize: '2.7rem', textTransform: 'uppercase' }}>
-              Sistema de llaves
+              {t('keysModule.title')}
             </h1>
             <p style={{ color: 'var(--tk-text-muted)', maxWidth: '860px', lineHeight: 1.6 }}>
-              Buscador vivo de llaves y keycards de Tarkov con precios separados para PVP/PVE y capa tactica para destacar las mas importantes.
+              {t('keysModule.subtitle')}
             </p>
           </div>
 
@@ -464,7 +467,7 @@ export default function KeysModule({ onViewChange }) {
                 whiteSpace: 'nowrap'
               }}
             >
-              VOLVER AL MENU
+              {t('common.backToMenu')}
             </button>
           </div>
         </header>
@@ -480,19 +483,19 @@ export default function KeysModule({ onViewChange }) {
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Buscar cualquier llave, keycard, quest, mapa o tag..."
+            placeholder={t('keysModule.searchPlaceholder')}
             style={inputStyle}
           />
 
           <select value={selectedMap} onChange={(event) => setSelectedMap(event.target.value)} style={selectStyle}>
             {maps.map((map) => (
-              <option key={map} value={map}>{map}</option>
+              <option key={map} value={map}>{t(`keysModule.filters.maps.${map}`, { defaultValue: map })}</option>
             ))}
           </select>
 
           <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} style={selectStyle}>
             {categories.map((category) => (
-              <option key={category} value={category}>{category}</option>
+              <option key={category} value={category}>{t(`keysModule.filters.categories.${category}`, { defaultValue: category })}</option>
             ))}
           </select>
         </section>
@@ -503,7 +506,7 @@ export default function KeysModule({ onViewChange }) {
             onClick={() => setSelectedCategory('Importantes')}
             style={{ ...buttonStyle, borderColor: 'rgba(255,207,102,0.35)', color: '#ffcf66' }}
           >
-            Ver importantes
+            {t('keysModule.actions.showImportant')}
           </button>
           <button
             type="button"
@@ -514,7 +517,7 @@ export default function KeysModule({ onViewChange }) {
             }}
             style={buttonStyle}
           >
-            Limpiar filtros
+            {t('keysModule.actions.clearFilters')}
           </button>
           <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--tk-text-muted)', fontWeight: '900', textTransform: 'uppercase' }}>
             <input
@@ -522,29 +525,29 @@ export default function KeysModule({ onViewChange }) {
               checked={showImportantFirst}
               onChange={(event) => setShowImportantFirst(event.target.checked)}
             />
-            Importantes primero
+            {t('keysModule.actions.importantFirst')}
           </label>
         </section>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          <StatCard label={`Llaves visibles ${modoMercado}`} value={filteredKeys.length} />
-          <StatCard label="Catalogo cargado" value={allKeys.length} />
-          <StatCard label="Importantes visibles" value={`${visibleImportantCount}/${importantCount}`} />
-          <StatCard label="Mapas cubiertos" value={new Set(filteredKeys.map((key) => key.map)).size} />
+          <StatCard label={t('keysModule.stats.visible', { mode: modoMercado })} value={filteredKeys.length} />
+          <StatCard label={t('keysModule.stats.catalog')} value={allKeys.length} />
+          <StatCard label={t('keysModule.stats.important')} value={`${visibleImportantCount}/${importantCount}`} />
+          <StatCard label={t('keysModule.stats.maps')} value={new Set(filteredKeys.map((key) => key.map)).size} />
         </section>
 
-        {loading && <p style={{ color: 'var(--tk-green)', marginBottom: '1rem' }}>Cargando llaves {modoMercado} desde tarkov.dev...</p>}
+        {loading && <p style={{ color: 'var(--tk-green)', marginBottom: '1rem' }}>{t('keysModule.status.loading', { mode: modoMercado })}</p>}
         {status && <p style={{ color: '#ffcf66', marginBottom: '1rem' }}>{status}</p>}
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1rem' }}>
           {filteredKeys.map((key) => (
-          <KeyCard key={key.id} keyItem={key} mode={modoMercado} />
+          <KeyCard key={key.id} keyItem={key} mode={modoMercado} locale={locale} />
           ))}
         </section>
 
         {!loading && filteredKeys.length === 0 && (
           <p style={{ color: 'var(--tk-text-muted)', marginTop: '2rem' }}>
-            No hay llaves que coincidan con esos filtros.
+            {t('keysModule.empty')}
           </p>
         )}
       </main>
@@ -585,8 +588,11 @@ const buttonStyle = {
   textTransform: 'uppercase'
 };
 
-function KeyCard({ keyItem, mode }) {
+function KeyCard({ keyItem, mode, locale }) {
+  const { t } = useTranslation();
   const priorityStyle = getPriorityStyle(keyItem.priority);
+  const translatedPriority = t(`keysModule.priorities.${keyItem.priority}`, { defaultValue: keyItem.priority });
+  const translatedCategory = t(`keysModule.filters.categories.${keyItem.category}`, { defaultValue: keyItem.category });
 
   return (
     <article
@@ -605,7 +611,7 @@ function KeyCard({ keyItem, mode }) {
             {keyItem.iconLink ? (
               <img src={keyItem.iconLink} alt={keyItem.shortName || keyItem.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
             ) : (
-              <span style={{ color: 'var(--tk-green)', fontWeight: '900' }}>KEY</span>
+              <span style={{ color: 'var(--tk-green)', fontWeight: '900' }}>{t('keysModule.fallbackIcon')}</span>
             )}
           </div>
           <div style={{ minWidth: 0 }}>
@@ -626,7 +632,7 @@ function KeyCard({ keyItem, mode }) {
               whiteSpace: 'nowrap'
             }}
           >
-            {keyItem.priority}
+            {translatedPriority}
           </span>
         )}
       </div>
@@ -635,10 +641,10 @@ function KeyCard({ keyItem, mode }) {
       <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.55, margin: '0 0 1rem' }}>{keyItem.recommendation}</p>
 
       <div style={{ display: 'grid', gap: '0.65rem' }}>
-        <InfoRow label="Tipo" value={keyItem.isImportant ? `${keyItem.category} - Importante` : keyItem.category} />
-        <InfoRow label={`Precio ${mode}`} value={formatRoubles(keyItem.price)} />
-        <InfoRow label="Tamaño" value={`${keyItem.width || 1}x${keyItem.height || 1}`} />
-        <InfoRow label="Quests" value={keyItem.quests.length ? keyItem.quests.join(', ') : 'Sin quest directa marcada'} />
+        <InfoRow label={t('keysModule.card.type')} value={keyItem.isImportant ? t('keysModule.card.importantType', { category: translatedCategory }) : translatedCategory} />
+        <InfoRow label={t('keysModule.card.price', { mode })} value={formatRoubles(keyItem.price, locale, t('keysModule.card.noPrice'))} />
+        <InfoRow label={t('keysModule.card.size')} value={`${keyItem.width || 1}x${keyItem.height || 1}`} />
+        <InfoRow label={t('keysModule.card.quests')} value={keyItem.quests.length ? keyItem.quests.join(', ') : t('keysModule.card.noQuest')} />
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '1rem' }}>
@@ -656,7 +662,7 @@ function KeyCard({ keyItem, mode }) {
           rel="noreferrer"
           style={{ color: 'var(--tk-green)', display: 'inline-block', marginTop: '1rem', fontWeight: '900', textDecoration: 'none' }}
         >
-          ABRIR WIKI
+          {t('keysModule.actions.openWiki')}
         </a>
       )}
     </article>

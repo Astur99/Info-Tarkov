@@ -541,7 +541,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
             textTransform: 'uppercase'
           }}
         >
-          COMPILANDO MATRIZ JERÁRQUICA, ESPERE...
+          {t('kappa.loading')}
         </p>
       </div>
     );
@@ -1226,7 +1226,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
                         fontWeight: '700',
                         transition: 'all 0.3s'
                       }}
-                      title="Wiki"
+                      title={t('kappa.node.openWiki')}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.borderColor = activeStyle.color;
                         e.currentTarget.style.color = '#fff';
@@ -1304,7 +1304,7 @@ function CollectorPanel({
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-start' }}>
           <div>
             <p style={{ margin: 0, color: '#ffcf66', fontWeight: '900', letterSpacing: '2px', textTransform: 'uppercase' }}>
-              Fence - Collector
+              {t('kappa.collector.eyebrow')}
             </p>
             <h3 style={{ margin: '0.2rem 0 0', color: '#fff', fontSize: '1.8rem', textTransform: 'uppercase' }}>
               {t('kappa.collector.title')}
@@ -1393,7 +1393,9 @@ function CollectorPanel({
                       style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                     />
                   ) : (
-                    <span style={{ color: '#ffcf66', fontSize: '0.68rem', fontWeight: '900' }}>ITEM</span>
+                    <span style={{ color: '#ffcf66', fontSize: '0.68rem', fontWeight: '900' }}>
+                      {t('kappa.collector.fallbackIcon')}
+                    </span>
                   )}
                 </span>
                 <input

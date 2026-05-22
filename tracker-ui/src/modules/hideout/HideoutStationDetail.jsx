@@ -1,5 +1,5 @@
+import { useTranslation } from 'react-i18next';
 import {
-  formatConstructionTime,
   formatRublos,
   getRequirementCount,
   getRequirementKey,
@@ -24,6 +24,8 @@ export default function HideoutStationDetail({
   itemsMarcados,
   toggleItem
 }) {
+  const { t } = useTranslation();
+
   if (!estacionSeleccionada) return null;
 
   return (
@@ -59,7 +61,7 @@ export default function HideoutStationDetail({
               letterSpacing: '1.5px'
             }}
           >
-            {modoMercado} / NIVEL OBJETIVO
+            {t('hideoutModule.detail.targetLevel', { mode: modoMercado })}
           </span>
 
           <h3
@@ -74,9 +76,9 @@ export default function HideoutStationDetail({
           </h3>
           {stationAvailability(estacionSeleccionada).blockedBy.length > 0 && (
             <p style={{ color: '#ffcf66', margin: '0.45rem 0 0', fontWeight: '800' }}>
-              Bloqueada por:{' '}
+              {t('hideoutModule.detail.blockedBy')}{' '}
               {stationAvailability(estacionSeleccionada).blockedBy
-                .map((req) => `${req.station?.name} nivel ${req.level}`)
+                .map((req) => t('hideoutModule.detail.stationLevel', { name: req.station?.name, level: req.level }))
                 .join(', ')}
             </p>
           )}
@@ -106,7 +108,9 @@ export default function HideoutStationDetail({
             ))}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-            <span style={{ color: 'var(--tk-text-muted)', fontWeight: '900', letterSpacing: '0.8px' }}>Construido:</span>
+            <span style={{ color: 'var(--tk-text-muted)', fontWeight: '900', letterSpacing: '0.8px' }}>
+              {t('hideoutModule.detail.built')}:
+            </span>
             <select
               value={nivelesConstruidos[estacionSeleccionada.id] || 0}
               onChange={(event) => setStationBuiltLevel(estacionSeleccionada.id, Number(event.target.value))}
@@ -120,9 +124,11 @@ export default function HideoutStationDetail({
                 fontWeight: '900'
               }}
             >
-              <option value={0}>Sin construir</option>
+              <option value={0}>{t('hideoutModule.detail.notBuilt')}</option>
               {estacionSeleccionada.levels?.map((level) => (
-                <option key={level.level} value={level.level}>Nivel {level.level}</option>
+                <option key={level.level} value={level.level}>
+                  {t('hideoutModule.detail.levelOption', { level: level.level })}
+                </option>
               ))}
             </select>
           </div>
@@ -141,40 +147,56 @@ export default function HideoutStationDetail({
         }}
       >
         <StatBlock
-          label={`PRESUPUESTO ${modoMercado}`}
-          value={itemStats.total > 0 ? formatRublos(itemStats.total) : 'SIN COSTE'}
+          label={t('hideoutModule.detail.budget', { mode: modoMercado })}
+          value={itemStats.total > 0 ? formatRublos(itemStats.total) : t('hideoutModule.detail.noCost')}
           highlight={itemStats.total > 0}
         />
         <StatBlock
-          label="PENDIENTE SEGÃšN CHECKLIST"
-          value={itemStats.pending > 0 ? formatRublos(itemStats.pending) : 'COMPLETO / SIN COSTE'}
+          label={t('hideoutModule.detail.pendingChecklist')}
+          value={itemStats.pending > 0 ? formatRublos(itemStats.pending) : t('hideoutModule.detail.completeNoCost')}
           highlight={itemStats.pending > 0}
         />
-        <StatBlock label="TIEMPO DE CONSTRUCCIÃ“N" value={formatConstructionTime(datosNivel?.constructionTime)} />
         <StatBlock
-          label="MATERIALES"
-          value={`${itemStats.completed}/${itemRequirements.length} MARCADOS`}
-          detail={itemStats.fir > 0 ? `${itemStats.fir} requisito(s) FIR` : 'Sin requisitos FIR detectados'}
+          label={t('hideoutModule.detail.constructionTime')}
+          value={formatConstructionTimeLabel(datosNivel?.constructionTime, t)}
+        />
+        <StatBlock
+          label={t('hideoutModule.detail.materials')}
+          value={t('hideoutModule.detail.materialsMarked', {
+            completed: itemStats.completed,
+            total: itemRequirements.length
+          })}
+          detail={
+            itemStats.fir > 0
+              ? t('hideoutModule.detail.firRequirementCount', { count: itemStats.fir })
+              : t('hideoutModule.detail.noFir')
+          }
         />
       </div>
 
-      <RequirementSection title="INSTANCIAS REQUERIDAS" empty="No requiere otras instancias del refugio.">
+      <RequirementSection
+        title={t('hideoutModule.detail.requiredStations')}
+        empty={t('hideoutModule.detail.noRequiredStations')}
+      >
         {stationRequirements.map((req) => (
           <RequirementPill key={req.id} tone="green">
-            {req.station?.name} <strong>NIVEL {req.level}</strong>
+            {req.station?.name} <strong>{t('hideoutModule.detail.levelShort', { level: req.level })}</strong>
           </RequirementPill>
         ))}
       </RequirementSection>
 
-      <RequirementSection title="TRADERS Y SKILLS" empty="No registra requisitos de traders o skills.">
+      <RequirementSection
+        title={t('hideoutModule.detail.tradersSkills')}
+        empty={t('hideoutModule.detail.noTradersSkills')}
+      >
         {traderRequirements.map((req) => (
           <RequirementPill key={req.id || `${req.trader?.name}-${req.value}`} tone="amber">
-            {req.trader?.name} <strong>NIVEL {req.value || req.level}</strong>
+            {req.trader?.name} <strong>{t('hideoutModule.detail.levelShort', { level: req.value || req.level })}</strong>
           </RequirementPill>
         ))}
         {skillRequirements.map((req) => (
           <RequirementPill key={req.id || `${req.skill?.name}-${req.level}`} tone="green">
-            {req.skill?.name || req.name} <strong>NIVEL {req.level}</strong>
+            {req.skill?.name || req.name} <strong>{t('hideoutModule.detail.levelShort', { level: req.level })}</strong>
           </RequirementPill>
         ))}
       </RequirementSection>
@@ -190,7 +212,7 @@ export default function HideoutStationDetail({
             textTransform: 'uppercase'
           }}
         >
-          OBJETOS REQUERIDOS
+          {t('hideoutModule.detail.requiredObjects')}
         </h4>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -238,7 +260,7 @@ export default function HideoutStationDetail({
                       flexShrink: 0
                     }}
                   >
-                    {checked ? 'âœ“' : ''}
+                    {checked ? '✓' : ''}
                   </span>
 
                   <div
@@ -288,7 +310,12 @@ export default function HideoutStationDetail({
                         fontWeight: '800'
                       }}
                     >
-                      <span>Flea {modoMercado} c/u: {precioUnidad > 0 ? formatRublos(precioUnidad) : '-'}</span>
+                      <span>
+                        {t('hideoutModule.detail.priceEach', {
+                          mode: modoMercado,
+                          price: precioUnidad > 0 ? formatRublos(precioUnidad) : '-'
+                        })}
+                      </span>
                       <span
                         style={{
                           color: requiresFir ? '#ffcf66' : 'var(--tk-green)',
@@ -298,7 +325,7 @@ export default function HideoutStationDetail({
                           padding: '0 0.45rem'
                         }}
                       >
-                        {requiresFir ? 'FIR OBLIGATORIO' : 'FLEA OK'}
+                        {requiresFir ? t('hideoutModule.detail.firRequired') : t('hideoutModule.detail.fleaOk')}
                       </span>
                     </div>
                   </div>
@@ -316,13 +343,24 @@ export default function HideoutStationDetail({
 
           {itemRequirements.length === 0 && (
             <p style={{ color: 'var(--tk-text-muted)', fontSize: '0.9rem' }}>
-              No se registran materiales especÃ­ficos.
+              {t('hideoutModule.detail.noMaterials')}
             </p>
           )}
         </div>
       </div>
     </section>
   );
+}
+
+function formatConstructionTimeLabel(seconds, t) {
+  if (!seconds) return t('hideoutModule.detail.immediate');
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.round((seconds % 3600) / 60);
+
+  if (hours <= 0) return t('hideoutModule.detail.minutes', { minutes });
+  if (minutes <= 0) return t('hideoutModule.detail.hours', { hours });
+  return t('hideoutModule.detail.hoursMinutes', { hours, minutes });
 }
 
 function StatBlock({ label, value, detail, highlight = false }) {

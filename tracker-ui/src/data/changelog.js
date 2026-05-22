@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.14.17';
+export const APP_VERSION = '0.14.34';
 
 export const VERSION_POLICY = {
   current: '0.x',
@@ -17,6 +17,502 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '0.14.34',
+    date: '2026-05-22',
+    codename: 'Account and Ballistics i18n Polish',
+    type: 'improvement',
+    title: {
+      es: 'Cuenta y simulador cierran textos sueltos',
+      en: 'Account and simulator close loose copy'
+    },
+    summary: {
+      es: 'El Centro de cuenta y los placeholders del simulador balístico pasan al sistema ES/EN.',
+      en: 'The Account Center and ballistic simulator placeholders now go through the ES/EN system.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Resumen operativo, accesos rápidos y fallback de usuario en Cuenta quedan listos para traducción.',
+          en: 'Operational summary, quick access and account username fallback are now translation-ready.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Los ejemplos de búsqueda de munición y blindaje del simulador balístico ya cambian con el idioma.',
+          en: 'Ammo and armor search examples in the ballistic simulator now switch with the selected language.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.33',
+    date: '2026-05-22',
+    codename: 'Admin and Story i18n Polish',
+    type: 'improvement',
+    title: {
+      es: 'Admin y Decisiones pulen traducción',
+      en: 'Admin and Decisions polish translation'
+    },
+    summary: {
+      es: 'Se eliminan etiquetas sueltas del Panel Admin y se corrige copy español en Decisiones / Finales.',
+      en: 'Loose Admin Panel labels are removed and Spanish copy is corrected in Decisions / Endings.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Email, roles, estado online, owner y usuario sin configurar pasan por i18n en Admin.',
+          en: 'Email, roles, online state, owner and unconfigured user labels now go through i18n in Admin.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Se corrigen tildes y textos antiguos en rutas de historia, opciones, penalizaciones y finales.',
+          en: 'Accents and older text are corrected across story routes, options, penalties and endings.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.32',
+    date: '2026-05-22',
+    codename: 'Prestige i18n Polish',
+    type: 'improvement',
+    title: {
+      es: 'Prestigios pulido para traducción',
+      en: 'Prestige polished for translation'
+    },
+    summary: {
+      es: 'El módulo de Prestigios queda revisado dentro del sistema ES/EN y se corrigen textos españoles sin tilde.',
+      en: 'The Prestige module is reviewed within the ES/EN system and Spanish copy without accents is corrected.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Se pulen textos de progresión, disponibilidad PVP y resumen de requisitos para que la versión española sea más fiel.',
+          en: 'Progression, PVP availability and requirement summary copy are polished so the Spanish version is more accurate.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Troubleshooting actualiza el estado real del despliegue ES/EN y excluye Dossier de la traducción pública.',
+          en: 'Troubleshooting updates the real ES/EN rollout status and excludes Dossier from public translation work.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.31',
+    date: '2026-05-22',
+    codename: 'Kappa Tree i18n Polish',
+    type: 'improvement',
+    title: {
+      es: 'Misiones / Kappa cierra textos pendientes',
+      en: 'Missions / Kappa closes pending text strings'
+    },
+    summary: {
+      es: 'El organigrama de Misiones / Kappa completa pequeños textos visibles que seguían fuera del sistema ES/EN.',
+      en: 'The Missions / Kappa tree completes small visible strings that were still outside the ES/EN system.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Carga de la matriz, cabecera de Collector, icono fallback de items y tooltip de wiki pasan a claves i18n.',
+          en: 'Matrix loading, Collector header, item fallback icon and wiki tooltip now use i18n keys.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.30',
+    date: '2026-05-22',
+    codename: 'Goons Tracker i18n Pass',
+    type: 'improvement',
+    title: {
+      es: 'Tracker de Goons preparado para traducción',
+      en: 'Goons Tracker prepared for translation'
+    },
+    summary: {
+      es: 'El Tracker de Goons avanza su migración ES/EN para perfiles, telemetría, mapas y estados de captura externa.',
+      en: 'The Goons Tracker advances its ES/EN migration for profiles, telemetry, maps and external capture states.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Roles, descripciones, ubicación detectada, modo de juego, último reporte, estado de transmisión y errores de extracción pasan a claves i18n.',
+          en: 'Roles, descriptions, detected location, game mode, last report, transmission state and extraction errors now use i18n keys.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.29',
+    date: '2026-05-22',
+    codename: 'Armor Simulator i18n Pass',
+    type: 'improvement',
+    title: {
+      es: 'Simulador balístico preparado para traducción',
+      en: 'Ballistics simulator prepared for translation'
+    },
+    summary: {
+      es: 'El Simulador Balístico avanza su migración ES/EN en la interfaz principal y limpia etiquetas antiguas de resultado/telemetría.',
+      en: 'The Ballistics Simulator advances its ES/EN migration in the main interface and cleans up old result/telemetry labels.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Carga, cabecera, buscadores, resultado TTK, estados de letalidad y telemetría de impactos pasan a claves i18n.',
+          en: 'Loading, header, search controls, TTK result, lethality states and impact telemetry now use i18n keys.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.28',
+    date: '2026-05-22',
+    codename: 'Maps i18n Pass',
+    type: 'improvement',
+    title: {
+      es: 'Mapas preparado para traducción',
+      en: 'Maps prepared for translation'
+    },
+    summary: {
+      es: 'La vista de Mapas Tácticos pasa a usar claves ES/EN para los textos visibles principales.',
+      en: 'The Tactical Maps view now uses ES/EN keys for its main visible text.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Título, subtítulo, botón de vuelta, barra de feed, etiqueta de navegación y título del iframe quedan conectados a i18n.',
+          en: 'Title, subtitle, back button, feed bar, navigation label and iframe title are now connected to i18n.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.27',
+    date: '2026-05-22',
+    codename: 'About i18n Pass',
+    type: 'improvement',
+    title: {
+      es: 'About preparado para traducción',
+      en: 'About prepared for translation'
+    },
+    summary: {
+      es: 'La vista About pasa a consumir contenido ES/EN para explicar el proyecto y sus módulos sin depender de textos visibles hardcodeados.',
+      en: 'The About view now consumes ES/EN content to explain the project and its modules without relying on visible hardcoded text.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Cabecera, resumen del proyecto, grupos técnicos, listado de módulos, acciones y estados pasan a claves i18n.',
+          en: 'Header, project summary, technical groups, module list, actions and statuses now use i18n keys.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.26',
+    date: '2026-05-22',
+    codename: 'Troubleshooting Refresh',
+    type: 'improvement',
+    title: {
+      es: 'Troubleshooting actualizado y Admin en traducción',
+      en: 'Troubleshooting refreshed and Admin translation started'
+    },
+    summary: {
+      es: 'Se actualiza el registro de problemas conocidos con el estado real de la app y se inicia la migración ES/EN del panel de administración.',
+      en: 'Known issues are refreshed to match the current app state, and the Admin Panel ES/EN migration begins.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Troubleshooting elimina incidencias ya superadas de lint/Hideout y añade limitaciones actuales: índice público de PMC, Live Events experimental, traducción parcial y aviso de bundle grande.',
+          en: 'Troubleshooting removes outdated lint/Hideout entries and adds current limitations: public PMC index, experimental Live Events, partial translation and large bundle warning.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Admin Panel empieza su pasada i18n con cabecera, métricas, filtros de usuarios, acciones, reportes, prompts, mensajes y detalle de usuario.',
+          en: 'Admin Panel starts its i18n pass with header, metrics, user filters, actions, reports, prompts, messages and user detail.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.25',
+    date: '2026-05-22',
+    codename: 'Quest Optimizer i18n Pass',
+    type: 'improvement',
+    title: {
+      es: 'Quest Optimizer preparado para traducción',
+      en: 'Quest Optimizer prepared for translation'
+    },
+    summary: {
+      es: 'Se avanza la internacionalización del submódulo Quest Optimizer sin cambiar su lógica de recomendación ni su integración con Misiones / Kappa.',
+      en: 'Internationalization advances in the Quest Optimizer submodule without changing its recommendation logic or its Missions / Kappa integration.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Cabecera, selectores, botón de prioridad Kappa, estados, recomendación principal, metadatos de rutas y bloques de quests/llaves usan ahora claves ES/EN.',
+          en: 'Header, selectors, Kappa priority button, states, main recommendation, route metadata and quest/key blocks now use ES/EN keys.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.24',
+    date: '2026-05-22',
+    codename: 'Keys i18n Pass',
+    type: 'improvement',
+    title: {
+      es: 'Sistema de Llaves preparado para traducción',
+      en: 'Key System prepared for translation'
+    },
+    summary: {
+      es: 'Se avanza la cobertura ES/EN del Sistema de Llaves y se guarda en la memoria del proyecto la estimación actual hacia la versión 1.0.',
+      en: 'ES/EN coverage advances in the Key System, and the current estimate toward version 1.0 is recorded in the project memory.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Cabecera, buscador, filtros, acciones, estadísticas, estados de carga, mensajes vacíos y etiquetas de tarjetas de llaves pasan a claves i18n.',
+          en: 'Header, search, filters, actions, stats, loading states, empty messages and key card labels now use i18n keys.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Se añade a PROJECT_CONTEXT la estimación viva de traducción, preparación multiidioma y distancia a 1.0 para futuras sesiones.',
+          en: 'PROJECT_CONTEXT now includes the live estimate for translation, multilingual readiness and distance to 1.0 for future sessions.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.23',
+    date: '2026-05-22',
+    codename: 'Live Events Maintenance',
+    type: 'improvement',
+    title: {
+      es: 'Saneamiento interno de Eventos en Directo',
+      en: 'Internal cleanup for Live Events'
+    },
+    summary: {
+      es: 'El modulo de eventos queda preparado para mantenerse, sustituirse o retirarse mas adelante sin arrastrar logica mezclada en la vista.',
+      en: 'The live events module is now easier to maintain, replace or remove later without keeping mixed data logic inside the view.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Las fuentes externas, eventos manuales verificados y fallback de referencia se separan en un fichero dedicado.',
+          en: 'External sources, verified manual events and the reference fallback have been moved into a dedicated file.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'La normalizacion de fechas, deduplicacion, ordenacion y carga del feed pasan a utilidades independientes para reducir el tamano del componente principal.',
+          en: 'Date normalization, deduplication, sorting and feed loading now live in independent utilities to reduce the size of the main component.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.22',
+    date: '2026-05-22',
+    codename: 'Boss Intel Cleanup',
+    type: 'improvement',
+    title: {
+      es: 'Saneamiento interno de Intel: Bosses',
+      en: 'Internal cleanup for Boss Intel'
+    },
+    summary: {
+      es: 'El módulo de bosses queda dividido en datos base, zonas de spawn y componente visual para facilitar mantenimiento y traducciones futuras.',
+      en: 'The boss module is now split into base data, spawn zones and visual component logic to make maintenance and future translations easier.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'La metadata fallback de bosses se mueve a un fichero dedicado, reduciendo el tamaño y la mezcla de responsabilidades de BossesIntel.',
+          en: 'Boss fallback metadata has been moved to a dedicated file, reducing the size and mixed responsibilities of BossesIntel.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Las zonas de spawn conocidas se separan en su propio módulo, dejando la UI centrada en renderizado, filtros y sincronización con tarkov.dev.',
+          en: 'Known spawn zones are now separated into their own module, leaving the UI focused on rendering, filters and tarkov.dev synchronization.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.21',
+    date: '2026-05-22',
+    codename: 'Bosses i18n Pass',
+    type: 'improvement',
+    title: {
+      es: 'Intel de Bosses preparado para traducción',
+      en: 'Boss Intel prepared for translation'
+    },
+    summary: {
+      es: 'Se migra la interfaz principal de Intel: Bosses a claves ES/EN y se prepara el módulo para traducir sus fichas tácticas completas por fases.',
+      en: 'The main Boss Intel interface has been migrated to ES/EN keys and the module is ready for phased translation of its full tactical dossiers.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Cabecera, buscador, filtros de mapa/dificultad, contador de objetivos, estado de carga y etiquetas del panel detallado pasan a i18n.',
+          en: 'Header, search, map/difficulty filters, visible target counter, loading state and detail panel labels now use i18n.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El plan de entrada recomendado se genera desde claves traducibles, manteniendo la lógica táctica actual sin cambiar la interfaz.',
+          en: 'The recommended entry plan is now generated from translatable keys while preserving the current tactical logic and interface.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Las fichas visibles de cada boss usan claves traducibles para guardias, descripción física, comportamiento, armas, munición, debilidades y loot.',
+          en: 'Each boss dossier now uses translatable keys for guards, visual profile, behavior, weapons, ammunition, weaknesses and loot.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.20',
+    date: '2026-05-21',
+    codename: 'Visible Version and Hideout i18n',
+    type: 'improvement',
+    title: {
+      es: 'Versión visible y Refugio preparado para traducción',
+      en: 'Visible version and Hideout prepared for translation'
+    },
+    summary: {
+      es: 'Se añade el número de versión en el menú principal y se avanza la traducción modular del Refugio y Decisiones / Finales.',
+      en: 'Adds the visible version number to the main menu and advances modular translation for Hideout and Story Decisions.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'El menú principal muestra ahora la versión activa en la esquina inferior izquierda para que usuarios y testers puedan identificar la build exacta.',
+          en: 'The main menu now shows the active version in the bottom-left corner so users and testers can identify the exact build.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El módulo de Refugio migra cabecera, estados cloud/local, listado de secciones, estadísticas y detalle de requisitos a claves ES/EN.',
+          en: 'The Hideout module now moves its header, cloud/local states, section list, stats and requirement detail to ES/EN keys.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Tracker de Goons empieza su migración a i18n con cabecera, carga, canales PVP/PVE, estados de radar y etiquetas de mapas preparadas en ES/EN.',
+          en: 'Goons Tracker starts its i18n migration with header, loading state, PVP/PVE channels, radar states and map labels prepared in ES/EN.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Decisiones / Finales recibe textos más fieles y descriptivos para explicar mejor consecuencias, rutas y puntos de no retorno.',
+          en: 'Story Decisions receives more faithful and descriptive copy to better explain consequences, routes and points of no return.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.19',
+    date: '2026-05-21',
+    codename: 'Story Decisions i18n',
+    type: 'improvement',
+    title: {
+      es: 'Decisiones / Finales preparado para traducción',
+      en: 'Story Decisions prepared for translation'
+    },
+    summary: {
+      es: 'El módulo de Decisiones / Finales deja de depender de textos visibles escritos directamente en el componente y pasa a usar claves ES/EN.',
+      en: 'The Story Decisions module no longer depends on visible text hardcoded in the component and now uses ES/EN keys.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Migradas a i18n las cabeceras, puntos de no retorno, decisiones principales, ramas Kerman/Prapor, rutas de final y bloques de requisitos.',
+          en: 'Migrated headers, points of no return, main decisions, Kerman/Prapor branches, ending routes and requirement blocks to i18n.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Las listas de requisitos ahora salen de los ficheros de idioma, facilitando futuras traducciones a francés, alemán, italiano o ruso.',
+          en: 'Requirement lists now come from locale files, making future French, German, Italian or Russian translations easier.'
+        }
+      }
+    ]
+  },
+  {
+    version: '0.14.18',
+    date: '2026-05-21',
+    codename: 'PMC and Flea i18n',
+    type: 'improvement',
+    title: {
+      es: 'Traducción de Perfil PMC y Flea',
+      en: 'PMC Profile and Flea translation'
+    },
+    summary: {
+      es: 'Se avanza la arquitectura bilingüe moviendo Perfil PMC y Flea Market Tracker a claves ES/EN preparadas para más idiomas.',
+      en: 'The bilingual architecture moves forward by migrating PMC Profile and Flea Market Tracker to ES/EN keys ready for more languages.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Perfil PMC usa i18n para cabecera, búsqueda, estado de sincronización, stats, equipo, favoritos, logros, skills, datos técnicos y exportación PNG.',
+          en: 'PMC Profile now uses i18n for the header, search, sync status, stats, gear, favorites, achievements, skills, technical data and PNG export.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Flea Market Tracker usa i18n para buscador, mensajes vacíos, tooltip de gráfica, detalle de precios, valor de traders y radar de fluctuaciones.',
+          en: 'Flea Market Tracker now uses i18n for search, empty states, chart tooltip, price detail, trader values and fluctuation radar.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'Las cadenas españolas nuevas incluyen tildes y caracteres propios del idioma para evitar textos planos tipo contrasena/sincronizacion.',
+          en: 'New Spanish strings include accents and language-specific characters to avoid flattened text such as contrasena/sincronizacion.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.17',
     date: '2026-05-21',

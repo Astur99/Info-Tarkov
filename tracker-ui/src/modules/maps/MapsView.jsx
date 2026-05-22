@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function MapsView({ onViewChange }) {
+  const { t } = useTranslation();
   // Estado inicial fijado en Ground Zero como punto de partida oficial en la versión 1.0
   const [mapaActivo, setMapaActivo] = useState('groundzero');
 
@@ -29,9 +31,9 @@ export default function MapsView({ onViewChange }) {
       {/* CABECERA TÁCTICA */}
       <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div>
-          <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>CARTOGRAFÍA TÁCTICA</h2>
+          <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>{t('mapsModule.title')}</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
-            Mapas interactivos, zonas de interes, spots de misiones, spawns y rutas de extracción.
+            {t('mapsModule.subtitle')}
           </p>
         </div>
         
@@ -52,7 +54,7 @@ export default function MapsView({ onViewChange }) {
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
         >
-          VOLVER AL MENÚ
+          {t('common.backToMenu')}
         </button>
       </header>
 
@@ -100,11 +102,11 @@ export default function MapsView({ onViewChange }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span style={{ width: '8px', height: '8px', backgroundColor: 'var(--tk-green)', borderRadius: '50%', boxShadow: '0 0 8px var(--tk-green)' }}></span>
             <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#fff', letterSpacing: '1px' }}>
-              PROYECTANDO FEED: {datosMapaActual.name}
+              {t('mapsModule.projectingFeed', { map: datosMapaActual.name })}
             </span>
           </div>
           <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '0.5px' }}>
-            SISTEMA INTERACTIVO DE NAVEGACIÓN
+            {t('mapsModule.navigationSystem')}
           </span>
         </div>
 
@@ -112,7 +114,7 @@ export default function MapsView({ onViewChange }) {
         <div style={{ width: '100%', height: '75vh', backgroundColor: '#0d0e12' }}>
           <iframe
             src={datosMapaActual.url}
-            title={`Mapa de ${datosMapaActual.name}`}
+            title={t('mapsModule.iframeTitle', { map: datosMapaActual.name })}
             style={{
               width: '100%',
               height: '100%',

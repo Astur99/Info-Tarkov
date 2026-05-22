@@ -58,7 +58,7 @@ const helperStyle = {
   margin: '0 0 1rem 0'
 };
 
-const getModeLabel = (mode) => (mode === 'BOTH' ? 'Ambos' : mode);
+const getModeLabel = (mode, t) => t(`auth.modes.${String(mode).toLowerCase()}`, { defaultValue: mode });
 
 const countObjectValues = (value) => {
   if (!value || typeof value !== 'object') return 0;
@@ -105,15 +105,15 @@ export default function AccountSettings({
   const usernameRules = t('account.username.rules');
   const passwordRequirements = t('auth.passwordRequirements');
   const passwordChecks = getPasswordChecks(newPassword, t);
-  const displayUsername = userProfile?.tarkov_username || userProfile?.username || username || 'Sin usuario';
+  const displayUsername = userProfile?.tarkov_username || userProfile?.username || username || t('account.overview.noUser');
   const linkedProfileUrl = `https://tarkov.dev/players`;
   const summaryCards = useMemo(() => [
-    { label: 'Modo principal', value: getModeLabel(primaryGameMode), meta: 'Preferencia global' },
-    { label: 'Misiones PVP', value: accountSummary.questPvp, meta: 'Completadas cloud' },
-    { label: 'Misiones PVE', value: accountSummary.questPve, meta: 'Completadas cloud' },
-    { label: 'Collector', value: `${accountSummary.collectorPvp}/${accountSummary.collectorPve}`, meta: 'PVP / PVE marcados' },
-    { label: 'Hideout', value: `${accountSummary.hideoutPvp}/${accountSummary.hideoutPve}`, meta: 'Materiales PVP / PVE' }
-  ], [accountSummary, primaryGameMode]);
+    { label: t('account.summary.mainMode'), value: getModeLabel(primaryGameMode, t), meta: t('account.summary.globalPreference') },
+    { label: t('account.summary.missionsPvp'), value: accountSummary.questPvp, meta: t('account.summary.cloudCompleted') },
+    { label: t('account.summary.missionsPve'), value: accountSummary.questPve, meta: t('account.summary.cloudCompleted') },
+    { label: t('account.summary.collector'), value: `${accountSummary.collectorPvp}/${accountSummary.collectorPve}`, meta: t('account.summary.collectorMarked') },
+    { label: t('account.summary.hideout'), value: `${accountSummary.hideoutPvp}/${accountSummary.hideoutPve}`, meta: t('account.summary.hideoutMaterials') }
+  ], [accountSummary, primaryGameMode, t]);
 
   useEffect(() => {
     let cancelled = false;
@@ -291,7 +291,7 @@ export default function AccountSettings({
         <section style={{ display: 'grid', gap: '1rem' }}>
           <article style={{ ...panelStyle, width: '100%' }}>
             <p style={{ color: 'var(--tk-green)', margin: 0, fontWeight: '900', letterSpacing: '1px', textTransform: 'uppercase' }}>
-              Centro de cuenta
+              {t('account.overview.eyebrow')}
             </p>
             <h1 style={{ color: '#fff', margin: '0.25rem 0 0', fontSize: '2.2rem' }}>{displayUsername}</h1>
 
@@ -301,9 +301,9 @@ export default function AccountSettings({
           </article>
 
           <article style={{ ...panelStyle, width: '100%' }}>
-            <h2 style={sectionTitleStyle}>Resumen operativo</h2>
+            <h2 style={sectionTitleStyle}>{t('account.summary.title')}</h2>
             {accountSummary.loading ? (
-              <p style={{ color: 'var(--tk-green)', margin: 0, fontWeight: '800' }}>Cargando progreso...</p>
+              <p style={{ color: 'var(--tk-green)', margin: 0, fontWeight: '800' }}>{t('account.summary.loading')}</p>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(145px, 1fr))', gap: '0.75rem' }}>
                 {summaryCards.map((card) => (
@@ -314,12 +314,12 @@ export default function AccountSettings({
           </article>
 
           <article style={{ ...panelStyle, width: '100%' }}>
-            <h2 style={sectionTitleStyle}>Accesos rápidos</h2>
+            <h2 style={sectionTitleStyle}>{t('account.quickActions.title')}</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.75rem' }}>
-              <QuickAction label="Misiones / Kappa" meta="Continuar progreso" onClick={() => onViewChange('kappa')} />
-              <QuickAction label="Hideout" meta="Gestionar materiales" onClick={() => onViewChange('hideout')} />
-              <QuickAction label="Flea Market" meta="Consultar economía" onClick={() => onViewChange('flea')} />
-              <QuickAction label="Perfil oficial" meta="Abrir tarkov.dev" as="a" href={linkedProfileUrl} />
+              <QuickAction label={t('account.quickActions.kappa')} meta={t('account.quickActions.kappaMeta')} onClick={() => onViewChange('kappa')} />
+              <QuickAction label={t('account.quickActions.hideout')} meta={t('account.quickActions.hideoutMeta')} onClick={() => onViewChange('hideout')} />
+              <QuickAction label={t('account.quickActions.flea')} meta={t('account.quickActions.fleaMeta')} onClick={() => onViewChange('flea')} />
+              <QuickAction label={t('account.quickActions.officialProfile')} meta={t('account.quickActions.officialProfileMeta')} as="a" href={linkedProfileUrl} />
             </div>
           </article>
         </section>

@@ -86,10 +86,460 @@
       }
     }
   },
+  "keysModule": {
+    "eyebrow": "Access search engine",
+    "title": "Key system",
+    "subtitle": "Live Tarkov key and keycard search with separate PVP/PVE prices and a tactical layer for highlighting the most important keys.",
+    "searchPlaceholder": "Search any key, keycard, quest, map or tag...",
+    "fallbackIcon": "KEY",
+    "empty": "No keys match those filters.",
+    "defaults": {
+      "use": "Key detected from the tarkov.dev database. Check its wiki page for exact location, doors and related loot.",
+      "recommendation": "This key is not marked as tactical priority. Look for it if a quest, loot route or barter requires it."
+    },
+    "status": {
+      "loading": "Loading {{mode}} keys from tarkov.dev...",
+      "noKeys": "No keys were detected in tarkov.dev. Showing the local tactical layer.",
+      "connectionError": "Could not connect to tarkov.dev. Showing locally saved important keys."
+    },
+    "actions": {
+      "showImportant": "Show important",
+      "clearFilters": "Clear filters",
+      "importantFirst": "Important first",
+      "openWiki": "OPEN WIKI"
+    },
+    "stats": {
+      "visible": "Visible keys {{mode}}",
+      "catalog": "Loaded catalog",
+      "important": "Visible important",
+      "maps": "Covered maps"
+    },
+    "filters": {
+      "maps": {
+        "Todos": "All",
+        "Customs": "Customs",
+        "Shoreline": "Shoreline",
+        "Reserve": "Reserve",
+        "Streets": "Streets",
+        "Interchange": "Interchange",
+        "Woods": "Woods",
+        "Lighthouse": "Lighthouse",
+        "Factory": "Factory",
+        "Labs": "Labs",
+        "Ground Zero": "Ground Zero"
+      },
+      "categories": {
+        "Todas": "All",
+        "Importantes": "Important",
+        "Quest": "Quest",
+        "Loot": "Loot",
+        "High value": "High value",
+        "Utility": "Utility",
+        "Sin clasificar": "Unclassified"
+      }
+    },
+    "priorities": {
+      "Alta": "High",
+      "Media": "Medium",
+      "Baja": "Low"
+    },
+    "card": {
+      "type": "Type",
+      "importantType": "{{category}} - Important",
+      "price": "Price {{mode}}",
+      "size": "Size",
+      "quests": "Quests",
+      "noPrice": "No price",
+      "noQuest": "No direct quest marked"
+    }
+  },
+  "questOptimizer": {
+    "eyebrow": "Next best raid",
+    "title": "Quest Optimizer",
+    "subtitle": "Analyzes pending quests, maps, Kappa and recommended keys to suggest where your next raid has the best value.",
+    "dynamicReason": "Groups pending quests detected per map from tarkov.dev.",
+    "variableRisk": "Variable risk depending on route",
+    "mainRecommendation": "Main recommendation",
+    "bestPlanSummary": "{{reason}} Tactical score: {{score}}. Risk: {{risk}}.",
+    "planMeta": "{{tasks}} visible quests · {{kappa}} Kappa",
+    "noCriticalKeys": "No critical keys detected for this route",
+    "empty": "No routes are available with these filters. Try disabling Kappa or changing map.",
+    "status": {
+      "loading": "Analyzing quests...",
+      "connectionError": "Could not connect to tarkov.dev. Showing base recommendations."
+    },
+    "actions": {
+      "kappaOnlyActive": "Kappa only active",
+      "prioritizeKappa": "Prioritize Kappa"
+    },
+    "blocks": {
+      "suggestedQuests": "Suggested quests",
+      "keysToReview": "Keys to review"
+    },
+    "maps": {
+      "Todos": "All"
+    },
+    "fallbackPlans": {
+      "customs": {
+        "reason": "Early map with many Prapor, Therapist and Skier chains.",
+        "risk": "High around Dorms and construction"
+      },
+      "shoreline": {
+        "reason": "Strong concentration of resort quests and Peacekeeper/Therapist progression.",
+        "risk": "High inside the resort"
+      },
+      "interchange": {
+        "reason": "Good map for Ragman, hideout items and store routes.",
+        "risk": "Medium/high inside the mall"
+      }
+    },
+    "risks": {
+      "customs": "High around Dorms, construction and gas station",
+      "shoreline": "High inside resort, medium outdoors",
+      "reserve": "High due to raiders, bunker and loot runners",
+      "interchange": "Medium/high around KIBA, tech stores and extracts",
+      "woods": "Medium, dangerous long sightlines and bosses",
+      "lighthouse": "High around water treatment and chalets",
+      "streets": "High due to player density and indoor routes",
+      "factory": "Very high, immediate combat",
+      "labs": "Very high, raiders and endgame players",
+      "groundZero": "Medium, concentrated early progression",
+      "terminal": "Waiting for stable data"
+    }
+  },
+  "armorModule": {
+    "loading": "LOADING BALLISTIC ENVIRONMENT...",
+    "title": "ARMOR TTK SIMULATOR",
+    "subtitle": "Interactive ballistics simulator based on inventory penetration and impact physics.",
+    "searchAmmo": "SEARCH AMMO",
+    "searchAmmoExample": "Ex: M61, SNB, M855A1, 5.56, BP...",
+    "searchArmor": "SEARCH ARMOR",
+    "searchArmorExample": "Ex: Slick, Gen4, class 6, ceramic...",
+    "noResults": "No results",
+    "resultTitle": "SIMULATION RESULT",
+    "shotSingular": "SHOT",
+    "shotPlural": "SHOTS",
+    "resultDescription": "Number of thorax impacts required to neutralize the target under sustained fire.",
+    "armorLabel": "Armor",
+    "armorMeta": "Class {{class}} / {{durability}} dur. / {{material}}",
+    "telemetryTitle": "IMPACT TELEMETRY (OPERATIONAL LOG)",
+    "shotLog": "# SHOT {{shot}}",
+    "penChance": "Penetration chance: {{chance}}%",
+    "thorax": "Thorax",
+    "plateRemaining": "Plate: {{remaining}} rem. (-{{damage}})",
+    "states": {
+      "waiting": "WAITING FOR PARAMETERS",
+      "immediateLethality": "IMMEDIATE LETHALITY",
+      "directFight": "DIRECT ENGAGEMENT",
+      "efficientProtection": "EFFICIENT PROTECTION"
+    },
+    "simulation": {
+      "criticalPenetration": "CRITICAL PENETRATION",
+      "stoppedImpact": "STOPPED IMPACT"
+    }
+  },
+  "mapsModule": {
+    "title": "TACTICAL CARTOGRAPHY",
+    "subtitle": "Interactive maps, points of interest, mission spots, spawns and extraction routes.",
+    "projectingFeed": "PROJECTING FEED: {{map}}",
+    "navigationSystem": "INTERACTIVE NAVIGATION SYSTEM",
+    "iframeTitle": "{{map}} map"
+  },
+  "about": {
+    "eyebrow": "Project memory",
+    "title": "About Info Tarkov",
+    "subtitle": "Complete summary of the purpose, scope, architecture and technologies behind the app.",
+    "modulesEyebrow": "App modules",
+    "modulesTitle": "Tools available to the user",
+    "statusLabel": "Status",
+    "techGroups": [
+      {
+        "title": "Frontend",
+        "items": ["React", "Vite", "JavaScript", "Inline CSS + global variables", "React.lazy", "Suspense"]
+      },
+      {
+        "title": "Backend",
+        "items": ["Supabase", "PostgreSQL", "SQL RPC", "Row Level Security", "Supabase Auth"]
+      },
+      {
+        "title": "Persistence",
+        "items": ["localStorage", "Per-user Supabase data", "user_module_state", "Separated PVP/PVE progress", "Persistent sessions"]
+      },
+      {
+        "title": "Product",
+        "items": ["Netlify", "GitHub", "i18next", "react-i18next", "External APIs", "Ticket system"]
+      }
+    ],
+    "sections": [
+      {
+        "title": "What Info Tarkov Is",
+        "body": "Info Tarkov is a modular hub for Escape From Tarkov designed as a tactical center for lookup, tracking and decisions. It gathers quest progress, bosses, events, servers, combat, planning and public PMC data in one interface."
+      },
+      {
+        "title": "What You Can Do",
+        "body": "The app lets you consult maps, track Kappa, review decisions/endings, investigate bosses, check Goons, explore PVP/PVE prices, plan Hideout, simulate combat, review events, inspect PMC profiles and report bugs or suggestions."
+      },
+      {
+        "title": "User System",
+        "body": "It works as guest or with an account. Guest progress is stored in the browser. With an account, Supabase stores Tarkov username, main mode and cloud progress separated for PVP and PVE."
+      },
+      {
+        "title": "Admin Panel",
+        "body": "The app includes an admin-only panel for metrics, users, roles, tickets, activity and administrative actions. The owner account is protected against accidental changes."
+      },
+      {
+        "title": "Communication and Support",
+        "body": "Report works as a ticket system between users and the developer. It keeps conversation, replies, states and notifications for both sides."
+      },
+      {
+        "title": "Frontend Architecture",
+        "body": "The frontend is built with React and Vite. Navigation is internal from App.jsx, and each module is loaded with React.lazy and Suspense to reduce initial weight."
+      },
+      {
+        "title": "Backend and Persistence",
+        "body": "The backend uses Supabase, PostgreSQL, Supabase Auth and Row Level Security. The app combines guest localStorage with cloud persistence when a session exists."
+      },
+      {
+        "title": "Main Technologies",
+        "body": "React, Vite, Supabase, PostgreSQL, Auth, RLS, localStorage, i18next, react-i18next, Netlify, GitHub and Tarkov-related external APIs."
+      },
+      {
+        "title": "Current State",
+        "body": "The project already includes auth, roles, admin panel, tickets, lazy loading, ES/EN multilingual base, PVP/PVE preference and a hybrid layer in missions, Goons, flea, keys, hideout and PMC Profile. Prestige is marked PVP ONLY."
+      }
+    ],
+    "moduleDetails": [
+      {
+        "name": "Tactical Maps",
+        "purpose": "Quick map lookup for extracts and points of interest. It is the future base for quest, key, loot and risk layers.",
+        "actions": ["Consult maps", "Prepare routes", "Locate key points"],
+        "status": "Visual base ready to evolve into interactive tactical maps."
+      },
+      {
+        "name": "Missions / Kappa",
+        "purpose": "Global quest tree connected to tarkov.dev, PVP/PVE progress, dependencies, Quest Optimizer and Collector checklist.",
+        "actions": ["Mark quests", "Filter Kappa", "Open optimizer", "Collector checklist", "Sync cloud"],
+        "status": "Critical progression module with hybrid local/cloud persistence."
+      },
+      {
+        "name": "Decisions / Endings",
+        "purpose": "Module for narrative decisions, points of no return and story-mode routes.",
+        "actions": ["Review routes", "Identify locks", "Compare options"],
+        "status": "Story intelligence base for avoiding irreversible decisions without context."
+      },
+      {
+        "name": "Intel: Bosses",
+        "purpose": "Boss dossiers with locations, gear, behavior, weak points, loot, difficulty and squads.",
+        "actions": ["Filter by map", "Review combat info", "Check loot", "Prepare strategy"],
+        "status": "Bosses 2.0 with tactical breakdown, spawn zones and entry plan."
+      },
+      {
+        "name": "Goons Tracker",
+        "purpose": "Consults estimated Goons rotation or location through external sources.",
+        "actions": ["Check report", "See active map", "Validate source", "Prepare raid"],
+        "status": "Depends on external sources and HTML parsing; documented in Troubleshooting."
+      },
+      {
+        "name": "Flea Market Tracker",
+        "purpose": "Price, fluctuation and profitability lookup with separated PVP/PVE markets.",
+        "actions": ["Switch market", "Search items", "View chart", "Evaluate profitability"],
+        "status": "Hybrid economy tracker connected to tarkov.dev."
+      },
+      {
+        "name": "Hideout Management",
+        "purpose": "Hideout planner with stations, materials, prerequisites, PVP/PVE prices and built progress.",
+        "actions": ["Switch mode", "Mark materials", "Mark levels", "See blockers", "Detect FIR"],
+        "status": "Hideout 2.0 with natural order, separated costs and local/cloud checklist."
+      },
+      {
+        "name": "Ballistics Simulator",
+        "purpose": "Tool for understanding penetration, damage, armor and estimated time to kill.",
+        "actions": ["Compare ammo", "Simulate hits", "Estimate TTK"],
+        "status": "Technical module with potential to become full Ammo Intelligence."
+      },
+      {
+        "name": "Live Events",
+        "purpose": "Tracking for temporary events, announcements and active changes.",
+        "actions": ["Check active events", "See recent events", "Use fallback", "Avoid stale data"],
+        "status": "Experimental, dependent on external sources and manual fallback."
+      },
+      {
+        "name": "Prestige",
+        "purpose": "PVP endgame progression with requirements, rewards, badges and checklist per prestige.",
+        "actions": ["Select level", "Mark requirements", "Review rewards"],
+        "status": "Independent PVP ONLY module."
+      },
+      {
+        "name": "Key System",
+        "purpose": "Key and keycard search connected to tarkov.dev with a tactical important-key layer.",
+        "actions": ["Switch PVP/PVE", "Search keys", "Filter map", "Check price", "Open wiki"],
+        "status": "Hybrid live search with local fallback."
+      },
+      {
+        "name": "Quest Optimizer",
+        "purpose": "Subtool that recommends the best map from pending quests, Kappa, risk and keys.",
+        "actions": ["Analyze progress", "Group by map", "Prioritize Kappa", "Prepare keys"],
+        "status": "Integrated inside Missions / Kappa."
+      },
+      {
+        "name": "PMC Profile",
+        "purpose": "Panel connected to public players.tarkov.dev JSON for already indexed PVP/PVE profiles.",
+        "actions": ["Switch mode", "Search PMCs", "View stats", "View gear", "Export card"],
+        "status": "Connected through static JSON with search, achievements, skills and PNG export."
+      }
+    ]
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "subtitle": "Internal usage metrics and registered users.",
+    "loading": "Loading metrics...",
+    "stats": {
+      "totalVisits": "Total visits",
+      "todayVisits": "Visits today",
+      "registeredUsers": "Registered users",
+      "onlineUsers": "Online users",
+      "onlineWindow": "Active in the last 2 min"
+    },
+    "filters": {
+      "allRoles": "All roles",
+      "allActivity": "All",
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "roles": {
+      "admin": "Admin",
+      "user": "User",
+      "owner": "OWNER"
+    },
+    "users": {
+      "title": "Users",
+      "searchPlaceholder": "Search username or email...",
+      "showing": "Showing {{filtered}} of {{total}} users",
+      "unconfigured": "Not configured",
+      "onlineBadge": "ONLINE",
+      "columns": {
+        "username": "Username",
+        "email": "Email",
+        "role": "Role",
+        "registered": "Registered",
+        "lastActivity": "Last activity",
+        "actions": "Actions"
+      }
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "detail": "Detail",
+      "makeAdmin": "Make admin",
+      "removeAdmin": "Remove admin",
+      "message": "Message"
+    },
+    "feedback": {
+      "title": "Reports",
+      "ticketCount": "{{count}} tickets",
+      "empty": "No reports or suggestions.",
+      "noUser": "No user",
+      "noEmail": "no email",
+      "currentStatus": "Current status: {{status}}",
+      "closedReplyTitle": "Closed tickets cannot be replied to",
+      "replyTitle": "Reply to user",
+      "replyUser": "Reply to user",
+      "deleteForAllTitle": "Delete this ticket for everyone",
+      "deleteForAll": "Delete for everyone",
+      "types": {
+        "bug": "Bug",
+        "suggestion": "Suggestion",
+        "other": "Other"
+      },
+      "status": {
+        "open": "Open",
+        "reviewing": "In review",
+        "closed": "Closed"
+      },
+      "statusActions": {
+        "open": "Mark open",
+        "reviewing": "Move to review",
+        "closed": "Close ticket"
+      }
+    },
+    "detail": {
+      "title": "User detail",
+      "role": "Role",
+      "profile": "Profile",
+      "profileStatus": {
+        "complete": "Complete",
+        "pending": "Pending"
+      },
+      "status": "Status",
+      "lastActivity": "Last activity",
+      "loadingProgress": "Loading progress...",
+      "cloudProgress": "Cloud progress by module",
+      "noModuleStates": "No cloud states saved.",
+      "saved": "Saved",
+      "missions": "Missions",
+      "noQuestProgress": "No cloud mission progress.",
+      "missionsMode": "{{mode}} missions",
+      "completedCount": "{{count}} completed"
+    },
+    "prompts": {
+      "roleChange": "Do you want to convert {{email}} to {{role}}?",
+      "deleteUser": "You are about to delete {{email}}. Their cloud progress will be lost. Continue?",
+      "typeDelete": "Type BORRAR to confirm.",
+      "messageSubject": "Message subject",
+      "messageBody": "Message",
+      "replyBody": "Reply for the user",
+      "deleteTicket": "Do you want to delete the ticket \"{{subject}}\"?"
+    },
+    "messages": {
+      "loadError": "Admin metrics could not be loaded.",
+      "roleError": "The user role could not be changed.",
+      "roleUpdated": "Role updated.",
+      "deleteCancelled": "Delete cancelled.",
+      "deleteError": "The account could not be deleted.",
+      "deleteSuccess": "Account deleted.",
+      "sendMessageError": "The message could not be sent: {{error}}",
+      "messageSent": "Message sent.",
+      "feedbackUpdateError": "The report could not be updated: {{error}}",
+      "feedbackUpdated": "Report updated.",
+      "feedbackReplyError": "The report could not be replied to: {{error}}",
+      "replySent": "Reply sent.",
+      "feedbackDeleteError": "The report could not be deleted: {{error}}",
+      "feedbackDeleted": "Report deleted.",
+      "rpcUnavailable": "RPC unavailable",
+      "progressLoadError": "Cloud progress could not be loaded: {{error}}. Run the updated SQL if the RPC is missing."
+    }
+  },
   "account": {
     "title": "Account",
     "adminProfile": "Admin profile",
     "userProfile": "User profile",
+    "overview": {
+      "eyebrow": "Account center",
+      "noUser": "No user"
+    },
+    "summary": {
+      "title": "Operational summary",
+      "loading": "Loading progress...",
+      "mainMode": "Main mode",
+      "globalPreference": "Global preference",
+      "missionsPvp": "PVP missions",
+      "missionsPve": "PVE missions",
+      "cloudCompleted": "Cloud completed",
+      "collector": "Collector",
+      "collectorMarked": "PVP / PVE marked",
+      "hideout": "Hideout",
+      "hideoutMaterials": "PVP / PVE materials"
+    },
+    "quickActions": {
+      "title": "Quick access",
+      "kappa": "Missions / Kappa",
+      "kappaMeta": "Continue progress",
+      "hideout": "Hideout",
+      "hideoutMeta": "Manage materials",
+      "flea": "Flea Market",
+      "fleaMeta": "Check economy",
+      "officialProfile": "Official profile",
+      "officialProfileMeta": "Open tarkov.dev"
+    },
     "username": {
       "title": "Username",
       "placeholder": "Your username",
@@ -229,22 +679,28 @@
         "fix": "If a capture error appears or the map does not look reliable, validate the data with the original source until the parser is updated."
       },
       {
-        "code": "I18N_PARTIAL_ROLLOUT_V1",
+        "code": "I18N_PARTIAL_ROLLOUT_V2",
         "title": "Partial Interface Translation",
-        "symptom": "The ES/EN selector already works on the home screen, login, Report, Account, Server Status and Missions / Kappa, but several internal modules still keep hardcoded Spanish text.",
-        "fix": "Translation is being rolled out in phases. Current priority: admin panel and main modules."
+        "symptom": "The ES/EN selector now covers home, login, account, Report, Server Status, Missions / Kappa, PMC Profile, Flea, Hideout, Bosses, Events, Prestige, Key System, Quest Optimizer, Goons, Maps, About and Ballistics Simulator. Some internal text or content data may still remain in larger modules.",
+        "fix": "Translation is being rolled out module by module. Dossier is excluded because it is private project documentation. Current priority: internal data, Admin Panel and remaining dynamic content."
       },
       {
-        "code": "DEV_LINT_REACT_V1",
-        "title": "Technical Debt Detected by Lint",
-        "symptom": "The production build compiles correctly, but ESLint detects technical debt in several modules: effects with immediate setState, pending hook dependencies and small unnecessary assignments or escapes.",
-        "fix": "It does not block current app usage, but should be fixed before a serious public deploy to reduce extra render risk and future hard-to-trace bugs."
+        "code": "PMC_STATIC_INDEX_V1",
+        "title": "PMC Profile and Public Index",
+        "symptom": "PMC Profile depends on public players.tarkov.dev JSON files. Only players already viewed on tarkov.dev/players and present in the public index can appear, and that index updates roughly once per day.",
+        "fix": "If a player does not appear, open their profile on tarkov.dev/players first and wait for the next index update. The app avoids the Turnstile-protected search and only uses available public JSON files."
       },
       {
-        "code": "DEV_HIDEOUT_FALLBACK_V1",
-        "title": "Hideout Local Fallback",
-        "symptom": "ESLint reports that the local Hideout fallback is referenced before declaration. The app can compile, but this structure is fragile if data loading is touched.",
-        "fix": "Move the fallback helper before the effect or convert it into a stable callback during the next Hideout cleanup pass."
+        "code": "LIVE_EVENTS_EXPERIMENTAL_V1",
+        "title": "Experimental Live Events",
+        "symptom": "Live Events depends on external feeds that are not always complete or up to date. It may miss active events even when the community knows they are running.",
+        "fix": "Treat the module as an experimental reference. It is kept with manual fallback and separated sources, but may be hidden or replaced by a more reliable source in a future version."
+      },
+      {
+        "code": "BUILD_CHUNK_SIZE_V1",
+        "title": "Bundle Size Warning",
+        "symptom": "The production build passes, but Vite warns about large chunks due to the accumulated size of the app, assets and implemented modules.",
+        "fix": "It does not block production. Main modules already use lazy loading; before 1.0, heavy assets and extra splitting should be reviewed if real performance requires it."
       }
     ]
   },
@@ -340,6 +796,7 @@
   "kappa": {
     "title": "STRATEGIC QUEST TREE",
     "subtitle": "Separate PvP and PvE tracking. Switch mode without losing progress in either branch.",
+    "loading": "COMPILING HIERARCHY MATRIX, PLEASE WAIT...",
     "optimizerButton": "Quest Optimizer",
     "searchPlaceholder": "GLOBAL SEARCH...",
     "panel": {
@@ -368,12 +825,15 @@
       "lockedStatus": "🔒 REQUIREMENTS",
       "completeButton": "COMPLETE",
       "completedButton": "{{mode}} COMPLETED",
+      "openWiki": "Open wiki",
       "completeTitle": "Complete this quest and all previous quests in {{mode}}",
       "uncompleteTitle": "Unmark this quest and clear its branch in {{mode}}"
     },
     "collector": {
+      "eyebrow": "Fence - Collector",
       "title": "Kappa Items",
       "subtitle": "Local checklist for saving and ticking Found in Raid items before handing Collector in {{mode}}.",
+      "fallbackIcon": "ITEM",
       "cardButton": "COLLECTOR ITEMS: {{completed}}/{{total}} - {{percent}}%",
       "progress": "{{completed}}/{{total}} items marked",
       "searchPlaceholder": "Search item, hint or spawn...",
@@ -394,6 +854,265 @@
       "centralApi": "Central API link error."
     }
   },
+  "bossesModule": {
+    "title": "INTEL: BOSSES",
+    "subtitle": "Critical intelligence for every boss in the game.",
+    "searchPlaceholder": "SEARCH TARGET...",
+    "allMaps": "ALL MAPS",
+    "allDifficulties": "ALL DIFFICULTIES",
+    "visibleTargets": "{{count}} visible targets",
+    "loadingIntel": "SYNCING INTEL FROM THE SERVER...",
+    "reviewedIntel": "REVIEWED TACTICAL REPORT",
+    "solo": "SOLO",
+    "squad": "SQUAD",
+    "unknownExactZone": "Exact zone pending confirmation",
+    "difficulty": {
+      "Medium": "MEDIUM",
+      "Hard": "HARD",
+      "Very Hard": "VERY HARD"
+    },
+    "sections": {
+      "spawnByMap": "SPAWN BY MAP",
+      "knownSpawnZones": "KNOWN SPAWN ZONES",
+      "registeredLocations": "REGISTERED LOCATIONS",
+      "guards": "SQUAD / GUARD ESCALATION",
+      "visuals": "VISUAL AND PHYSICAL DETAILS",
+      "behavior": "COMBAT BEHAVIOR",
+      "entryPlan": "RECOMMENDED ENTRY PLAN",
+      "weapons": "PRIMARY WEAPONS",
+      "ammo": "DETECTED AMMUNITION",
+      "weaknesses": "CRITICAL IMPACT POINTS / WEAKNESSES",
+      "loot": "HIGH VALUE LOOT"
+    },
+    "plan": {
+      "confirmSpawn": "Opening priority: confirm spawn on {{map}}.",
+      "avoidLongDuels": "Avoid long trades: {{weakness}}",
+      "expectedAmmo": "Expected ammunition: {{ammo}}. Enter with real cover and a clear exit.",
+      "veryHard": {
+        "line1": "Do not cross open sightlines without prior information.",
+        "line2": "Use optics, range and cover; assuming a frontal fight is usually fatal."
+      },
+      "hard": {
+        "line1": "Clear guards or secondary angles before pushing.",
+        "line2": "Grenades and repositioning are worth more than trading face to face."
+      },
+      "medium": {
+        "line1": "Isolate the target and cut off push routes.",
+        "line2": "Do not stay still after the first shot; reposition and force another angle."
+      }
+    },
+    "dossiers": {
+      "bigpipe": {
+        "guards": "Accompanied by Knight and Birdeye (The Goons)",
+        "visuals": "Massive build, extensive tattoos and his signature mechanical pipe.",
+        "behavior": "Extremely aggressive. Pushes and flanks at close range while Knight applies pressure.",
+        "weapons": "MGL 40mm, Remington 870, Colt M4A1",
+        "ammo": "40x46mm HE, 12/70 AP-20, 5.56x45mm M855A1",
+        "weaknesses": "Unprotected head, no heavy helmet, and exposed joints.",
+        "loot": "MGL grenade launcher, Pipe's special backpack and high-priority keys."
+      },
+      "birdeye": {
+        "guards": "Accompanied by Knight and Big Pipe (The Goons)",
+        "visuals": "Light camouflage equipment and advanced tactical headset.",
+        "behavior": "Silent marksman. Repositions constantly and his footsteps are barely audible.",
+        "weapons": "Remington M700, SR-25, M4A1",
+        "ammo": "7.62x51mm M61 / M993, 5.56x45mm SSA AP",
+        "weaknesses": "Exposed torso and limbs; lacks sustained heavy armor.",
+        "loot": "Modified bolt-action rifle, access cards and premium military ammunition."
+      },
+      "glukhar": {
+        "guards": "6 to 7 heavily armored guards",
+        "visuals": "Russian urban camouflage uniform, robust build and no helmet.",
+        "behavior": "Strategic and defensive. His guards split into assault, scout and marksman roles.",
+        "weapons": "AS VAL, M1A, ASH-12",
+        "ammo": "9x39mm SP-6 / BP, 7.62x51mm M62, 12.7x55mm PS12B",
+        "weaknesses": "Head shots, especially if isolated from his assault guards.",
+        "loot": "Reserve military keys, FIR ASH-12 and high-capacity magazines."
+      },
+      "kaban": {
+        "guards": "Large group of armored guards and static snipers",
+        "visuals": "Huge frame, heavy civilian clothing and entrenched position in the car dealership.",
+        "behavior": "Static but lethal. Uses mounted heavy machine guns and relentless sustained fire.",
+        "weapons": "PKP Pecheneg, PKM, Tokarev TT-33",
+        "ammo": "7.62x54mmR SNB / BT, 7.62x25mm PST",
+        "weaknesses": "Extremely limited mobility; vulnerable to flanks and grenades.",
+        "loot": "PKP/PKM machine gun, Streets keys and full ammunition cases."
+      },
+      "killa": {
+        "guards": "Spawns completely alone",
+        "visuals": "Black tracksuit with three stripes, 6B13 armor and Maska helmet with visor.",
+        "behavior": "Relentless hunter. Runs toward footstep audio and fires long bursts.",
+        "weapons": "RPK-16, PP-19-01 Vityaz, AK-74M",
+        "ammo": "5.45x39mm 7N40 / Igolnik, 9x19mm PBP",
+        "weaknesses": "Side blind spots, back of the head and legs.",
+        "loot": "Maska-1Sch helmet and level 5 Killa polyethylene body armor."
+      },
+      "knight": {
+        "guards": "Leader of the trio, accompanied by Big Pipe and Birdeye",
+        "visuals": "Ballistic skull mask and modular assault plate carrier.",
+        "behavior": "Spearhead operator. Detects targets at extreme range and starts lethal pursuits.",
+        "weapons": "FN SCAR-H, MDR 5.56, Glock 18C",
+        "ammo": "7.62x51mm BCP FMJ / M80, 5.56x45mm M855A1",
+        "weaknesses": "Ballistic mask visor and lower limbs.",
+        "loot": "Skull mask, assault plate carrier and advanced stimulants."
+      },
+      "kollontay": {
+        "guards": "3 to 5 guards with Russian police equipment",
+        "visuals": "Former military police uniform, officer cap and riot baton.",
+        "behavior": "Psychological pressure. If he gets too close, he uses the baton and can force weapon blocking.",
+        "weapons": "RPK-16, Stechkin APS, rubber baton",
+        "ammo": "5.45x39mm PPBS / BP, 9x18mm PM PBM",
+        "weaknesses": "Side torso angles; vulnerable while sprinting in with the baton.",
+        "loot": "Unique Kollontay baton, Streets police station keys and police equipment."
+      },
+      "partisan": {
+        "guards": "Spawns completely alone",
+        "visuals": "Worn woodland camouflage, thick beard and large tactical backpack.",
+        "behavior": "Hostile trapper. Places tripwire grenades and stalks from vegetation.",
+        "weapons": "Modified AKM, SKS, tripwire traps",
+        "ammo": "7.62x39mm BP / PP, F-1 / VOG-25 grenades",
+        "weaknesses": "Easy to drop in open terrain if his traps are detected before contact.",
+        "loot": "Tripwire kit, collector AKM and smuggler dogtags."
+      },
+      "reshala": {
+        "guards": "4 elite Zavodskoy guards",
+        "visuals": "Brown leather jacket with gold patterns and no visible armor.",
+        "behavior": "Cowardly and evasive. Hides while his guards assault and secure the area.",
+        "weapons": "Golden TT pistol, AK-101, AK-74N",
+        "ammo": "PST Gzh, 5.56x45mm M856A1, 5.45x39mm BT",
+        "weaknesses": "Torso and head; he has no native body armor.",
+        "loot": "Collector golden TT pistol, Customs office key and bitcoins."
+      },
+      "sanitar": {
+        "guards": "2 heavily armed guards",
+        "visuals": "Blue medical coat over civilian clothing and a surgical kit bag.",
+        "behavior": "Dynamic support. Constantly heals and buffs his guards during combat.",
+        "weapons": "VSS Vintorez, OP-SKS, Kedr-B",
+        "ammo": "9x39mm SP-5, 7.62x39mm PS, 9x18mm SP7",
+        "weaknesses": "Unprotected head and animation windows while injecting stimulants.",
+        "loot": "Medical case with rare stimulants, Ophthalmoscope, LedX and syringes."
+      },
+      "shturman": {
+        "guards": "2 guards equipped with long-range rifles",
+        "visuals": "Winter coat with fur hood, exposed face and strong sawmill control.",
+        "behavior": "Zone sniper. Shoots at extreme distances with calculated cadence.",
+        "weapons": "SVDS, AK-105",
+        "ammo": "7.62x54mmR 7N1 / SNB, 5.45x39mm BT",
+        "weaknesses": "Head and limbs without rigid ballistic armor.",
+        "loot": "Shturman's stash key, modified SVDS and red access cards."
+      },
+      "tagilla": {
+        "guards": "Spawns completely alone",
+        "visuals": "Low welding trousers, tattooed torso and heavy welding mask.",
+        "behavior": "Relentless close-range assault. Chases with the sledgehammer and forces close combat.",
+        "weapons": "Tagilla's hammer, Saiga-12, MP-155 Ultima",
+        "ammo": "12/70 Flechette / AP-20, Magnum buckshot",
+        "weaknesses": "Exposed back and legs with high flesh-damage vulnerability.",
+        "loot": "Level 5 welding mask, Tagilla's rigid plate carrier and sledgehammer."
+      },
+      "Zryachiy": {
+        "guards": "2 support snipers hidden on the island slopes",
+        "visuals": "White balaclava with stitched pattern and optic mounted at the eye.",
+        "behavior": "Absolute defensive sniper. Opens fire if you cross the bridge without an active transmitter.",
+        "weapons": "AXMC .338, SV-98",
+        "ammo": ".338 Lapua Magnum AP, 7.62x54mmR BS",
+        "weaknesses": "Static defensive position; vulnerable if you break his initial line of sight.",
+        "loot": "AXMC .338 tactical rifle, collector Lapua AP ammunition and military telemetry."
+      }
+    }
+  },
+  "goonsModule": {
+    "title": "GOONS TRACKER",
+    "subtitle": "Goons intelligence and their latest known location.",
+    "loading": "Extracting Goons data in {{mode}} mode...",
+    "channel": "{{mode}} CHANNEL",
+    "noReports": "NO OPERATIONAL REPORTS",
+    "dateLocale": "en-US",
+    "unknownMap": "UNKNOWN (OUT OF COVERAGE)",
+    "activeChannelGeolocation": "ACTIVE CHANNEL GEOLOCATION",
+    "detectedLocation": "CURRENT DETECTED LOCATION",
+    "gameMode": "GAME MODE",
+    "telemetryError": "⚠ TELEMETRY ERROR",
+    "telemetryOk": "✓ {{mode}}",
+    "lastReport": "Last report: {{report}}",
+    "confirmedLocation": "⚠ REPORT: LOCATION CONFIRMED",
+    "cleanTransmission": "✓ CLEAN TRANSMISSION",
+    "consoleCaptureError": "Capture failed in {{mode}} mode:",
+    "errors": {
+      "mapParse": "Could not extract the active map from the tracker HTML"
+    },
+    "profiles": {
+      "knight": {
+        "role": "SQUAD LEADER / ASSAULT",
+        "desc": "The tactical brain of the squad. Extremely aggressive, wearing his iconic skull mask, he pushes straight toward your position and flanks with relentless suppressive fire once he detects you or your squad."
+      },
+      "bigPipe": {
+        "role": "HEAVY SUPPORT / ARTILLERY",
+        "desc": "Demolitions and covering-fire specialist. Commonly carries a 40 mm M32A1 multi-shot grenade launcher or heavy machine guns, providing devastating suppression while Knight advances."
+      },
+      "birdeye": {
+        "role": "RECON / MARKSMAN",
+        "desc": "The silent sniper of the trio. His footsteps are very quiet and he opens fire from long distance."
+      }
+    },
+    "maps": {
+      "customs": { "label": "ZONE: FORTRESS / DORMS" },
+      "woods": { "label": "ZONE: ANTENNA / SCAV CAMP" },
+      "shoreline": { "label": "ZONE: RADAR STATION / RESORT" },
+      "lighthouse": { "label": "ZONE: CHALETS / WATER TREATMENT" }
+    }
+  },
+  "hideoutModule": {
+    "title": "HIDEOUT LOGISTICS",
+    "subtitle": "Separate PVP/PVE costs, local material checklist, FIR warnings and station, trader and skill requirements.",
+    "loading": "CONNECTING TO HIDEOUT MODULE, PLEASE WAIT...",
+    "sync": {
+      "cloud": "CLOUD PROGRESS ACTIVE",
+      "syncing": "SYNCING PROGRESS...",
+      "local": "LOCAL MODE: SIGN IN TO SYNC",
+      "localError": "LOCAL MODE: CLOUD TABLE UNAVAILABLE OR SYNC ERROR"
+    },
+    "errors": {
+      "externalFallback": "External data unavailable. Showing reduced local fallback."
+    },
+    "list": {
+      "sections": "SECTIONS",
+      "progress": "Progress",
+      "availableUpgrades": "{{count}} upgrade(s) unlocked",
+      "blocked": "LOCK"
+    },
+    "detail": {
+      "targetLevel": "{{mode}} / TARGET LEVEL",
+      "blockedBy": "Blocked by:",
+      "stationLevel": "{{name}} level {{level}}",
+      "built": "Built",
+      "notBuilt": "Not built",
+      "levelOption": "Level {{level}}",
+      "budget": "{{mode}} BUDGET",
+      "noCost": "NO COST",
+      "pendingChecklist": "PENDING FROM CHECKLIST",
+      "completeNoCost": "COMPLETE / NO COST",
+      "constructionTime": "CONSTRUCTION TIME",
+      "immediate": "IMMEDIATE",
+      "minutes": "{{minutes}} MIN",
+      "hours": "{{hours}} HOURS",
+      "hoursMinutes": "{{hours}}H {{minutes}}M",
+      "materials": "MATERIALS",
+      "materialsMarked": "{{completed}}/{{total}} MARKED",
+      "firRequirementCount": "{{count}} FIR requirement(s)",
+      "noFir": "No FIR requirements detected",
+      "requiredStations": "REQUIRED STATIONS",
+      "noRequiredStations": "No other hideout stations required.",
+      "tradersSkills": "TRADERS AND SKILLS",
+      "noTradersSkills": "No trader or skill requirements registered.",
+      "levelShort": "LEVEL {{level}}",
+      "requiredObjects": "REQUIRED OBJECTS",
+      "priceEach": "Flea {{mode}} each: {{price}}",
+      "firRequired": "FIR REQUIRED",
+      "fleaOk": "FLEA OK",
+      "noMaterials": "No specific materials registered."
+    }
+  },
   "storyModule": {
     "title": "STORY DECISIONS",
     "subtitle": "All routes, decisions and points of no return you should track to reach the different Tarkov story endings.",
@@ -410,12 +1129,12 @@
       "fallingSkies": {
         "badge": "Campaign objective",
         "title": "FALLING SKIES",
-        "body": "Progress through the Falling Skies chapter."
+        "body": "Advance the main chain until the decisions that shape Terminal access and the endings become available."
       },
       "armoredCase": {
         "badge": "Recovery objective",
         "title": "RECOVER ARMORED CASE",
-        "body": "Recover the Armored Case from the crashed plane in Woods."
+        "body": "Recover the Armored Case from the crashed plane in Woods. From here, handing it over or keeping it changes later costs, requirements and routes."
       }
     },
     "armoredChoices": {
@@ -425,28 +1144,28 @@
     "keepPath": {
       "badge": "Chapter: The Ticket",
       "title": "CONTAINER IN YOUR HANDS",
-      "body": "The Armored Case is in your hands. You move directly toward opening it."
+      "body": "The Armored Case stays under your control. You avoid relying on Prapor early on, but that choice can make a later route far more expensive."
     },
     "praporPath": {
       "badge": "Chapter: The Ticket",
       "connectionBadge": "Connecting the dots",
       "connectionTitle": "THE ARMORED CASE IS IN YOUR HANDS",
       "steps": {
-        "lighthouse": { "label": "Lighthouse", "body": "Find compromising material about Prapor on Lighthouse." },
+        "lighthouse": { "label": "Lighthouse", "body": "Find compromising material about Prapor on Lighthouse to open leverage against him." },
         "access": { "label": "Access requirement", "body": "Gain access to Lightkeeper. Network Provider 1 must be available." },
-        "bribe": { "label": "Trade bribe", "body": "Talk to Lightkeeper and pay him three TerraGroup Blue Folders." },
-        "signal": { "label": "Signal", "body": "Fire a yellow flare in front of Ultra Mall on Interchange." },
-        "raidCondition": { "label": "Raid condition", "body": "Kill 15 targets without dying in the same flare raid." },
-        "pickup": { "label": "Pickup", "body": "Collect the Armored Case from Lightkeeper. It is stored in the special slot." }
+        "bribe": { "label": "Trade bribe", "body": "Talk to Lightkeeper and hand over three TerraGroup Blue Folders so he intervenes." },
+        "signal": { "label": "Signal", "body": "Fire a yellow flare in front of Ultra Mall on Interchange to mark the operation window." },
+        "raidCondition": { "label": "Raid condition", "body": "Kill 15 targets without dying during that same raid. If you fail, you will need to repeat the execution." },
+        "pickup": { "label": "Pickup", "body": "Collect the Armored Case from Lightkeeper. It is stored in the special slot and becomes central to the route again." }
       }
     },
     "containerOpening": {
       "decryptBadge": "Decryption",
       "decryptTitle": "OPENING THE CONTAINER",
-      "decryptBody": "Find the Signal Jammer in LABS.",
+      "decryptBody": "Find the Signal Jammer in LABS to continue the technical opening of the container.",
       "completeBadge": "Complete state",
       "completeTitle": "THE ARMORED CASE IS OPEN",
-      "completeBody": "Internal blueprints exposed."
+      "completeBody": "The internal blueprints are exposed and you can decide what to do with the critical information."
     },
     "kermanChoices": {
       "noKerman": "BRANCH: DO NOT WORK WITH KERMAN",
@@ -455,13 +1174,13 @@
     "noKerman": {
       "accessBadge": "Port access",
       "easyWayTitle": "EASY WAY ACHIEVEMENT",
-      "easyWayBody": "Go to the port entrance, use the intercom and swipe the Keycard.",
+      "easyWayBody": "Go to the port entrance, use the intercom and swipe the Keycard. This check confirms whether the direct exit is available.",
       "terminalBadge": "Terminal response",
       "terminalTitle": "THE CARD DID NOT WORK",
-      "terminalBody": "Card rejected. Ask Prapor for help finding an alternative.",
+      "terminalBody": "The card is rejected. Ask Prapor for help finding another way into Terminal.",
       "showRequirements": "SHOW HELP REQUIREMENTS",
       "hideRequirements": "HIDE HELP REQUIREMENTS",
-      "standby": "System on standby. Activate calculation to project the escape window.",
+      "standby": "System on standby. Open the help requirements to estimate the real cost of this branch.",
       "terminalPathBadge": "Path to Terminal",
       "terminalPathBody": "Go to Shoreline between 21:00 and 06:00, use the tower intercom and swipe the Keycard. Approach the Terminal gate without a weapon in your hands and begin your escape attempt.",
       "terminalRetry": "If the attempt fails, you will need to buy a new note from Prapor for 5M roubles.",
@@ -480,7 +1199,8 @@
             "Give Prapor the Flash Drive with data.",
             "Kill 50 targets in Streets of Tarkov.",
             "Kill 4 PMCs and survive in a single raid."
-          ]
+          ],
+          "penalty": "Penalty: these tasks must be completed in under 72 hours or you will need to hand over the Kappa container to progress. If completed in time, you earn the I Am Speed achievement."
         }
       }
     },
@@ -547,6 +1267,43 @@
       "savior": { "title": "SAVIOR ENDING", "body": "You escaped Tarkov for humanity. The strike against TerraGroup exposed its secrets and released the truth." },
       "debtor": { "title": "DEBTOR ENDING", "body": "You escaped Tarkov, but not yourself. You switched sides and remained tied to a debt that is hard to erase." },
       "fallen": { "title": "FALLEN ENDING", "body": "You escaped Tarkov only to fall into darkness. TerraGroup survived and the world began to crack." }
+    }
+  },
+  "fleaModule": {
+    "title": "Flea Market Tracker",
+    "subtitle": "Dynamic price analysis, fluctuation charts and item profitability for PVP and PVE.",
+    "noDate": "No date",
+    "search": {
+      "title": "Hybrid search ({{mode}}) - English / Spanish without accents",
+      "placeholder": "E.g. sugar, ledx, graphics card...",
+      "loading": "Searching the database...",
+      "empty": "The requested item was not found in the {{mode}} market"
+    },
+    "chart": {
+      "firstRecord": "First record",
+      "deltaVsPrevious": "{{delta}} vs previous",
+      "sevenDaysAgo": "7 days ago",
+      "min": "MIN:",
+      "max": "MAX:",
+      "now": "Now"
+    },
+    "item": {
+      "space": "Space: {{width}}x{{height}} ({{slots}} slots)",
+      "pricePerSlot": "{{price}} / Slot",
+      "noRecord": "No record"
+    },
+    "detail": {
+      "specificData": "Specific data - {{mode}}",
+      "historicalTrend": "Historical trend ({{mode}}, last 7 days)",
+      "avg24h": "Global 24h average:",
+      "currentLow": "Current low price:",
+      "traderValue": "Trader buy value"
+    },
+    "hotDeals": {
+      "title": "Most fluctuating items in the {{mode}} market:",
+      "loading": "Listing items...",
+      "up": "Up {{pct}}",
+      "down": "Down {{pct}}"
     }
   },
   "prestigeModule": {
@@ -639,6 +1396,143 @@
       "p6Reward3": "30% skills and weapon mastery",
       "p6Reward4": "8x8 transfer window",
       "p6Reward5": "Secure container Gamma (Loui Peeton)"
+    }
+  },
+  "pmc": {
+    "header": {
+      "eyebrow": "Operational identity",
+      "title": "PMC Profile",
+      "subtitle": "Profile connected to the public players.tarkov.dev JSON files. Only players already viewed on tarkov.dev/players appear, and the public index updates once per day."
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "search": "Search",
+      "myProfile": "My profile",
+      "copyAccountId": "Copy AccID",
+      "accountCopied": "Account ID copied",
+      "exportCard": "Export card"
+    },
+    "search": {
+      "linkedUser": "Linked user",
+      "notConfigured": "Not configured",
+      "placeholder": "Search another PMC...",
+      "history": "History"
+    },
+    "errors": {
+      "loadProfile": "The PMC profile could not be loaded.",
+      "enterUsername": "Enter a Tarkov username to search."
+    },
+    "stats": {
+      "level": "Level",
+      "faction": "Faction",
+      "xp": "XP",
+      "time": "Time",
+      "raids": "Raids",
+      "extracted": "Extracted",
+      "kills": "Kills",
+      "pmcKills": "PMC kills",
+      "account": "Account",
+      "achievements": "Achievements",
+      "activity": "Activity"
+    },
+    "sync": {
+      "status": "Status",
+      "publicIndex": "Public index",
+      "localRead": "Local read",
+      "noPublicDate": "No public date",
+      "updatedMinutes": "Updated {{count}} min ago",
+      "updatedHours": "Updated {{count}} h ago",
+      "updatedDays": "Updated {{count}} days ago"
+    },
+    "status": {
+      "synced": "Synced",
+      "querying": "Querying",
+      "waiting": "Waiting",
+      "error": "Error",
+      "syncedAt": "Synced · {{date}}",
+      "queryingProfile": "Querying profile...",
+      "configureOrSearch": "Configure or search a user",
+      "syncFailed": "Could not sync",
+      "preparing": "Preparing sync"
+    },
+    "panels": {
+      "gear": "Tactical gear",
+      "gearFallback": "Gear",
+      "favorites": "Favorites"
+    },
+    "empty": {
+      "gear": "No visible gear",
+      "favorites": "No visible favorites"
+    },
+    "equipmentSlots": {
+      "firstPrimaryWeapon": "Primary weapon",
+      "secondPrimaryWeapon": "Secondary weapon",
+      "holster": "Pistol",
+      "scabbard": "Melee",
+      "securedContainer": "Container",
+      "armBand": "Armband",
+      "headwear": "Headwear",
+      "faceCover": "Face cover",
+      "armorVest": "Armor",
+      "tacticalVest": "Rig",
+      "backpack": "Backpack",
+      "eyewear": "Eyewear"
+    },
+    "achievements": {
+      "title": "Profile achievements",
+      "summary": "{{visible}} visible out of {{total}} completed. Featured achievements show the most exclusive entries in the profile.",
+      "searchPlaceholder": "Search achievement...",
+      "empty": "No achievements with these filters",
+      "top": "Top achievement",
+      "single": "Achievement",
+      "headers": {
+        "achievement": "Achievement",
+        "rarity": "Rarity",
+        "players": "Players",
+        "completed": "Completed"
+      }
+    },
+    "achievementFilters": {
+      "all": "All",
+      "legendary": "Legendary",
+      "rare": "Rare",
+      "common": "Common"
+    },
+    "achievementSorts": {
+      "date": "Date",
+      "rarity": "Rarity",
+      "name": "Name"
+    },
+    "skills": {
+      "title": "Farmed skills",
+      "summary": "{{count}} skills detected in the public profile. Sorted by progress.",
+      "headers": {
+        "skill": "Skill",
+        "level": "Level",
+        "lastAccess": "Last access"
+      }
+    },
+    "data": {
+      "title": "Available data",
+      "description": "Tarkov.dev protects direct search with Turnstile, but publishes already viewed profiles as static JSON. Info Tarkov combines that profile with item/achievement catalogs to show a more useful sheet.",
+      "lastPublicUpdate": "Last public update: {{date}}",
+      "mainSkills": "Main skills: {{skills}}",
+      "detectedFields": "Detected fields: {{fields}}",
+      "noExtraFields": "No extra fields detected",
+      "noSkills": "No skills detected"
+    },
+    "export": {
+      "title": "{{mode}} / INFOTARKOV PMC DOSSIER",
+      "topAchievement": "TOP ACHIEVEMENT: {{name}}",
+      "topAchievementEmpty": "TOP ACHIEVEMENT: -",
+      "syncedLine": "Synced: {{date}} · Account ID: {{accountId}}",
+      "imageFallback": "External images could not be embedded in this export.",
+      "sections": {
+        "gear": "Tactical gear",
+        "favorites": "Favorites",
+        "achievements": "Featured achievements",
+        "skills": "Farmed skills"
+      }
     }
   }
 }

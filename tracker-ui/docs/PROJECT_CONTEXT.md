@@ -1,6 +1,6 @@
 # Info Tarkov - Project Context
 
-Last updated: 2026-05-21
+Last updated: 2026-05-22
 
 This document is the working context for continuing development in a fresh Codex/ChatGPT thread.
 
@@ -25,6 +25,53 @@ npm.cmd run lint
 `npm.cmd run build` currently passes.
 
 `npm.cmd run lint` currently passes with no errors or warnings.
+
+## Translation and 1.0 Estimate
+
+Latest working estimate, recorded on 2026-05-22:
+
+- ES/EN i18n files are synchronized with 772 string leaves in each locale.
+- Visible app translation is estimated at roughly 65-70%.
+- Technical readiness for adding more languages after ES/EN is estimated at roughly 80-85%.
+- Overall distance to a serious 1.0 release is estimated at roughly 70-75% complete.
+
+Modules already well prepared or mostly translated:
+
+- Home/menu shell
+- Auth/login base
+- Account settings base
+- PMC Profile
+- Flea Market Tracker
+- Hideout
+- Bosses
+- Live Events
+- Prestiges
+- Story Decisions / Finales
+- Troubleshooting
+- Server Status
+- Large parts of Kappa and Goons
+
+Modules still needing translation or cleanup passes:
+
+- Keys
+- Quest Optimizer
+- Admin Panel
+- About
+- Project Dossier
+- Maps
+- Armor Simulator
+- remaining Goons/Kappa strings
+
+Before 1.0, aim for:
+
+- Full ES/EN coverage of visible UI.
+- No important hardcoded Spanish strings in components.
+- Clean lint/build.
+- Updated About, Changelog and Project Dossier.
+- Clear fallback/error states for external APIs.
+- Desktop/mobile visual QA.
+- Decision on whether Live Events remains experimental or gets hidden/removed.
+- Conscious decision on current Vite chunk-size warning.
 
 ## Stack
 

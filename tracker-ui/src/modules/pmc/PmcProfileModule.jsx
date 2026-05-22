@@ -1,36 +1,28 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { fetchTarkovPlayerProfile } from './pmcApi';
 
 const MODE_STORAGE_KEY = 'info_tarkov_pmc_profile_mode';
 const HISTORY_STORAGE_KEY = 'info_tarkov_pmc_profile_history';
 
-const ACHIEVEMENT_FILTERS = [
-  { id: 'all', label: 'Todos' },
-  { id: 'legendary', label: 'Legendarios' },
-  { id: 'rare', label: 'Raros' },
-  { id: 'common', label: 'Comunes' }
-];
+const ACHIEVEMENT_FILTERS = ['all', 'legendary', 'rare', 'common'];
 
-const ACHIEVEMENT_SORTS = [
-  { id: 'date', label: 'Fecha' },
-  { id: 'rarity', label: 'Rareza' },
-  { id: 'name', label: 'Nombre' }
-];
+const ACHIEVEMENT_SORTS = ['date', 'rarity', 'name'];
 
 const EQUIPMENT_SLOT_LABELS = {
-  FirstPrimaryWeapon: 'Arma principal',
-  SecondPrimaryWeapon: 'Arma secundaria',
-  Holster: 'Pistola',
-  Scabbard: 'Melee',
-  SecuredContainer: 'Contenedor',
-  ArmBand: 'Armband',
-  Headwear: 'Casco',
-  FaceCover: 'Face cover',
-  ArmorVest: 'Armadura',
-  TacticalVest: 'Rig',
-  Backpack: 'Mochila',
-  Eyewear: 'Gafas'
+  FirstPrimaryWeapon: 'firstPrimaryWeapon',
+  SecondPrimaryWeapon: 'secondPrimaryWeapon',
+  Holster: 'holster',
+  Scabbard: 'scabbard',
+  SecuredContainer: 'securedContainer',
+  ArmBand: 'armBand',
+  Headwear: 'headwear',
+  FaceCover: 'faceCover',
+  ArmorVest: 'armorVest',
+  TacticalVest: 'tacticalVest',
+  Backpack: 'backpack',
+  Eyewear: 'eyewear'
 };
 
 const panelStyle = {
@@ -88,15 +80,15 @@ const formatPercent = (value) => {
   return `${parsed.toFixed(parsed < 10 ? 2 : 1)}%`;
 };
 
-const formatSyncAge = (value) => {
-  if (!value) return 'Sin fecha publica';
+const formatSyncAgeLabel = (value, t) => {
+  if (!value) return t('pmc.sync.noPublicDate');
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'Sin fecha publica';
+  if (Number.isNaN(date.getTime())) return t('pmc.sync.noPublicDate');
   const diffMinutes = Math.max(0, Math.round((Date.now() - date.getTime()) / 60000));
-  if (diffMinutes < 60) return `Actualizado hace ${diffMinutes} min`;
+  if (diffMinutes < 60) return t('pmc.sync.updatedMinutes', { count: diffMinutes });
   const diffHours = Math.round(diffMinutes / 60);
-  if (diffHours < 48) return `Actualizado hace ${diffHours} h`;
-  return `Actualizado hace ${Math.round(diffHours / 24)} dias`;
+  if (diffHours < 48) return t('pmc.sync.updatedHours', { count: diffHours });
+  return t('pmc.sync.updatedDays', { count: Math.round(diffHours / 24) });
 };
 
 const formatSkillName = (value) => {
@@ -274,6 +266,7 @@ const getProfileUsername = (userProfile, session) =>
   '';
 
 export default function PmcProfileModule({ onViewChange, session, userProfile }) {
+  const { t } = useTranslation();
   const [activeMode, setActiveMode] = useState(() => localStorage.getItem(MODE_STORAGE_KEY) || readDefaultPlayableMode());
   const [remoteProfile, setRemoteProfile] = useState(null);
   const [status, setStatus] = useState('idle');
@@ -322,15 +315,15 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
       console.error(profileError);
       setRemoteProfile(null);
       setStatus('error');
-      setError(profileError.message || 'No se pudo cargar el perfil de PMC.');
+      setError(profileError.message || t('pmc.errors.loadProfile'));
     }
-  }, [activeMode, profileUsername]);
+  }, [activeMode, profileUsername, t]);
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
     const cleanSearch = searchInput.trim() || tarkovUsername;
     if (!cleanSearch) {
-      setError('Introduce un usuario de Tarkov para buscar.');
+      setError(t('pmc.errors.enterUsername'));
       setStatus('error');
       return;
     }
@@ -352,7 +345,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
   const handleCopyAccountId = async () => {
     if (!remoteProfile?.accountId) return;
     await navigator.clipboard.writeText(remoteProfile.accountId);
-    setCopyStatus('Account ID copiado');
+    setCopyStatus(t('pmc.actions.accountCopied'));
     window.setTimeout(() => setCopyStatus(''), 1600);
   };
 
@@ -400,7 +393,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
     ctx.lineWidth = 2;
     ctx.fillStyle = '#9fb48f';
     ctx.font = '800 20px Rajdhani, Arial';
-    ctx.fillText(`${activeMode} / INFOTARKOV PMC DOSSIER`, 62, 74);
+    ctx.fillText(t('pmc.export.title', { mode: activeMode }), 62, 74);
 
     ctx.fillStyle = '#ffffff';
     ctx.font = '900 62px Rajdhani, Arial';
@@ -410,20 +403,20 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
     ctx.fillText(remoteProfile.level ? `L${remoteProfile.level}` : 'L--', 840, 146);
     ctx.fillStyle = '#ffcf66';
     ctx.font = '900 22px Rajdhani, Arial';
-    ctx.fillText(rareAchievements[0] ? `TOP LOGRO: ${rareAchievements[0].name}` : 'TOP LOGRO: -', 62, 190);
+    ctx.fillText(rareAchievements[0] ? t('pmc.export.topAchievement', { name: rareAchievements[0].name }) : t('pmc.export.topAchievementEmpty'), 62, 190);
     ctx.fillStyle = '#8d8f8c';
     ctx.font = '800 18px Rajdhani, Arial';
-    ctx.fillText(`Sincronizado: ${formatDateTime(remoteProfile.updatedAt)} · Account ID: ${remoteProfile.accountId || '-'}`, 62, 226);
+    ctx.fillText(t('pmc.export.syncedLine', { date: formatDateTime(remoteProfile.updatedAt), accountId: remoteProfile.accountId || '-' }), 62, 226);
 
     const statRows = [
-      ['Faccion', remoteProfile.faction || '-', 'shield'],
-      ['XP', formatNumber(remoteProfile.experience), 'xp'],
-      ['Raids', formatNumber(remoteProfile.raids), 'raid'],
-      ['Extracted', formatNumber(remoteProfile.survivedRaids), 'extract'],
+      [t('pmc.stats.faction'), remoteProfile.faction || '-', 'shield'],
+      [t('pmc.stats.xp'), formatNumber(remoteProfile.experience), 'xp'],
+      [t('pmc.stats.raids'), formatNumber(remoteProfile.raids), 'raid'],
+      [t('pmc.stats.extracted'), formatNumber(remoteProfile.survivedRaids), 'extract'],
       ['SR', remoteProfile.survivalRate !== null && remoteProfile.survivalRate !== undefined ? `${remoteProfile.survivalRate}%` : '-', 'percent'],
-      ['Kills', formatNumber(remoteProfile.kills), 'kill'],
-      ['PMC kills', formatNumber(remoteProfile.killedPmcs), 'target'],
-      ['Logros', formatNumber(remoteProfile.achievementsCount), 'star']
+      [t('pmc.stats.kills'), formatNumber(remoteProfile.kills), 'kill'],
+      [t('pmc.stats.pmcKills'), formatNumber(remoteProfile.killedPmcs), 'target'],
+      [t('pmc.stats.achievements'), formatNumber(remoteProfile.achievementsCount), 'star']
     ];
     statRows.forEach(([label, value, icon], index) => {
       const x = 62 + (index % 4) * 245;
@@ -476,13 +469,13 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
       drawClampedText(ctx, item?.name || '-', x + 72, y + 52, cardWidth - 86, 16, 2);
     };
 
-    drawSectionTitle('Equipo tactico', 515);
+    drawSectionTitle(t('pmc.export.sections.gear'), 515);
     equipment.slice(0, 4).forEach((item, index) => drawItemCard(item, 62 + (index % 2) * 490, 548 + Math.floor(index / 2) * 88, 455));
 
-    drawSectionTitle('Favoritos', 760);
+    drawSectionTitle(t('pmc.export.sections.favorites'), 760);
     favorites.slice(0, 4).forEach((item, index) => drawItemCard(item, 62 + (index % 2) * 490, 793 + Math.floor(index / 2) * 88, 455));
 
-    drawSectionTitle('Logros destacados', 1005);
+    drawSectionTitle(t('pmc.export.sections.achievements'), 1005);
     const featuredAchievements = (rareAchievements.length ? rareAchievements : achievements).slice(0, 6);
     featuredAchievements.forEach((achievement, index) => {
       const x = 62 + (index % 2) * 490;
@@ -504,13 +497,13 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
       }
       ctx.fillStyle = '#ffcf66';
       ctx.font = '900 13px Rajdhani, Arial';
-      ctx.fillText(`${achievement.rarityLabel || achievement.rarity || 'Logro'} · ${formatPercent(achievement.playersCompletedPercent)}`, x + 60, y + 20);
+      ctx.fillText(`${achievement.rarityLabel || achievement.rarity || t('pmc.achievements.single')} · ${formatPercent(achievement.playersCompletedPercent)}`, x + 60, y + 20);
       ctx.fillStyle = '#ffffff';
       ctx.font = '900 17px Rajdhani, Arial';
       drawClampedText(ctx, achievement.name, x + 60, y + 42, 370, 17, 1);
     });
 
-    drawSectionTitle('Skills farmeadas', 1260);
+    drawSectionTitle(t('pmc.export.sections.skills'), 1260);
     skills.slice(0, 8).forEach((skill, index) => {
       const x = 62 + (index % 4) * 245;
       const y = 1293 + Math.floor(index / 4) * 64;
@@ -539,7 +532,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
     ctx.font = '900 18px Rajdhani, Arial';
     ctx.fillText('INFOTARKOV.COM', 62, 1420);
     ctx.fillStyle = '#8d8f8c';
-    ctx.fillText(formatSyncAge(remoteProfile.updatedAt), 820, 1420);
+    ctx.fillText(formatSyncAgeLabel(remoteProfile.updatedAt, t), 820, 1420);
 
     const link = document.createElement('a');
     link.download = `infotarkov-${remoteProfile.nickname || profileUsername || 'pmc'}-${activeMode}.png`;
@@ -553,7 +546,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
       ctx.fillText(remoteProfile.nickname || profileUsername || 'PMC', 62, 120);
       ctx.fillStyle = '#9fb48f';
       ctx.font = '900 24px Rajdhani, Arial';
-      ctx.fillText('No se pudieron incrustar imagenes externas en esta exportacion.', 62, 170);
+      ctx.fillText(t('pmc.export.imageFallback'), 62, 170);
       link.href = canvas.toDataURL('image/png');
     }
     link.click();
@@ -573,29 +566,29 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
   }, [activeMode, loadProfile]);
 
   const stats = useMemo(() => [
-    { label: 'Nivel', value: remoteProfile?.level ? `L${remoteProfile.level}` : '-' },
-    { label: 'Facción', value: remoteProfile?.faction || '-' },
-    { label: 'XP', value: formatNumber(remoteProfile?.experience) },
-    { label: 'Tiempo', value: remoteProfile?.totalInGameTime || '-' },
+    { label: t('pmc.stats.level'), value: remoteProfile?.level ? `L${remoteProfile.level}` : '-' },
+    { label: t('pmc.stats.faction'), value: remoteProfile?.faction || '-' },
+    { label: t('pmc.stats.xp'), value: formatNumber(remoteProfile?.experience) },
+    { label: t('pmc.stats.time'), value: remoteProfile?.totalInGameTime || '-' },
     {
-      label: 'Raids',
+      label: t('pmc.stats.raids'),
       value: formatNumber(remoteProfile?.raids),
-      pairLabel: 'Extracted',
+      pairLabel: t('pmc.stats.extracted'),
       pairValue: formatNumber(remoteProfile?.survivedRaids),
       wide: true
     },
     { label: 'SR', value: remoteProfile?.survivalRate !== null && remoteProfile?.survivalRate !== undefined ? `${remoteProfile.survivalRate}%` : '-' },
-    { label: 'Kills', value: formatNumber(remoteProfile?.kills) },
-    { label: 'PMC kills', value: formatNumber(remoteProfile?.killedPmcs) },
-    { label: 'Cuenta', value: remoteProfile?.memberCategory || '-', wide: true },
-    { label: 'Logros', value: formatNumber(remoteProfile?.achievementsCount) },
-    { label: 'Actividad', value: formatDateTime(remoteProfile?.lastActiveAt), wide: true }
-  ], [remoteProfile]);
+    { label: t('pmc.stats.kills'), value: formatNumber(remoteProfile?.kills) },
+    { label: t('pmc.stats.pmcKills'), value: formatNumber(remoteProfile?.killedPmcs) },
+    { label: t('pmc.stats.account'), value: remoteProfile?.memberCategory || '-', wide: true },
+    { label: t('pmc.stats.achievements'), value: formatNumber(remoteProfile?.achievementsCount) },
+    { label: t('pmc.stats.activity'), value: formatDateTime(remoteProfile?.lastActiveAt), wide: true }
+  ], [remoteProfile, t]);
 
-  const topKeys = remoteProfile?.topLevelKeys?.length ? remoteProfile.topLevelKeys.join(', ') : 'Sin campos extra detectados';
+  const topKeys = remoteProfile?.topLevelKeys?.length ? remoteProfile.topLevelKeys.join(', ') : t('pmc.data.noExtraFields');
   const skillText = remoteProfile?.skillsSummary?.length
     ? remoteProfile.skillsSummary.map((skill) => `${skill.id}: L${formatNumber(skill.level)}`).join(' · ')
-    : 'Sin skills detectadas';
+    : t('pmc.data.noSkills');
   const allAchievements = useMemo(
     () => remoteProfile?.allAchievements || remoteProfile?.recentAchievements || [],
     [remoteProfile]
@@ -626,11 +619,11 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
         <header style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '1.2rem', marginBottom: '1rem' }}>
           <div>
             <p style={{ color: 'var(--tk-green)', margin: '0 0 0.35rem', fontWeight: '900', letterSpacing: '2px', textTransform: 'uppercase' }}>
-              Identidad operativa
+              {t('pmc.header.eyebrow')}
             </p>
-            <h1 style={{ color: '#fff', margin: 0, fontSize: '2.55rem', textTransform: 'uppercase' }}>Perfil de PMC</h1>
+            <h1 style={{ color: '#fff', margin: 0, fontSize: '2.55rem', textTransform: 'uppercase' }}>{t('pmc.header.title')}</h1>
             <p style={{ color: 'var(--tk-text-muted)', maxWidth: '860px', lineHeight: 1.5, margin: '0.45rem 0 0' }}>
-              Perfil conectado a los JSON públicos de players.tarkov.dev. Solo aparecen jugadores ya vistos en tarkov.dev/players y el índice público se actualiza una vez al día.
+              {t('pmc.header.subtitle')}
             </p>
           </div>
 
@@ -652,10 +645,10 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
                 opacity: status === 'loading' ? 0.65 : 1
               }}
             >
-              REFRESCAR
+              {t('pmc.actions.refresh')}
             </button>
             <button type="button" onClick={() => onViewChange('home')} style={{ ...buttonBaseStyle, backgroundColor: 'rgba(255,255,255,0.04)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '0.8rem 1.05rem', whiteSpace: 'nowrap' }}>
-              VOLVER AL MENU
+              {t('common.backToMenu')}
             </button>
           </div>
         </header>
@@ -694,7 +687,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
 
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
             <TacticalEquipmentPanel items={equipmentItems} />
-            <ItemPanel title="Favoritos" empty="Sin favoritos visibles" items={favoriteItems} />
+            <ItemPanel title={t('pmc.panels.favorites')} empty={t('pmc.empty.favorites')} items={favoriteItems} />
           </section>
 
           <AchievementsHub
@@ -746,13 +739,14 @@ function ModeSwitch({ activeMode, setActiveMode }) {
 }
 
 function SearchBar({ error, handleResetToLinkedUser, handleSearchSubmit, onHistorySelect, profileUsername, searchHistory, searchInput, setSearchInput, status, tarkovUsername }) {
+  const { t } = useTranslation();
   return (
     <section style={{ ...panelStyle, padding: '0.85rem', marginBottom: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '0.75rem', alignItems: 'center' }}>
       <div>
         <p style={{ color: 'var(--tk-text-muted)', margin: 0, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px' }}>
-          Usuario enlazado
+          {t('pmc.search.linkedUser')}
         </p>
-        <strong style={{ color: '#fff', display: 'block', fontSize: '1.25rem', textTransform: 'uppercase' }}>{tarkovUsername || 'Sin configurar'}</strong>
+        <strong style={{ color: '#fff', display: 'block', fontSize: '1.25rem', textTransform: 'uppercase' }}>{tarkovUsername || t('pmc.search.notConfigured')}</strong>
       </div>
 
       <form onSubmit={handleSearchSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '0.6rem', alignItems: 'center' }}>
@@ -760,7 +754,7 @@ function SearchBar({ error, handleResetToLinkedUser, handleSearchSubmit, onHisto
           type="text"
           value={searchInput}
           onChange={(event) => setSearchInput(event.target.value)}
-          placeholder="Buscar otro PMC..."
+          placeholder={t('pmc.search.placeholder')}
           spellCheck="false"
           style={{
             width: '100%',
@@ -786,7 +780,7 @@ function SearchBar({ error, handleResetToLinkedUser, handleSearchSubmit, onHisto
             opacity: status === 'loading' ? 0.65 : 1
           }}
         >
-          BUSCAR
+          {t('pmc.actions.search')}
         </button>
       </form>
 
@@ -805,7 +799,7 @@ function SearchBar({ error, handleResetToLinkedUser, handleSearchSubmit, onHisto
             whiteSpace: 'nowrap'
           }}
         >
-          MI PERFIL
+          {t('pmc.actions.myProfile')}
         </button>
       )}
 
@@ -835,7 +829,7 @@ function SearchBar({ error, handleResetToLinkedUser, handleSearchSubmit, onHisto
 
       {searchHistory.length > 0 && (
         <div style={{ gridColumn: '1 / -1', display: 'flex', flexWrap: 'wrap', gap: '0.45rem', alignItems: 'center' }}>
-          <span style={{ color: 'var(--tk-text-muted)', fontWeight: '900', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '1px' }}>Historial</span>
+          <span style={{ color: 'var(--tk-text-muted)', fontWeight: '900', textTransform: 'uppercase', fontSize: '0.78rem', letterSpacing: '1px' }}>{t('pmc.search.history')}</span>
           {searchHistory.map((entry) => (
             <button
               key={`${entry.mode}-${entry.username}`}
@@ -860,13 +854,14 @@ function SearchBar({ error, handleResetToLinkedUser, handleSearchSubmit, onHisto
 }
 
 function ProfileActions({ copyStatus, handleCopyAccountId, handleExportCard, remoteProfile }) {
+  const { t } = useTranslation();
   return (
     <article style={{ ...panelStyle, padding: '0.85rem 1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.65rem', alignItems: 'center' }}>
       <button type="button" onClick={handleCopyAccountId} disabled={!remoteProfile?.accountId} style={{ ...actionButtonStyle, opacity: remoteProfile?.accountId ? 1 : 0.55 }}>
-        {copyStatus || 'Copiar AccID'}
+        {copyStatus || t('pmc.actions.copyAccountId')}
       </button>
       <button type="button" onClick={handleExportCard} disabled={!remoteProfile} style={{ ...actionButtonStyle, opacity: remoteProfile ? 1 : 0.55 }}>
-        Exportar tarjeta
+        {t('pmc.actions.exportCard')}
       </button>
     </article>
   );
@@ -881,11 +876,20 @@ const actionButtonStyle = {
 };
 
 function SyncStatus({ remoteProfile, status }) {
+  const { t } = useTranslation();
+  const statusLabel = {
+    ready: t('pmc.status.synced'),
+    loading: t('pmc.status.querying'),
+    error: t('pmc.status.error'),
+    'missing-user': t('pmc.status.waiting'),
+    idle: t('pmc.status.waiting')
+  }[status] || t('pmc.status.waiting');
+
   return (
     <article style={{ ...panelStyle, padding: '0.9rem 1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
-      <InfoLine label="Estado" value={status === 'ready' ? 'Sincronizado' : status === 'loading' ? 'Consultando' : 'En espera'} />
-      <InfoLine label="Indice publico" value={formatSyncAge(remoteProfile?.updatedAt)} />
-      <InfoLine label="Lectura local" value={formatDateTime(remoteProfile?.fetchedAt)} />
+      <InfoLine label={t('pmc.sync.status')} value={statusLabel} />
+      <InfoLine label={t('pmc.sync.publicIndex')} value={formatSyncAgeLabel(remoteProfile?.updatedAt, t)} />
+      <InfoLine label={t('pmc.sync.localRead')} value={formatDateTime(remoteProfile?.fetchedAt)} />
       <InfoLine label="Account ID" value={remoteProfile?.accountId || '-'} />
     </article>
   );
@@ -901,6 +905,7 @@ function InfoLine({ label, value }) {
 }
 
 function ProfileSummary({ activeMode, profileUsername, remoteProfile, stats, status, topAchievement }) {
+  const { t } = useTranslation();
   return (
     <article style={{ ...panelStyle, padding: '1rem 1rem 0.9rem', borderColor: 'rgba(187, 211, 169, 0.18)' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 0.55fr) minmax(0, 1.45fr)', gap: '1rem', alignItems: 'stretch' }}>
@@ -914,15 +919,15 @@ function ProfileSummary({ activeMode, profileUsername, remoteProfile, stats, sta
               {remoteProfile?.nickname || profileUsername || 'PMC'}
             </h2>
             <p style={{ color: status === 'ready' ? 'var(--tk-green)' : '#ffcf66', margin: 0, fontWeight: '900', textTransform: 'uppercase' }}>
-              {status === 'ready' && `Sincronizado · ${formatDateTime(remoteProfile?.fetchedAt)}`}
-              {status === 'loading' && 'Consultando perfil...'}
-              {status === 'missing-user' && 'Configura o busca un usuario'}
-              {status === 'error' && 'No se pudo sincronizar'}
-              {status === 'idle' && 'Preparando sincronización'}
+              {status === 'ready' && t('pmc.status.syncedAt', { date: formatDateTime(remoteProfile?.fetchedAt) })}
+              {status === 'loading' && t('pmc.status.queryingProfile')}
+              {status === 'missing-user' && t('pmc.status.configureOrSearch')}
+              {status === 'error' && t('pmc.status.syncFailed')}
+              {status === 'idle' && t('pmc.status.preparing')}
             </p>
             {topAchievement && (
               <div style={{ marginTop: '0.55rem', display: 'inline-flex', maxWidth: '100%', alignItems: 'center', gap: '0.45rem', border: '1px solid rgba(255,207,102,0.22)', background: 'rgba(255,207,102,0.07)', borderRadius: '8px', padding: '0.38rem 0.55rem' }}>
-                <span style={{ color: '#ffcf66', fontWeight: '900', textTransform: 'uppercase', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>Top logro</span>
+                <span style={{ color: '#ffcf66', fontWeight: '900', textTransform: 'uppercase', fontSize: '0.78rem', whiteSpace: 'nowrap' }}>{t('pmc.achievements.top')}</span>
                 <strong style={{ color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{topAchievement.name}</strong>
               </div>
             )}
@@ -980,14 +985,17 @@ function StatValue({ label, value }) {
 }
 
 function TacticalEquipmentPanel({ items }) {
+  const { t } = useTranslation();
   const tacticalItems = items.map((item) => ({
     ...item,
-    tacticalLabel: EQUIPMENT_SLOT_LABELS[item.slotId] || item.slotId || 'Equipo'
+    tacticalLabel: item.slotId
+      ? t(`pmc.equipmentSlots.${EQUIPMENT_SLOT_LABELS[item.slotId] || item.slotId}`, { defaultValue: item.slotId })
+      : t('pmc.panels.gearFallback')
   }));
 
   return (
     <article style={{ ...panelStyle, padding: '1rem' }}>
-      <h3 style={{ color: '#fff', margin: '0 0 0.75rem', textTransform: 'uppercase' }}>Equipo táctico</h3>
+      <h3 style={{ color: '#fff', margin: '0 0 0.75rem', textTransform: 'uppercase' }}>{t('pmc.panels.gear')}</h3>
       {tacticalItems.length ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.65rem' }}>
           {tacticalItems.map((item) => (
@@ -1004,7 +1012,7 @@ function TacticalEquipmentPanel({ items }) {
           ))}
         </div>
       ) : (
-        <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>Sin equipo visible</p>
+        <p style={{ color: 'var(--tk-text-muted)', margin: 0 }}>{t('pmc.empty.gear')}</p>
       )}
     </article>
   );
@@ -1052,30 +1060,32 @@ function AchievementsHub({
   setAchievementSearch,
   setAchievementSort
 }) {
+  const { t } = useTranslation();
+
   return (
     <article style={{ ...panelStyle, padding: '1rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
         <div>
-          <h3 style={{ color: '#fff', margin: 0, textTransform: 'uppercase' }}>Logros del perfil</h3>
+          <h3 style={{ color: '#fff', margin: 0, textTransform: 'uppercase' }}>{t('pmc.achievements.title')}</h3>
           <p style={{ color: 'var(--tk-text-muted)', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
-            {formatNumber(achievements.length)} visibles de {formatNumber(allCount)} completados. Los destacados muestran los más exclusivos del perfil.
+            {t('pmc.achievements.summary', { visible: formatNumber(achievements.length), total: formatNumber(allCount) })}
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {ACHIEVEMENT_FILTERS.map((filter) => (
             <button
-              key={filter.id}
+              key={filter}
               type="button"
-              onClick={() => setAchievementFilter(filter.id)}
+              onClick={() => setAchievementFilter(filter)}
               style={{
                 ...buttonBaseStyle,
-                border: achievementFilter === filter.id ? '1px solid rgba(187, 211, 169, 0.55)' : '1px solid rgba(255,255,255,0.08)',
-                background: achievementFilter === filter.id ? 'rgba(187,211,169,0.16)' : 'rgba(255,255,255,0.035)',
-                color: achievementFilter === filter.id ? 'var(--tk-green)' : '#d7d7d7',
+                border: achievementFilter === filter ? '1px solid rgba(187, 211, 169, 0.55)' : '1px solid rgba(255,255,255,0.08)',
+                background: achievementFilter === filter ? 'rgba(187,211,169,0.16)' : 'rgba(255,255,255,0.035)',
+                color: achievementFilter === filter ? 'var(--tk-green)' : '#d7d7d7',
                 padding: '0.45rem 0.65rem'
               }}
             >
-              {filter.label}
+              {t(`pmc.achievementFilters.${filter}`)}
             </button>
           ))}
         </div>
@@ -1088,7 +1098,7 @@ function AchievementsHub({
           type="text"
           value={achievementSearch}
           onChange={(event) => setAchievementSearch(event.target.value)}
-          placeholder="Buscar logro..."
+          placeholder={t('pmc.achievements.searchPlaceholder')}
           style={{
             width: '100%',
             boxSizing: 'border-box',
@@ -1115,11 +1125,11 @@ function AchievementsHub({
             fontWeight: '900'
           }}
         >
-          {ACHIEVEMENT_SORTS.map((sort) => <option key={sort.id} value={sort.id}>{sort.label}</option>)}
+          {ACHIEVEMENT_SORTS.map((sort) => <option key={sort} value={sort}>{t(`pmc.achievementSorts.${sort}`)}</option>)}
         </select>
       </div>
 
-      <AchievementTable achievements={achievements} empty="Sin logros con estos filtros" contained />
+      <AchievementTable achievements={achievements} empty={t('pmc.achievements.empty')} contained />
     </article>
   );
 }
@@ -1149,6 +1159,14 @@ function AchievementShowcase({ achievements }) {
 }
 
 function AchievementTable({ title, achievements, empty, contained = false }) {
+  const { t } = useTranslation();
+  const headers = [
+    t('pmc.achievements.headers.achievement'),
+    t('pmc.achievements.headers.rarity'),
+    t('pmc.achievements.headers.players'),
+    t('pmc.achievements.headers.completed')
+  ];
+
   return (
     <article style={title ? { ...panelStyle, padding: '1rem' } : {}}>
       {title && <h3 style={{ color: '#fff', margin: '0 0 0.75rem', textTransform: 'uppercase' }}>{title}</h3>}
@@ -1157,7 +1175,7 @@ function AchievementTable({ title, achievements, empty, contained = false }) {
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '520px' }}>
             <thead>
               <tr>
-                {['Logro', 'Rareza', 'Jugadores', 'Completado'].map((header) => (
+                {headers.map((header) => (
                   <th key={header} style={{ color: 'var(--tk-text-muted)', textAlign: 'left', fontSize: '0.82rem', textTransform: 'uppercase', padding: '0.45rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.08)', position: contained ? 'sticky' : 'static', top: 0, zIndex: 1, background: '#141416' }}>{header}</th>
                 ))}
               </tr>
@@ -1195,14 +1213,15 @@ function AchievementRow({ achievement }) {
 }
 
 function SkillsPanel({ skills }) {
+  const { t } = useTranslation();
   if (!skills.length) return null;
 
   return (
     <article style={{ ...panelStyle, padding: '1rem' }}>
       <div style={{ marginBottom: '0.9rem' }}>
-        <h3 style={{ color: '#fff', margin: 0, textTransform: 'uppercase' }}>Habilidades farmeadas</h3>
+        <h3 style={{ color: '#fff', margin: 0, textTransform: 'uppercase' }}>{t('pmc.skills.title')}</h3>
         <p style={{ color: 'var(--tk-text-muted)', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
-          {formatNumber(skills.length)} skills detectadas en el perfil publico. Ordenadas por progreso.
+          {t('pmc.skills.summary', { count: formatNumber(skills.length) })}
         </p>
       </div>
 
@@ -1210,9 +1229,9 @@ function SkillsPanel({ skills }) {
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '520px' }}>
           <thead>
             <tr>
-              <th style={tableHeadStyle}>Skill</th>
-              <th style={tableHeadStyle}>Nivel</th>
-              <th style={tableHeadStyle}>Ultimo acceso</th>
+              <th style={tableHeadStyle}>{t('pmc.skills.headers.skill')}</th>
+              <th style={tableHeadStyle}>{t('pmc.skills.headers.level')}</th>
+              <th style={tableHeadStyle}>{t('pmc.skills.headers.lastAccess')}</th>
             </tr>
           </thead>
           <tbody>
@@ -1260,23 +1279,26 @@ function SkillsPanel({ skills }) {
 }
 
 function DataPanel({ remoteProfile, skillText, topKeys }) {
+  const { t } = useTranslation();
+
   return (
     <article style={{ ...panelStyle, padding: '1rem' }}>
-      <h3 style={{ color: '#fff', margin: '0 0 0.75rem', textTransform: 'uppercase' }}>Datos disponibles</h3>
+      <h3 style={{ color: '#fff', margin: '0 0 0.75rem', textTransform: 'uppercase' }}>{t('pmc.data.title')}</h3>
       <p style={{ color: 'var(--tk-text-muted)', margin: 0, lineHeight: 1.55 }}>
-        Tarkov.dev protege la búsqueda directa con Turnstile, pero publica perfiles ya consultados como JSON estático. Info Tarkov cruza ese perfil con catálogos de items/logros para mostrar una ficha más útil.
+        {t('pmc.data.description')}
       </p>
       {remoteProfile?.updatedAt && (
         <p style={{ color: 'var(--tk-text-muted)', margin: '0.8rem 0 0', lineHeight: 1.35 }}>
-          Última actualización pública: {formatDateTime(remoteProfile.updatedAt)}
+          {t('pmc.data.lastPublicUpdate', { date: formatDateTime(remoteProfile.updatedAt) })}
         </p>
       )}
       <p style={{ color: 'var(--tk-green)', margin: '0.8rem 0 0', fontWeight: '900', lineHeight: 1.35 }}>
-        Skills principales: {skillText}
+        {t('pmc.data.mainSkills', { skills: skillText })}
       </p>
       <p style={{ color: 'var(--tk-green)', margin: '0.55rem 0 0', fontWeight: '900', lineHeight: 1.35 }}>
-        Campos detectados: {topKeys}
+        {t('pmc.data.detectedFields', { fields: topKeys })}
       </p>
     </article>
   );
 }
+

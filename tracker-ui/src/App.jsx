@@ -5,6 +5,7 @@ import './index.css';
 import { supabase } from './lib/supabaseClient';
 import { buildProfileFromSessionMetadata, hydrateGameModePreference } from './lib/userProfilePreferences';
 import LanguageSwitcher from './components/layout/LanguageSwitcher';
+import { APP_VERSION } from './data/changelog';
 
 import mapasImage from './assets/backgrounds/mapas.png';
 import kappaCaseImage from './assets/backgrounds/kappa.png';
@@ -788,7 +789,7 @@ function App() {
         <div
           style={{
             position: 'fixed',
-            bottom: '2.35rem',
+            bottom: '3.85rem',
             left: '2.5rem',
             zIndex: 1000,
             display: 'flex',
@@ -833,6 +834,23 @@ function App() {
               {button.label}
             </button>
           ))}
+        </div>
+        <div
+          style={{
+            position: 'fixed',
+            bottom: '2.35rem',
+            left: '2.5rem',
+            zIndex: 1000,
+            color: 'rgba(255,255,255,0.32)',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: '0.72rem',
+            fontWeight: '900',
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            pointerEvents: 'none'
+          }}
+        >
+          v{APP_VERSION}
         </div>
       </div>
     </div>

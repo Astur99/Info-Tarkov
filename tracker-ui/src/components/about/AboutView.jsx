@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 const sections = [
   {
     title: 'Que es Info Tarkov',
@@ -160,6 +162,11 @@ const techGroups = [
 ];
 
 export default function AboutView({ onViewChange }) {
+  const { t } = useTranslation();
+  const localizedSections = t('about.sections', { returnObjects: true, defaultValue: sections });
+  const localizedModuleDetails = t('about.moduleDetails', { returnObjects: true, defaultValue: moduleDetails });
+  const localizedTechGroups = t('about.techGroups', { returnObjects: true, defaultValue: techGroups });
+
   return (
     <div
       className="fade-in-slide terminal-panel"
@@ -192,7 +199,7 @@ export default function AboutView({ onViewChange }) {
                 textTransform: 'uppercase'
               }}
             >
-              Memoria del proyecto
+              {t('about.eyebrow')}
             </p>
             <h1
               style={{
@@ -203,10 +210,10 @@ export default function AboutView({ onViewChange }) {
                 textTransform: 'uppercase'
               }}
             >
-              About Info Tarkov
+              {t('about.title')}
             </h1>
             <p style={{ color: 'var(--tk-text-muted)', maxWidth: '760px', lineHeight: 1.6, fontSize: '1rem' }}>
-              Resumen completo del proposito, alcance, arquitectura y tecnologias que dan forma a la app.
+              {t('about.subtitle')}
             </p>
           </div>
 
@@ -225,7 +232,7 @@ export default function AboutView({ onViewChange }) {
               whiteSpace: 'nowrap'
             }}
           >
-            VOLVER AL MENU
+            {t('common.backToMenu')}
           </button>
         </header>
 
@@ -237,7 +244,7 @@ export default function AboutView({ onViewChange }) {
             marginBottom: '2rem'
           }}
         >
-          {techGroups.map((group) => (
+          {localizedTechGroups.map((group) => (
             <article
               key={group.title}
               style={{
@@ -281,15 +288,15 @@ export default function AboutView({ onViewChange }) {
                 textTransform: 'uppercase'
               }}
             >
-              Modulos de la app
+              {t('about.modulesEyebrow')}
             </p>
             <h2 style={{ color: '#fff', margin: 0, fontSize: '1.8rem', textTransform: 'uppercase' }}>
-              Herramientas disponibles para el usuario
+              {t('about.modulesTitle')}
             </h2>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1rem' }}>
-            {moduleDetails.map((module) => (
+            {localizedModuleDetails.map((module) => (
               <article
                 key={module.name}
                 style={{
@@ -334,7 +341,7 @@ export default function AboutView({ onViewChange }) {
                   ))}
                 </div>
                 <p style={{ color: '#d8d8d8', lineHeight: 1.55, margin: 0 }}>
-                  <strong style={{ color: '#fff' }}>Estado:</strong> {module.status}
+                  <strong style={{ color: '#fff' }}>{t('about.statusLabel')}:</strong> {module.status}
                 </p>
               </article>
             ))}
@@ -342,7 +349,7 @@ export default function AboutView({ onViewChange }) {
         </section>
 
         <section style={{ display: 'grid', gap: '1rem' }}>
-          {sections.map((section) => (
+          {localizedSections.map((section) => (
             <article
               key={section.title}
               style={{

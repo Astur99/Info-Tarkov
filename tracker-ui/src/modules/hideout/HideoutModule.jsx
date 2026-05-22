@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { fetchHideoutStations } from './hideoutApi';
 import HideoutHeader from './HideoutHeader';
@@ -18,6 +19,7 @@ import {
 } from './hideoutUtils';
 
 export default function HideoutModule({ onViewChange, session }) {
+  const { t } = useTranslation();
   const [estaciones, setEstaciones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [estacionSeleccionada, setEstacionSeleccionada] = useState(null);
@@ -34,15 +36,15 @@ export default function HideoutModule({ onViewChange, session }) {
   const gameMode = MARKET_MODES[modoMercado];
   const { storageKey, levelStorageKey } = getHideoutStorageKeys(modoMercado);
 
-  const cargarLocal = () => {
+  const cargarLocal = useCallback(() => {
     setEstaciones(poolHideoutLocal);
     selectedStationIdRef.current = poolHideoutLocal[0]?.id || null;
     selectedLevelRef.current = 1;
     setEstacionSeleccionada(poolHideoutLocal[0]);
     setNivelObjetivo(1);
-    setErrorFuente('Datos externos no disponibles. Mostrando fallback local reducido.');
+    setErrorFuente(t('hideoutModule.errors.externalFallback'));
     setCargando(false);
-  };
+  }, [t]);
 
   const handleModeChange = (mode) => {
     setCargando(true);
@@ -151,7 +153,7 @@ export default function HideoutModule({ onViewChange, session }) {
     return () => {
       cancelled = true;
     };
-  }, [gameMode]);
+  }, [cargarLocal, gameMode]);
 
   const datosNivel = useMemo(
     () => estacionSeleccionada?.levels?.find((level) => level.level === nivelObjetivo) || null,
@@ -245,7 +247,7 @@ export default function HideoutModule({ onViewChange, session }) {
           letterSpacing: '2px'
         }}
       >
-        CONECTANDO CON MÓDULO DEL REFUGIO, ESPERE...
+        {t('hideoutModule.loading')}
       </div>
     );
   }

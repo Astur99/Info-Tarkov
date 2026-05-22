@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 export default function HideoutStationList({
   hideoutProgress,
   estaciones,
@@ -7,6 +9,8 @@ export default function HideoutStationList({
   setEstacionSeleccionada,
   setNivelObjetivo
 }) {
+  const { t } = useTranslation();
+
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       <h3
@@ -19,7 +23,7 @@ export default function HideoutStationList({
           textTransform: 'uppercase'
         }}
       >
-        SECCIONES
+        {t('hideoutModule.list.sections')}
       </h3>
 
       <div
@@ -33,7 +37,7 @@ export default function HideoutStationList({
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', color: '#fff', fontWeight: '900' }}>
-          <span>Progreso</span>
+          <span>{t('hideoutModule.list.progress')}</span>
           <span style={{ color: 'var(--tk-green)' }}>{hideoutProgress.builtLevels}/{hideoutProgress.totalLevels}</span>
         </div>
         <div style={{ height: '7px', borderRadius: '999px', background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
@@ -46,7 +50,7 @@ export default function HideoutStationList({
           />
         </div>
         <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800', fontSize: '0.78rem' }}>
-          {hideoutProgress.available} mejora(s) desbloqueada(s)
+          {t('hideoutModule.list.availableUpgrades', { count: hideoutProgress.available })}
         </span>
       </div>
 
@@ -148,7 +152,7 @@ export default function HideoutStationList({
                   fontWeight: '800'
                 }}
               >
-                {builtLevel}/{est.levels?.length || 0} - {availability.text}
+                {builtLevel}/{est.levels?.length || 0} - {availability.status === 'blocked' ? t('hideoutModule.list.blocked') : availability.text}
               </span>
             </button>
           );

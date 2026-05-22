@@ -1,6 +1,9 @@
+import { useTranslation } from 'react-i18next';
 import { MARKET_MODES } from './hideoutUtils';
 
 export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, setModoMercado, onViewChange }) {
+  const { t } = useTranslation();
+
   return (
     <header
       style={{
@@ -23,7 +26,7 @@ export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, se
             color: '#fff'
           }}
         >
-          HIDEOUT LOGISTICS
+          {t('hideoutModule.title')}
         </h2>
 
         <p
@@ -35,19 +38,26 @@ export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, se
             lineHeight: 1.5
           }}
         >
-          Costes separados para PVP/PVE, checklist local de materiales, avisos FIR y requisitos de estaciones,
-          traders y skills.
+          {t('hideoutModule.subtitle')}
         </p>
         {errorFuente && (
           <p style={{ color: '#ffcf66', marginTop: '0.5rem', fontWeight: '800', letterSpacing: '0.8px' }}>
             {errorFuente}
           </p>
         )}
-        <p style={{ color: syncStatus === 'cloud' ? 'var(--tk-green)' : '#ffcf66', marginTop: '0.45rem', fontWeight: '900', letterSpacing: '1px', textTransform: 'uppercase' }}>
-          {syncStatus === 'cloud' && 'PROGRESO CLOUD ACTIVO'}
-          {syncStatus === 'syncing' && 'SINCRONIZANDO PROGRESO...'}
-          {syncStatus === 'local' && 'MODO LOCAL: INICIA SESIÃ“N PARA SINCRONIZAR'}
-          {syncStatus === 'local-error' && 'MODO LOCAL: TABLA CLOUD NO DISPONIBLE O ERROR DE SINCRONIZACIÃ“N'}
+        <p
+          style={{
+            color: syncStatus === 'cloud' ? 'var(--tk-green)' : '#ffcf66',
+            marginTop: '0.45rem',
+            fontWeight: '900',
+            letterSpacing: '1px',
+            textTransform: 'uppercase'
+          }}
+        >
+          {syncStatus === 'cloud' && t('hideoutModule.sync.cloud')}
+          {syncStatus === 'syncing' && t('hideoutModule.sync.syncing')}
+          {syncStatus === 'local' && t('hideoutModule.sync.local')}
+          {syncStatus === 'local-error' && t('hideoutModule.sync.localError')}
         </p>
       </div>
 
@@ -105,7 +115,7 @@ export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, se
             letterSpacing: '1px'
           }}
         >
-          VOLVER AL MENÃš
+          {t('common.backToMenu')}
         </button>
       </div>
     </header>
