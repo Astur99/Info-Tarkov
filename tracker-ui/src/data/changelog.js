@@ -44,6 +44,13 @@ export const changelogEntries = [
           es: 'Se eliminan los ficheros del módulo experimental y sus textos activos de About/Troubleshooting/i18n.',
           en: 'The experimental module files and active About/Troubleshooting/i18n copy have been removed.'
         }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El dossier interno documenta el criterio pre-1.0: lanzamiento desktop-first y adaptación móvil planificada para después.',
+          en: 'The internal dossier documents the pre-1.0 decision: desktop-first launch and mobile adaptation planned afterwards.'
+        }
       }
     ]
   },

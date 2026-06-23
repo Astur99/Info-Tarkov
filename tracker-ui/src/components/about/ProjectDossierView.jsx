@@ -17,7 +17,12 @@ const architectureBlocks = [
   {
     title: 'Datos externos',
     body:
-      'Los modulos de economia, llaves, misiones y refugio consumen tarkov.dev por GraphQL o JSON API. Perfil PMC usa los JSON publicos estaticos de players.tarkov.dev para perfiles ya indexados. Goons, eventos y server status dependen de fuentes externas distintas y por eso tienen fallbacks o avisos cuando la fuente falla.'
+      'Los modulos de economia, llaves, misiones y refugio consumen tarkov.dev por GraphQL o JSON API. Perfil PMC usa los JSON publicos estaticos de players.tarkov.dev para perfiles ya indexados. Goons y server status dependen de fuentes externas distintas y por eso tienen fallbacks o avisos cuando la fuente falla.'
+  },
+  {
+    title: 'Estado pre-1.0',
+    body:
+      'La version 1.0 se plantea como lanzamiento desktop-first. La app esta pensada para PC, la traduccion visible ES/EN esta revisada y Live Events queda retirado porque no existe una fuente fiable que cumpla el estandar de calidad. La adaptacion movil queda planificada para despues de la 1.0 como una capa responsive progresiva, no como una app separada.'
   },
   {
     title: 'Seguridad de producto',
@@ -193,6 +198,9 @@ const flows = [
 ];
 
 const nextRefactors = [
+  'Revisar bundle/code-splitting antes de 1.0 para reducir el chunk principal si compensa.',
+  'Pasada final de QA desktop sobre flujos criticos: registro/login, cuenta, reportes, admin, PMC, Kappa, Hideout, Flea y Bosses.',
+  'Mantener la version movil como hito post-1.0: topbar responsive, grids a una columna, tablas con scroll controlado y paneles densos convertidos en bloques.',
   'Terminar limpieza de hooks en Hideout.',
   'Refactorizar KappaTree en QuestGraph, QuestCard, CollectorChecklist, kappaStorage y kappaUtils.',
   'Crear componentes UI compartidos: ModeSwitch, BackButton, LoadingState, ErrorState y ProgressBar.',
