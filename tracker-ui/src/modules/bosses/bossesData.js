@@ -212,7 +212,7 @@ export const FALLBACK_BOSSES = [
     name: 'WEDGE',
     fileName: 'wedge.jpg',
     mapaDefault: 'Icebreaker',
-    spawnDefault: 'N/D',
+    spawnDefault: '100%',
     dificultad: 'Very Hard',
     colorDificultad: '#ff4444',
     guardias: 'Black Division boss with 3 to 6 followers depending on the number of players in the raid',

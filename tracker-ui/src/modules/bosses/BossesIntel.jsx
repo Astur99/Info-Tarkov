@@ -9,7 +9,14 @@ const bossImageModules = import.meta.glob('../../assets/bosses/*', {
   import: 'default'
 });
 
+const BOSS_IMAGE_FOCUS = {
+  birdeye: '50% 8%',
+  kollontay: '50% 18%',
+  wedge: '32% 50%'
+};
+
 const getBossImage = (boss) => bossImageModules[`../../assets/bosses/${boss.fileName}`] || '';
+const getBossImageFocus = (boss) => BOSS_IMAGE_FOCUS[boss?.id] || '50% 50%';
 
 const getSpawnMapKey = (mapName) => String(mapName || '').replace(/\W+/g, '_');
 
@@ -70,7 +77,7 @@ function BossImage({ boss, style }) {
       src={src}
       alt={boss.name}
       onError={() => setFailed(true)}
-      style={style}
+      style={{ objectPosition: getBossImageFocus(boss), ...style }}
     />
   );
 }

@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.14.36';
+export const APP_VERSION = '0.14.37';
 
 export const VERSION_POLICY = {
   current: '0.x',
@@ -17,6 +17,36 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '0.14.37',
+    date: '2026-06-23',
+    codename: 'Boss Portrait Framing',
+    type: 'improvement',
+    title: {
+      es: 'Retratos de bosses mejor encuadrados',
+      en: 'Better framed boss portraits'
+    },
+    summary: {
+      es: 'Se ajusta el encuadre visual de varios bosses en Intel: Bosses y se corrige The Wedge como spawn garantizado.',
+      en: 'Several boss portrait crops are refined in Intel: Bosses and The Wedge is corrected as a guaranteed spawn.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Birdeye, Kollontay y The Wedge usan foco de imagen específico para que la cara/equipo principal no quede cortado en la lista.',
+          en: 'Birdeye, Kollontay and The Wedge now use specific image focus points so their face/main gear is not cropped in the list.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'The Wedge pasa de spawn no confirmado a 100%, al ser el boss garantizado de Icebreaker.',
+          en: 'The Wedge changes from unconfirmed spawn to 100%, as the guaranteed Icebreaker boss.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.36',
     date: '2026-06-23',
