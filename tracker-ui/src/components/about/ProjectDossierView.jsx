@@ -22,7 +22,7 @@ const architectureBlocks = [
   {
     title: 'Estado pre-1.0',
     body:
-      'La version 1.0 se plantea como lanzamiento desktop-first. La app esta pensada para PC, la traduccion visible ES/EN esta revisada y Live Events queda retirado porque no existe una fuente fiable que cumpla el estandar de calidad. La adaptacion movil queda planificada para despues de la 1.0 como una capa responsive progresiva, no como una app separada.'
+      'La version 1.0 se plantea como lanzamiento desktop-first. La app esta pensada para PC, la traduccion visible ES/EN esta revisada, Mapas 2.0 queda cerrado con briefings limpios y Live Events queda retirado porque no existe una fuente fiable que cumpla el estandar de calidad. La adaptacion movil queda planificada para despues de la 1.0 como una capa responsive progresiva, no como una app separada.'
   },
   {
     title: 'Seguridad de producto',
@@ -174,7 +174,7 @@ const modules = [
     name: 'Mapas, Historia y Troubleshooting',
     files: 'src/modules/maps/, src/modules/story/, src/modules/troubleshooting/',
     body:
-      'Mapas combina visor externo reemr.se con briefings tacticos curados por mapa. Los datos estructurados viven en mapBriefings.js y la copy en i18n ES/EN para poder ampliar idiomas. Story agrupa decisiones/finales. Troubleshooting documenta limitaciones y problemas conocidos.'
+      'Mapas combina visor externo reemr.se con briefings curados por mapa centrados en descripcion, datos base, zonas de conflicto y puntos de interes. Los datos estructurados viven en mapBriefings.js y la copy en i18n ES/EN para poder ampliar idiomas. Transits queda como organigrama de conexiones. Story agrupa decisiones/finales. Troubleshooting documenta limitaciones y problemas conocidos.'
   }
 ];
 
@@ -198,8 +198,8 @@ const flows = [
 ];
 
 const nextRefactors = [
-  'Revisar bundle/code-splitting antes de 1.0 para reducir el chunk principal si compensa.',
-  'Pasada final de QA desktop sobre flujos criticos: registro/login, cuenta, reportes, admin, PMC, Kappa, Hideout, Flea y Bosses.',
+  'Antes de 1.0, hacer un ultimo smoke test manual de flujos criticos: registro/login, cuenta, reportes, admin, PMC, Kappa, Hideout, Flea, Bosses y Mapas.',
+  'Revisar bundle/code-splitting antes o justo despues de 1.0 para reducir el chunk principal si compensa.',
   'Mantener la version movil como hito post-1.0: topbar responsive, grids a una columna, tablas con scroll controlado y paneles densos convertidos en bloques.',
   'Terminar limpieza de hooks en Hideout.',
   'Refactorizar KappaTree en QuestGraph, QuestCard, CollectorChecklist, kappaStorage y kappaUtils.',

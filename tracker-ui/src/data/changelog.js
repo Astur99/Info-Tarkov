@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.14.39';
+export const APP_VERSION = '0.14.40';
 
 export const VERSION_POLICY = {
   current: '0.x',
@@ -17,6 +17,43 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '0.14.40',
+    date: '2026-06-23',
+    codename: 'Pre-1.0 Release Polish',
+    type: 'changed',
+    title: {
+      es: 'Pulido final pre-1.0',
+      en: 'Final pre-1.0 polish'
+    },
+    summary: {
+      es: 'Se limpia la documentacion publica del proyecto para reflejar el estado real de lanzamiento desktop-first y la retirada de Live Events.',
+      en: 'Public project documentation is cleaned up to reflect the real desktop-first launch state and the removal of Live Events.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'About elimina el modulo fantasma de Eventos en Directo y actualiza Mapas como Mapas 2.0 con briefings limpios.',
+          en: 'About removes the ghost Live Events module and updates Maps as Maps 2.0 with clean briefings.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Troubleshooting deja de presentar Live Events como modulo activo y actualiza la cobertura ES/EN como revisada para la fase pre-1.0.',
+          en: 'Troubleshooting no longer presents Live Events as an active module and marks ES/EN coverage as reviewed for the pre-1.0 phase.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El numero visible de version sube a v0.14.40 para identificar esta build de pulido.',
+          en: 'The visible version number moves to v0.14.40 to identify this polish build.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.39',
     date: '2026-06-23',

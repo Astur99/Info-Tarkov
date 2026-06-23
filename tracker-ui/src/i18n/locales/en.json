@@ -371,6 +371,7 @@
         "bosses": "Bosses"
       },
       "values": {
+        "5": "5",
         "10-12": "10-12",
         "12-16": "12-16",
         "5-6": "5-6",
@@ -393,7 +394,6 @@
         "strategic": "Strategic",
         "1-3": "1-3",
         "34x168 m": "34x168 m",
-        "5": "5",
         "1-5": "1-5",
         "118x110 m": "118x110 m"
       }
@@ -821,11 +821,11 @@
     "sections": [
       {
         "title": "What Info Tarkov Is",
-        "body": "Info Tarkov is a modular hub for Escape From Tarkov designed as a tactical center for lookup, tracking and decisions. It gathers quest progress, bosses, servers, combat, planning and public PMC data in one interface."
+        "body": "Info Tarkov is a modular hub for Escape From Tarkov designed as a tactical center for lookup, tracking and decisions. It gathers quest progress, bosses, servers, combat, planning, tactical maps, economy and public PMC data in one interface."
       },
       {
         "title": "What You Can Do",
-        "body": "The app lets you consult maps, track Kappa, review decisions/endings, investigate bosses, check Goons, explore PVP/PVE prices, plan Hideout, simulate combat, review, inspect PMC profiles and report bugs or suggestions."
+        "body": "The app lets you consult maps with briefings, track Kappa, review decisions/endings, investigate bosses, check Goons, explore PVP/PVE prices, plan Hideout, simulate combat, inspect PMC profiles and report bugs or suggestions."
       },
       {
         "title": "User System",
@@ -853,19 +853,20 @@
       },
       {
         "title": "Current State",
-        "body": "The project already includes auth, roles, admin panel, tickets, lazy loading, ES/EN multilingual base, PVP/PVE preference and a hybrid layer in missions, Goons, flea, keys, hideout and PMC Profile. Prestige is marked PVP ONLY."
+        "body": "The project already includes auth, roles, admin panel, tickets, lazy loading, reviewed ES/EN multilingual base, PVP/PVE preference and a hybrid layer in missions, Goons, flea, keys, hideout, maps and PMC Profile. Prestige is marked PVP ONLY."
       }
     ],
     "moduleDetails": [
       {
         "name": "Tactical Maps",
-        "purpose": "Quick map lookup for extracts and points of interest. It is the future base for quest, key, loot and risk layers.",
+        "purpose": "External map lookup with clean per-map briefings: description, base data, conflict zones and points of interest.",
         "actions": [
           "Consult maps",
-          "Prepare routes",
+          "Read briefing",
+          "Review zones",
           "Locate key points"
         ],
-        "status": "Visual base ready to evolve into interactive tactical maps."
+        "status": "Maps 2.0 is ready for desktop-first launch; Transits remains a connection chart."
       },
       {
         "name": "Missions / Kappa",
@@ -943,17 +944,6 @@
           "Estimate TTK"
         ],
         "status": "Technical module with potential to become full Ammo Intelligence."
-      },
-      {
-        "name": "",
-        "purpose": "Tracking for temporary, announcements and active changes.",
-        "actions": [
-          "Check active events",
-          "See recent events",
-          "Use fallback",
-          "Avoid stale data"
-        ],
-        "status": "Experimental, dependent on external sources and manual fallback."
       },
       {
         "name": "Prestige",
@@ -1298,8 +1288,8 @@
       {
         "code": "NET_EXTERNAL_APIS_V1",
         "title": "External API Dependency",
-        "symptom": "Server status, live, Goons Tracker, Flea Market and some Kappa data depend on external sources. If an API, proxy or external site fails, the module may show empty data, old data or a temporary error.",
-        "fix": "Try again after a few minutes and check your connection. includes a manual fallback when automatic sources do not respond."
+        "symptom": "Server status, Goons Tracker, Flea Market and some Kappa data depend on external sources. If an API, proxy or external site fails, the module may show empty data, old data or a temporary error.",
+        "fix": "Try again after a few minutes and check your connection. Critical modules keep fallbacks or state messages when an external source does not respond."
       },
       {
         "code": "GOONS_HTML_PARSE_V1",
@@ -1308,22 +1298,16 @@
         "fix": "If a capture error appears or the map does not look reliable, validate the data with the original source until the parser is updated."
       },
       {
-        "code": "I18N_PARTIAL_ROLLOUT_V2",
-        "title": "Partial Interface Translation",
-        "symptom": "The ES/EN selector now covers home, login, account, Report, Server Status, Missions / Kappa, PMC Profile, Flea, Hideout, Bosses, Events, Prestige, Key System, Quest Optimizer, Goons, Maps, About and Ballistics Simulator. Some internal text or content data may still remain in larger modules.",
-        "fix": "Translation is being rolled out module by module. Dossier is excluded because it is private project documentation. Current priority: internal data, Admin Panel and remaining dynamic content."
+        "code": "I18N_REVIEWED_PRE_1_0",
+        "title": "Reviewed ES/EN Coverage",
+        "symptom": "The ES/EN selector now covers the main public interface: home, login, account, Report, Server Status, Missions / Kappa, PMC Profile, Flea, Hideout, Bosses, Prestige, Key System, Quest Optimizer, Goons, Maps, About and Ballistics Simulator.",
+        "fix": "Visible translation has been reviewed for the pre-1.0 phase. Dossier is excluded because it is private project documentation; any new modules should be added with ES/EN i18n keys from the start."
       },
       {
         "code": "PMC_STATIC_INDEX_V1",
         "title": "PMC Profile and Public Index",
         "symptom": "PMC Profile depends on public players.tarkov.dev JSON files. Only players already viewed on tarkov.dev/players and present in the public index can appear, and that index updates roughly once per day.",
         "fix": "If a player does not appear, open their profile on tarkov.dev/players first and wait for the next index update. The app avoids the Turnstile-protected search and only uses available public JSON files."
-      },
-      {
-        "code": "LIVE_EVENTS_EXPERIMENTAL_V1",
-        "title": "Experimental",
-        "symptom": " depends on external feeds that are not always complete or up to date. It may miss active even when the community knows they are running.",
-        "fix": "Treat the module as an experimental reference. It is kept with manual fallback and separated sources, but may be hidden or replaced by a more reliable source in a future version."
       },
       {
         "code": "BUILD_CHUNK_SIZE_V1",

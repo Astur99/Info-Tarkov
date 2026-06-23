@@ -371,6 +371,7 @@
         "bosses": "Bosses"
       },
       "values": {
+        "5": "5",
         "10-12": "10-12",
         "12-16": "12-16",
         "5-6": "5-6",
@@ -393,7 +394,6 @@
         "strategic": "Estrategico",
         "1-3": "1-3",
         "34x168 m": "34x168 m",
-        "5": "5",
         "1-5": "1-5",
         "118x110 m": "118x110 m"
       }
@@ -821,11 +821,11 @@
     "sections": [
       {
         "title": "Qué es Info Tarkov",
-        "body": "Info Tarkov es un hub modular para Escape From Tarkov pensado como centro táctico de consulta, seguimiento y decisión. Reúne en una sola interfaz progreso de misiones, bosses, eventos, servidores, combate, planificación y datos públicos del PMC."
+        "body": "Info Tarkov es un hub modular para Escape From Tarkov pensado como centro tactico de consulta, seguimiento y decision. Reune en una sola interfaz progreso de misiones, bosses, servidores, combate, planificacion, mapas tacticos, economia y datos publicos del PMC."
       },
       {
         "title": "Qué se puede hacer",
-        "body": "La app permite consultar mapas, seguir Kappa, revisar decisiones/finales, investigar bosses, consultar Goons, explorar precios PVP/PVE, planificar el hideout, simular combate, revisar eventos, consultar perfiles PMC y comunicar bugs o sugerencias mediante tickets."
+        "body": "La app permite consultar mapas con briefings, seguir Kappa, revisar decisiones/finales, investigar bosses, consultar Goons, explorar precios PVP/PVE, planificar el hideout, simular combate, consultar perfiles PMC y comunicar bugs o sugerencias mediante tickets."
       },
       {
         "title": "Sistema de usuarios",
@@ -853,19 +853,20 @@
       },
       {
         "title": "Estado actual",
-        "body": "El proyecto ya cuenta con autenticación, roles, panel admin, tickets, lazy loading, base multilenguaje ES/EN, preferencia PVP/PVE y capa híbrida en misiones, Goons, flea, llaves, hideout y Perfil PMC. Prestigios queda marcado como PVP ONLY."
+        "body": "El proyecto ya cuenta con autenticacion, roles, panel admin, tickets, lazy loading, base multilenguaje ES/EN revisada, preferencia PVP/PVE y capa hibrida en misiones, Goons, flea, llaves, hideout, mapas y Perfil PMC. Prestigios queda marcado como PVP ONLY."
       }
     ],
     "moduleDetails": [
       {
         "name": "Mapas tácticos",
-        "purpose": "Consulta rápida de mapas, extracciones y puntos de interés. Es la base futura para capas de quests, llaves, loot y riesgo.",
+        "purpose": "Consulta de mapas externos con briefings limpios por mapa: descripcion, datos base, zonas de conflicto y puntos de interes.",
         "actions": [
           "Consultar mapas",
-          "Preparar rutas",
+          "Leer briefing",
+          "Revisar zonas",
           "Ubicar puntos importantes"
         ],
-        "status": "Base visual preparada para evolucionar hacia mapas tácticos interactivos."
+        "status": "Mapas 2.0 listo para lanzamiento desktop-first; Transits queda como organigrama de conexiones."
       },
       {
         "name": "Misiones / Kappa",
@@ -943,17 +944,6 @@
           "Estimar TTK"
         ],
         "status": "Módulo técnico con potencial para convertirse en Ammo Intelligence completo."
-      },
-      {
-        "name": " en directo",
-        "purpose": "Seguimiento de eventos temporales, anuncios y cambios activos.",
-        "actions": [
-          "Consultar activos",
-          "Ver recientes",
-          "Usar fallback",
-          "Evitar datos antiguos"
-        ],
-        "status": "Experimental, dependiente de fuentes externas y fallback manual."
       },
       {
         "name": "Prestigios",
@@ -1298,8 +1288,8 @@
       {
         "code": "NET_EXTERNAL_APIS_V1",
         "title": "Dependencia de APIs Externas",
-        "symptom": "Estado de servidores, eventos en directo, Goons Tracker, Flea Market y algunos datos de Kappa dependen de fuentes externas. Si una API, proxy o web externa falla, el módulo puede mostrar datos vacíos, antiguos o un error temporal.",
-        "fix": "Reintenta pasados unos minutos y comprueba tu conexión. En eventos en directo existe un fallback manual cuando las fuentes automáticas no responden."
+        "symptom": "Estado de servidores, Goons Tracker, Flea Market y algunos datos de Kappa dependen de fuentes externas. Si una API, proxy o web externa falla, el modulo puede mostrar datos vacios, antiguos o un error temporal.",
+        "fix": "Reintenta pasados unos minutos y comprueba tu conexion. Los modulos criticos mantienen fallbacks o mensajes de estado cuando la fuente externa no responde."
       },
       {
         "code": "GOONS_HTML_PARSE_V1",
@@ -1308,22 +1298,16 @@
         "fix": "Si aparece un error de captura o el mapa no parece fiable, valida el dato con la fuente original hasta actualizar el parser."
       },
       {
-        "code": "I18N_PARTIAL_ROLLOUT_V2",
-        "title": "Traducción Parcial de la Interfaz",
-        "symptom": "El selector ES/EN ya cubre portada, login, cuenta, Report, estado de servidores, Misiones / Kappa, Perfil PMC, Flea, Hideout, Bosses, Prestigios, Sistema de Llaves, Quest Optimizer, Goons, Mapas, About y Simulador Balístico. Todavía pueden quedar textos internos o datos de contenido en módulos grandes.",
-        "fix": "La traducción se está desplegando por módulos. Dossier queda fuera por ser documentación privada del proyecto. Prioridad actual: revisar datos internos, Admin Panel y contenido dinámico restante."
+        "code": "I18N_REVIEWED_PRE_1_0",
+        "title": "Cobertura ES/EN Revisada",
+        "symptom": "El selector ES/EN ya cubre la interfaz publica principal: portada, login, cuenta, Report, estado de servidores, Misiones / Kappa, Perfil PMC, Flea, Hideout, Bosses, Prestigios, Sistema de Llaves, Quest Optimizer, Goons, Mapas, About y Simulador Balistico.",
+        "fix": "La traduccion visible ha sido revisada para la fase pre-1.0. Dossier queda fuera por ser documentacion privada del proyecto; si se anaden nuevos modulos, deben entrar ya con claves i18n ES/EN."
       },
       {
         "code": "PMC_STATIC_INDEX_V1",
         "title": "Perfil PMC e Índice Público",
         "symptom": "Perfil PMC depende de los JSON públicos de players.tarkov.dev. Solo aparecen jugadores que ya han sido consultados en tarkov.dev/players y cuyo perfil está en el índice público, que se actualiza aproximadamente una vez al día.",
         "fix": "Si un jugador no aparece, abre primero su perfil en tarkov.dev/players y espera a la siguiente actualización del índice. La app evita la búsqueda protegida por Turnstile y usa solo los JSON públicos disponibles."
-      },
-      {
-        "code": "LIVE_EVENTS_EXPERIMENTAL_V1",
-        "title": " en Directo Experimental",
-        "symptom": " en Directo depende de feeds externos no siempre completos o actualizados. Puede no detectar eventos activos aunque la comunidad sepa que están ocurriendo.",
-        "fix": "Trata el módulo como referencia experimental. Se mantiene con fallback manual y fuentes separadas, pero podría ocultarse o sustituirse por una fuente más fiable en futuras versiones."
       },
       {
         "code": "BUILD_CHUNK_SIZE_V1",
