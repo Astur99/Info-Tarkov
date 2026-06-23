@@ -1259,7 +1259,7 @@
       },
       "wedge": {
         "Icebreaker": [
-          "Level 3",
+          "Level 3 gym",
           "Black Division contact area",
           "3-6 follower escort"
         ]
@@ -1416,10 +1416,10 @@
       "wedge": {
         "guards": "Black Division boss with 3 to 6 followers depending on the number of players in the raid.",
         "visuals": "Black EXFIL helmet with visor, Avon gas mask and Spiritus LV-119 plate carrier.",
-        "behavior": "Elite Black Division contact on Icebreaker level 3. Treat as a coordinated squad with heavy armor and high-penetration ammunition.",
+        "behavior": "Elite Black Division contact in the Icebreaker level 3 gym. Treat as a coordinated squad with heavy armor and high-penetration ammunition.",
         "weapons": "HK MP7A1, FN SCAR-H, X-17, DS Arms SA-58, Desert Tech MDR, HK USP and SOG Voodoo Hawk",
         "ammo": "4.6x30mm AP SX, 5.56x45mm M995, 7.62x51mm M993, .45 ACP AP",
-        "weaknesses": "High health pool and 3-6 followers; isolate guards first and avoid exposed angles on Icebreaker.",
+        "weaknesses": "880 health and 3-6 followers; isolate guards first and avoid exposed angles inside Icebreaker.",
         "loot": "Spiritus LV-119 plate carrier, keycard holder case, Euros, Dollars and Black Division gear."
       }
     }

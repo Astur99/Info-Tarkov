@@ -51,6 +51,6 @@ export const BOSS_SPAWN_ZONES = {
     Lighthouse: ['Lightkeeper island', 'Bridge approach', 'Island ridgelines']
   },
   wedge: {
-    Icebreaker: ['Level 3', 'Black Division contact area', '3-6 follower escort']
+    Icebreaker: ['Level 3 gym', 'Black Division contact area', '3-6 follower escort']
   }
 };

@@ -212,15 +212,15 @@ export const FALLBACK_BOSSES = [
     name: 'WEDGE',
     fileName: 'wedge.jpg',
     mapaDefault: 'Icebreaker',
-    spawnDefault: 'TBD',
+    spawnDefault: 'N/D',
     dificultad: 'Very Hard',
     colorDificultad: '#ff4444',
     guardias: 'Black Division boss with 3 to 6 followers depending on the number of players in the raid',
     fisico: 'Black EXFIL helmet with visor, Avon gas mask and Spiritus LV-119 plate carrier.',
-    actitud: 'Elite Black Division contact on Icebreaker level 3. Treat as a coordinated squad with heavy armor and high-penetration ammunition.',
+    actitud: 'Elite Black Division contact in the Icebreaker level 3 gym. Treat as a coordinated squad with heavy armor and high-penetration ammunition.',
     armas: 'HK MP7A1, FN SCAR-H, X-17, DS Arms SA-58, Desert Tech MDR, HK USP and SOG Voodoo Hawk',
     municion: '4.6x30mm AP SX, 5.56x45mm M995, 7.62x51mm M993, .45 ACP AP',
-    debiles: 'High health pool and 3-6 followers; isolate guards first and avoid exposed angles on Icebreaker.',
+    debiles: '880 health and 3-6 followers; isolate guards first and avoid exposed angles inside Icebreaker.',
     loot: 'Spiritus LV-119 plate carrier, keycard holder case, Euros, Dollars and Black Division gear.'
   }
 ];

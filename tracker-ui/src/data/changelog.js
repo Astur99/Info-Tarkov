@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.14.35';
+export const APP_VERSION = '0.14.36';
 
 export const VERSION_POLICY = {
   current: '0.x',
@@ -17,6 +17,36 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '0.14.36',
+    date: '2026-06-23',
+    codename: 'The Wedge Intel Polish',
+    type: 'improvement',
+    title: {
+      es: 'The Wedge queda integrado',
+      en: 'The Wedge is fully integrated'
+    },
+    summary: {
+      es: 'Se completa la ficha de The Wedge con imagen local, zona más precisa en Icebreaker y mejor tratamiento de spawn sin porcentaje confirmado.',
+      en: 'The Wedge dossier is completed with a local image, more precise Icebreaker zone data and better handling for unconfirmed spawn rates.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Intel: Bosses usa la imagen local de The Wedge y evita mostrar 0% cuando el porcentaje de spawn no está confirmado.',
+          en: 'Intel: Bosses now uses The Wedge local image and avoids showing 0% when the spawn rate is not confirmed.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'La ficha de The Wedge concreta gimnasio del nivel 3 de Icebreaker, 880 de vida y escolta Black Division de 3-6 seguidores.',
+          en: 'The Wedge dossier now specifies Icebreaker level 3 gym, 880 health and a 3-6 Black Division follower escort.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.35',
     date: '2026-06-15',

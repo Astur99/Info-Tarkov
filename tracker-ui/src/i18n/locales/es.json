@@ -1259,7 +1259,7 @@
       },
       "wedge": {
         "Icebreaker": [
-          "Nivel 3",
+          "Gimnasio del nivel 3",
           "Zona de contacto Black Division",
           "Escolta de 3-6 seguidores"
         ]
@@ -1416,10 +1416,10 @@
       "wedge": {
         "guards": "Boss de Black Division con 3 a 6 seguidores según el número de jugadores en la raid.",
         "visuals": "Casco EXFIL negro con visor, máscara de gas Avon y portaplacas Spiritus LV-119.",
-        "behavior": "Contacto élite de Black Division en Icebreaker nivel 3. Trátalo como una escuadra coordinada con blindaje pesado y munición de alta penetración.",
+        "behavior": "Contacto élite de Black Division en el gimnasio del nivel 3 de Icebreaker. Trátalo como una escuadra coordinada con blindaje pesado y munición de alta penetración.",
         "weapons": "HK MP7A1, FN SCAR-H, X-17, DS Arms SA-58, Desert Tech MDR, HK USP y SOG Voodoo Hawk",
         "ammo": "4.6x30mm AP SX, 5.56x45mm M995, 7.62x51mm M993, .45 ACP AP",
-        "weaknesses": "Vida alta y 3-6 seguidores; aísla guardias primero y evita ángulos abiertos en Icebreaker.",
+        "weaknesses": "880 de vida y 3-6 seguidores; aísla guardias primero y evita ángulos abiertos dentro de Icebreaker.",
         "loot": "Portaplacas Spiritus LV-119, keycard holder case, euros, dólares y equipo de Black Division."
       }
     }

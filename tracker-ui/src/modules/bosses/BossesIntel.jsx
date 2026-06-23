@@ -13,6 +13,17 @@ const getBossImage = (boss) => bossImageModules[`../../assets/bosses/${boss.file
 
 const getSpawnMapKey = (mapName) => String(mapName || '').replace(/\W+/g, '_');
 
+const buildFallbackSpawnDetails = (boss) => {
+  const parsedChance = Number.parseInt(boss.spawnDefault, 10);
+  const hasNumericChance = Number.isFinite(parsedChance);
+
+  return boss.mapaDefault.split(', ').map((name) => ({
+    name,
+    chance: hasNumericChance ? parsedChance : null,
+    chanceLabel: hasNumericChance ? `${parsedChance}%` : boss.spawnDefault
+  }));
+};
+
 const getBossSpawnZones = (boss, t) => {
   if (!boss) return [];
   const zoneMap = BOSS_SPAWN_ZONES[boss.id] || {};
@@ -134,10 +145,7 @@ export default function BossesView({ onViewChange }) {
               ...bossLocal,
               mapa: bossLocal.mapaDefault,
               spawn: bossLocal.spawnDefault,
-              spawnDetails: bossLocal.mapaDefault.split(', ').map((name) => ({
-                name,
-                chance: Number.parseInt(bossLocal.spawnDefault, 10) || 0
-              }))
+              spawnDetails: buildFallbackSpawnDetails(bossLocal)
             };
           });
           setBossesData(poolActualizado);
@@ -146,7 +154,7 @@ export default function BossesView({ onViewChange }) {
             ...b,
             mapa: b.mapaDefault,
             spawn: b.spawnDefault,
-            spawnDetails: b.mapaDefault.split(', ').map((name) => ({ name, chance: Number.parseInt(b.spawnDefault, 10) || 0 }))
+            spawnDetails: buildFallbackSpawnDetails(b)
           })));
         }
         setCargando(false);
@@ -156,7 +164,7 @@ export default function BossesView({ onViewChange }) {
           ...b,
           mapa: b.mapaDefault,
           spawn: b.spawnDefault,
-          spawnDetails: b.mapaDefault.split(', ').map((name) => ({ name, chance: Number.parseInt(b.spawnDefault, 10) || 0 }))
+          spawnDetails: buildFallbackSpawnDetails(b)
         })));
         setCargando(false);
       });
@@ -414,9 +422,9 @@ export default function BossesView({ onViewChange }) {
                         <div key={spawn.name} style={{ display: 'grid', gridTemplateColumns: '140px 1fr 46px', alignItems: 'center', gap: '0.75rem' }}>
                           <strong style={{ color: '#fff' }}>{spawn.name}</strong>
                           <div style={{ height: '7px', background: 'rgba(255,255,255,0.08)', borderRadius: '999px', overflow: 'hidden' }}>
-                            <div style={{ width: `${Math.min(100, spawn.chance)}%`, height: '100%', background: 'var(--tk-green)' }} />
+                            <div style={{ width: `${Math.min(100, spawn.chance || 0)}%`, height: '100%', background: 'var(--tk-green)' }} />
                           </div>
-                          <span style={{ color: 'var(--tk-green)', fontWeight: '900', textAlign: 'right' }}>{spawn.chance}%</span>
+                          <span style={{ color: 'var(--tk-green)', fontWeight: '900', textAlign: 'right' }}>{spawn.chanceLabel || `${spawn.chance}%`}</span>
                         </div>
                       ))}
                     </div>
