@@ -355,7 +355,417 @@
     "subtitle": "Mapas interactivos, zonas de interés, spots de misiones, spawns y rutas de extracción.",
     "projectingFeed": "PROYECTANDO FEED: {{map}}",
     "navigationSystem": "SISTEMA INTERACTIVO DE NAVEGACIÓN",
-    "iframeTitle": "Mapa de {{map}}"
+    "iframeTitle": "Mapa de {{map}}",
+    "briefing": {
+      "eyebrow": "Briefing tactico",
+      "conflictZones": "Zonas de conflicto",
+      "pointsOfInterest": "Puntos de interes",
+      "recommendedRoute": "Ruta recomendada",
+      "warnings": "Avisos tacticos",
+      "stats": {
+        "players": "Jugadores",
+        "duration": "Duracion",
+        "threat": "Amenaza",
+        "value": "Valor",
+        "size": "Tama?o",
+        "bosses": "Bosses"
+      },
+      "values": {
+        "10-12": "10-12",
+        "12-16": "12-16",
+        "5-6": "5-6",
+        "10-14": "10-14",
+        "9-12": "9-12",
+        "10-13": "10-13",
+        "35 min": "35 min",
+        "50 min": "50 min",
+        "20 min": "20 min",
+        "40 min": "40 min",
+        "45 min": "45 min",
+        "medium": "Medio",
+        "mediumHigh": "Media/Alta",
+        "high": "Alto",
+        "veryHigh": "Muy alta",
+        "low": "Bajo",
+        "unknown": "Sin datos",
+        "variable": "Variable",
+        "objective": "Objetivo",
+        "strategic": "Estrategico",
+        "1-3": "1-3",
+        "34x168 m": "34x168 m",
+        "5": "5",
+        "1-5": "1-5",
+        "118x110 m": "118x110 m"
+      }
+    },
+    "briefingTags": {
+      "earlyProgression": "Progresion temprana",
+      "compactPvP": "PvP compacto",
+      "questDense": "Muchas quests",
+      "highLoot": "Loot alto",
+      "densePvP": "PvP denso",
+      "longRaid": "Raid larga",
+      "instantPvP": "PvP inmediato",
+      "tagilla": "Tagilla",
+      "shortRaid": "Raid corta",
+      "questHub": "Hub de quests",
+      "dorms": "Dorms",
+      "reshala": "Reshala",
+      "longRange": "Largo alcance",
+      "shturman": "Shturman",
+      "stashes": "Stashes",
+      "killa": "Killa",
+      "techLoot": "Loot tecnico",
+      "darkInteriors": "Interiores oscuros",
+      "glukhar": "Glukhar",
+      "raiders": "Raiders",
+      "bunker": "Bunker",
+      "resortPvP": "PvP resort",
+      "sanitar": "Sanitar",
+      "questHeavy": "Quests",
+      "rogues": "Rogues",
+      "zryachiy": "Zryachiy",
+      "endgamePuzzle": "Endgame/puzzle",
+      "specialObjective": "Objetivo especial",
+      "trapRisk": "Riesgo de trampas",
+      "tagillaVariant": "Amenaza especial",
+      "futureContent": "Contenido futuro",
+      "endgameArea": "Zona endgame",
+      "pendingIntel": "Intel pendiente",
+      "mapLinking": "Conexion de mapas",
+      "routePlanning": "Planificacion",
+      "raidChain": "Cadena de raid",
+      "blackDivision": "Black Division",
+      "wedge": "The Wedge",
+      "verticalInterior": "Interior vertical",
+      "knight": "Knight"
+    },
+    "briefings": {
+      "groundzero": {
+        "title": "Ground Zero",
+        "summary": "Mapa compacto de progresion temprana. Es bueno para aprender ritmo, audio vertical y rutas cortas, pero concentra a muchos jugadores en los mismos objetivos.",
+        "conflictZones": {
+          "terragroupLobby": "Lobby de TerraGroup y accesos interiores",
+          "emercomCheckpoint": "Checkpoint EMERCOM y calle abierta",
+          "nakatanStairs": "Escaleras de Nakatani y cruces verticales"
+        },
+        "pointsOfInterest": {
+          "capitalInsight": "Oficinas Capital Insight para objetivos iniciales",
+          "fusionCafeteria": "Cafeteria Fusion y loot temprano",
+          "undergroundParking": "Parking subterraneo para rotar con cobertura"
+        },
+        "route": {
+          "spawnRead": "Identifica spawn y evita cruzar la calle sin informacion.",
+          "questSweep": "Resuelve objetivos cercanos antes de buscar PvP.",
+          "extractEarly": "Extrae pronto si llevas item de quest."
+        },
+        "warnings": {
+          "verticalAudio": "El audio vertical puede confundir en edificios.",
+          "beginnerTraffic": "Mucho trafico de jugadores nuevos y quests compartidas.",
+          "openStreetCrossings": "Cruzar calles sin humo/cobertura suele castigarse."
+        }
+      },
+      "streets": {
+        "title": "Streets of Tarkov",
+        "summary": "Mapa urbano de alto valor y alta densidad. Premia rutas por bordes, paciencia y lectura de edificios; castiga avanzar por avenidas sin limpiar ventanas.",
+        "conflictZones": {
+          "lexos": "LexOs y sus accesos",
+          "pinewood": "Pinewood y plaza cercana",
+          "chekannaya": "Chekannaya y edificios financieros",
+          "climovMall": "Centro comercial Klimov y calles centrales"
+        },
+        "pointsOfInterest": {
+          "relaxationRoom": "Relaxation room y rutas de llaves",
+          "financialBuildings": "Edificios financieros con loot tecnico",
+          "medicalBlocks": "Bloques medicos y oficinas",
+          "concordia": "Concordia y apartamentos"
+        },
+        "route": {
+          "edgeRoute": "Empieza por bordes y evita avenidas centrales.",
+          "lootAnchor": "Elige un ancla de loot y no encadenes demasiados interiores.",
+          "lateExtract": "Reserva energia para una salida lenta y cubierta."
+        },
+        "warnings": {
+          "manyAngles": "Hay demasiadas ventanas y angulos para correr en abierto.",
+          "aiDensity": "La IA puede revelar tu posicion al disparar.",
+          "performanceRisk": "Mapa pesado: evita rutas codiciosas si el raid va mal."
+        }
+      },
+      "factory": {
+        "title": "Factory",
+        "summary": "Arena cerrada de combate inmediato. Sirve para PvP, misiones rapidas y Tagilla, pero no perdona dudas en los primeros segundos.",
+        "conflictZones": {
+          "office": "Oficinas y pasillo superior",
+          "underground": "Tuneles subterraneos",
+          "gateThree": "Gate 3 y rutas de salida"
+        },
+        "pointsOfInterest": {
+          "officeSafe": "Caja fuerte de oficinas",
+          "medicalTent": "Zona medica/tienda",
+          "cellars": "Cellars y rutas bajas"
+        },
+        "route": {
+          "surviveOpening": "Sobrevive al primer contacto antes de moverte por objetivo.",
+          "clearVerticals": "Limpia arriba/abajo antes de cruzar centro.",
+          "extractFast": "Si el objetivo esta hecho, no alargues la raid."
+        },
+        "warnings": {
+          "noReset": "No hay tiempo real para resetear pelea.",
+          "thirdParties": "Todo disparo atrae terceros.",
+          "soundPunish": "El sonido delata cada rotacion."
+        }
+      },
+      "customs": {
+        "title": "Customs",
+        "summary": "Mapa clasico de progresion con muchas quests. Sus rutas se entienden facil, pero los cuellos de botella entre lados generan PvP constante.",
+        "conflictZones": {
+          "dorms": "Dorms de dos y tres plantas",
+          "stronghold": "Fortaleza y crackhouse",
+          "newGas": "Nueva gasolinera",
+          "construction": "Construccion y puente"
+        },
+        "pointsOfInterest": {
+          "dormsSafes": "Cajas fuertes y llaves de Dorms",
+          "crackhouse": "Crackhouse e inteligencia",
+          "warehouseArea": "Almacenes y maquinaria",
+          "bigRed": "Big Red y oficinas"
+        },
+        "route": {
+          "chooseSide": "Decide si juegas tu lado o cruzas temprano.",
+          "avoidCenterRush": "Evita centro si no necesitas Dorms/Fortaleza.",
+          "extractOpposite": "Planea salida opuesta antes de cargar loot."
+        },
+        "warnings": {
+          "chokePoints": "Puentes y pasos estrechos concentran emboscadas.",
+          "sniperScavs": "Sniper scavs castigan rutas abiertas.",
+          "questTraffic": "Muchas quests llevan a los mismos edificios."
+        }
+      },
+      "woods": {
+        "title": "Woods",
+        "summary": "Mapa abierto de orientacion y largas lineas. Excelente para stashes, misiones exteriores y Shturman, pero perder referencias puede costar la raid.",
+        "conflictZones": {
+          "sawmill": "Aserradero y orillas",
+          "usecCamp": "Campamento USEC",
+          "scavBunker": "Bunker scav",
+          "emercomCamp": "Campamento medico/EMERCOM"
+        },
+        "pointsOfInterest": {
+          "hiddenStashes": "Stashes ocultos por bordes",
+          "medicalCamp": "Campamento medico",
+          "sawmill": "Aserradero y caja de Shturman",
+          "village": "Pueblo y rutas norte"
+        },
+        "route": {
+          "landmarkCheck": "Usa montana, rio y lineas electricas como referencias.",
+          "edgeMovement": "Rota por bordes si vas cargado.",
+          "avoidSawmillNoise": "No entres al aserradero tarde sin informacion."
+        },
+        "warnings": {
+          "mines": "Minas y limites del mapa matan sin aviso visual claro.",
+          "longSightlines": "Cualquier colina puede tener tirador.",
+          "orientationLoss": "Perder orientacion te fuerza a cruzar zonas abiertas."
+        }
+      },
+      "interchange": {
+        "title": "Interchange",
+        "summary": "Centro comercial oscuro, vertical y lleno de rutas de loot. Muy rentable, pero las extracciones y tiendas tecnologicas son focos de PvP.",
+        "conflictZones": {
+          "techlight": "Techlight, Rasmussen y Texho",
+          "kiba": "KIBA y centro comercial",
+          "ultra": "ULTRA medical",
+          "oliGoshanIdea": "Entradas OLI/Goshan/IDEA"
+        },
+        "pointsOfInterest": {
+          "techStores": "Tiendas tecnologicas",
+          "medicalRooms": "Salas medicas y farmacias",
+          "foodShelves": "Goshan y comida",
+          "stashes": "Stashes exteriores"
+        },
+        "route": {
+          "powerDecision": "Decide si activas power o juegas rutas sin exponer.",
+          "storeSweep": "Limpia tienda por tienda sin correr por pasillos abiertos.",
+          "extractAwareness": "Cuenta con campers en salidas principales."
+        },
+        "warnings": {
+          "campedExtracts": "Emercom y Railway pueden estar campeadas.",
+          "lowVisibility": "La oscuridad favorece angulos muertos.",
+          "verticalAudio": "El audio entre plantas puede enga?ar."
+        }
+      },
+      "reserve": {
+        "title": "Reserve",
+        "summary": "Base militar densa con gran loot y extracciones exigentes. La clave es entrar con plan de salida antes de comprometerte con bunker o tren.",
+        "conflictZones": {
+          "d2Bunker": "Bunker D2 y sala de mando",
+          "trainStation": "Estacion de tren",
+          "blackWhitePawn": "Edificios Pawn",
+          "queen": "Queen y tejados"
+        },
+        "pointsOfInterest": {
+          "militaryTech": "Loot militar y tecnico",
+          "markedRooms": "Habitaciones marcadas",
+          "bishopMedical": "Bishop medico",
+          "bunkerSwitches": "Palancas y sistemas de bunker"
+        },
+        "route": {
+          "extractPlanFirst": "Elige extraccion antes de lootear.",
+          "bunkerTiming": "Bunker temprano es peligroso; tarde puede estar campeado.",
+          "avoidTrainChaos": "No dependas del tren si vas cargado."
+        },
+        "warnings": {
+          "extractComplexity": "Muchas salidas tienen condicion.",
+          "raiderSpawns": "Raiders cambian el ritmo de golpe.",
+          "roofSightlines": "Tejados y torres cubren media base."
+        }
+      },
+      "shoreline": {
+        "title": "Shoreline",
+        "summary": "Mapa partido entre resort de alto PvP y exteriores de quest. Decide desde spawn si vas a pelear resort o hacer ruta segura.",
+        "conflictZones": {
+          "eastWing": "Ala este del resort",
+          "westWing": "Ala oeste del resort",
+          "cottages": "Cottages",
+          "pier": "Muelle"
+        },
+        "pointsOfInterest": {
+          "healthResort": "Health Resort y llaves",
+          "cottageSafes": "Cajas fuertes de cottages",
+          "weatherStation": "Estacion meteorologica",
+          "villageStashes": "Pueblo y stashes"
+        },
+        "route": {
+          "decideResort": "Si vas resort, entra pronto y con objetivo claro.",
+          "outerQuestLoop": "Para questear, usa ruta exterior y evita centro.",
+          "latePierCheck": "Pier tarde es trampa si no controlas alrededores."
+        },
+        "warnings": {
+          "resortRush": "Resort concentra squads y jugadores de loot.",
+          "openFields": "Campos abiertos castigan rutas directas.",
+          "pierTrap": "Pier puede dejarte sin salida limpia."
+        }
+      },
+      "lighthouse": {
+        "title": "Lighthouse",
+        "summary": "Mapa de Rogues, largas lineas y loot fuerte. Necesita ruta por spawn y respeto absoluto a minas, tejados y Water Treatment.",
+        "conflictZones": {
+          "waterTreatment": "Water Treatment",
+          "chalets": "Chalets",
+          "longRoad": "Carretera larga",
+          "islandBridge": "Puente/isla de Lightkeeper"
+        },
+        "pointsOfInterest": {
+          "waterTreatmentLoot": "Loot industrial de Water Treatment",
+          "chalets": "Chalets y cajas fuertes",
+          "village": "Pueblo",
+          "islandApproach": "Aproximacion a isla"
+        },
+        "route": {
+          "roguePlan": "No entres a Rogues sin plan de angulos.",
+          "routeBySpawn": "Tu spawn decide si juegas norte, chalets o carretera.",
+          "avoidRoadTunnel": "Evita carretera abierta si oyes disparos largos."
+        },
+        "warnings": {
+          "rogueLasers": "Rogues castigan exposiciones minimas.",
+          "minefields": "Minas alrededor de zonas restringidas.",
+          "sniperAngles": "Francotiradores cubren rutas enteras."
+        }
+      },
+      "labyrinth": {
+        "title": "Labyrinth",
+        "summary": "Mapa especial de presion, orientacion y objetivos. Debe jugarse lento, con memoria de rutas y evitando tratarlo como un mapa normal de loot.",
+        "conflictZones": {
+          "centralMaze": "Nucleo del laberinto",
+          "trapSwitches": "Zonas de interruptores/trampas",
+          "extractionPuzzle": "Ruta de extraccion y cierre"
+        },
+        "pointsOfInterest": {
+          "trapControls": "Controles de trampas",
+          "lockedRoutes": "Rutas bloqueadas",
+          "objectiveRooms": "Salas de objetivo",
+          "labyrinthExit": "Salida del laberinto"
+        },
+        "route": {
+          "moveSlow": "Avanza lento y confirma cada cruce.",
+          "markSwitches": "Memoriza interruptores y cambios de ruta.",
+          "commitExtract": "Cuando abras salida, compromete la extraccion."
+        },
+        "warnings": {
+          "limitedReliableData": "Datos publicos aun limitados; evitar afirmar rutas exactas.",
+          "trapPunish": "Las trampas castigan correr o seguir a ciegas.",
+          "navigationPressure": "La presion del mapa induce errores de orientacion."
+        }
+      },
+      "terminal": {
+        "title": "Terminal",
+        "summary": "Mapa endgame de escala limitada y presencia elevada de bosses. Debe jugarse con control de angulos, lectura de sonido y cuidado especial al cruzar patios o interiores industriales.",
+        "conflictZones": {
+          "terminalApproaches": "Accesos principales a la terminal",
+          "bossRoutes": "Rutas y contactos de bosses",
+          "containerYards": "Patios y zonas de contenedores"
+        },
+        "pointsOfInterest": {
+          "terminalInterior": "Interior de terminal",
+          "industrialAccess": "Accesos industriales",
+          "extractionRoutes": "Rutas de salida"
+        },
+        "route": {
+          "awaitReliableIntel": "Esperar inteligencia fiable antes de recomendar rutas."
+        },
+        "warnings": {
+          "noStablePublicIntel": "No usar como guia real hasta tener fuentes verificadas."
+        }
+      },
+      "transits": {
+        "title": "Transits",
+        "summary": "Organigrama de conexiones entre mapas. Esta seccion no pretende aportar datos de raid, sino mostrar de forma clara que mapas pueden encadenarse mediante transits.",
+        "conflictZones": {
+          "transitTiming": "Ventana de transito",
+          "extractionApproach": "Aproximacion a salida/transit"
+        },
+        "pointsOfInterest": {
+          "routeContinuity": "Continuidad de ruta",
+          "questRouting": "Encadenado de quests",
+          "survivalChains": "Cadenas de supervivencia"
+        },
+        "route": {
+          "planBeforeRaid": "Define destino antes de entrar.",
+          "carryOnlyNeeded": "No sobrecargues si vas a encadenar mapas.",
+          "confirmDestination": "Confirma transit antes de comprometerte."
+        },
+        "warnings": {
+          "wrongTransit": "Elegir mal el transit rompe la ruta.",
+          "lateRaidRisk": "Llegar tarde aumenta riesgo de campers.",
+          "inventoryCommitment": "Lo que lleves condiciona el siguiente mapa."
+        }
+      },
+      "icebreaker": {
+        "title": "Icebreaker",
+        "summary": "Mapa especial de asalto interior en un buque. Version 1.3: 1-3 PMC, 50 minutos, tama?o 34x168 m, con The Wedge y Knight como amenazas principales. Debe jugarse por cubiertas, limpiando angulos cortos y evitando avanzar sin control vertical.",
+        "conflictZones": {
+          "levelThreeGym": "Gimnasio del nivel 3 y zona de The Wedge/Knight",
+          "engineRooms": "Salas de maquinas y pasillos tecnicos",
+          "sternRoutes": "Rutas de popa y cubiertas conectadas",
+          "blackDivisionPatrols": "Contactos Black Division y escoltas"
+        },
+        "pointsOfInterest": {
+          "wedgeContact": "Contacto principal con The Wedge y Knight",
+          "shipInterior": "Interior del buque y rutas por niveles",
+          "lockedRooms": "Salas bloqueadas/objetivo",
+          "technicalCorridors": "Corredores tecnicos para rotar con cobertura"
+        },
+        "route": {
+          "secureEntry": "Asegura entrada y primer pasillo antes de profundizar.",
+          "clearByDecks": "Limpia por cubierta/nivel; no mezcles rutas verticales sin audio claro.",
+          "commitObjective": "Una vez cumplido objetivo, evita greed y compromete salida."
+        },
+        "warnings": {
+          "guaranteedBoss": "The Wedge spawnea al 100%; entra preparado para boss, Knight y escolta.",
+          "tightAngles": "Angulos cortos y puertas favorecen emboscadas.",
+          "limitedReliableData": "Los datos publicos siguen creciendo; evitar rutas exactas no verificadas."
+        }
+      }
+    }
   },
   "about": {
     "eyebrow": "Memoria del proyecto",

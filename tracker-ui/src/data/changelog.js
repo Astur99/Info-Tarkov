@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.14.38';
+export const APP_VERSION = '0.14.39';
 
 export const VERSION_POLICY = {
   current: '0.x',
@@ -17,6 +17,43 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '0.14.39',
+    date: '2026-06-23',
+    codename: 'Tactical Map Briefings',
+    type: 'feature',
+    title: {
+      es: 'Briefings tácticos en Mapas',
+      en: 'Tactical briefings in Maps'
+    },
+    summary: {
+      es: 'La sección de Mapas añade briefings limpios por mapa con descripción, datos base, zonas de conflicto y puntos de interés.',
+      en: 'The Maps section adds clean briefings per map with description, base data, conflict zones and points of interest.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'Mapas incorpora un panel de briefing bajo la selección de mapas, preparado en ES/EN y separado en datos mantenibles.',
+          en: 'Maps now includes a briefing panel below map selection, prepared in ES/EN and split into maintainable data.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'Icebreaker, Labyrinth y Terminal reciben tratamiento especial con datos base revisados; Transits queda reducido a su función principal de organigrama de conexiones.',
+          en: 'Icebreaker, Labyrinth and Terminal receive special treatment with reviewed base data; Transits is reduced to its main connection-chart purpose.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El dossier interno documenta que Mapas combina visor externo con briefings tácticos curados mediante mapBriefings.js e i18n.',
+          en: 'The internal dossier documents that Maps combines the external viewer with curated tactical briefings through mapBriefings.js and i18n.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.38',
     date: '2026-06-23',

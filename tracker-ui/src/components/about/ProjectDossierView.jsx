@@ -174,7 +174,7 @@ const modules = [
     name: 'Mapas, Historia y Troubleshooting',
     files: 'src/modules/maps/, src/modules/story/, src/modules/troubleshooting/',
     body:
-      'Mapas es base visual tactica. Story agrupa decisiones/finales. Troubleshooting documenta limitaciones y problemas conocidos.'
+      'Mapas combina visor externo reemr.se con briefings tacticos curados por mapa. Los datos estructurados viven en mapBriefings.js y la copy en i18n ES/EN para poder ampliar idiomas. Story agrupa decisiones/finales. Troubleshooting documenta limitaciones y problemas conocidos.'
   }
 ];
 
