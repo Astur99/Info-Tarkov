@@ -82,7 +82,8 @@
         "title": "TROUBLESHOOTING",
         "desc": "Reporte de anomalías conocidas en la app, registros de depuración y soluciones aplicables."
       }
-    }
+    },
+    "howToUse": "MANUAL"
   },
   "changelog": {
     "eyebrow": "Registro público",
@@ -995,7 +996,7 @@
       "eyebrow": "C?mo usar",
       "title": "Gu?a completa de la app",
       "body": "Manual buscable con todos los m?dulos, subsecciones, conexiones y acciones clave de Info Tarkov.",
-      "action": "ABRIR GU?A"
+      "action": "ABRIR MANUAL"
     }
   },
   "admin": {

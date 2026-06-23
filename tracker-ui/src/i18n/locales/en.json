@@ -82,7 +82,8 @@
         "title": "TROUBLESHOOTING",
         "desc": "Known app issues, debug notes and available fixes."
       }
-    }
+    },
+    "howToUse": "GUIDE"
   },
   "changelog": {
     "eyebrow": "Public log",

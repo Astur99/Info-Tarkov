@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.1.0';
+export const APP_VERSION = '1.1.1';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,43 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.1.1',
+    date: '2026-06-23',
+    codename: 'Guide Accessibility Polish',
+    type: 'improvement',
+    title: {
+      es: 'Guía más accesible y limpia',
+      en: 'Cleaner and more accessible guide'
+    },
+    summary: {
+      es: 'La guía de uso pasa a sentirse más como una enciclopedia de ayuda y gana acceso directo desde el menú principal.',
+      en: 'The how-to-use guide now feels more like a help encyclopedia and gains direct access from the main menu.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Se ocultan los metadatos internos de conexión y palabras clave, manteniéndolos activos para el buscador.',
+          en: 'Internal connection and keyword metadata is hidden while remaining active for search.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El índice visual se renombra como capítulos/artículos para que la experiencia sea menos técnica y más de manual consultable.',
+          en: 'The visual index is renamed as chapters/articles so the experience feels less technical and more like a searchable manual.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'El menú principal añade acceso directo a la Guía para usuarios nuevos.',
+          en: 'The main menu adds direct access to the Guide for new users.'
+        }
+      }
+    ]
+  },
   {
     version: '1.1.0',
     date: '2026-06-23',

@@ -797,6 +797,7 @@ function App() {
           }}
         >
           {[
+            { label: t('home.howToUse'), view: 'how-to-use' },
             { label: t('home.about'), view: 'about' },
             { label: t('home.patchNotes'), view: 'changelog' },
             ...(userRole === 'admin' ? [{ label: t('home.dossier'), view: 'project-dossier' }] : [])

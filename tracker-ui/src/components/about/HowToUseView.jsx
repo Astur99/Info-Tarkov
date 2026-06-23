@@ -42,7 +42,7 @@ export default function HowToUseView({ onViewChange }) {
 
   const normalizedQuery = normalize(query.trim());
 
-  const modules = useMemo(() => content.categories.map((category) => ({
+  const chapters = useMemo(() => content.categories.map((category) => ({
     id: category.id,
     name: category.module
   })), [content.categories]);
@@ -139,15 +139,20 @@ export default function HowToUseView({ onViewChange }) {
             </strong>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+          <div style={{ marginTop: '1rem' }}>
+            <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 0.55rem', fontSize: '0.82rem', fontWeight: 900, letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+              {content.chaptersLabel}
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <FilterButton active={activeModule === 'all'} onClick={() => setActiveModule('all')}>
               {content.allModules}
             </FilterButton>
-            {modules.map((module) => (
+            {chapters.map((module) => (
               <FilterButton key={module.id} active={activeModule === module.id} onClick={() => setActiveModule(module.id)}>
                 {module.name}
               </FilterButton>
             ))}
+            </div>
           </div>
         </section>
 
@@ -158,7 +163,7 @@ export default function HowToUseView({ onViewChange }) {
         ) : (
           <section style={{ display: 'grid', gap: '1rem' }}>
             {visibleCategories.map((category) => (
-              <article key={category.id} style={{ ...panelStyle, padding: '1.15rem' }}>
+              <article key={category.id} style={{ ...panelStyle, padding: '1.35rem' }}>
                 <div
                   style={{
                     display: 'flex',
@@ -173,11 +178,6 @@ export default function HowToUseView({ onViewChange }) {
                   <h2 style={{ margin: 0, color: '#fff', fontSize: '1.35rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
                     {category.module}
                   </h2>
-                  {category.view && category.view !== 'home' && (
-                    <button type="button" onClick={() => onViewChange(category.view)} style={smallButtonStyle}>
-                      {content.openModule}
-                    </button>
-                  )}
                 </div>
 
                 <div style={{ display: 'grid', gap: '0.75rem' }}>
@@ -186,7 +186,7 @@ export default function HowToUseView({ onViewChange }) {
                     const isOpen = openSections.has(sectionId);
 
                     return (
-                      <div key={sectionId} style={{ background: 'rgba(0,0,0,0.22)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', overflow: 'hidden' }}>
+                      <div key={sectionId} style={{ background: 'rgba(0,0,0,0.18)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', overflow: 'hidden' }}>
                         <button
                           type="button"
                           onClick={() => toggleSection(sectionId)}
@@ -196,7 +196,7 @@ export default function HowToUseView({ onViewChange }) {
                             justifyContent: 'space-between',
                             gap: '1rem',
                             alignItems: 'center',
-                            background: isOpen ? 'rgba(26,176,21,0.07)' : 'transparent',
+                            background: isOpen ? 'linear-gradient(90deg, rgba(26,176,21,0.075), rgba(255,255,255,0.025))' : 'transparent',
                             border: 'none',
                             color: '#fff',
                             padding: '1rem',
@@ -206,44 +206,23 @@ export default function HowToUseView({ onViewChange }) {
                           }}
                         >
                           <span>
-                            <strong style={{ display: 'block', fontSize: '1.1rem', letterSpacing: '0.4px' }}>{section.title}</strong>
+                            <strong style={{ display: 'block', fontSize: '1.18rem', letterSpacing: '0.4px' }}>{section.title}</strong>
                             <span style={{ color: 'var(--tk-text-muted)', display: 'block', marginTop: '0.2rem', lineHeight: 1.35 }}>{section.summary}</span>
                           </span>
                           <span style={{ color: 'var(--tk-green)', fontWeight: 900, fontSize: '1.2rem' }}>{isOpen ? '-' : '+'}</span>
                         </button>
 
                         {isOpen && (
-                          <div style={{ padding: '0 1rem 1rem', display: 'grid', gap: '1rem' }}>
+                          <div style={{ padding: '0 1rem 1.15rem', display: 'grid', gap: '1rem' }}>
                             <HelpBlock title={content.stepsLabel} items={section.steps} ordered />
                             <HelpBlock title={content.tipsLabel} items={section.tips} />
-                            <div>
-                              <h3 style={blockTitleStyle}>{content.connectionLabel}</h3>
-                              <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.6, margin: 0 }}>{section.connection}</p>
-                            </div>
-                            <div>
-                              <h3 style={blockTitleStyle}>{content.keywordsLabel}</h3>
-                              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                                {section.keywords.map((keyword) => (
-                                  <button
-                                    key={keyword}
-                                    type="button"
-                                    onClick={() => setQuery(keyword)}
-                                    style={{
-                                      color: 'var(--tk-green)',
-                                      background: 'rgba(26,176,21,0.08)',
-                                      border: '1px solid rgba(26,176,21,0.16)',
-                                      borderRadius: '999px',
-                                      padding: '0.25rem 0.55rem',
-                                      fontFamily: "'Rajdhani', sans-serif",
-                                      fontWeight: 800,
-                                      cursor: 'pointer'
-                                    }}
-                                  >
-                                    {keyword}
-                                  </button>
-                                ))}
+                            {category.view && category.view !== 'home' && (
+                              <div>
+                                <button type="button" onClick={() => onViewChange(category.view)} style={smallButtonStyle}>
+                                  {content.openModule}
+                                </button>
                               </div>
-                            </div>
+                            )}
                           </div>
                         )}
                       </div>
