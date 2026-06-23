@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.14.37';
+export const APP_VERSION = '0.14.38';
 
 export const VERSION_POLICY = {
   current: '0.x',
@@ -17,6 +17,36 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '0.14.38',
+    date: '2026-06-23',
+    codename: 'Pre-1.0 Quality Gate',
+    type: 'changed',
+    title: {
+      es: 'Live Events sale de la build',
+      en: 'Live Events leaves the build'
+    },
+    summary: {
+      es: 'Se retira Eventos en Directo antes de la 1.0 porque no existe una fuente fiable que cumpla el estándar de calidad de Info Tarkov.',
+      en: 'Live Events is removed before 1.0 because there is no reliable source that meets Info Tarkov quality standards.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'El menú principal ya no muestra Eventos en Directo y la ruta interna del módulo queda eliminada.',
+          en: 'The main menu no longer shows Live Events and the internal module route has been removed.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Se eliminan los ficheros del módulo experimental y sus textos activos de About/Troubleshooting/i18n.',
+          en: 'The experimental module files and active About/Troubleshooting/i18n copy have been removed.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.37',
     date: '2026-06-23',

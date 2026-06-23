@@ -160,12 +160,6 @@ const modules = [
       'Calculadora de municion, armaduras, penetracion, dano y simulacion de impactos. Pendiente de refactor matematico/UI.'
   },
   {
-    name: 'Eventos en Directo',
-    files: 'src/modules/live-events/',
-    body:
-      'Lee live-events externos, normaliza estructuras, clasifica estados y usa eventos verificados manualmente cuando la fuente no cubre un evento real.'
-  },
-  {
     name: 'Server Status',
     files: 'src/modules/server-status/',
     body:

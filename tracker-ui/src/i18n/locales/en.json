@@ -62,10 +62,6 @@
         "title": "BALLISTICS SIMULATOR",
         "desc": "Penetration probability, plate break simulation and TTK impact calculations."
       },
-      "liveEvents": {
-        "title": "LIVE EVENTS",
-        "desc": "Tracking for announcements, temporary events, patches and active Tarkov broadcasts."
-      },
       "prestige": {
         "title": "PRESTIGE",
         "desc": "Requirements, rewards and checklist for preparing each PvP prestige level."
@@ -415,11 +411,11 @@
     "sections": [
       {
         "title": "What Info Tarkov Is",
-        "body": "Info Tarkov is a modular hub for Escape From Tarkov designed as a tactical center for lookup, tracking and decisions. It gathers quest progress, bosses, events, servers, combat, planning and public PMC data in one interface."
+        "body": "Info Tarkov is a modular hub for Escape From Tarkov designed as a tactical center for lookup, tracking and decisions. It gathers quest progress, bosses, servers, combat, planning and public PMC data in one interface."
       },
       {
         "title": "What You Can Do",
-        "body": "The app lets you consult maps, track Kappa, review decisions/endings, investigate bosses, check Goons, explore PVP/PVE prices, plan Hideout, simulate combat, review events, inspect PMC profiles and report bugs or suggestions."
+        "body": "The app lets you consult maps, track Kappa, review decisions/endings, investigate bosses, check Goons, explore PVP/PVE prices, plan Hideout, simulate combat, review, inspect PMC profiles and report bugs or suggestions."
       },
       {
         "title": "User System",
@@ -539,8 +535,8 @@
         "status": "Technical module with potential to become full Ammo Intelligence."
       },
       {
-        "name": "Live Events",
-        "purpose": "Tracking for temporary events, announcements and active changes.",
+        "name": "",
+        "purpose": "Tracking for temporary, announcements and active changes.",
         "actions": [
           "Check active events",
           "See recent events",
@@ -892,8 +888,8 @@
       {
         "code": "NET_EXTERNAL_APIS_V1",
         "title": "External API Dependency",
-        "symptom": "Server status, live events, Goons Tracker, Flea Market and some Kappa data depend on external sources. If an API, proxy or external site fails, the module may show empty data, old data or a temporary error.",
-        "fix": "Try again after a few minutes and check your connection. Live Events includes a manual fallback when automatic sources do not respond."
+        "symptom": "Server status, live, Goons Tracker, Flea Market and some Kappa data depend on external sources. If an API, proxy or external site fails, the module may show empty data, old data or a temporary error.",
+        "fix": "Try again after a few minutes and check your connection. includes a manual fallback when automatic sources do not respond."
       },
       {
         "code": "GOONS_HTML_PARSE_V1",
@@ -915,8 +911,8 @@
       },
       {
         "code": "LIVE_EVENTS_EXPERIMENTAL_V1",
-        "title": "Experimental Live Events",
-        "symptom": "Live Events depends on external feeds that are not always complete or up to date. It may miss active events even when the community knows they are running.",
+        "title": "Experimental",
+        "symptom": " depends on external feeds that are not always complete or up to date. It may miss active even when the community knows they are running.",
         "fix": "Treat the module as an experimental reference. It is kept with manual fallback and separated sources, but may be hidden or replaced by a more reliable source in a future version."
       },
       {
@@ -926,61 +922,6 @@
         "fix": "It does not block production. Main modules already use lazy loading; before 1.0, heavy assets and extra splitting should be reviewed if real performance requires it."
       }
     ]
-  },
-  "liveEvents": {
-    "eyebrow": "Tactical feed",
-    "title": "Live events",
-    "subtitle": "Scans tarkovdata sources, classifies active or recent events and keeps a manual reference if the external feed fails.",
-    "lastSync": "LAST SYNC: {{date}} - SOURCE: {{source}}",
-    "visibleRecords": "{{count}} visible records",
-    "sourceWarning": "SOURCE WARNING: {{error}}",
-    "loading": "SYNCING EVENTS...",
-    "empty": "No active or recent events are registered right now.",
-    "noDate": "NO DATE",
-    "details": "DETAILS",
-    "sourceLabel": "SOURCE: {{source}}",
-    "actions": {
-      "scanning": "SCANNING...",
-      "refresh": "REFRESH FEED",
-      "hideEnded": "HIDE ENDED",
-      "showEnded": "SHOW ENDED"
-    },
-    "counters": {
-      "active": "Active",
-      "recent": "Recent",
-      "ended": "Ended",
-      "localTime": "Local time"
-    },
-    "status": {
-      "active": "ACTIVE",
-      "recent": "RECENT",
-      "reference": "REFERENCE",
-      "ended": "ENDED"
-    },
-    "freshness": {
-      "inProgress": "IN PROGRESS",
-      "today": "TODAY",
-      "daysAgo": "{{count}} DAYS AGO"
-    },
-    "sources": {
-      "verifiedManual": "verified manual",
-      "fallbackManual": "manual reference",
-      "none": "no source"
-    },
-    "errors": {
-      "manualActive": "The automatic feed returned no events, but there is a manually verified temporary event.",
-      "noFeed": "The automatic feed could not be confirmed. Showing a manual reference link.",
-      "unexpected": "Unexpected error while reading events. Showing a manual reference link."
-    },
-    "fallback": {
-      "title": "Escape From Tarkov Events",
-      "description": "No active event could be confirmed from automatic sources. Use the external link as a manual reference."
-    },
-    "manual": {
-      "fullSpeedAhead": {
-        "description": "Active event with Rogues outside Lighthouse, presence on Shoreline and Reserve, Peacekeeper quest chain and Awaiting Departure achievement."
-      }
-    }
   },
   "serverStatus": {
     "title": "NETWORK / BATTLEYE TELEMETRY",

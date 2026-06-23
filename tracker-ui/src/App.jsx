@@ -16,7 +16,6 @@ import fleaImage from './assets/backgrounds/flea.png';
 import hideoutImage from './assets/backgrounds/hideout.png';
 import simuladorImage from './assets/backgrounds/simulador.png';
 import troubleshootingImage from './assets/backgrounds/troubleshooting.png';
-import liveEventsImage from './assets/backgrounds/liveevents.png';
 import prestigeImage from './assets/backgrounds/prestigios.png';
 import keysImage from './assets/backgrounds/llaves.png';
 import pmcProfileImage from './assets/backgrounds/pmc.png';
@@ -42,7 +41,6 @@ const KeysModule = lazy(() => import('./modules/keys/KeysModule'));
 const PmcProfileModule = lazy(() => import('./modules/pmc/PmcProfileModule'));
 const TroubleshootingView = lazy(() => import('./modules/troubleshooting/TroubleshootingView'));
 const ServerStatus = lazy(() => import('./modules/server-status/ServerStatus'));
-const LiveEvents = lazy(() => import('./modules/live-events/LiveEvents'));
 
 const loadUserRole = async (session) => {
   if (!session?.user?.id) return null;
@@ -448,13 +446,6 @@ function App() {
       imagePosition: { right: '-10px', bottom: '-100px', width: '180px', maxWidth: '58%' }
     },
     {
-      id: 'live-events',
-      title: t('home.modules.liveEvents.title'),
-      desc: t('home.modules.liveEvents.desc'),
-      bgImage: liveEventsImage,
-      imagePosition: { right: '-5px', bottom: '0px', width: '145px', maxWidth: '62%' }
-    },
-    {
       id: 'trouble',
       title: t('home.modules.trouble.title'),
       desc: t('home.modules.trouble.desc'),
@@ -544,7 +535,6 @@ function App() {
   if (currentView === 'pmc-profile') return <LazyView><PmcProfileModule onViewChange={navigateToView} session={session} userProfile={userProfile} /></LazyView>;
   if (currentView === 'trouble') return <LazyView><TroubleshootingView onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'server-status') return <LazyView><ServerStatus onViewChange={navigateToView} /></LazyView>;
-  if (currentView === 'live-events') return <LazyView><LiveEvents onViewChange={navigateToView} /></LazyView>;
 
   return (
     <div

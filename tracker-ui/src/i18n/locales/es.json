@@ -62,10 +62,6 @@
         "title": "SIMULADOR BALÍSTICO",
         "desc": "Cálculo de probabilidad de penetración y simulación de rotura de placas e impactos TTK."
       },
-      "liveEvents": {
-        "title": "EVENTOS EN DIRECTO",
-        "desc": "Seguimiento de anuncios, eventos temporales, parches y transmisiones activas de Tarkov."
-      },
       "prestige": {
         "title": "PRESTIGIOS",
         "desc": "Requisitos, recompensas y checklist para preparar cada nivel de prestigio PVP."
@@ -539,7 +535,7 @@
         "status": "Módulo técnico con potencial para convertirse en Ammo Intelligence completo."
       },
       {
-        "name": "Eventos en directo",
+        "name": " en directo",
         "purpose": "Seguimiento de eventos temporales, anuncios y cambios activos.",
         "actions": [
           "Consultar activos",
@@ -904,7 +900,7 @@
       {
         "code": "I18N_PARTIAL_ROLLOUT_V2",
         "title": "Traducción Parcial de la Interfaz",
-        "symptom": "El selector ES/EN ya cubre portada, login, cuenta, Report, estado de servidores, Misiones / Kappa, Perfil PMC, Flea, Hideout, Bosses, Eventos, Prestigios, Sistema de Llaves, Quest Optimizer, Goons, Mapas, About y Simulador Balístico. Todavía pueden quedar textos internos o datos de contenido en módulos grandes.",
+        "symptom": "El selector ES/EN ya cubre portada, login, cuenta, Report, estado de servidores, Misiones / Kappa, Perfil PMC, Flea, Hideout, Bosses, Prestigios, Sistema de Llaves, Quest Optimizer, Goons, Mapas, About y Simulador Balístico. Todavía pueden quedar textos internos o datos de contenido en módulos grandes.",
         "fix": "La traducción se está desplegando por módulos. Dossier queda fuera por ser documentación privada del proyecto. Prioridad actual: revisar datos internos, Admin Panel y contenido dinámico restante."
       },
       {
@@ -915,8 +911,8 @@
       },
       {
         "code": "LIVE_EVENTS_EXPERIMENTAL_V1",
-        "title": "Eventos en Directo Experimental",
-        "symptom": "Eventos en Directo depende de feeds externos no siempre completos o actualizados. Puede no detectar eventos activos aunque la comunidad sepa que están ocurriendo.",
+        "title": " en Directo Experimental",
+        "symptom": " en Directo depende de feeds externos no siempre completos o actualizados. Puede no detectar eventos activos aunque la comunidad sepa que están ocurriendo.",
         "fix": "Trata el módulo como referencia experimental. Se mantiene con fallback manual y fuentes separadas, pero podría ocultarse o sustituirse por una fuente más fiable en futuras versiones."
       },
       {
@@ -926,61 +922,6 @@
         "fix": "No bloquea producción. La app ya usa lazy loading en módulos principales; antes de 1.0 conviene revisar assets pesados y posibles divisiones adicionales si el rendimiento real lo pide."
       }
     ]
-  },
-  "liveEvents": {
-    "eyebrow": "Feed táctico",
-    "title": "Eventos en directo",
-    "subtitle": "Escanea fuentes de tarkovdata, clasifica eventos activos o recientes y conserva una referencia manual si el feed externo falla.",
-    "lastSync": "ÚLTIMA SINCRONIZACIÓN: {{date}} - FUENTE: {{source}}",
-    "visibleRecords": "{{count}} registros visibles",
-    "sourceWarning": "AVISO DE FUENTE: {{error}}",
-    "loading": "SINCRONIZANDO EVENTOS...",
-    "empty": "No se registran eventos activos o recientes ahora mismo.",
-    "noDate": "SIN FECHA",
-    "details": "DETALLES",
-    "sourceLabel": "SOURCE: {{source}}",
-    "actions": {
-      "scanning": "ESCANEANDO...",
-      "refresh": "REFRESCAR FEED",
-      "hideEnded": "OCULTAR FINALIZADOS",
-      "showEnded": "MOSTRAR FINALIZADOS"
-    },
-    "counters": {
-      "active": "Activos",
-      "recent": "Recientes",
-      "ended": "Finalizados",
-      "localTime": "Hora local"
-    },
-    "status": {
-      "active": "ACTIVO",
-      "recent": "RECIENTE",
-      "reference": "REFERENCIA",
-      "ended": "FINALIZADO"
-    },
-    "freshness": {
-      "inProgress": "EN CURSO",
-      "today": "HOY",
-      "daysAgo": "HACE {{count}} DIAS"
-    },
-    "sources": {
-      "verifiedManual": "verificado manual",
-      "fallbackManual": "referencia manual",
-      "none": "sin fuente"
-    },
-    "errors": {
-      "manualActive": "El feed automático no devolvió eventos, pero hay un evento temporal verificado manualmente.",
-      "noFeed": "No se pudo confirmar el feed automático. Mostrando enlace de referencia manual.",
-      "unexpected": "Error inesperado leyendo eventos. Mostrando enlace de referencia manual."
-    },
-    "fallback": {
-      "title": "Eventos de Escape From Tarkov",
-      "description": "No se pudo confirmar ningún evento activo desde las fuentes automáticas. Usa el enlace externo como referencia manual."
-    },
-    "manual": {
-      "fullSpeedAhead": {
-        "description": "Evento activo con Rogues fuera de Lighthouse, presencia en Shoreline y Reserve, cadena de Peacekeeper y logro Awaiting Departure."
-      }
-    }
   },
   "serverStatus": {
     "title": "TELEMETRÍA DE RED / BATTLEYE",
