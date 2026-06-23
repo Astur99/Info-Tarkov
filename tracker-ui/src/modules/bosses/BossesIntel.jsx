@@ -11,14 +11,23 @@ const bossImageModules = import.meta.glob('../../assets/bosses/*', {
 
 const getBossImage = (boss) => bossImageModules[`../../assets/bosses/${boss.fileName}`] || '';
 
+const getSpawnMapKey = (mapName) => String(mapName || '').replace(/\W+/g, '_');
+
 const getBossSpawnZones = (boss, t) => {
   if (!boss) return [];
   const zoneMap = BOSS_SPAWN_ZONES[boss.id] || {};
 
-  return (boss.spawnDetails || []).map((spawn) => ({
-    ...spawn,
-    zones: zoneMap[spawn.name] || zoneMap[spawn.name.replace('The Lab', 'Laboratory')] || [t('bossesModule.unknownExactZone')]
-  }));
+  return (boss.spawnDetails || []).map((spawn) => {
+    const zones = zoneMap[spawn.name] || zoneMap[spawn.name.replace('The Lab', 'Laboratory')] || [t('bossesModule.unknownExactZone')];
+    const mapKey = getSpawnMapKey(spawn.name);
+
+    return {
+      ...spawn,
+      zones: zones.map((zone, index) =>
+        t(`bossesModule.spawnZones.${boss.id}.${mapKey}.${index}`, { defaultValue: zone })
+      )
+    };
+  });
 };
 
 function BossImage({ boss, style }) {
@@ -303,6 +312,7 @@ export default function BossesView({ onViewChange }) {
           <option value="ALL">{t('bossesModule.allMaps')}</option>
           <option value="Customs">CUSTOMS</option>
           <option value="Factory">FACTORY</option>
+          <option value="Icebreaker">ICEBREAKER</option>
           <option value="Interchange">INTERCHANGE</option>
           <option value="Lighthouse">LIGHTHOUSE</option>
           <option value="Reserve">RESERVE</option>

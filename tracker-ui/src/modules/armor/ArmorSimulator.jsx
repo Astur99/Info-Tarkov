@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const POOL_AMMO_LOCAL = [
@@ -11,13 +11,13 @@ const POOL_AMMO_LOCAL = [
 ];
 
 const POOL_ARMOR_LOCAL = [
-  { id: 'v1', name: 'Placa Balística Clase 6 (Granit GOST)', shortName: 'Granit Cl.6', clase: 6, durabilidad: 60, material: 'Ceramic' },
-  { id: 'v2', name: 'Hexgrid Thor Thoracic Armor Vest', shortName: 'Hexgrid Cl.6', clase: 6, durabilidad: 50, material: 'Polyethylene' },
-  { id: 'v3', name: 'Placa Balística Clase 5 (Korund-VM)', shortName: 'Korund Cl.5', clase: 5, durabilidad: 45, material: 'Steel' },
-  { id: 'v4', name: 'IOTV Gen4 Body Armor', shortName: 'Gen4 Cl.5', clase: 5, durabilidad: 95, material: 'Titanium' },
-  { id: 'v5', name: 'HighCom Trooper TFO Armor Vest', shortName: 'Trooper Cl.4', clase: 4, durabilidad: 85, material: 'Polyethylene' },
-  { id: 'v6', name: '6B23-1 Armor', shortName: '6B23-1 Cl.3', clase: 3, durabilidad: 60, material: 'Steel' },
-  { id: 'v7', name: 'PACA MK2 Body Armor', shortName: 'PACA Cl.2', clase: 2, durabilidad: 40, material: 'Aramid' }
+  { id: 'v1', nameKey: 'granit', shortNameKey: 'granitShort', clase: 6, durabilidad: 60, material: 'Ceramic' },
+  { id: 'v2', nameKey: 'hexgrid', shortNameKey: 'hexgridShort', clase: 6, durabilidad: 50, material: 'Polyethylene' },
+  { id: 'v3', nameKey: 'korund', shortNameKey: 'korundShort', clase: 5, durabilidad: 45, material: 'Steel' },
+  { id: 'v4', nameKey: 'gen4', shortNameKey: 'gen4Short', clase: 5, durabilidad: 95, material: 'Titanium' },
+  { id: 'v5', nameKey: 'trooper', shortNameKey: 'trooperShort', clase: 4, durabilidad: 85, material: 'Polyethylene' },
+  { id: 'v6', nameKey: 'sixb23', shortNameKey: 'sixb23Short', clase: 3, durabilidad: 60, material: 'Steel' },
+  { id: 'v7', nameKey: 'paca', shortNameKey: 'pacaShort', clase: 2, durabilidad: 40, material: 'Aramid' }
 ];
 
 const QUERY_BALISTICA = `
@@ -237,6 +237,14 @@ function materialToText(material) {
   return material.name || material.id || 'Titanium';
 }
 
+function getLocalArmorFallback(t) {
+  return POOL_ARMOR_LOCAL.map((armor) => ({
+    ...armor,
+    name: t(`armorModule.fallbackArmor.${armor.nameKey}`),
+    shortName: t(`armorModule.fallbackArmor.${armor.shortNameKey}`)
+  }));
+}
+
 function normalizeArmor(item, props, suffix = '') {
   if (!item || !props?.class) return null;
 
@@ -334,6 +342,7 @@ function getMaterialFactor(material, materialData) {
 
 export default function ArmorSimulator({ onViewChange }) {
   const { t } = useTranslation();
+  const armorFallback = useMemo(() => getLocalArmorFallback(t), [t]);
   const [municiones, setMuniciones] = useState([]);
   const [armaduras, setArmaduras] = useState([]);
   const [selectedAmmo, setSelectedAmmo] = useState(null);
@@ -344,13 +353,13 @@ export default function ArmorSimulator({ onViewChange }) {
   const [busquedaAmmo, setBusquedaAmmo] = useState('');
   const [busquedaArmor, setBusquedaArmor] = useState('');
 
-  const cargarFallback = () => {
+  const cargarFallback = useCallback(() => {
     setMuniciones(POOL_AMMO_LOCAL);
-    setArmaduras(POOL_ARMOR_LOCAL);
+    setArmaduras(armorFallback);
     setSelectedAmmo(POOL_AMMO_LOCAL[0]);
-    setSelectedArmor(POOL_ARMOR_LOCAL[0]);
+    setSelectedArmor(armorFallback[0]);
     setCargando(false);
-  };
+  }, [armorFallback]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -417,7 +426,7 @@ export default function ArmorSimulator({ onViewChange }) {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [cargarFallback]);
 
   const municionesFiltradas = municiones.filter((m) => {
     const q = normalizarTexto(busquedaAmmo);
@@ -767,7 +776,7 @@ export default function ArmorSimulator({ onViewChange }) {
             {armadurasFiltradas.length > 0 ? (
               armadurasFiltradas.map((a) => (
                 <option key={a.id} value={a.id} style={{ backgroundColor: '#0e0e11' }}>
-                  [CLASE {a.clase}] {a.name} / {a.material}
+                  {t('armorModule.armorClassOption', { class: a.clase, name: a.name, material: a.material })}
                 </option>
               ))
             ) : (
@@ -997,3 +1006,4 @@ export default function ArmorSimulator({ onViewChange }) {
     </div>
   );
 }
+

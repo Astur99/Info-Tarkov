@@ -1,4 +1,4 @@
-export const APP_VERSION = '0.14.34';
+export const APP_VERSION = '0.14.35';
 
 export const VERSION_POLICY = {
   current: '0.x',
@@ -6,7 +6,7 @@ export const VERSION_POLICY = {
     es: {
       title: 'Sistema de versiones',
       body:
-        'Mientras Info Tarkov siga en fase beta, usamos versionado 0.x. Subimos el tercer numero para fixes pequenos, el segundo numero para nuevas funciones o cambios importantes de modulos, y reservamos la version 1.0.0 para una primera version publica estable con traduccion y QA mas completos.'
+        'Mientras Info Tarkov siga en fase beta, usamos versionado 0.x. Subimos el tercer numero para fixes pequeños, el segundo numero para nuevas funciones o cambios importantes de modulos, y reservamos la version 1.0.0 para una primera version publica estable con traduccion y QA mas completos.'
     },
     en: {
       title: 'Versioning system',
@@ -17,6 +17,99 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '0.14.35',
+    date: '2026-06-15',
+    codename: 'Public Copy i18n Cleanup',
+    type: 'improvement',
+    title: {
+      es: 'Traducción pública más cerrada',
+      en: 'Public translation coverage tightened'
+    },
+    summary: {
+      es: 'Se revisan textos visibles restantes en Cuenta, Report, Astur, Quest Optimizer y Simulador Balístico.',
+      en: 'Remaining visible copy is reviewed across Account, Report, Astur, Quest Optimizer and Ballistics Simulator.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'La vista Astur pasa a usar i18n y cambia correctamente entre ES/EN.',
+          en: 'The Astur view now uses i18n and switches correctly between ES/EN.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Los errores de respuesta/cierre de tickets del usuario pasan a plantillas traducibles.',
+          en: 'User ticket reply/close errors now use translatable templates.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Quest Optimizer mueve riesgos y recomendaciones fallback al sistema de locales.',
+          en: 'Quest Optimizer moves fallback risks and recommendations into locale files.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Sistema de Llaves mueve usos, zonas y recomendaciones de llaves importantes a claves ES/EN.',
+          en: 'Key System moves important-key uses, areas and recommendations into ES/EN keys.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'ChangeLog y botones inferiores del menú se conectan al sistema global de i18n.',
+          en: 'ChangeLog and lower menu buttons are connected to the global i18n system.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'About deja de mantener textos fallback en español dentro del componente y consume solo datos localizados.',
+          en: 'About no longer keeps Spanish fallback copy inside the component and now consumes localized data only.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Intel: Bosses traduce las zonas de spawn conocidas por boss y mapa, manteniendo fallback técnico si falta alguna clave.',
+          en: 'Intel: Bosses now translates known spawn zones by boss and map while keeping technical fallbacks if a key is missing.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'Intel: Bosses añade The Wedge con ficha basada en la wiki, soporte de mapa Icebreaker y textos ES/EN.',
+          en: 'Intel: Bosses adds The Wedge with a wiki-based dossier, Icebreaker map support and ES/EN copy.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Perfil de PMC aplica formato de fechas y números según el idioma activo, también en la tarjeta exportada.',
+          en: 'PMC Profile now formats dates and numbers according to the active language, including the exported card.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Panel Admin elimina fallbacks internos en español para estados y tipos de tickets.',
+          en: 'Admin Panel removes internal Spanish fallbacks for ticket states and types.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Simulador Balístico localiza los nombres fallback de blindajes y la etiqueta de clase del selector.',
+          en: 'Ballistics Simulator localizes fallback armor names and the selector class label.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.34',
     date: '2026-05-22',

@@ -49,5 +49,8 @@ export const BOSS_SPAWN_ZONES = {
   },
   Zryachiy: {
     Lighthouse: ['Lightkeeper island', 'Bridge approach', 'Island ridgelines']
+  },
+  wedge: {
+    Icebreaker: ['Level 3', 'Black Division contact area', '3-6 follower escort']
   }
 };

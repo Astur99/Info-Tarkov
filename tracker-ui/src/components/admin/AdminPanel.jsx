@@ -31,23 +31,22 @@ const actionButtonStyle = {
 const OWNER_EMAIL = 'juancarfele@gmail.com';
 
 const feedbackTypeLabels = {
-  bug: 'Bug',
-  suggestion: 'Sugerencia',
-  other: 'Otro'
+  bug: 'bug',
+  suggestion: 'suggestion',
+  other: 'other'
 };
 
 const feedbackStatusLabels = {
-  open: 'Abierto',
-  reviewing: 'En revisión',
-  closed: 'Cerrado'
+  open: 'open',
+  reviewing: 'reviewing',
+  closed: 'closed'
 };
 
 const feedbackStatusActions = {
-  open: 'Marcar abierto',
-  reviewing: 'Pasar a revisión',
-  closed: 'Cerrar ticket'
+  open: 'open',
+  reviewing: 'reviewing',
+  closed: 'closed'
 };
-
 const feedbackStatusStyles = {
   open: {
     color: 'var(--tk-green)',
@@ -67,8 +66,8 @@ const feedbackStatusStyles = {
 };
 
 const replyAuthorLabels = {
-  user: 'Usuario',
-  admin: 'Astur'
+  user: 'user',
+  admin: 'admin'
 };
 
 const getAdminDisplayUsername = (user) =>
@@ -690,7 +689,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                             }}
                           >
                             <strong style={{ color: reply.author_role === 'admin' ? 'var(--tk-green)' : '#fff' }}>
-                              {replyAuthorLabels[reply.author_role] || reply.author_role}
+                              {t(`admin.feedback.replyAuthors.${reply.author_role}`, { defaultValue: replyAuthorLabels[reply.author_role] || reply.author_role })}
                             </strong>
                             <span style={{ color: 'var(--tk-text-muted)', marginLeft: '0.5rem' }}>
                               {reply.created_at ? new Date(reply.created_at).toLocaleString() : '-'}
@@ -869,3 +868,4 @@ function DetailStat({ label, value }) {
     </div>
   );
 }
+

@@ -110,7 +110,7 @@ export default function UserMessages({ onViewChange, onReportsSeen, onNotificati
 
     if (error) {
       console.error(error);
-      setStatus(`No se pudo responder el ticket: ${error.message}`);
+      setStatus(t('report.errors.replyWithMessage', { message: error.message }));
       return;
     }
 
@@ -130,7 +130,7 @@ export default function UserMessages({ onViewChange, onReportsSeen, onNotificati
 
     if (error) {
       console.error(error);
-      setStatus(`No se pudo cerrar el ticket: ${error.message}`);
+      setStatus(t('report.errors.closeWithMessage', { message: error.message }));
       return;
     }
 

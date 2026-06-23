@@ -3,52 +3,14 @@ import { APP_VERSION, VERSION_POLICY, changelogEntries } from '../../data/change
 
 const fallbackLanguage = 'es';
 
-const copy = {
-  es: {
-    eyebrow: 'Registro publico',
-    title: 'ChangeLog',
-    subtitle:
-      'Historial de updates de Info Tarkov agrupado por versiones publicas. Las entradas combinan commits reales, contexto de desarrollo y cambios visibles para usuarios.',
-    currentVersion: 'Version actual',
-    totalUpdates: 'Versiones registradas',
-    back: 'VOLVER AL MENU',
-    types: {
-      added: 'Nuevo',
-      changed: 'Mejorado',
-      fixed: 'Corregido',
-      feature: 'Feature',
-      improvement: 'Mejora',
-      foundation: 'Base'
-    }
-  },
-  en: {
-    eyebrow: 'Public log',
-    title: 'ChangeLog',
-    subtitle:
-      'Info Tarkov update history grouped by public versions. Entries combine real commits, development context and user-visible changes.',
-    currentVersion: 'Current version',
-    totalUpdates: 'Logged versions',
-    back: 'BACK TO MENU',
-    types: {
-      added: 'Added',
-      changed: 'Changed',
-      fixed: 'Fixed',
-      feature: 'Feature',
-      improvement: 'Improvement',
-      foundation: 'Foundation'
-    }
-  }
-};
-
 const getLocalized = (value, language) => {
   if (!value) return '';
   return value[language] || value[fallbackLanguage] || value.en || '';
 };
 
 export default function ChangelogView({ onViewChange }) {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const language = i18n.resolvedLanguage || i18n.language || fallbackLanguage;
-  const labels = copy[language] || copy[fallbackLanguage];
   const policy = VERSION_POLICY.labels[language] || VERSION_POLICY.labels[fallbackLanguage];
 
   return (
@@ -83,7 +45,7 @@ export default function ChangelogView({ onViewChange }) {
                 textTransform: 'uppercase'
               }}
             >
-              {labels.eyebrow}
+              {t('changelog.eyebrow')}
             </p>
             <h1
               style={{
@@ -94,10 +56,10 @@ export default function ChangelogView({ onViewChange }) {
                 textTransform: 'uppercase'
               }}
             >
-              {labels.title}
+              {t('changelog.title')}
             </h1>
             <p style={{ color: 'var(--tk-text-muted)', maxWidth: '760px', lineHeight: 1.6, fontSize: '1rem' }}>
-              {labels.subtitle}
+              {t('changelog.subtitle')}
             </p>
           </div>
 
@@ -116,7 +78,7 @@ export default function ChangelogView({ onViewChange }) {
               whiteSpace: 'nowrap'
             }}
           >
-            {labels.back}
+            {t('common.backToMenu')}
           </button>
         </header>
 
@@ -137,7 +99,7 @@ export default function ChangelogView({ onViewChange }) {
             }}
           >
             <p style={{ color: 'var(--tk-text-muted)', margin: 0, fontWeight: '800', textTransform: 'uppercase' }}>
-              {labels.currentVersion}
+              {t('changelog.currentVersion')}
             </p>
             <strong style={{ color: '#fff', fontSize: '2.1rem', letterSpacing: '1px' }}>v{APP_VERSION}</strong>
           </article>
@@ -151,7 +113,7 @@ export default function ChangelogView({ onViewChange }) {
             }}
           >
             <p style={{ color: 'var(--tk-text-muted)', margin: 0, fontWeight: '800', textTransform: 'uppercase' }}>
-              {labels.totalUpdates}
+              {t('changelog.totalUpdates')}
             </p>
             <strong style={{ color: '#fff', fontSize: '2.1rem', letterSpacing: '1px' }}>{changelogEntries.length}</strong>
           </article>
@@ -213,7 +175,7 @@ export default function ChangelogView({ onViewChange }) {
                     letterSpacing: '0.8px'
                   }}
                 >
-                  {labels.types[entry.type] || entry.type}
+                  {t(`changelog.types.${entry.type}`, { defaultValue: entry.type })}
                 </span>
               </aside>
 
@@ -258,7 +220,7 @@ export default function ChangelogView({ onViewChange }) {
                           textTransform: 'uppercase'
                         }}
                       >
-                        {labels.types[change.type] || change.type}
+                        {t(`changelog.types.${change.type}`, { defaultValue: change.type })}
                       </span>
                       <span style={{ color: '#d8d8d8', lineHeight: 1.45 }}>
                         {getLocalized(change.text, language)}

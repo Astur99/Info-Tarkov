@@ -17,7 +17,9 @@
   },
   "home": {
     "serverStatus": "Estado de Servidores",
+    "about": "ABOUT",
     "patchNotes": "ChangeLog",
+    "dossier": "DOSSIER",
     "login": "Login / Crear cuenta",
     "logout": "Cerrar sesión",
     "userButton": "{{username}}",
@@ -86,6 +88,21 @@
       }
     }
   },
+  "changelog": {
+    "eyebrow": "Registro público",
+    "title": "ChangeLog",
+    "subtitle": "Historial de updates de Info Tarkov agrupado por versiones públicas. Las entradas combinan commits reales, contexto de desarrollo y cambios visibles para usuarios.",
+    "currentVersion": "Versión actual",
+    "totalUpdates": "Versiones registradas",
+    "types": {
+      "added": "Nuevo",
+      "changed": "Mejorado",
+      "fixed": "Corregido",
+      "feature": "Feature",
+      "improvement": "Mejora",
+      "foundation": "Base"
+    }
+  },
   "keysModule": {
     "eyebrow": "Motor de búsqueda de acceso",
     "title": "Sistema de llaves",
@@ -96,6 +113,88 @@
     "defaults": {
       "use": "Llave detectada desde la base de datos de tarkov.dev. Consulta su wiki para ubicación exacta, puertas y loot asociado.",
       "recommendation": "No está marcada como prioritaria en la capa táctica. Búscala si una quest, ruta de loot o barter te la pide."
+    },
+    "intel": {
+      "dorm206": {
+        "area": "Dorms, residencia de dos plantas",
+        "use": "Abre la habitación 206 para localizar el agua escondida.",
+        "recommendation": "Guardar hasta completar la quest. Es una llave temprana muy importante para progresión."
+      },
+      "machinery": {
+        "area": "Camión cisterna de construcción",
+        "use": "Permite abrir el camión donde se recoge el reloj de bronce.",
+        "recommendation": "Prioridad absoluta al inicio del wipe. Si no la tienes, busca la chaqueta fija de tres plantas."
+      },
+      "dorm114": {
+        "area": "Dorms, residencia de dos plantas",
+        "use": "Abre la habitación 114 para recuperar el maletín de Carbon.",
+        "recommendation": "Guardar para quest. Después puede conservarse por caja fuerte y botiquines."
+      },
+      "factoryExit": {
+        "area": "Salidas ZB y puertas de Factory",
+        "use": "Desbloquea extracciones y atajos clave en Factory y Customs.",
+        "recommendation": "Comprar o guardar siempre. Es una llave utilitaria de alto impacto para supervivencia."
+      },
+      "resortWest216": {
+        "area": "Health Resort, ala oeste",
+        "use": "Acceso a habitación necesaria para progresión de Therapist.",
+        "recommendation": "Guardar hasta completar la cadena. Shoreline tiene mucho bloqueo por llaves."
+      },
+      "resortWest220": {
+        "area": "Health Resort, ala oeste",
+        "use": "Una de las llaves usadas para acceder al generador del resort.",
+        "recommendation": "Guardar si estás avanzando Peacekeeper. Puede ser sustituible según ruta/llave disponible."
+      },
+      "cottageBackDoor": {
+        "area": "Zona de cottages",
+        "use": "Permite entrar al cottage cerrado para objetivos de quest.",
+        "recommendation": "Muy recomendable guardarla. Suele bloquear progresión si no aparece en flea a buen precio."
+      },
+      "rbSt": {
+        "area": "Garajes y zona técnica",
+        "use": "Abre una sala importante para objetivos de Reserve y loot técnico/militar.",
+        "recommendation": "Guardar si la encuentras. Suele tener valor alto por combinación de quest y loot."
+      },
+      "rbKprl": {
+        "area": "Dome / guard building",
+        "use": "Acceso a habitación con potencial de intel, cajas y valor consistente.",
+        "recommendation": "Buena para rutas de loot en Reserve, no prioritaria si vas solo a questear."
+      },
+      "emercomMedical": {
+        "area": "Unidad médica EMERCOM",
+        "use": "Abre la unidad médica necesaria para quest y loot médico.",
+        "recommendation": "Guardar para Therapist/Skier y llevar cuando vayas a Interchange con objetivo médico."
+      },
+      "oliLogistics": {
+        "area": "Oficinas de OLI",
+        "use": "Permite acceder a documentos de quest en OLI.",
+        "recommendation": "Llave de progresión. Mantener hasta completar las rutas de Ragman en Interchange."
+      },
+      "zb014": {
+        "area": "Bunker ZB-014",
+        "use": "Abre bunker y extract condicional con loot útil.",
+        "recommendation": "Guardar. No suele ser carísima y ayuda tanto a quest como a supervivencia."
+      },
+      "operatingRoom": {
+        "area": "Water Treatment / edificios médicos",
+        "use": "Acceso a sala con loot médico y técnico.",
+        "recommendation": "Interesante si juegas Lighthouse de forma regular. No prioritaria para novatos."
+      },
+      "conferenceRoom": {
+        "area": "Streets of Tarkov",
+        "use": "Acceso a ubicación interior usada en progresión de Streets.",
+        "recommendation": "Comprar solo cuando tengas la quest o ruta clara en Streets."
+      },
+      "dorm314Marked": {
+        "area": "Dorms, residencia de tres plantas",
+        "use": "Abre la habitación marcada de Customs con loot de alto valor variable.",
+        "recommendation": "No es llave de principiante. Valora precio, usos restantes y riesgo de Dorms."
+      },
+      "labsKeycard": {
+        "area": "Laboratorio",
+        "use": "Acceso a Labs o zonas especiales del laboratorio, según tarjeta.",
+        "recommendation": "Potente, pero no prioritaria para progresión general. Requiere economía y experiencia en Labs."
+      }
     },
     "status": {
       "loading": "Cargando llaves {{mode}} desde tarkov.dev...",
@@ -236,6 +335,23 @@
     "simulation": {
       "criticalPenetration": "PENETRACIÓN CRÍTICA",
       "stoppedImpact": "IMPACTO RETENIDO"
+    },
+    "armorClassOption": "[CLASE {{class}}] {{name}} / {{material}}",
+    "fallbackArmor": {
+      "granit": "Placa balística clase 6 (Granit GOST)",
+      "granitShort": "Granit Cl.6",
+      "hexgrid": "Chaleco antibalas Hexgrid Thor",
+      "hexgridShort": "Hexgrid Cl.6",
+      "korund": "Placa balística clase 5 (Korund-VM)",
+      "korundShort": "Korund Cl.5",
+      "gen4": "Blindaje corporal IOTV Gen4",
+      "gen4Short": "Gen4 Cl.5",
+      "trooper": "Chaleco blindado HighCom Trooper TFO",
+      "trooperShort": "Trooper Cl.4",
+      "sixb23": "Blindaje 6B23-1",
+      "sixb23Short": "6B23-1 Cl.3",
+      "paca": "Blindaje corporal PACA MK2",
+      "pacaShort": "PACA Cl.2"
     }
   },
   "mapsModule": {
@@ -255,19 +371,45 @@
     "techGroups": [
       {
         "title": "Frontend",
-        "items": ["React", "Vite", "JavaScript", "CSS inline + variables globales", "React.lazy", "Suspense"]
+        "items": [
+          "React",
+          "Vite",
+          "JavaScript",
+          "CSS inline + variables globales",
+          "React.lazy",
+          "Suspense"
+        ]
       },
       {
         "title": "Backend",
-        "items": ["Supabase", "PostgreSQL", "RPC SQL", "Row Level Security", "Supabase Auth"]
+        "items": [
+          "Supabase",
+          "PostgreSQL",
+          "RPC SQL",
+          "Row Level Security",
+          "Supabase Auth"
+        ]
       },
       {
         "title": "Persistencia",
-        "items": ["localStorage", "Supabase por usuario", "user_module_state", "Progreso separado PVP/PVE", "Sesiones persistentes"]
+        "items": [
+          "localStorage",
+          "Supabase por usuario",
+          "user_module_state",
+          "Progreso separado PVP/PVE",
+          "Sesiones persistentes"
+        ]
       },
       {
         "title": "Producto",
-        "items": ["Netlify", "GitHub", "i18next", "react-i18next", "APIs externas", "Sistema de tickets"]
+        "items": [
+          "Netlify",
+          "GitHub",
+          "i18next",
+          "react-i18next",
+          "APIs externas",
+          "Sistema de tickets"
+        ]
       }
     ],
     "sections": [
@@ -312,79 +454,144 @@
       {
         "name": "Mapas tácticos",
         "purpose": "Consulta rápida de mapas, extracciones y puntos de interés. Es la base futura para capas de quests, llaves, loot y riesgo.",
-        "actions": ["Consultar mapas", "Preparar rutas", "Ubicar puntos importantes"],
+        "actions": [
+          "Consultar mapas",
+          "Preparar rutas",
+          "Ubicar puntos importantes"
+        ],
         "status": "Base visual preparada para evolucionar hacia mapas tácticos interactivos."
       },
       {
         "name": "Misiones / Kappa",
         "purpose": "Árbol global de quests conectado con tarkov.dev, progreso PVP/PVE, dependencias, Quest Optimizer y checklist Collector.",
-        "actions": ["Marcar quests", "Filtrar Kappa", "Abrir optimizador", "Checklist Collector", "Sincronizar cloud"],
+        "actions": [
+          "Marcar quests",
+          "Filtrar Kappa",
+          "Abrir optimizador",
+          "Checklist Collector",
+          "Sincronizar cloud"
+        ],
         "status": "Módulo crítico de progresión con persistencia local/cloud híbrida."
       },
       {
         "name": "Decisiones / Finales",
         "purpose": "Módulo para decisiones narrativas, puntos de no retorno y rutas del modo historia.",
-        "actions": ["Revisar rutas", "Identificar bloqueos", "Comparar opciones"],
+        "actions": [
+          "Revisar rutas",
+          "Identificar bloqueos",
+          "Comparar opciones"
+        ],
         "status": "Base de story intelligence para evitar decisiones irreversibles sin información."
       },
       {
         "name": "Intel: Bosses",
         "purpose": "Fichas de bosses con ubicaciones, equipo, comportamiento, puntos débiles, loot, dificultad y escuadras.",
-        "actions": ["Filtrar por mapa", "Ver combate", "Revisar loot", "Preparar estrategia"],
+        "actions": [
+          "Filtrar por mapa",
+          "Ver combate",
+          "Revisar loot",
+          "Preparar estrategia"
+        ],
         "status": "Bosses 2.0 con desglose táctico, zonas de spawn y plan de entrada."
       },
       {
         "name": "Tracker de Goons",
         "purpose": "Consulta de rotación o ubicación estimada de los Goons mediante fuentes externas.",
-        "actions": ["Consultar reporte", "Ver mapa activo", "Validar fuente", "Preparar raid"],
+        "actions": [
+          "Consultar reporte",
+          "Ver mapa activo",
+          "Validar fuente",
+          "Preparar raid"
+        ],
         "status": "Dependiente de fuentes externas y parser HTML; documentado en Troubleshooting."
       },
       {
         "name": "Flea Market Tracker",
         "purpose": "Consulta de precios, fluctuaciones y rentabilidad con mercados separados PVP/PVE.",
-        "actions": ["Cambiar mercado", "Buscar items", "Ver gráfica", "Evaluar rentabilidad"],
+        "actions": [
+          "Cambiar mercado",
+          "Buscar items",
+          "Ver gráfica",
+          "Evaluar rentabilidad"
+        ],
         "status": "Tracker económico híbrido conectado a tarkov.dev."
       },
       {
         "name": "Gestión del Refugio",
         "purpose": "Planificador de hideout con estaciones, materiales, requisitos previos, precios PVP/PVE y progreso construido.",
-        "actions": ["Cambiar modo", "Marcar materiales", "Marcar niveles", "Ver bloqueos", "Detectar FIR"],
+        "actions": [
+          "Cambiar modo",
+          "Marcar materiales",
+          "Marcar niveles",
+          "Ver bloqueos",
+          "Detectar FIR"
+        ],
         "status": "Hideout 2.0 con orden natural, costes separados y checklist local/cloud."
       },
       {
         "name": "Simulador balístico",
         "purpose": "Herramienta para entender penetración, daño, armaduras y tiempo estimado para matar.",
-        "actions": ["Comparar munición", "Simular impactos", "Estimar TTK"],
+        "actions": [
+          "Comparar munición",
+          "Simular impactos",
+          "Estimar TTK"
+        ],
         "status": "Módulo técnico con potencial para convertirse en Ammo Intelligence completo."
       },
       {
         "name": "Eventos en directo",
         "purpose": "Seguimiento de eventos temporales, anuncios y cambios activos.",
-        "actions": ["Consultar activos", "Ver recientes", "Usar fallback", "Evitar datos antiguos"],
+        "actions": [
+          "Consultar activos",
+          "Ver recientes",
+          "Usar fallback",
+          "Evitar datos antiguos"
+        ],
         "status": "Experimental, dependiente de fuentes externas y fallback manual."
       },
       {
         "name": "Prestigios",
         "purpose": "Progresión endgame PVP con requisitos, recompensas, insignias y checklist por prestigio.",
-        "actions": ["Seleccionar nivel", "Marcar requisitos", "Consultar recompensas"],
+        "actions": [
+          "Seleccionar nivel",
+          "Marcar requisitos",
+          "Consultar recompensas"
+        ],
         "status": "Módulo independiente PVP ONLY."
       },
       {
         "name": "Sistema de llaves",
         "purpose": "Buscador de llaves y keycards conectado a tarkov.dev con capa táctica de llaves importantes.",
-        "actions": ["Cambiar PVP/PVE", "Buscar llaves", "Filtrar mapa", "Ver precio", "Abrir wiki"],
+        "actions": [
+          "Cambiar PVP/PVE",
+          "Buscar llaves",
+          "Filtrar mapa",
+          "Ver precio",
+          "Abrir wiki"
+        ],
         "status": "Buscador vivo híbrido con fallback local."
       },
       {
         "name": "Quest Optimizer",
         "purpose": "Subherramienta para recomendar el mejor mapa según quests pendientes, Kappa, riesgo y llaves.",
-        "actions": ["Analizar progreso", "Agrupar por mapa", "Priorizar Kappa", "Preparar llaves"],
+        "actions": [
+          "Analizar progreso",
+          "Agrupar por mapa",
+          "Priorizar Kappa",
+          "Preparar llaves"
+        ],
         "status": "Integrado dentro de Misiones / Kappa."
       },
       {
         "name": "Perfil de PMC",
         "purpose": "Panel conectado a JSON públicos de players.tarkov.dev para perfiles ya indexados en PVP/PVE.",
-        "actions": ["Cambiar modo", "Buscar PMCs", "Ver stats", "Ver equipo", "Exportar tarjeta"],
+        "actions": [
+          "Cambiar modo",
+          "Buscar PMCs",
+          "Ver stats",
+          "Ver equipo",
+          "Exportar tarjeta"
+        ],
         "status": "Conectado mediante JSON estático, con búsqueda, logros, skills y exportación PNG."
       }
     ]
@@ -459,6 +666,10 @@
         "open": "Marcar abierto",
         "reviewing": "Pasar a revisión",
         "closed": "Cerrar ticket"
+      },
+      "replyAuthors": {
+        "user": "Usuario",
+        "admin": "Astur"
       }
     },
     "detail": {
@@ -635,6 +846,8 @@
       "required": "Completa asunto y descripción.",
       "send": "No se pudo enviar el ticket.",
       "emptyReply": "Escribe una respuesta antes de enviar.",
+      "replyWithMessage": "No se pudo responder el ticket: {{message}}",
+      "closeWithMessage": "No se pudo cerrar el ticket: {{message}}",
       "delete": "No se pudo borrar el ticket."
     },
     "messages": {
@@ -646,6 +859,16 @@
     "confirm": {
       "close": "¿Quieres cerrar el ticket \"{{subject}}\"?",
       "delete": "¿Quieres borrar \"{{subject}}\" de tu lista de tickets?"
+    }
+  },
+  "astur": {
+    "eyebrow": "Creador y desarrollador",
+    "subtitle": "Info Tarkov nace como una herramienta personal para centralizar inteligencia, progreso y utilidad real dentro de Escape From Tarkov. Si quieres seguir el desarrollo, proponer ideas o pasarte por la comunidad, estas son mis redes.",
+    "open": "Abrir",
+    "links": {
+      "twitch": "Directos, Tarkov, comunidad y seguimiento del proyecto.",
+      "x": "Actualizaciones rápidas, ideas y comunicación directa.",
+      "instagram": "Contenido personal, clips y presencia social."
     }
   },
   "troubleshooting": {
@@ -871,6 +1094,177 @@
       "Hard": "HARD",
       "Very Hard": "VERY HARD"
     },
+    "spawnZones": {
+      "bigpipe": {
+        "Customs": {
+          "0": "Fortaleza",
+          "1": "Nueva gasolinera",
+          "2": "Aproximación a Dorms",
+          "3": "Ruta de Crackhouse"
+        },
+        "Lighthouse": {
+          "0": "Planta de tratamiento",
+          "1": "Cresta de chalets",
+          "2": "Aproximación al pueblo"
+        },
+        "Shoreline": {
+          "0": "Estación meteorológica",
+          "1": "Cottages",
+          "2": "Aproximación al muelle"
+        },
+        "Woods": {
+          "0": "Búnker scav",
+          "1": "Ruta del campamento USEC",
+          "2": "Afueras del aserradero"
+        }
+      },
+      "birdeye": {
+        "Customs": {
+          "0": "Overwatch de Fortaleza",
+          "1": "Líneas de visión de Crackhouse",
+          "2": "Aproximación a Dorms"
+        },
+        "Lighthouse": {
+          "0": "Acantilados de la carretera larga",
+          "1": "Overwatch de planta de tratamiento",
+          "2": "Cresta de chalets"
+        },
+        "Shoreline": {
+          "0": "Cresta de estación meteorológica",
+          "1": "Líneas de visión de cottages",
+          "2": "Aproximación al muelle"
+        },
+        "Woods": {
+          "0": "Crestas del aserradero",
+          "1": "Ruta del campamento USEC",
+          "2": "Bosque del búnker scav"
+        }
+      },
+      "knight": {
+        "Customs": {
+          "0": "Fortaleza",
+          "1": "Empuje de Crackhouse",
+          "2": "Aproximación a Dorms"
+        },
+        "Lighthouse": {
+          "0": "Planta de tratamiento",
+          "1": "Chalets",
+          "2": "Aproximación por carretera larga"
+        },
+        "Shoreline": {
+          "0": "Estación meteorológica",
+          "1": "Cottages",
+          "2": "Aproximación al muelle"
+        },
+        "Woods": {
+          "0": "Borde del aserradero",
+          "1": "Ruta del campamento USEC",
+          "2": "Búnker scav"
+        }
+      },
+      "glukhar": {
+        "Reserve": {
+          "0": "Estación de tren",
+          "1": "Edificios Knight",
+          "2": "Edificios Pawn",
+          "3": "Edificios K",
+          "4": "Acceso al búnker subterráneo"
+        }
+      },
+      "kaban": {
+        "Streets_of_Tarkov": {
+          "0": "Concesionario LexOs",
+          "1": "Patio de LexOs",
+          "2": "Posiciones de ametralladora",
+          "3": "Lado de grúa derrumbada"
+        }
+      },
+      "killa": {
+        "Interchange": {
+          "0": "Goshan",
+          "1": "IDEA",
+          "2": "OLI",
+          "3": "Centro comercial central",
+          "4": "Transiciones de parking"
+        }
+      },
+      "kollontay": {
+        "Streets_of_Tarkov": {
+          "0": "Centro comercial Klimov",
+          "1": "Hotel Pinewood",
+          "2": "Zonas policiales",
+          "3": "Patrulla de calles centrales"
+        }
+      },
+      "partisan": {
+        "Customs": {
+          "0": "Aproximaciones boscosas",
+          "1": "Exterior de Dorms",
+          "2": "Rutas de contrabandistas"
+        },
+        "Woods": {
+          "0": "Trampas del bosque",
+          "1": "Afueras del aserradero",
+          "2": "Ruta del campamento USEC"
+        },
+        "Shoreline": {
+          "0": "Bosques del pueblo",
+          "1": "Aproximación a cottages",
+          "2": "Ruta de estación meteorológica"
+        },
+        "Factory": {
+          "0": "Túneles de expansión",
+          "1": "Rutas de puertas",
+          "2": "Aproximaciones a oficinas"
+        }
+      },
+      "reshala": {
+        "Customs": {
+          "0": "Dorms",
+          "1": "Nueva gasolinera",
+          "2": "Fortaleza",
+          "3": "Rutas del checkpoint scav"
+        }
+      },
+      "sanitar": {
+        "Shoreline": {
+          "0": "Health Resort",
+          "1": "Cottages",
+          "2": "Muelle",
+          "3": "Rutas de ambulancia"
+        }
+      },
+      "shturman": {
+        "Woods": {
+          "0": "Aserradero",
+          "1": "Pilas de madera",
+          "2": "Líneas de visión de sniper rock",
+          "3": "Rutas exteriores de madera"
+        }
+      },
+      "tagilla": {
+        "Factory": {
+          "0": "Zona de oficinas",
+          "1": "Subterráneo",
+          "2": "Rutas Gate 0/3",
+          "3": "Pasillos de expansión"
+        }
+      },
+      "Zryachiy": {
+        "Lighthouse": {
+          "0": "Isla de Lightkeeper",
+          "1": "Aproximación al puente",
+          "2": "Crestas de la isla"
+        }
+      },
+      "wedge": {
+        "Icebreaker": [
+          "Nivel 3",
+          "Zona de contacto Black Division",
+          "Escolta de 3-6 seguidores"
+        ]
+      }
+    },
     "sections": {
       "spawnByMap": "SPAWN POR MAPA",
       "knownSpawnZones": "ZONAS DE SPAWN CONOCIDAS",
@@ -1018,6 +1412,15 @@
         "ammo": ".338 Lapua Magnum AP, 7.62x54mmR BS",
         "weaknesses": "Inmóvil en su puesto; vulnerable si rompes su línea visual inicial.",
         "loot": "Rifle táctico AXMC .338, munición Lapua AP y telemetría militar."
+      },
+      "wedge": {
+        "guards": "Boss de Black Division con 3 a 6 seguidores según el número de jugadores en la raid.",
+        "visuals": "Casco EXFIL negro con visor, máscara de gas Avon y portaplacas Spiritus LV-119.",
+        "behavior": "Contacto élite de Black Division en Icebreaker nivel 3. Trátalo como una escuadra coordinada con blindaje pesado y munición de alta penetración.",
+        "weapons": "HK MP7A1, FN SCAR-H, X-17, DS Arms SA-58, Desert Tech MDR, HK USP y SOG Voodoo Hawk",
+        "ammo": "4.6x30mm AP SX, 5.56x45mm M995, 7.62x51mm M993, .45 ACP AP",
+        "weaknesses": "Vida alta y 3-6 seguidores; aísla guardias primero y evita ángulos abiertos en Icebreaker.",
+        "loot": "Portaplacas Spiritus LV-119, keycard holder case, euros, dólares y equipo de Black Division."
       }
     }
   },
@@ -1056,10 +1459,18 @@
       }
     },
     "maps": {
-      "customs": { "label": "ZONA: FORTALEZA / DORMITORIOS" },
-      "woods": { "label": "ZONA: ANTENA / CAMPAMENTO SCAV" },
-      "shoreline": { "label": "ZONA: ESTACIÓN DE RADAR / RESORT" },
-      "lighthouse": { "label": "ZONA: CHALETS / PLANTA DE TRATAMIENTO" }
+      "customs": {
+        "label": "ZONA: FORTALEZA / DORMITORIOS"
+      },
+      "woods": {
+        "label": "ZONA: ANTENA / CAMPAMENTO SCAV"
+      },
+      "shoreline": {
+        "label": "ZONA: ESTACIÓN DE RADAR / RESORT"
+      },
+      "lighthouse": {
+        "label": "ZONA: CHALETS / PLANTA DE TRATAMIENTO"
+      }
     }
   },
   "hideoutModule": {
@@ -1151,12 +1562,30 @@
       "connectionBadge": "Conexión de puntos",
       "connectionTitle": "EL ARMORED CASE ESTÁ EN TUS MANOS",
       "steps": {
-        "lighthouse": { "label": "Lighthouse", "body": "Encuentra material comprometedor de Prapor en Lighthouse para abrir la línea de presión sobre él." },
-        "access": { "label": "Requisito de acceso", "body": "Consigue acceso a Lightkeeper. Network Provider 1 debe estar disponible." },
-        "bribe": { "label": "Soborno de tradeo", "body": "Habla con Lightkeeper y entrégale tres TerraGroup Blue Folders para que intervenga en el asunto." },
-        "signal": { "label": "Señalización", "body": "Dispara una bengala amarilla frente al Ultra Mall en Interchange para marcar la ventana de operación." },
-        "raidCondition": { "label": "Condición en raid", "body": "Mata a 15 objetivos sin morir durante esa misma raid. Si fallas, tendrás que repetir la ejecución." },
-        "pickup": { "label": "Recogida", "body": "Recoge el Armored Case de Lightkeeper. Se guarda en el slot especial y vuelve a ser pieza central de la ruta." }
+        "lighthouse": {
+          "label": "Lighthouse",
+          "body": "Encuentra material comprometedor de Prapor en Lighthouse para abrir la línea de presión sobre él."
+        },
+        "access": {
+          "label": "Requisito de acceso",
+          "body": "Consigue acceso a Lightkeeper. Network Provider 1 debe estar disponible."
+        },
+        "bribe": {
+          "label": "Soborno de tradeo",
+          "body": "Habla con Lightkeeper y entrégale tres TerraGroup Blue Folders para que intervenga en el asunto."
+        },
+        "signal": {
+          "label": "Señalización",
+          "body": "Dispara una bengala amarilla frente al Ultra Mall en Interchange para marcar la ventana de operación."
+        },
+        "raidCondition": {
+          "label": "Condición en raid",
+          "body": "Mata a 15 objetivos sin morir durante esa misma raid. Si fallas, tendrás que repetir la ejecución."
+        },
+        "pickup": {
+          "label": "Recogida",
+          "body": "Recoge el Armored Case de Lightkeeper. Se guarda en el slot especial y vuelve a ser pieza central de la ruta."
+        }
       }
     },
     "containerOpening": {
@@ -1207,10 +1636,22 @@
     "kermanIntro": {
       "badge": "Primera fase con Kerman",
       "steps": {
-        "labs": { "label": "Infiltración LABS", "body": "Busca la Masterkeycard y el dispositivo RFID en LABS." },
-        "mechanic": { "label": "Ayuda de Mechanic", "body": "Si falta el RFID, habla con Mechanic y págale 40 Bitcoins." },
-        "streets": { "label": "Streets", "body": "Obtén la llave de Elektroniks y ve a su apartamento en Streets para recuperar el RFID." },
-        "rfid": { "label": "Activación de tarjeta RFID", "body": "Activa la tarjeta RFID desde el Armored Case y pásala por el lector del puerto." }
+        "labs": {
+          "label": "Infiltración LABS",
+          "body": "Busca la Masterkeycard y el dispositivo RFID en LABS."
+        },
+        "mechanic": {
+          "label": "Ayuda de Mechanic",
+          "body": "Si falta el RFID, habla con Mechanic y págale 40 Bitcoins."
+        },
+        "streets": {
+          "label": "Streets",
+          "body": "Obtén la llave de Elektroniks y ve a su apartamento en Streets para recuperar el RFID."
+        },
+        "rfid": {
+          "label": "Activación de tarjeta RFID",
+          "body": "Activa la tarjeta RFID desde el Armored Case y pásala por el lector del puerto."
+        }
       }
     },
     "evidenceChoices": {
@@ -1263,10 +1704,22 @@
       }
     },
     "finals": {
-      "survivor": { "title": "FINAL SURVIVOR", "body": "Huiste esperando escapar, pero el infierno estalló a tus espaldas. Sobreviviste, aunque la ciudad quedó atrás envuelta en cenizas." },
-      "savior": { "title": "FINAL SAVIOR", "body": "Escapaste de Tarkov por la humanidad. El golpe contra TerraGroup expuso sus secretos y libero la verdad." },
-      "debtor": { "title": "FINAL DEBTOR", "body": "Escapaste de Tarkov, pero no de ti mismo. Cambiaste de bando y quedaste ligado a una deuda dificil de borrar." },
-      "fallen": { "title": "FINAL FALLEN", "body": "Escapaste de Tarkov para caer en la oscuridad. TerraGroup sobrevivio y el mundo empezo a agrietarse." }
+      "survivor": {
+        "title": "FINAL SURVIVOR",
+        "body": "Huiste esperando escapar, pero el infierno estalló a tus espaldas. Sobreviviste, aunque la ciudad quedó atrás envuelta en cenizas."
+      },
+      "savior": {
+        "title": "FINAL SAVIOR",
+        "body": "Escapaste de Tarkov por la humanidad. El golpe contra TerraGroup expuso sus secretos y libero la verdad."
+      },
+      "debtor": {
+        "title": "FINAL DEBTOR",
+        "body": "Escapaste de Tarkov, pero no de ti mismo. Cambiaste de bando y quedaste ligado a una deuda dificil de borrar."
+      },
+      "fallen": {
+        "title": "FINAL FALLEN",
+        "body": "Escapaste de Tarkov para caer en la oscuridad. TerraGroup sobrevivio y el mundo empezo a agrietarse."
+      }
     }
   },
   "fleaModule": {

@@ -1,25 +1,29 @@
+import { useTranslation } from 'react-i18next';
+
 const socialLinks = [
   {
     name: 'Twitch',
     handle: 'AsturTV',
     url: 'https://www.twitch.tv/AsturTV',
-    description: 'Directos, Tarkov, comunidad y seguimiento del proyecto.'
+    descriptionKey: 'astur.links.twitch'
   },
   {
     name: 'X',
     handle: '@juankar_hh',
     url: 'https://x.com/juankar_hh',
-    description: 'Actualizaciones rapidas, ideas y comunicacion directa.'
+    descriptionKey: 'astur.links.x'
   },
   {
     name: 'Instagram',
     handle: '@juankar_hh',
     url: 'https://www.instagram.com/juankar_hh/',
-    description: 'Contenido personal, clips y presencia social.'
+    descriptionKey: 'astur.links.instagram'
   }
 ];
 
 export default function AsturView({ onViewChange }) {
+  const { t } = useTranslation();
+
   return (
     <div
       className="fade-in-slide terminal-panel"
@@ -45,7 +49,7 @@ export default function AsturView({ onViewChange }) {
             marginBottom: '2rem'
           }}
         >
-          ← VOLVER AL TERMINAL
+          {t('common.backToTerminal')}
         </button>
 
         <header
@@ -64,7 +68,7 @@ export default function AsturView({ onViewChange }) {
               textTransform: 'uppercase'
             }}
           >
-            Creador y desarrollador
+            {t('astur.eyebrow')}
           </p>
           <h1
             style={{
@@ -78,7 +82,7 @@ export default function AsturView({ onViewChange }) {
             Astur
           </h1>
           <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.6, maxWidth: '720px' }}>
-            Info Tarkov nace como una herramienta personal para centralizar inteligencia, progreso y utilidad real dentro de Escape From Tarkov. Si quieres seguir el desarrollo, proponer ideas o pasarte por la comunidad, estas son mis redes.
+            {t('astur.subtitle')}
           </p>
         </header>
 
@@ -118,7 +122,7 @@ export default function AsturView({ onViewChange }) {
                   {link.handle}
                 </span>
                 <span style={{ color: 'var(--tk-text-muted)', display: 'block', marginTop: '0.45rem', lineHeight: 1.5 }}>
-                  {link.description}
+                  {t(link.descriptionKey)}
                 </span>
               </span>
 
@@ -133,7 +137,7 @@ export default function AsturView({ onViewChange }) {
                   textTransform: 'uppercase'
                 }}
               >
-                Abrir
+                {t('astur.open')}
               </span>
             </a>
           ))}

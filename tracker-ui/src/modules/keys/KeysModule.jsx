@@ -36,6 +36,7 @@ const getKeyQuery = (gameMode) => `
 
 const importantKeyIntel = [
   {
+    copyKey: 'dorm206',
     aliases: ['Dorm room 206 key'],
     map: 'Customs',
     area: 'Dorms, two-story dormitory',
@@ -47,6 +48,7 @@ const importantKeyIntel = [
     tags: ['early wipe', 'therapist', 'quest blocker']
   },
   {
+    copyKey: 'machinery',
     aliases: ['Machinery key'],
     map: 'Customs',
     area: 'Camion cisterna de construccion',
@@ -58,6 +60,7 @@ const importantKeyIntel = [
     tags: ['early wipe', 'prapor', 'customs']
   },
   {
+    copyKey: 'dorm114',
     aliases: ['Dorm room 114 key'],
     map: 'Customs',
     area: 'Dorms, two-story dormitory',
@@ -69,6 +72,7 @@ const importantKeyIntel = [
     tags: ['therapist', 'safe', 'meds']
   },
   {
+    copyKey: 'factoryExit',
     aliases: ['Factory emergency exit key'],
     map: 'Factory',
     area: 'Salidas ZB y puertas de Factory',
@@ -80,6 +84,7 @@ const importantKeyIntel = [
     tags: ['extract', 'utility', 'factory', 'customs']
   },
   {
+    copyKey: 'resortWest216',
     aliases: ['Health Resort west wing room 216 key'],
     map: 'Shoreline',
     area: 'Health Resort, ala oeste',
@@ -91,6 +96,7 @@ const importantKeyIntel = [
     tags: ['shoreline', 'therapist', 'resort']
   },
   {
+    copyKey: 'resortWest220',
     aliases: ['Health Resort west wing room 220 key'],
     map: 'Shoreline',
     area: 'Health Resort, ala oeste',
@@ -102,6 +108,7 @@ const importantKeyIntel = [
     tags: ['shoreline', 'peacekeeper', 'resort']
   },
   {
+    copyKey: 'cottageBackDoor',
     aliases: ['Cottage back door key'],
     map: 'Shoreline',
     area: 'Zona de cottages',
@@ -113,6 +120,7 @@ const importantKeyIntel = [
     tags: ['shoreline', 'therapist', 'quest blocker']
   },
   {
+    copyKey: 'rbSt',
     aliases: ['RB-ST key'],
     map: 'Reserve',
     area: 'Garajes y zona tecnica',
@@ -124,6 +132,7 @@ const importantKeyIntel = [
     tags: ['reserve', 'military', 'expensive']
   },
   {
+    copyKey: 'rbKprl',
     aliases: ['RB-KPRL key'],
     map: 'Reserve',
     area: 'Dome / guard building',
@@ -135,6 +144,7 @@ const importantKeyIntel = [
     tags: ['reserve', 'intel', 'loot']
   },
   {
+    copyKey: 'emercomMedical',
     aliases: ['EMERCOM medical unit key'],
     map: 'Interchange',
     area: 'Unidad medica EMERCOM',
@@ -146,6 +156,7 @@ const importantKeyIntel = [
     tags: ['interchange', 'medical', 'quest']
   },
   {
+    copyKey: 'oliLogistics',
     aliases: ['OLI logistics department office key'],
     map: 'Interchange',
     area: 'Oficinas de OLI',
@@ -157,6 +168,7 @@ const importantKeyIntel = [
     tags: ['interchange', 'ragman', 'documents']
   },
   {
+    copyKey: 'zb014',
     aliases: ['ZB-014 key'],
     map: 'Woods',
     area: 'Bunker ZB-014',
@@ -168,6 +180,7 @@ const importantKeyIntel = [
     tags: ['woods', 'extract', 'jaeger']
   },
   {
+    copyKey: 'operatingRoom',
     aliases: ['Operating room key'],
     map: 'Lighthouse',
     area: 'Water Treatment / edificios medicos',
@@ -179,6 +192,7 @@ const importantKeyIntel = [
     tags: ['lighthouse', 'medical', 'loot']
   },
   {
+    copyKey: 'conferenceRoom',
     aliases: ['Conference room key'],
     map: 'Streets',
     area: 'Streets of Tarkov',
@@ -190,6 +204,7 @@ const importantKeyIntel = [
     tags: ['streets', 'quest', 'mid wipe']
   },
   {
+    copyKey: 'dorm314Marked',
     aliases: ['Dorm room 314 marked key'],
     map: 'Customs',
     area: 'Dorms, three-story dormitory',
@@ -201,6 +216,7 @@ const importantKeyIntel = [
     tags: ['marked', 'high risk', 'loot']
   },
   {
+    copyKey: 'labsKeycard',
     aliases: ['TerraGroup Labs keycard (Black)', 'TerraGroup Labs access keycard'],
     map: 'Labs',
     area: 'Laboratorio',
@@ -283,12 +299,12 @@ const enrichKey = (item, t) => {
   return {
     ...item,
     map,
-    area: intel?.area || map,
+    area: intel?.copyKey ? t(`keysModule.intel.${intel.copyKey}.area`, { defaultValue: intel.area }) : map,
     category,
     priority: intel?.priority || 'Baja',
     quests: intel?.quests || [],
-    use: intel?.use || t('keysModule.defaults.use'),
-    recommendation: intel?.recommendation || t('keysModule.defaults.recommendation'),
+    use: intel?.copyKey ? t(`keysModule.intel.${intel.copyKey}.use`, { defaultValue: intel.use }) : t('keysModule.defaults.use'),
+    recommendation: intel?.copyKey ? t(`keysModule.intel.${intel.copyKey}.recommendation`, { defaultValue: intel.recommendation }) : t('keysModule.defaults.recommendation'),
     tags: intel?.tags || [map.toLowerCase(), category.toLowerCase(), 'tarkov.dev'],
     isImportant,
     price: item.lastLowPrice || item.avg24hPrice || item.basePrice || 0

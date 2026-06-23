@@ -798,9 +798,9 @@ function App() {
           }}
         >
           {[
-            { label: 'ABOUT', view: 'about' },
+            { label: t('home.about'), view: 'about' },
             { label: t('home.patchNotes'), view: 'changelog' },
-            ...(userRole === 'admin' ? [{ label: 'DOSSIER', view: 'project-dossier' }] : [])
+            ...(userRole === 'admin' ? [{ label: t('home.dossier'), view: 'project-dossier' }] : [])
           ].map((button) => (
             <button
               key={button.view}

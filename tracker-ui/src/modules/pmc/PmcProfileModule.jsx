@@ -54,18 +54,20 @@ const tableHeadStyle = {
   background: '#141416'
 };
 
-const formatNumber = (value) => {
+const getLocale = (language) => (language === 'en' ? 'en-US' : 'es-ES');
+
+const formatNumber = (value, locale = 'es-ES') => {
   if (value === null || value === undefined || value === '') return '-';
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return String(value);
-  return new Intl.NumberFormat('es-ES').format(parsed);
+  return new Intl.NumberFormat(locale).format(parsed);
 };
 
-const formatDateTime = (value) => {
+const formatDateTime = (value, locale = 'es-ES') => {
   if (!value) return '-';
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '-';
-  return new Intl.DateTimeFormat('es-ES', {
+  return new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
@@ -266,7 +268,8 @@ const getProfileUsername = (userProfile, session) =>
   '';
 
 export default function PmcProfileModule({ onViewChange, session, userProfile }) {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
+  const locale = getLocale(i18n.resolvedLanguage);
   const [activeMode, setActiveMode] = useState(() => localStorage.getItem(MODE_STORAGE_KEY) || readDefaultPlayableMode());
   const [remoteProfile, setRemoteProfile] = useState(null);
   const [status, setStatus] = useState('idle');
@@ -406,17 +409,17 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
     ctx.fillText(rareAchievements[0] ? t('pmc.export.topAchievement', { name: rareAchievements[0].name }) : t('pmc.export.topAchievementEmpty'), 62, 190);
     ctx.fillStyle = '#8d8f8c';
     ctx.font = '800 18px Rajdhani, Arial';
-    ctx.fillText(t('pmc.export.syncedLine', { date: formatDateTime(remoteProfile.updatedAt), accountId: remoteProfile.accountId || '-' }), 62, 226);
+    ctx.fillText(t('pmc.export.syncedLine', { date: formatDateTime(remoteProfile.updatedAt, locale), accountId: remoteProfile.accountId || '-' }), 62, 226);
 
     const statRows = [
       [t('pmc.stats.faction'), remoteProfile.faction || '-', 'shield'],
-      [t('pmc.stats.xp'), formatNumber(remoteProfile.experience), 'xp'],
-      [t('pmc.stats.raids'), formatNumber(remoteProfile.raids), 'raid'],
-      [t('pmc.stats.extracted'), formatNumber(remoteProfile.survivedRaids), 'extract'],
+      [t('pmc.stats.xp'), formatNumber(remoteProfile.experience, locale), 'xp'],
+      [t('pmc.stats.raids'), formatNumber(remoteProfile.raids, locale), 'raid'],
+      [t('pmc.stats.extracted'), formatNumber(remoteProfile.survivedRaids, locale), 'extract'],
       ['SR', remoteProfile.survivalRate !== null && remoteProfile.survivalRate !== undefined ? `${remoteProfile.survivalRate}%` : '-', 'percent'],
-      [t('pmc.stats.kills'), formatNumber(remoteProfile.kills), 'kill'],
-      [t('pmc.stats.pmcKills'), formatNumber(remoteProfile.killedPmcs), 'target'],
-      [t('pmc.stats.achievements'), formatNumber(remoteProfile.achievementsCount), 'star']
+      [t('pmc.stats.kills'), formatNumber(remoteProfile.kills, locale), 'kill'],
+      [t('pmc.stats.pmcKills'), formatNumber(remoteProfile.killedPmcs, locale), 'target'],
+      [t('pmc.stats.achievements'), formatNumber(remoteProfile.achievementsCount, locale), 'star']
     ];
     statRows.forEach(([label, value, icon], index) => {
       const x = 62 + (index % 4) * 245;
@@ -568,26 +571,26 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
   const stats = useMemo(() => [
     { label: t('pmc.stats.level'), value: remoteProfile?.level ? `L${remoteProfile.level}` : '-' },
     { label: t('pmc.stats.faction'), value: remoteProfile?.faction || '-' },
-    { label: t('pmc.stats.xp'), value: formatNumber(remoteProfile?.experience) },
+    { label: t('pmc.stats.xp'), value: formatNumber(remoteProfile?.experience, locale) },
     { label: t('pmc.stats.time'), value: remoteProfile?.totalInGameTime || '-' },
     {
       label: t('pmc.stats.raids'),
-      value: formatNumber(remoteProfile?.raids),
+      value: formatNumber(remoteProfile?.raids, locale),
       pairLabel: t('pmc.stats.extracted'),
-      pairValue: formatNumber(remoteProfile?.survivedRaids),
+      pairValue: formatNumber(remoteProfile?.survivedRaids, locale),
       wide: true
     },
     { label: 'SR', value: remoteProfile?.survivalRate !== null && remoteProfile?.survivalRate !== undefined ? `${remoteProfile.survivalRate}%` : '-' },
-    { label: t('pmc.stats.kills'), value: formatNumber(remoteProfile?.kills) },
-    { label: t('pmc.stats.pmcKills'), value: formatNumber(remoteProfile?.killedPmcs) },
+    { label: t('pmc.stats.kills'), value: formatNumber(remoteProfile?.kills, locale) },
+    { label: t('pmc.stats.pmcKills'), value: formatNumber(remoteProfile?.killedPmcs, locale) },
     { label: t('pmc.stats.account'), value: remoteProfile?.memberCategory || '-', wide: true },
-    { label: t('pmc.stats.achievements'), value: formatNumber(remoteProfile?.achievementsCount) },
-    { label: t('pmc.stats.activity'), value: formatDateTime(remoteProfile?.lastActiveAt), wide: true }
-  ], [remoteProfile, t]);
+    { label: t('pmc.stats.achievements'), value: formatNumber(remoteProfile?.achievementsCount, locale) },
+    { label: t('pmc.stats.activity'), value: formatDateTime(remoteProfile?.lastActiveAt, locale), wide: true }
+  ], [locale, remoteProfile, t]);
 
   const topKeys = remoteProfile?.topLevelKeys?.length ? remoteProfile.topLevelKeys.join(', ') : t('pmc.data.noExtraFields');
   const skillText = remoteProfile?.skillsSummary?.length
-    ? remoteProfile.skillsSummary.map((skill) => `${skill.id}: L${formatNumber(skill.level)}`).join(' · ')
+    ? remoteProfile.skillsSummary.map((skill) => `${skill.id}: L${formatNumber(skill.level, locale)}`).join(' · ')
     : t('pmc.data.noSkills');
   const allAchievements = useMemo(
     () => remoteProfile?.allAchievements || remoteProfile?.recentAchievements || [],
@@ -669,6 +672,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
         <section style={{ display: 'grid', gap: '1rem' }}>
           <ProfileSummary
             activeMode={activeMode}
+            locale={locale}
             profileUsername={profileUsername}
             remoteProfile={remoteProfile}
             stats={stats}
@@ -683,7 +687,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
             remoteProfile={remoteProfile}
           />
 
-          <SyncStatus remoteProfile={remoteProfile} status={status} />
+          <SyncStatus locale={locale} remoteProfile={remoteProfile} status={status} />
 
           <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
             <TacticalEquipmentPanel items={equipmentItems} />
@@ -697,14 +701,15 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
             achievements={filteredAchievements}
             allCount={allAchievements.length}
             rareAchievements={rareAchievements}
+            locale={locale}
             setAchievementFilter={setAchievementFilter}
             setAchievementSearch={setAchievementSearch}
             setAchievementSort={setAchievementSort}
           />
 
-          <SkillsPanel skills={remoteProfile?.skillsSummary || []} />
+          <SkillsPanel locale={locale} skills={remoteProfile?.skillsSummary || []} />
 
-          <DataPanel remoteProfile={remoteProfile} skillText={skillText} topKeys={topKeys} />
+          <DataPanel locale={locale} remoteProfile={remoteProfile} skillText={skillText} topKeys={topKeys} />
         </section>
       </main>
     </div>
@@ -875,7 +880,7 @@ const actionButtonStyle = {
   padding: '0.72rem 0.9rem'
 };
 
-function SyncStatus({ remoteProfile, status }) {
+function SyncStatus({ locale, remoteProfile, status }) {
   const { t } = useTranslation();
   const statusLabel = {
     ready: t('pmc.status.synced'),
@@ -889,7 +894,7 @@ function SyncStatus({ remoteProfile, status }) {
     <article style={{ ...panelStyle, padding: '0.9rem 1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
       <InfoLine label={t('pmc.sync.status')} value={statusLabel} />
       <InfoLine label={t('pmc.sync.publicIndex')} value={formatSyncAgeLabel(remoteProfile?.updatedAt, t)} />
-      <InfoLine label={t('pmc.sync.localRead')} value={formatDateTime(remoteProfile?.fetchedAt)} />
+      <InfoLine label={t('pmc.sync.localRead')} value={formatDateTime(remoteProfile?.fetchedAt, locale)} />
       <InfoLine label="Account ID" value={remoteProfile?.accountId || '-'} />
     </article>
   );
@@ -904,7 +909,7 @@ function InfoLine({ label, value }) {
   );
 }
 
-function ProfileSummary({ activeMode, profileUsername, remoteProfile, stats, status, topAchievement }) {
+function ProfileSummary({ activeMode, locale, profileUsername, remoteProfile, stats, status, topAchievement }) {
   const { t } = useTranslation();
   return (
     <article style={{ ...panelStyle, padding: '1rem 1rem 0.9rem', borderColor: 'rgba(187, 211, 169, 0.18)' }}>
@@ -919,7 +924,7 @@ function ProfileSummary({ activeMode, profileUsername, remoteProfile, stats, sta
               {remoteProfile?.nickname || profileUsername || 'PMC'}
             </h2>
             <p style={{ color: status === 'ready' ? 'var(--tk-green)' : '#ffcf66', margin: 0, fontWeight: '900', textTransform: 'uppercase' }}>
-              {status === 'ready' && t('pmc.status.syncedAt', { date: formatDateTime(remoteProfile?.fetchedAt) })}
+              {status === 'ready' && t('pmc.status.syncedAt', { date: formatDateTime(remoteProfile?.fetchedAt, locale) })}
               {status === 'loading' && t('pmc.status.queryingProfile')}
               {status === 'missing-user' && t('pmc.status.configureOrSearch')}
               {status === 'error' && t('pmc.status.syncFailed')}
@@ -1055,6 +1060,7 @@ function AchievementsHub({
   achievementSort,
   achievements,
   allCount,
+  locale,
   rareAchievements,
   setAchievementFilter,
   setAchievementSearch,
@@ -1068,7 +1074,7 @@ function AchievementsHub({
         <div>
           <h3 style={{ color: '#fff', margin: 0, textTransform: 'uppercase' }}>{t('pmc.achievements.title')}</h3>
           <p style={{ color: 'var(--tk-text-muted)', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
-            {t('pmc.achievements.summary', { visible: formatNumber(achievements.length), total: formatNumber(allCount) })}
+            {t('pmc.achievements.summary', { visible: formatNumber(achievements.length, locale), total: formatNumber(allCount, locale) })}
           </p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -1091,7 +1097,7 @@ function AchievementsHub({
         </div>
       </div>
 
-      <AchievementShowcase achievements={rareAchievements} />
+      <AchievementShowcase achievements={rareAchievements} locale={locale} />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(180px, 1fr) 180px', gap: '0.65rem', margin: '0.95rem 0' }}>
         <input
@@ -1129,12 +1135,12 @@ function AchievementsHub({
         </select>
       </div>
 
-      <AchievementTable achievements={achievements} empty={t('pmc.achievements.empty')} contained />
+      <AchievementTable achievements={achievements} empty={t('pmc.achievements.empty')} locale={locale} contained />
     </article>
   );
 }
 
-function AchievementShowcase({ achievements }) {
+function AchievementShowcase({ achievements, locale }) {
   const showcase = achievements.slice(0, 3);
   if (!showcase.length) return null;
 
@@ -1150,7 +1156,7 @@ function AchievementShowcase({ achievements }) {
               {achievement.rarityLabel} · {formatPercent(achievement.playersCompletedPercent)}
             </span>
             <strong style={{ color: '#fff', display: 'block', overflowWrap: 'anywhere', lineHeight: 1.1 }}>{achievement.name}</strong>
-            <span style={{ color: 'var(--tk-text-muted)', display: 'block', fontWeight: '800', marginTop: '0.25rem' }}>{formatDateTime(achievement.completedAt)}</span>
+            <span style={{ color: 'var(--tk-text-muted)', display: 'block', fontWeight: '800', marginTop: '0.25rem' }}>{formatDateTime(achievement.completedAt, locale)}</span>
           </div>
         </div>
       ))}
@@ -1158,7 +1164,7 @@ function AchievementShowcase({ achievements }) {
   );
 }
 
-function AchievementTable({ title, achievements, empty, contained = false }) {
+function AchievementTable({ title, achievements, empty, locale, contained = false }) {
   const { t } = useTranslation();
   const headers = [
     t('pmc.achievements.headers.achievement'),
@@ -1182,7 +1188,7 @@ function AchievementTable({ title, achievements, empty, contained = false }) {
             </thead>
             <tbody>
               {achievements.map((achievement) => (
-                <AchievementRow key={`${title}-${achievement.id}`} achievement={achievement} />
+                <AchievementRow key={`${title}-${achievement.id}`} achievement={achievement} locale={locale} />
               ))}
             </tbody>
           </table>
@@ -1194,7 +1200,7 @@ function AchievementTable({ title, achievements, empty, contained = false }) {
   );
 }
 
-function AchievementRow({ achievement }) {
+function AchievementRow({ achievement, locale }) {
   return (
     <tr>
       <td style={{ padding: '0.52rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
@@ -1207,12 +1213,12 @@ function AchievementRow({ achievement }) {
       </td>
       <td style={{ color: 'var(--tk-green)', fontWeight: '900', padding: '0.52rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{achievement.rarityLabel}</td>
       <td style={{ color: 'var(--tk-text-muted)', fontWeight: '800', padding: '0.52rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{formatPercent(achievement.playersCompletedPercent)}</td>
-      <td style={{ color: 'var(--tk-text-muted)', fontWeight: '800', padding: '0.52rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{formatDateTime(achievement.completedAt)}</td>
+      <td style={{ color: 'var(--tk-text-muted)', fontWeight: '800', padding: '0.52rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>{formatDateTime(achievement.completedAt, locale)}</td>
     </tr>
   );
 }
 
-function SkillsPanel({ skills }) {
+function SkillsPanel({ locale, skills }) {
   const { t } = useTranslation();
   if (!skills.length) return null;
 
@@ -1221,7 +1227,7 @@ function SkillsPanel({ skills }) {
       <div style={{ marginBottom: '0.9rem' }}>
         <h3 style={{ color: '#fff', margin: 0, textTransform: 'uppercase' }}>{t('pmc.skills.title')}</h3>
         <p style={{ color: 'var(--tk-text-muted)', margin: '0.25rem 0 0', lineHeight: 1.4 }}>
-          {t('pmc.skills.summary', { count: formatNumber(skills.length) })}
+          {t('pmc.skills.summary', { count: formatNumber(skills.length, locale) })}
         </p>
       </div>
 
@@ -1267,7 +1273,7 @@ function SkillsPanel({ skills }) {
                   {formatSkillLevel(skill.level)}
                 </td>
                 <td style={{ color: 'var(--tk-text-muted)', fontWeight: '800', padding: '0.58rem 0.55rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                  {formatDateTime(skill.lastAccess)}
+                  {formatDateTime(skill.lastAccess, locale)}
                 </td>
               </tr>
             ))}
@@ -1278,7 +1284,7 @@ function SkillsPanel({ skills }) {
   );
 }
 
-function DataPanel({ remoteProfile, skillText, topKeys }) {
+function DataPanel({ locale, remoteProfile, skillText, topKeys }) {
   const { t } = useTranslation();
 
   return (
@@ -1289,7 +1295,7 @@ function DataPanel({ remoteProfile, skillText, topKeys }) {
       </p>
       {remoteProfile?.updatedAt && (
         <p style={{ color: 'var(--tk-text-muted)', margin: '0.8rem 0 0', lineHeight: 1.35 }}>
-          {t('pmc.data.lastPublicUpdate', { date: formatDateTime(remoteProfile.updatedAt) })}
+          {t('pmc.data.lastPublicUpdate', { date: formatDateTime(remoteProfile.updatedAt, locale) })}
         </p>
       )}
       <p style={{ color: 'var(--tk-green)', margin: '0.8rem 0 0', fontWeight: '900', lineHeight: 1.35 }}>
@@ -1301,4 +1307,5 @@ function DataPanel({ remoteProfile, skillText, topKeys }) {
     </article>
   );
 }
+
 
