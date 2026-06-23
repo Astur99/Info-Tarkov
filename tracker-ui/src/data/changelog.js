@@ -1,22 +1,59 @@
-export const APP_VERSION = '0.14.40';
+export const APP_VERSION = '1.0.0';
 
 export const VERSION_POLICY = {
-  current: '0.x',
+  current: '1.x',
   labels: {
     es: {
       title: 'Sistema de versiones',
       body:
-        'Mientras Info Tarkov siga en fase beta, usamos versionado 0.x. Subimos el tercer numero para fixes pequeños, el segundo numero para nuevas funciones o cambios importantes de modulos, y reservamos la version 1.0.0 para una primera version publica estable con traduccion y QA mas completos.'
+        'Info Tarkov usa versionado semantico. La version 1.0.0 marca el primer lanzamiento publico estable desktop-first; los fixes suben el tercer numero, las funciones relevantes suben el segundo y los cambios mayores reservan una nueva version principal.'
     },
     en: {
       title: 'Versioning system',
       body:
-        'While Info Tarkov is still in beta, we use 0.x versioning. The third number is for small fixes, the second number is for new features or relevant module changes, and 1.0.0 is reserved for the first stable public release with fuller translation and QA.'
+        'Info Tarkov uses semantic versioning. Version 1.0.0 marks the first stable public desktop-first release; fixes bump the third number, relevant features bump the second, and major changes reserve a new main version.'
     }
   }
 };
 
 export const changelogEntries = [
+  {
+    version: '1.0.0',
+    date: '2026-06-23',
+    codename: 'First Stable Release',
+    type: 'release',
+    title: {
+      es: 'Primer lanzamiento estable',
+      en: 'First stable release'
+    },
+    summary: {
+      es: 'Info Tarkov llega a su primera version estable desktop-first con los modulos principales revisados, traduccion ES/EN, progreso PVP/PVE y documentacion publica alineada.',
+      en: 'Info Tarkov reaches its first stable desktop-first release with the main modules reviewed, ES/EN translation, PVP/PVE progress and aligned public documentation.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'Se consolida la experiencia publica con Mapas 2.0, Misiones/Kappa, Hideout, PMC Profile, Flea, Bosses, Goons, Llaves, Prestigios, Simulador, Reportes, Admin, About, Changelog y Troubleshooting.',
+          en: 'The public experience is consolidated with Maps 2.0, Missions/Kappa, Hideout, PMC Profile, Flea, Bosses, Goons, Keys, Prestige, Simulator, Reports, Admin, About, Changelog and Troubleshooting.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'La version visible pasa a v1.0.0 y el sistema de versiones deja atras la fase beta 0.x.',
+          en: 'The visible version moves to v1.0.0 and the versioning system leaves the 0.x beta phase behind.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'La 1.0 se declara desktop-first: la adaptacion movil queda planificada como hito posterior sin bloquear el lanzamiento.',
+          en: '1.0 is declared desktop-first: mobile adaptation remains planned as a later milestone without blocking release.'
+        }
+      }
+    ]
+  },
   {
     version: '0.14.40',
     date: '2026-06-23',
