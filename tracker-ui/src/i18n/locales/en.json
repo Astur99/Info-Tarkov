@@ -990,7 +990,13 @@
         ],
         "status": "Connected through static JSON with search, achievements, skills and PNG export."
       }
-    ]
+    ],
+    "howToUse": {
+      "eyebrow": "How to use",
+      "title": "Complete app guide",
+      "body": "Searchable manual covering every module, subsection, connection and key action in Info Tarkov.",
+      "action": "OPEN GUIDE"
+    }
   },
   "admin": {
     "title": "Admin Panel",

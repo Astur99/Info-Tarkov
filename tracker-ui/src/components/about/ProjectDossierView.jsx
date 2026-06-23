@@ -50,7 +50,7 @@ const structure = [
   {
     path: 'src/components/about/',
     role:
-      'Vistas informativas: About, Astur, ChangeLog y este dossier tecnico admin.'
+      'Vistas informativas: About, HowToUse, Astur, ChangeLog y este dossier tecnico admin.'
   },
   {
     path: 'src/components/auth/',
@@ -175,6 +175,12 @@ const modules = [
     files: 'src/modules/maps/, src/modules/story/, src/modules/troubleshooting/',
     body:
       'Mapas combina visor externo reemr.se con briefings curados por mapa centrados en descripcion, datos base, zonas de conflicto y puntos de interes. Los datos estructurados viven en mapBriefings.js y la copy en i18n ES/EN para poder ampliar idiomas. Transits queda como organigrama de conexiones. Story agrupa decisiones/finales. Troubleshooting documenta limitaciones y problemas conocidos.'
+  },
+  {
+    name: 'Manual de uso',
+    files: 'src/components/about/HowToUseView.jsx, src/components/about/howToUseContent.js',
+    body:
+      'Vista publica enlazada desde About con manual operativo ES/EN. Usa contenido estructurado por categorias, modulos, keywords, pasos, consejos y conexiones internas. Incluye buscador normalizado sin tildes, filtros por modulo y enlaces directos a vistas de producto.'
   }
 ];
 

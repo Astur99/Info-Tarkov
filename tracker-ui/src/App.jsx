@@ -24,6 +24,7 @@ const Auth = lazy(() => import('./components/auth/Auth'));
 const AccountSettings = lazy(() => import('./components/auth/AccountSettings'));
 const AdminPanel = lazy(() => import('./components/admin/AdminPanel'));
 const AboutView = lazy(() => import('./components/about/AboutView'));
+const HowToUseView = lazy(() => import('./components/about/HowToUseView'));
 const AsturView = lazy(() => import('./components/about/AsturView'));
 const ChangelogView = lazy(() => import('./components/about/ChangelogView'));
 const ProjectDossierView = lazy(() => import('./components/about/ProjectDossierView'));
@@ -493,6 +494,14 @@ function App() {
     return (
       <LazyView>
         <AboutView onViewChange={navigateToView} />
+      </LazyView>
+    );
+  }
+
+  if (currentView === 'how-to-use') {
+    return (
+      <LazyView>
+        <HowToUseView onViewChange={navigateToView} />
       </LazyView>
     );
   }

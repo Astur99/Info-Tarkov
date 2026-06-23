@@ -990,7 +990,13 @@
         ],
         "status": "Conectado mediante JSON estático, con búsqueda, logros, skills y exportación PNG."
       }
-    ]
+    ],
+    "howToUse": {
+      "eyebrow": "C?mo usar",
+      "title": "Gu?a completa de la app",
+      "body": "Manual buscable con todos los m?dulos, subsecciones, conexiones y acciones clave de Info Tarkov.",
+      "action": "ABRIR GU?A"
+    }
   },
   "admin": {
     "title": "Panel Admin",

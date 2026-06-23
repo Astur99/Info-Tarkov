@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.1.0';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,43 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.1.0',
+    date: '2026-06-23',
+    codename: 'How to Use Manual',
+    type: 'feature',
+    title: {
+      es: 'Guía completa de uso',
+      en: 'Complete how-to-use guide'
+    },
+    summary: {
+      es: 'About incorpora una sección Cómo usar / How to Use con buscador, índice por módulos y explicación detallada de toda la plataforma.',
+      en: 'About adds a How to Use section with search, module index and detailed explanations for the whole platform.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'Nueva vista de manual operativo con contenido ES/EN, búsqueda por palabras clave, filtros por módulo y bloques desplegables.',
+          en: 'New operational manual view with ES/EN content, keyword search, module filters and expandable blocks.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'La guía cubre inicio, cuenta, idioma, reportes, admin, Misiones/Kappa, Quest Optimizer, Collector, Hideout, PMC, Flea, Llaves, Bosses, Goons, Simulador, Mapas, Historia, Prestigios, Troubleshooting y ChangeLog.',
+          en: 'The guide covers home, account, language, reports, admin, Missions/Kappa, Quest Optimizer, Collector, Hideout, PMC, Flea, Keys, Bosses, Goons, Simulator, Maps, Story, Prestige, Troubleshooting and ChangeLog.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'About añade un acceso destacado a la guía para reducir fricción de usuarios nuevos tras el lanzamiento 1.0.',
+          en: 'About adds a featured entry point to the guide to reduce friction for new users after the 1.0 launch.'
+        }
+      }
+    ]
+  },
   {
     version: '1.0.0',
     date: '2026-06-23',
