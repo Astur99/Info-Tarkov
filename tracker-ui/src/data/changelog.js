@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.1.1';
+export const APP_VERSION = '1.2.1';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,140 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.1',
+    date: '2026-06-24',
+    codename: 'Mobile Stable Pass',
+    type: 'changed',
+    title: {
+      es: 'Primera version movil estable',
+      en: 'First stable mobile version'
+    },
+    summary: {
+      es: 'Se completa el primer repaso serio de movil con menu, misiones, refugio, perfil, mapas y cuenta adaptados para uso tactil.',
+      en: 'The first serious mobile pass is completed with menu, quests, hideout, PMC profile, maps and account adapted for touch use.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'El menu principal muestra las imagenes de cada modulo directamente en movil, ya que no existe hover en navegacion tactil.',
+          en: 'The main menu now shows each module image directly on mobile, since touch navigation has no hover state.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Misiones / Kappa mejora su uso tactil con selector de traders compacto, panel desplegable y matriz preparada para desplazamiento/zoom con dedos.',
+          en: 'Missions / Kappa improves touch usability with compact trader selection, collapsible panel and a matrix prepared for finger pan/zoom.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Hideout reorganiza secciones, niveles, estadisticas, requisitos y materiales para ocupar menos espacio y leerse mejor en movil.',
+          en: 'Hideout reorganizes sections, levels, stats, requirements and materials so it uses less space and reads better on mobile.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'PMC Profile, Mapas y Cuenta reciben layouts moviles mas limpios para evitar solapes, scroll horizontal y bloques dificiles de tocar.',
+          en: 'PMC Profile, Maps and Account receive cleaner mobile layouts to avoid overlaps, horizontal scroll and hard-to-tap blocks.'
+        }
+      },
+      {
+        type: 'removed',
+        text: {
+          es: 'About elimina el bloque duplicado de acceso al manual, ya disponible como accion principal en el menu.',
+          en: 'About removes the duplicated manual access block, now available as a main menu action.'
+        }
+      }
+    ]
+  },
+  {
+    version: '1.2.0',
+    date: '2026-06-24',
+    codename: 'Mobile Foundation',
+    type: 'added',
+    title: {
+      es: 'Primera base responsive para movil',
+      en: 'First responsive mobile foundation'
+    },
+    summary: {
+      es: 'Se introduce una capa responsive global para que Info Tarkov sea usable desde movil sin cambiar la experiencia de escritorio.',
+      en: 'A global responsive layer is introduced so Info Tarkov becomes usable on mobile without changing the desktop experience.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'El menu principal adapta titulo, tarjetas, botones superiores, acciones inferiores y version visible a pantallas pequenas.',
+          en: 'The main menu now adapts title, cards, top buttons, bottom actions and visible version label to small screens.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Los paneles y grids principales se apilan en movil para reducir solapes, recortes y scroll horizontal accidental.',
+          en: 'Main panels and grids now stack on mobile to reduce overlaps, clipping and accidental horizontal scrolling.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Se suavizan efectos visuales y paddings en pantallas estrechas para mejorar legibilidad y rendimiento tactil.',
+          en: 'Visual effects and spacing are reduced on narrow screens to improve readability and touch performance.'
+        }
+      }
+    ]
+  },
+  {
+    version: '1.1.3',
+    date: '2026-06-24',
+    codename: 'Navigation Persistence Hotfix',
+    type: 'fixed',
+    title: {
+      es: 'Navegacion estable al cambiar de pestana',
+      en: 'Stable navigation when switching tabs'
+    },
+    summary: {
+      es: 'La app ya no vuelve al menu cuando el navegador revalida la sesion al regresar desde otra pestana.',
+      en: 'The app no longer returns to the main menu when the browser revalidates the session after coming back from another tab.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'El listener de Supabase Auth deja de forzar Home en cada evento de sesion valida, manteniendo abierta la vista actual.',
+          en: 'The Supabase Auth listener no longer forces Home on every valid-session event, preserving the current view.'
+        }
+      }
+    ]
+  },
+  {
+    version: '1.1.2',
+    date: '2026-06-23',
+    codename: 'Public Guide Cleanup',
+    type: 'fixed',
+    title: {
+      es: 'Manual publico mas limpio',
+      en: 'Cleaner public manual'
+    },
+    summary: {
+      es: 'Se retira la referencia visible al Panel Admin del manual publico para mantener la guia centrada en usuarios normales.',
+      en: 'The visible Admin Panel reference is removed from the public manual so the guide stays focused on regular users.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'La seccion de Admin queda fuera del manual publico y sigue documentada unicamente en el Dossier privado.',
+          en: 'The Admin section is removed from the public manual and remains documented only in the private Dossier.'
+        }
+      }
+    ]
+  },
   {
     version: '1.1.1',
     date: '2026-06-23',

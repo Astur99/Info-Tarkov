@@ -11,6 +11,7 @@ export default function LanguageSwitcher() {
 
   return (
     <div
+      className="language-switcher"
       aria-label={t('language.label')}
       style={{
         position: 'fixed',

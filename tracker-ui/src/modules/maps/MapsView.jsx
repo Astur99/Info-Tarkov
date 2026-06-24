@@ -44,10 +44,10 @@ export default function MapsView({ onViewChange }) {
   const hasBriefingLists = conflictZones.length > 0 || pointsOfInterest.length > 0;
 
   return (
-    <div className="fade-in-slide terminal-panel" style={{ padding: '6rem 2rem 4rem 2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
+    <div className="fade-in-slide terminal-panel maps-mobile-root" style={{ padding: '6rem 2rem 4rem 2rem', maxWidth: '1600px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
       
       {/* CABECERA TÁCTICA */}
-      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
+      <header className="maps-mobile-header" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div>
           <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>{t('mapsModule.title')}</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
@@ -77,7 +77,22 @@ export default function MapsView({ onViewChange }) {
       </header>
 
       {/* REJILLA DE SELECCIÓN DE MAPAS (SOLO NOMBRES EN GRANDE) */}
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '3rem' }}>
+      <section className="maps-mobile-selector">
+        <label htmlFor="maps-mobile-select">{t('mapsModule.selectMap')}</label>
+        <select
+          id="maps-mobile-select"
+          value={mapaActivo}
+          onChange={(event) => setMapaActivo(event.target.value)}
+        >
+          {mapasDisponibles.map((mapa) => (
+            <option key={mapa.id} value={mapa.id}>
+              {mapa.name}
+            </option>
+          ))}
+        </select>
+      </section>
+
+      <section className="maps-desktop-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '3rem' }}>
         {mapasDisponibles.map((mapa) => {
           const seleccionado = mapa.id === mapaActivo;
           return (

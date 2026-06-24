@@ -946,24 +946,6 @@ export const HOW_TO_USE_CONTENT = {
             ],
             connection:
               'Every relevant improvement is documented so users and testers know which version they are using.'
-          },
-          {
-            title: 'Admin Panel',
-            keywords: ['admin', 'users', 'tickets', 'roles', 'metrics', 'dossier'],
-            summary:
-              'Private administrator area: users, roles, tickets, internal metrics and technical dossier.',
-            steps: [
-              'Only appears if your role is admin.',
-              'Open Admin to review users, tickets and metrics.',
-              'Use Dossier to understand internal project architecture.',
-              'Reply to tickets so the user receives a notification.'
-            ],
-            tips: [
-              'Dossier is not translated because it is private documentation.',
-              'The owner account is protected from accidental changes.'
-            ],
-            connection:
-              'Admin connects Reports, users, Supabase, metrics and internal documentation.'
           }
         ]
       }

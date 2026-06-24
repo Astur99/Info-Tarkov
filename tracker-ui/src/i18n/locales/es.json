@@ -354,6 +354,7 @@
   "mapsModule": {
     "title": "CARTOGRAFÍA TÁCTICA",
     "subtitle": "Mapas interactivos, zonas de interés, spots de misiones, spawns y rutas de extracción.",
+    "selectMap": "Seleccionar mapa",
     "projectingFeed": "PROYECTANDO FEED: {{map}}",
     "navigationSystem": "SISTEMA INTERACTIVO DE NAVEGACIÓN",
     "iframeTitle": "Mapa de {{map}}",
@@ -1364,6 +1365,7 @@
     "loading": "COMPILANDO MATRIZ JERÁRQUICA, ESPERE...",
     "optimizerButton": "Quest Optimizer",
     "searchPlaceholder": "BUSCAR GLOBAL...",
+    "traderLabel": "Trader",
     "panel": {
       "activeProfile": "PERFIL ACTIVO",
       "syncing": "SINCRONIZANDO PROGRESO...",
@@ -1831,6 +1833,7 @@
     "list": {
       "sections": "SECCIONES",
       "progress": "Progreso",
+      "selectSection": "Seleccionar sección",
       "availableUpgrades": "{{count}} mejora(s) desbloqueada(s)",
       "blocked": "BLOQ"
     },

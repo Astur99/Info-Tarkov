@@ -237,7 +237,6 @@ function App() {
       window.setTimeout(() => {
         syncSessionData(session);
       }, 0);
-      if (session) navigateToView('home');
     });
 
     return () => subscription.unsubscribe();
@@ -560,6 +559,7 @@ function App() {
       }}
     >
       <button
+        className="home-fixed-button home-server-button"
         onClick={() => navigateToView('server-status')}
         style={{
           position: 'fixed',
@@ -589,6 +589,7 @@ function App() {
 
       {session && (
         <button
+          className="home-fixed-button home-account-button"
           onClick={() => navigateToView('account')}
           style={{
             position: 'fixed',
@@ -617,6 +618,7 @@ function App() {
 
       {session && userRole !== 'admin' && (
         <button
+          className="home-fixed-button home-report-button"
           onClick={() => {
             markReportsAsSeen();
             navigateToView('messages');
@@ -649,6 +651,7 @@ function App() {
 
       {userRole === 'admin' && (
         <button
+          className="home-fixed-button home-admin-button"
           onClick={() => navigateAndRefreshNotifications('admin')}
           style={{
             position: 'fixed',
@@ -677,6 +680,7 @@ function App() {
       )}
 
       <button
+        className="home-fixed-button home-auth-button"
         onClick={async () => {
           if (session) {
             await supabase.auth.signOut();
@@ -711,8 +715,8 @@ function App() {
         {session ? t('home.logout') : t('home.login')}
       </button>
 
-      <div style={{ padding: '6rem 2rem 10rem 2rem', maxWidth: '1400px', margin: '0 auto' }}>
-        <header className="fade-in-slide" style={{ marginBottom: '6rem', textAlign: 'center' }}>
+      <div className="home-shell" style={{ padding: '6rem 2rem 10rem 2rem', maxWidth: '1400px', margin: '0 auto' }}>
+        <header className="fade-in-slide home-hero" style={{ marginBottom: '6rem', textAlign: 'center' }}>
           <TitleGlowPro />
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '1.5rem' }}>
@@ -747,6 +751,7 @@ function App() {
         </header>
 
         <div
+          className="home-module-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
@@ -759,6 +764,7 @@ function App() {
         </div>
 
         <button
+          className="home-credit-button"
           type="button"
           onClick={() => navigateToView('astur')}
           style={{
@@ -786,6 +792,7 @@ function App() {
         </button>
 
         <div
+          className="home-footer-actions"
           style={{
             position: 'fixed',
             bottom: '3.85rem',
@@ -836,6 +843,7 @@ function App() {
           ))}
         </div>
         <div
+          className="home-version-label"
           style={{
             position: 'fixed',
             bottom: '2.35rem',
@@ -868,6 +876,7 @@ function TitleGlowPro() {
 
   return (
     <div
+      className="home-title"
       onMouseMove={handleMouseMoveLocal}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -887,6 +896,7 @@ function TitleGlowPro() {
       />
 
       <h1
+        className="home-title-shadow"
         style={{
           fontFamily: "'Rajdhani', sans-serif",
           fontSize: '4.8rem',
@@ -901,6 +911,7 @@ function TitleGlowPro() {
       </h1>
 
       <h1
+        className="home-title-glow"
         style={{
           fontFamily: "'Rajdhani', sans-serif",
           fontSize: '4.8rem',
@@ -935,7 +946,7 @@ function ModuleCard({ mod, index, onViewChange }) {
 
   return (
     <div
-      className={`fade-in-slide terminal-module-card ${delayClass}`}
+      className={`fade-in-slide terminal-module-card home-module-card ${delayClass}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onViewChange(mod.id)}
@@ -960,6 +971,7 @@ function ModuleCard({ mod, index, onViewChange }) {
       {hasBgImage && (
         <>
           <div
+            className="home-module-card-vignette"
             style={{
               position: 'absolute',
               inset: 0,
@@ -971,6 +983,7 @@ function ModuleCard({ mod, index, onViewChange }) {
           />
 
           <img
+            className="home-module-card-image"
             src={mod.bgImage}
             alt=""
             aria-hidden="true"
@@ -992,6 +1005,7 @@ function ModuleCard({ mod, index, onViewChange }) {
           />
 
           <div
+            className="home-module-card-glow"
             style={{
               position: 'absolute',
               right: '-120px',

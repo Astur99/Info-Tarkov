@@ -260,6 +260,7 @@ export default function AccountSettings({
 
   return (
     <div
+      className="account-mobile-root"
       style={{
         minHeight: '100vh',
         background: '#0a0a0c',
@@ -268,6 +269,7 @@ export default function AccountSettings({
     >
       <button
         type="button"
+        className="account-mobile-back"
         onClick={() => onViewChange('home')}
         style={{
           position: 'fixed',
@@ -287,9 +289,9 @@ export default function AccountSettings({
         {t('common.backToTerminal')}
       </button>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.25fr) minmax(360px, 420px)', gap: '1rem', width: 'min(1120px, 100%)', margin: '0 auto', alignItems: 'start' }}>
-        <section style={{ display: 'grid', gap: '1rem' }}>
-          <article style={{ ...panelStyle, width: '100%' }}>
+      <div className="account-mobile-layout" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.25fr) minmax(360px, 420px)', gap: '1rem', width: 'min(1120px, 100%)', margin: '0 auto', alignItems: 'start' }}>
+        <section className="account-mobile-left" style={{ display: 'grid', gap: '1rem' }}>
+          <article className="account-mobile-panel account-mobile-overview" style={{ ...panelStyle, width: '100%' }}>
             <p style={{ color: 'var(--tk-green)', margin: 0, fontWeight: '900', letterSpacing: '1px', textTransform: 'uppercase' }}>
               {t('account.overview.eyebrow')}
             </p>
@@ -300,12 +302,12 @@ export default function AccountSettings({
             </p>
           </article>
 
-          <article style={{ ...panelStyle, width: '100%' }}>
+          <article className="account-mobile-panel" style={{ ...panelStyle, width: '100%' }}>
             <h2 style={sectionTitleStyle}>{t('account.summary.title')}</h2>
             {accountSummary.loading ? (
               <p style={{ color: 'var(--tk-green)', margin: 0, fontWeight: '800' }}>{t('account.summary.loading')}</p>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(145px, 1fr))', gap: '0.75rem' }}>
+              <div className="account-mobile-summary-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(145px, 1fr))', gap: '0.75rem' }}>
                 {summaryCards.map((card) => (
                   <SummaryCard key={card.label} {...card} />
                 ))}
@@ -313,9 +315,9 @@ export default function AccountSettings({
             )}
           </article>
 
-          <article style={{ ...panelStyle, width: '100%' }}>
+          <article className="account-mobile-panel" style={{ ...panelStyle, width: '100%' }}>
             <h2 style={sectionTitleStyle}>{t('account.quickActions.title')}</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.75rem' }}>
+            <div className="account-mobile-action-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.75rem' }}>
               <QuickAction label={t('account.quickActions.kappa')} meta={t('account.quickActions.kappaMeta')} onClick={() => onViewChange('kappa')} />
               <QuickAction label={t('account.quickActions.hideout')} meta={t('account.quickActions.hideoutMeta')} onClick={() => onViewChange('hideout')} />
               <QuickAction label={t('account.quickActions.flea')} meta={t('account.quickActions.fleaMeta')} onClick={() => onViewChange('flea')} />
@@ -324,8 +326,8 @@ export default function AccountSettings({
           </article>
         </section>
 
-        <section style={{ display: 'grid', gap: '1rem' }}>
-        <form onSubmit={handleSaveUsername} style={{ ...panelStyle, width: '100%' }}>
+        <section className="account-mobile-right" style={{ display: 'grid', gap: '1rem' }}>
+        <form className="account-mobile-panel account-mobile-form" onSubmit={handleSaveUsername} style={{ ...panelStyle, width: '100%' }}>
           <h2 style={sectionTitleStyle}>{t('account.username.title')}</h2>
 
           <input
@@ -382,7 +384,7 @@ export default function AccountSettings({
           )}
         </form>
 
-        <form onSubmit={handleChangePassword} style={{ ...panelStyle, width: '100%' }}>
+        <form className="account-mobile-panel account-mobile-form" onSubmit={handleChangePassword} style={{ ...panelStyle, width: '100%' }}>
           <h2 style={sectionTitleStyle}>{t('account.password.title')}</h2>
 
           <input
@@ -440,6 +442,7 @@ export default function AccountSettings({
         </form>
 
         <section
+          className="account-mobile-panel account-mobile-danger"
           style={{
             ...panelStyle,
             width: '100%',

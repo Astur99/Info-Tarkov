@@ -254,7 +254,7 @@ export default function HideoutModule({ onViewChange, session }) {
 
   return (
     <div
-      className="fade-in-slide terminal-panel"
+      className="fade-in-slide terminal-panel hideout-mobile-root"
       style={{
         padding: '6rem 2rem 8rem 2rem',
         maxWidth: '1500px',
@@ -271,6 +271,7 @@ export default function HideoutModule({ onViewChange, session }) {
       />
 
       <div
+        className="hideout-mobile-layout"
         style={{
           display: 'grid',
           gridTemplateColumns: '340px 1fr',

@@ -78,54 +78,6 @@ export default function AboutView({ onViewChange }) {
 
         <section
           style={{
-            ...{
-              background: 'rgba(26,176,21,0.055)',
-              border: '1px solid rgba(26,176,21,0.18)',
-              borderRadius: '8px',
-              padding: '1.35rem',
-              marginBottom: '2rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '1rem',
-              flexWrap: 'wrap'
-            }
-          }}
-        >
-          <div>
-            <p style={{ color: 'var(--tk-green)', margin: '0 0 0.35rem', fontWeight: 900, letterSpacing: '2px', textTransform: 'uppercase' }}>
-              {t('about.howToUse.eyebrow')}
-            </p>
-            <h2 style={{ color: '#fff', margin: 0, fontSize: '1.45rem', textTransform: 'uppercase' }}>
-              {t('about.howToUse.title')}
-            </h2>
-            <p style={{ color: 'var(--tk-text-muted)', margin: '0.4rem 0 0', lineHeight: 1.55, maxWidth: '760px' }}>
-              {t('about.howToUse.body')}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => onViewChange('how-to-use')}
-            style={{
-              backgroundColor: 'rgba(182,205,169,0.9)',
-              color: '#0b0c0b',
-              border: '1px solid rgba(182,205,169,0.55)',
-              padding: '0.85rem 1.1rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '900',
-              letterSpacing: '1px',
-              whiteSpace: 'nowrap',
-              fontFamily: "'Rajdhani', sans-serif"
-            }}
-          >
-            {t('about.howToUse.action')}
-          </button>
-        </section>
-
-        <section
-          style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: '1rem',

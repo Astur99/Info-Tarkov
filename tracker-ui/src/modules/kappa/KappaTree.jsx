@@ -36,6 +36,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   const [syncError, setSyncError] = useState(null);
   const [activeTool, setActiveTool] = useState(initialTool);
   const [collectorOpen, setCollectorOpen] = useState(false);
+  const [statsPanelOpen, setStatsPanelOpen] = useState(false);
   const [collectorItems, setCollectorItems] = useState(() => readCollectorProgress(readActiveMode()));
   const [collectorSearch, setCollectorSearch] = useState('');
   const [collectorItemAssets, setCollectorItemAssets] = useState({});
@@ -43,6 +44,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   const [completadas, setCompletadas] = useState(() => readProgress('PVP'));
 
   const matrixRef = useRef(null);
+  const pinchRef = useRef(null);
   const suppressSaveRef = useRef(false);
   const [zoom, setZoom] = useState(0.8);
   const [pan, setPan] = useState(getInitialTreePan);
@@ -399,6 +401,105 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
     });
   };
 
+  const getTouchDistance = (touches) => {
+    const [first, second] = touches;
+    return Math.hypot(second.clientX - first.clientX, second.clientY - first.clientY);
+  };
+
+  const getTouchCenter = (touches) => {
+    const [first, second] = touches;
+    return {
+      x: (first.clientX + second.clientX) / 2,
+      y: (first.clientY + second.clientY) / 2
+    };
+  };
+
+  const handleTouchStart = (event) => {
+    if (
+      event.target.tagName === 'BUTTON' ||
+      event.target.tagName === 'INPUT' ||
+      event.target.tagName === 'A' ||
+      event.target.closest?.('[data-fixed-panel="true"]')
+    ) {
+      return;
+    }
+
+    if (event.touches.length === 1) {
+      const touch = event.touches[0];
+      setIsDown(true);
+      setStartPan({
+        x: touch.clientX - pan.x,
+        y: touch.clientY - pan.y
+      });
+      pinchRef.current = null;
+      return;
+    }
+
+    if (event.touches.length === 2) {
+      event.preventDefault();
+      setIsDown(false);
+      const center = getTouchCenter(event.touches);
+      pinchRef.current = {
+        distance: getTouchDistance(event.touches),
+        zoom,
+        contentX: (center.x - pan.x) / zoom,
+        contentY: (center.y - pan.y) / zoom
+      };
+    }
+  };
+
+  const handleTouchMove = (event) => {
+    if (
+      event.target.tagName === 'BUTTON' ||
+      event.target.tagName === 'INPUT' ||
+      event.target.tagName === 'A' ||
+      event.target.closest?.('[data-fixed-panel="true"]')
+    ) {
+      return;
+    }
+
+    if (event.touches.length === 1 && isDown) {
+      event.preventDefault();
+      const touch = event.touches[0];
+      setPan({
+        x: touch.clientX - startPan.x,
+        y: touch.clientY - startPan.y
+      });
+      return;
+    }
+
+    if (event.touches.length === 2 && pinchRef.current) {
+      event.preventDefault();
+      const center = getTouchCenter(event.touches);
+      const scale = getTouchDistance(event.touches) / pinchRef.current.distance;
+      const nextZoom = Math.max(0.3, Math.min(1.3, pinchRef.current.zoom * scale));
+
+      setZoom(nextZoom);
+      setPan({
+        x: center.x - pinchRef.current.contentX * nextZoom,
+        y: center.y - pinchRef.current.contentY * nextZoom
+      });
+    }
+  };
+
+  const handleTouchEnd = (event) => {
+    if (event.touches.length === 0) {
+      setIsDown(false);
+      pinchRef.current = null;
+      return;
+    }
+
+    if (event.touches.length === 1) {
+      const touch = event.touches[0];
+      setIsDown(true);
+      setStartPan({
+        x: touch.clientX - pan.x,
+        y: touch.clientY - pan.y
+      });
+      pinchRef.current = null;
+    }
+  };
+
   const activeStyle = TRADER_STYLES[currentTrader] || TRADER_STYLES.DEFAULT;
 
   const totalMisiones = todasLasMisiones.length;
@@ -563,7 +664,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
 
   return (
     <div
-      className="terminal-panel"
+      className="terminal-panel kappa-mobile-root"
       style={{
         padding: '2rem 1rem 0 1rem',
         width: '100%',
@@ -576,6 +677,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
       }}
     >
       <div
+        className="kappa-mobile-header"
         style={{
           width: '100%',
           maxWidth: '1600px',
@@ -677,7 +779,26 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
           </div>
         </div>
 
+        <div className="kappa-mobile-trader-select">
+          <label htmlFor="kappa-trader-select">{t('kappa.traderLabel')}</label>
+          <select
+            id="kappa-trader-select"
+            value={currentTrader}
+            onChange={(event) => {
+              setCurrentTrader(event.target.value);
+              setPan(getInitialTreePan());
+            }}
+          >
+            {TRADERS.map((tName) => (
+              <option key={tName} value={tName}>
+                {tName.toUpperCase()}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div
+          className="kappa-trader-tabs"
           style={{
             display: 'flex',
             gap: '0.5rem',
@@ -722,12 +843,17 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
       </div>
 
       <div
+        className="kappa-mobile-matrix"
         ref={matrixRef}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeaveOrUp}
         onMouseUp={handleMouseLeaveOrUp}
         onMouseMove={handleMouseMove}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         style={{
           flex: 1,
           width: '100vw',
@@ -736,7 +862,8 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
           position: 'relative',
           overflow: 'hidden',
           cursor: isDown ? 'grabbing' : 'grab',
-          backgroundColor: '#030303'
+          backgroundColor: '#030303',
+          touchAction: 'none'
         }}
       >
         {collectorOpen && (
@@ -757,45 +884,55 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
           />
         )}
 
-        <aside data-fixed-panel="true" style={statPanelStyle}>
-          <div
-            style={{
-              display: 'flex',
-              gap: '0.5rem',
-              marginBottom: '0.9rem'
-            }}
+        <aside className={`kappa-mobile-stats ${statsPanelOpen ? 'is-open' : ''}`} data-fixed-panel="true" style={statPanelStyle}>
+          <button
+            type="button"
+            className="kappa-mobile-stats-toggle"
+            onClick={() => setStatsPanelOpen((open) => !open)}
           >
-            <button
-              onClick={() => cambiarModoJuego('PVP')}
-              style={modeButtonStyle(modoJuego === 'PVP')}
-            >
-              PvP
-            </button>
+            <span>{modoJuego} / {t('kappa.panel.statsTitle')}</span>
+            <span aria-hidden="true">{statsPanelOpen ? 'v' : '^'}</span>
+          </button>
 
-            <button
-              onClick={() => cambiarModoJuego('PVE')}
-              style={modeButtonStyle(modoJuego === 'PVE')}
+          <div className="kappa-mobile-stats-body">
+            <div
+              style={{
+                display: 'flex',
+                gap: '0.5rem',
+                marginBottom: '0.9rem'
+              }}
             >
-              PvE
-            </button>
-          </div>
+              <button
+                onClick={() => cambiarModoJuego('PVP')}
+                style={modeButtonStyle(modoJuego === 'PVP')}
+              >
+                PvP
+              </button>
 
-          <div
-            style={{
-              marginBottom: '1rem',
-              padding: '0.55rem 0.7rem',
-              borderRadius: '8px',
-              backgroundColor: 'rgba(255,255,255,0.035)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              color: 'var(--tk-text-muted)',
-              fontSize: '0.75rem',
-              fontWeight: '800',
-              letterSpacing: '0.7px',
-              textAlign: 'center'
-            }}
-          >
-            {t('kappa.panel.activeProfile')}: <span style={{ color: 'var(--tk-green)' }}>{modoJuego}</span>
-          </div>
+              <button
+                onClick={() => cambiarModoJuego('PVE')}
+                style={modeButtonStyle(modoJuego === 'PVE')}
+              >
+                PvE
+              </button>
+            </div>
+
+            <div
+              style={{
+                marginBottom: '1rem',
+                padding: '0.55rem 0.7rem',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(255,255,255,0.035)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                color: 'var(--tk-text-muted)',
+                fontSize: '0.75rem',
+                fontWeight: '800',
+                letterSpacing: '0.7px',
+                textAlign: 'center'
+              }}
+            >
+              {t('kappa.panel.activeProfile')}: <span style={{ color: 'var(--tk-green)' }}>{modoJuego}</span>
+            </div>
 
           <div
             style={{
@@ -940,6 +1077,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
           >
             {t('kappa.panel.resetProgress', { mode: modoJuego })}
           </button>
+          </div>
         </aside>
 
         <div
@@ -1269,6 +1407,7 @@ function CollectorPanel({
 
   return (
     <div
+      className="collector-mobile-overlay"
       data-fixed-panel="true"
       style={{
         position: 'fixed',
@@ -1286,6 +1425,7 @@ function CollectorPanel({
       onWheel={(event) => event.stopPropagation()}
     >
       <section
+        className="collector-mobile-panel"
         style={{
           width: 'min(1040px, 100%)',
           height: 'min(760px, calc(100vh - 2.5rem))',

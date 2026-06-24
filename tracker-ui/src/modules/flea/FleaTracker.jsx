@@ -296,10 +296,10 @@ export default function FleaTracker({ onViewChange }) {
   };
 
   return (
-    <div className="fade-in-slide terminal-panel" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
+    <div className="fade-in-slide terminal-panel flea-mobile-root" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
       
       {/* CABECERA */}
-      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
+      <header className="flea-mobile-header" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div>
           <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>{t('fleaModule.title')}</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
@@ -394,7 +394,7 @@ export default function FleaTracker({ onViewChange }) {
       </section>
 
       {/* CAMBIO DE ORDEN: REJILLA DEL ÍTEM BUSCADO (PRIMERA PRIORIDAD BAJO INPUT) */}
-      <div style={{ display: 'grid', gridTemplateColumns: itemSeleccionado ? '1.1fr 0.9fr' : '1fr', gap: '2rem', transition: 'all 0.3s', marginBottom: '4rem' }}>
+      <div className="flea-mobile-results" style={{ display: 'grid', gridTemplateColumns: itemSeleccionado ? '1.1fr 0.9fr' : '1fr', gap: '2rem', transition: 'all 0.3s', marginBottom: '4rem' }}>
         <section style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {itemsResultados.map((item) => {
             const slots = item.width * item.height;

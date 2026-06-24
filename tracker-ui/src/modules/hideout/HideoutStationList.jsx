@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function HideoutStationList({
@@ -10,23 +11,39 @@ export default function HideoutStationList({
   setNivelObjetivo
 }) {
   const { t } = useTranslation();
+  const [sectionsOpen, setSectionsOpen] = useState(false);
 
   return (
-    <section style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-      <h3
-        style={{
-          fontSize: '0.85rem',
-          color: 'var(--tk-text-muted)',
-          fontWeight: '800',
-          letterSpacing: '2px',
-          marginBottom: '0.5rem',
-          textTransform: 'uppercase'
-        }}
-      >
-        {t('hideoutModule.list.sections')}
-      </h3>
+    <section
+      className={`hideout-mobile-station-list ${sectionsOpen ? 'is-open' : ''}`}
+      style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
+    >
+      <div className="hideout-mobile-section-header">
+        <h3
+          style={{
+            fontSize: '0.85rem',
+            color: 'var(--tk-text-muted)',
+            fontWeight: '800',
+            letterSpacing: '2px',
+            marginBottom: '0.5rem',
+            textTransform: 'uppercase'
+          }}
+        >
+          {t('hideoutModule.list.sections')}
+        </h3>
+
+        <button
+          type="button"
+          className="hideout-mobile-section-toggle"
+          onClick={() => setSectionsOpen((open) => !open)}
+        >
+          <span>{estacionSeleccionada?.name || t('hideoutModule.list.selectSection')}</span>
+          <span aria-hidden="true">{sectionsOpen ? 'v' : '^'}</span>
+        </button>
+      </div>
 
       <div
+        className="hideout-mobile-progress-card"
         style={{
           background: 'rgba(0,0,0,0.28)',
           border: '1px solid rgba(255,255,255,0.06)',
@@ -55,6 +72,7 @@ export default function HideoutStationList({
       </div>
 
       <div
+        className="hideout-mobile-station-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',

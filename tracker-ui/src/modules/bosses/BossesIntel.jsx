@@ -274,7 +274,7 @@ export default function BossesView({ onViewChange }) {
   };
 
   return (
-    <div className="fade-in-slide terminal-panel" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
+    <div className="fade-in-slide terminal-panel bosses-mobile-root" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
       
       <style>{`
         @keyframes desgloseFicha {
@@ -289,7 +289,7 @@ export default function BossesView({ onViewChange }) {
       `}</style>
 
       {/* CABECERA */}
-      <header style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
+      <header className="bosses-mobile-header" style={{ marginBottom: '3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div>
           <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>{t('bossesModule.title')}</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
@@ -308,7 +308,7 @@ export default function BossesView({ onViewChange }) {
       </header>
 
       {/* FILTROS TÃCTICOS */}
-      <section style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem', flexWrap: 'wrap', alignItems: 'center' }}>
+      <section className="bosses-mobile-filters" style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem', flexWrap: 'wrap', alignItems: 'center' }}>
         <input 
           type="text" 
           placeholder={t('bossesModule.searchPlaceholder')} 
@@ -361,7 +361,7 @@ export default function BossesView({ onViewChange }) {
       ) : (
         <>
           {/* GRID DE CARDS GENERAL */}
-          <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
+          <section className="bosses-mobile-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
             {bossesFiltrados.map((boss) => {
               const activo = bossSeleccionado?.id === boss.id;
               return (
@@ -401,7 +401,7 @@ export default function BossesView({ onViewChange }) {
 
           {/* PANEL DETALLADO DEL OBJETIVO */}
           {bossSeleccionado && (
-            <section style={{ animation: 'desgloseFicha 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards', backgroundColor: 'var(--tk-glass)', border: '1px solid var(--tk-glass-border)', borderRadius: '16px', padding: '2.5rem' }}>
+            <section className="bosses-mobile-detail" style={{ animation: 'desgloseFicha 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards', backgroundColor: 'var(--tk-glass)', border: '1px solid var(--tk-glass-border)', borderRadius: '16px', padding: '2.5rem' }}>
               
               <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '2rem', marginBottom: '2rem', display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
                 <div style={{ width: '140px', height: '140px', borderRadius: '12px', overflow: 'hidden', border: '2px solid var(--tk-glass-border)', boxShadow: '0 4px 20px rgba(0,0,0,0.6)', flexShrink: 0, backgroundColor: '#000' }}>

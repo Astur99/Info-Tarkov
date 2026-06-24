@@ -32,6 +32,8 @@ const sectionMatches = (section, category, query) => {
   return normalize(haystack).includes(query);
 };
 
+const isPublicSection = (section) => normalize(section.title) !== 'panel admin' && normalize(section.title) !== 'admin panel';
+
 export default function HowToUseView({ onViewChange }) {
   const { i18n } = useTranslation();
   const language = i18n.language?.startsWith('en') ? 'en' : 'es';
@@ -52,7 +54,9 @@ export default function HowToUseView({ onViewChange }) {
       .filter((category) => activeModule === 'all' || category.id === activeModule)
       .map((category) => ({
         ...category,
-        sections: category.sections.filter((section) => sectionMatches(section, category, normalizedQuery))
+        sections: category.sections.filter(
+          (section) => isPublicSection(section) && sectionMatches(section, category, normalizedQuery)
+        )
       }))
       .filter((category) => category.sections.length > 0)
   ), [activeModule, content.categories, normalizedQuery]);

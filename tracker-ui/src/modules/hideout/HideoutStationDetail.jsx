@@ -30,6 +30,7 @@ export default function HideoutStationDetail({
 
   return (
     <section
+      className="hideout-mobile-detail"
       style={{
         backgroundColor: 'var(--tk-glass)',
         backdropFilter: 'blur(25px)',
@@ -42,6 +43,7 @@ export default function HideoutStationDetail({
       }}
     >
       <div
+        className="hideout-mobile-detail-header"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -84,8 +86,8 @@ export default function HideoutStationDetail({
           )}
         </div>
 
-        <div style={{ display: 'grid', gap: '0.65rem', justifyItems: 'end' }}>
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+        <div className="hideout-mobile-level-controls" style={{ display: 'grid', gap: '0.65rem', justifyItems: 'end' }}>
+          <div className="hideout-mobile-level-tabs" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             {estacionSeleccionada.levels?.map((level) => (
               <button
                 key={level.level}
@@ -107,7 +109,7 @@ export default function HideoutStationDetail({
               </button>
             ))}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div className="hideout-mobile-built-control" style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <span style={{ color: 'var(--tk-text-muted)', fontWeight: '900', letterSpacing: '0.8px' }}>
               {t('hideoutModule.detail.built')}:
             </span>
@@ -136,6 +138,7 @@ export default function HideoutStationDetail({
       </div>
 
       <div
+        className="hideout-mobile-stat-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
@@ -215,7 +218,7 @@ export default function HideoutStationDetail({
           {t('hideoutModule.detail.requiredObjects')}
         </h4>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <div className="hideout-mobile-material-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {itemRequirements.map((req) => {
             const precioUnidad = getRequirementPrice(req);
             const count = getRequirementCount(req);
@@ -226,6 +229,7 @@ export default function HideoutStationDetail({
             return (
               <button
                 type="button"
+                className="hideout-mobile-material-row"
                 key={key}
                 onClick={() => toggleItem(req)}
                 style={{

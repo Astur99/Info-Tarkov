@@ -617,9 +617,9 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
   }, [achievementFilter, achievementSearch, achievementSort, allAchievements]);
 
   return (
-    <div className="fade-in-slide terminal-panel" style={{ minHeight: '100vh', background: '#0a0a0c', padding: '5.25rem 2rem 6rem', fontFamily: "'Rajdhani', sans-serif" }}>
+    <div className="fade-in-slide terminal-panel pmc-mobile-root" style={{ minHeight: '100vh', background: '#0a0a0c', padding: '5.25rem 2rem 6rem', fontFamily: "'Rajdhani', sans-serif" }}>
       <main style={{ width: 'min(1280px, 100%)', margin: '0 auto' }}>
-        <header style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '1.2rem', marginBottom: '1rem' }}>
+        <header className="pmc-mobile-header" style={{ display: 'flex', justifyContent: 'space-between', gap: '2rem', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '1.2rem', marginBottom: '1rem' }}>
           <div>
             <p style={{ color: 'var(--tk-green)', margin: '0 0 0.35rem', fontWeight: '900', letterSpacing: '2px', textTransform: 'uppercase' }}>
               {t('pmc.header.eyebrow')}
@@ -630,7 +630,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div className="pmc-mobile-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <ModeSwitch activeMode={activeMode} setActiveMode={setActiveMode} />
             <button
               type="button"
@@ -746,7 +746,7 @@ function ModeSwitch({ activeMode, setActiveMode }) {
 function SearchBar({ error, handleResetToLinkedUser, handleSearchSubmit, onHistorySelect, profileUsername, searchHistory, searchInput, setSearchInput, status, tarkovUsername }) {
   const { t } = useTranslation();
   return (
-    <section style={{ ...panelStyle, padding: '0.85rem', marginBottom: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '0.75rem', alignItems: 'center' }}>
+    <section className="pmc-mobile-search" style={{ ...panelStyle, padding: '0.85rem', marginBottom: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '0.75rem', alignItems: 'center' }}>
       <div>
         <p style={{ color: 'var(--tk-text-muted)', margin: 0, fontWeight: '900', textTransform: 'uppercase', letterSpacing: '1px' }}>
           {t('pmc.search.linkedUser')}
@@ -912,13 +912,13 @@ function InfoLine({ label, value }) {
 function ProfileSummary({ activeMode, locale, profileUsername, remoteProfile, stats, status, topAchievement }) {
   const { t } = useTranslation();
   return (
-    <article style={{ ...panelStyle, padding: '1rem 1rem 0.9rem', borderColor: 'rgba(187, 211, 169, 0.18)' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 0.55fr) minmax(0, 1.45fr)', gap: '1rem', alignItems: 'stretch' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', gap: '0.9rem', alignItems: 'center', minWidth: 0 }}>
-          <div style={{ width: 64, height: 64, borderRadius: '8px', border: '1px solid rgba(187,211,169,0.25)', background: 'linear-gradient(145deg, rgba(187,211,169,0.16), rgba(0,0,0,0.35))', display: 'grid', placeItems: 'center', color: 'var(--tk-green)', fontWeight: '900', fontSize: '1.6rem' }}>
+    <article className="pmc-mobile-summary" style={{ ...panelStyle, padding: '1rem 1rem 0.9rem', borderColor: 'rgba(187, 211, 169, 0.18)' }}>
+      <div className="pmc-mobile-summary-layout" style={{ display: 'grid', gridTemplateColumns: 'minmax(220px, 0.55fr) minmax(0, 1.45fr)', gap: '1rem', alignItems: 'stretch' }}>
+        <div className="pmc-mobile-identity" style={{ display: 'grid', gridTemplateColumns: '64px 1fr', gap: '0.9rem', alignItems: 'center', minWidth: 0 }}>
+          <div className="pmc-mobile-level-badge" style={{ width: 64, height: 64, borderRadius: '8px', border: '1px solid rgba(187,211,169,0.25)', background: 'linear-gradient(145deg, rgba(187,211,169,0.16), rgba(0,0,0,0.35))', display: 'grid', placeItems: 'center', color: 'var(--tk-green)', fontWeight: '900', fontSize: '1.6rem' }}>
             {remoteProfile?.level ? `L${remoteProfile.level}` : '--'}
           </div>
-          <div style={{ minWidth: 0 }}>
+          <div className="pmc-mobile-identity-copy" style={{ minWidth: 0 }}>
             <p style={{ color: 'var(--tk-green)', margin: 0, fontWeight: '900', letterSpacing: '1px', textTransform: 'uppercase' }}>{activeMode} / tarkov.dev</p>
             <h2 style={{ color: '#fff', margin: '0.05rem 0', fontSize: '2rem', textTransform: 'uppercase', overflowWrap: 'anywhere' }}>
               {remoteProfile?.nickname || profileUsername || 'PMC'}
@@ -939,7 +939,7 @@ function ProfileSummary({ activeMode, locale, profileUsername, remoteProfile, st
           </div>
         </div>
 
-        <div style={{
+        <div className="pmc-mobile-stat-grid" style={{
           display: 'flex',
           flexWrap: 'wrap',
           gap: '0.45rem',
@@ -958,7 +958,7 @@ function ProfileSummary({ activeMode, locale, profileUsername, remoteProfile, st
 
 function StatPill({ label, value, pairLabel, pairValue, wide = false }) {
   return (
-    <div style={{
+    <div className={`pmc-mobile-stat-pill ${wide ? 'is-wide' : ''}`} style={{
       flex: wide ? '1 1 190px' : '1 1 118px',
       minWidth: wide ? '170px' : '108px',
       minHeight: '64px',
