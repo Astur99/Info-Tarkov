@@ -1,16 +1,17 @@
 import { useTranslation } from 'react-i18next';
+import { getContentLanguage } from '../../i18n/languages';
 import { APP_VERSION, VERSION_POLICY, changelogEntries } from '../../data/changelog';
 
 const fallbackLanguage = 'es';
 
 const getLocalized = (value, language) => {
   if (!value) return '';
-  return value[language] || value[fallbackLanguage] || value.en || '';
+  return value[language] || value.en || value[fallbackLanguage] || '';
 };
 
 export default function ChangelogView({ onViewChange }) {
   const { i18n, t } = useTranslation();
-  const language = i18n.resolvedLanguage || i18n.language || fallbackLanguage;
+  const language = getContentLanguage(i18n.resolvedLanguage || i18n.language);
   const policy = VERSION_POLICY.labels[language] || VERSION_POLICY.labels[fallbackLanguage];
 
   return (

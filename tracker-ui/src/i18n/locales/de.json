@@ -1,0 +1,87 @@
+{
+  "language": {
+    "label": "Sprache",
+    "es": "ES",
+    "en": "EN",
+    "de": "DE",
+    "fr": "FR",
+    "it": "IT",
+    "ru": "RU"
+  },
+  "common": {
+    "backToMenu": "Zurueck zum Menue",
+    "backToTerminal": "Zurueck zum Terminal",
+    "close": "Schliessen",
+    "delete": "Loeschen"
+  },
+  "home": {
+    "serverStatus": "Serverstatus",
+    "admin": "Admin",
+    "report": "Report",
+    "login": "Einloggen",
+    "logout": "Abmelden",
+    "sessionStarted": "Sitzung gestartet",
+    "adminSuffix": " · Admin",
+    "guestMode": "Gastmodus",
+    "howToUse": "Handbuch",
+    "about": "About",
+    "patchNotes": "Changelog",
+    "dossier": "Dossier",
+    "configureUser": "Konfigurieren",
+    "userButton": "{{username}}",
+    "modules": {
+      "maps": {
+        "title": "TAKTISCHE KARTEN",
+        "desc": "Interaktive Karten mit Extraktionen und wichtigen Punkten."
+      },
+      "kappa": {
+        "title": "MISSIONEN / KAPPA",
+        "desc": "Globaler Questbaum mit Filtern, Kappa-Missionen und Fortschrittscheckliste."
+      },
+      "story": {
+        "title": "ENTSCHEIDUNGEN / ENDEN",
+        "desc": "Punkte ohne Rueckkehr und Entscheidungen fuer die verschiedenen Enden."
+      },
+      "bosses": {
+        "title": "INTEL: BOSSE",
+        "desc": "Informationen, Orte, Ausruestung, Schwachstellen und Loot der Bosse."
+      },
+      "goons": {
+        "title": "GOONS TRACKER",
+        "desc": "Rotation, Community-Sichtungen und Standortverfolgung der Goons."
+      },
+      "flea": {
+        "title": "FLEA MARKET TRACKER",
+        "desc": "Preissuche per API, Schwankungsdiagramme und Rentabilitaetsrechnung."
+      },
+      "hideout": {
+        "title": "HIDEOUT-VERWALTUNG",
+        "desc": "Planer fuer Ausbau, Materialcheckliste und Kosten mit Live-Preisen."
+      },
+      "simulator": {
+        "title": "BALLISTIK-SIMULATOR",
+        "desc": "Penetrationschance, Plattenbruch-Simulation und TTK-Berechnung."
+      },
+      "prestige": {
+        "title": "PRESTIGE",
+        "desc": "Anforderungen, Belohnungen und Checkliste fuer PvP-Prestige."
+      },
+      "keys": {
+        "title": "SCHLUESSELSYSTEM",
+        "desc": "Taktische Schluesseldatenbank mit Nutzung, Quests und Prioritaet."
+      },
+      "questOptimizer": {
+        "title": "QUEST-OPTIMIZER",
+        "desc": "Analysiert offene Quests und empfiehlt die beste Karte fuer den naechsten Raid."
+      },
+      "pmcProfile": {
+        "title": "PMC-PROFIL",
+        "desc": "Profil mit Tarkov-Daten, Fortschritt, Ausruestung, Erfolgen und Skills."
+      },
+      "trouble": {
+        "title": "TROUBLESHOOTING",
+        "desc": "Bekannte Probleme, Debug-Hinweise und verfuegbare Loesungen."
+      }
+    }
+  }
+}

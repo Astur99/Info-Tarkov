@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getIntlLocale } from '../../i18n/languages';
 
 const SERVICES = [
   'Website',
@@ -234,7 +235,7 @@ function TacticalHeaderTracker({ active, total, language }) {
     return () => clearInterval(timer);
   }, []);
 
-  const locale = language === 'en' ? 'en-US' : language || 'es';
+  const locale = getIntlLocale(language);
   const allOperational = active === total;
 
   return (

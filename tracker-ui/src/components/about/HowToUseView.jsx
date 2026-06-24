@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getContentLanguage } from '../../i18n/languages';
 import { HOW_TO_USE_CONTENT } from './howToUseContent';
 
 const panelStyle = {
@@ -36,7 +37,7 @@ const isPublicSection = (section) => normalize(section.title) !== 'panel admin' 
 
 export default function HowToUseView({ onViewChange }) {
   const { i18n } = useTranslation();
-  const language = i18n.language?.startsWith('en') ? 'en' : 'es';
+  const language = getContentLanguage(i18n.resolvedLanguage || i18n.language);
   const content = HOW_TO_USE_CONTENT[language] || HOW_TO_USE_CONTENT.es;
   const [query, setQuery] = useState('');
   const [activeModule, setActiveModule] = useState('all');
@@ -114,7 +115,7 @@ export default function HowToUseView({ onViewChange }) {
               ABOUT
             </button>
             <button type="button" onClick={() => onViewChange('home')} style={headerButtonStyle}>
-              {language === 'en' ? 'BACK TO MENU' : 'VOLVER AL MENU'}
+              {language === 'es' ? 'VOLVER AL MENU' : 'BACK TO MENU'}
             </button>
           </div>
         </header>

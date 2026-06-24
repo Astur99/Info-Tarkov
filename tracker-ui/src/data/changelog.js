@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.1';
+export const APP_VERSION = '1.2.3';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,87 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.3',
+    date: '2026-06-24',
+    codename: 'Goons Tracker Reliability',
+    type: 'fixed',
+    title: {
+      es: 'Tracker de Goons mas estable',
+      en: 'More stable Goons Tracker'
+    },
+    summary: {
+      es: 'El modulo de Goons deja de depender de un proxy publico desde el navegador y pasa a consultar la fuente mediante una Function propia con cache y ultimo dato valido.',
+      en: 'The Goons module no longer depends on a public browser proxy and now reads the source through an internal Function with cache and last valid data.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'Se sustituye la lectura mediante AllOrigins por `/api/goons-tracker`, reduciendo fallos por CORS, timeouts y cambios de disponibilidad del proxy externo.',
+          en: 'Replaced the AllOrigins-based read with `/api/goons-tracker`, reducing failures caused by CORS, timeouts and external proxy availability.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'La nueva Function cachea la ubicacion activa PVP/PVE, extrae reportes recientes y conserva el ultimo dato bueno si la fuente comunitaria falla temporalmente.',
+          en: 'The new Function caches the active PVP/PVE location, extracts recent reports and keeps the last good data if the community source temporarily fails.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El estado del modulo ahora diferencia entre telemetria en vivo y dato guardado, evitando que la interfaz quede inutil si hay una caida puntual.',
+          en: 'The module status now separates live telemetry from saved data, preventing the interface from becoming useless during a temporary outage.'
+        }
+      }
+    ]
+  },
+  {
+    version: '1.2.2',
+    date: '2026-06-24',
+    codename: 'Language Expansion Groundwork',
+    type: 'changed',
+    title: {
+      es: 'Base preparada para nuevos idiomas',
+      en: 'Base prepared for new languages'
+    },
+    summary: {
+      es: 'Se prepara Info Tarkov para aleman, frances, italiano y ruso con paquetes beta parciales, fallback seguro a ingles y selector compacto.',
+      en: 'Info Tarkov is prepared for German, French, Italian and Russian with partial beta packs, safe English fallback and a compact selector.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'Anadidos paquetes iniciales `de`, `fr`, `it` y `ru` con etiquetas base y fallback automatico a ingles para claves aun no traducidas.',
+          en: 'Added initial `de`, `fr`, `it` and `ru` packs with base labels and automatic English fallback for keys not translated yet.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El selector de idioma pasa a desplegable compacto para soportar mas idiomas sin romper la cabecera en movil.',
+          en: 'The language selector is now a compact dropdown so more languages can be supported without breaking the mobile header.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Fechas y numeros de Perfil PMC, Flea, Llaves y Estado de servidores usan un mapa comun de locales internacionales.',
+          en: 'Dates and numbers in PMC Profile, Flea, Keys and Server Status now use a shared international locale map.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Admin mejora su lectura en movil con tickets y usuarios en cards tactiles en lugar de tablas forzadas.',
+          en: 'Admin improves mobile readability with tickets and users shown as touch-friendly cards instead of forced tables.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.1',
     date: '2026-06-24',

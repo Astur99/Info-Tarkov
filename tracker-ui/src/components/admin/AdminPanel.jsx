@@ -333,6 +333,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
   return (
     <div
+      className="admin-mobile-root"
       style={{
         minHeight: '100vh',
         background: '#0a0a0c',
@@ -341,6 +342,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
       }}
     >
       <button
+        className="admin-mobile-back"
         type="button"
         onClick={() => onViewChange('home')}
         style={{
@@ -361,8 +363,8 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
         {t('common.backToTerminal')}
       </button>
 
-      <main style={{ width: 'min(1100px, 100%)', margin: '0 auto' }}>
-        <header style={{ marginBottom: '2rem' }}>
+      <main className="admin-mobile-shell" style={{ width: 'min(1100px, 100%)', margin: '0 auto' }}>
+        <header className="admin-mobile-header" style={{ marginBottom: '2rem' }}>
           <h1 style={{ color: '#fff', margin: 0, fontSize: '2.4rem' }}>{t('admin.title')}</h1>
           <p style={{ color: 'var(--tk-text-muted)', marginTop: '0.45rem' }}>
             {t('admin.subtitle')}
@@ -374,6 +376,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
         {stats && (
           <section
+            className="admin-mobile-stats"
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
@@ -406,8 +409,9 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
           </section>
         )}
 
-        <section style={panelStyle}>
+        <section className="admin-mobile-panel admin-users-panel" style={panelStyle}>
           <div
+            className="admin-mobile-section-heading"
             style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -436,6 +440,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
           </div>
 
           <div
+            className="admin-mobile-filters"
             style={{
               display: 'grid',
               gridTemplateColumns: 'minmax(220px, 1fr) 150px 170px',
@@ -498,7 +503,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
             {t('admin.users.showing', { filtered: filteredUsers.length, total: users.length })}
           </p>
 
-          <div style={{ overflowX: 'auto' }}>
+          <div className="admin-desktop-table-wrap" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', color: '#fff' }}>
               <thead>
                 <tr style={{ color: 'var(--tk-text-muted)', textAlign: 'left' }}>
@@ -604,10 +609,80 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
               </tbody>
             </table>
           </div>
+
+          <div className="admin-mobile-user-cards">
+            {filteredUsers.map((user) => {
+              const displayName = getAdminDisplayUsername(user) || t('admin.users.unconfigured');
+              const online = isRecentlyOnline(user.last_seen);
+              const isOwner = user.email === OWNER_EMAIL;
+
+              return (
+                <article key={user.user_id} className="admin-mobile-user-card">
+                  <button
+                    type="button"
+                    className="admin-mobile-user-summary"
+                    onClick={() => openUserDetail(user)}
+                  >
+                    <span>
+                      <strong>{displayName}</strong>
+                      <small>{user.email}</small>
+                    </span>
+                    <span className={online ? 'is-online' : ''}>
+                      {online ? t('admin.filters.online') : t('admin.filters.offline')}
+                    </span>
+                  </button>
+
+                  <div className="admin-mobile-user-meta">
+                    <span>{t('admin.users.columns.role')}: {isOwner ? t('admin.roles.owner') : t(`admin.roles.${user.role || 'user'}`)}</span>
+                    <span>{t('admin.users.columns.registered')}: {user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}</span>
+                    <span>{t('admin.users.columns.lastActivity')}: {user.last_seen ? new Date(user.last_seen).toLocaleString() : '-'}</span>
+                  </div>
+
+                  <div className="admin-mobile-user-actions">
+                    <button type="button" onClick={() => openUserDetail(user)} style={actionButtonStyle}>
+                      {t('admin.actions.detail')}
+                    </button>
+
+                    {!isOwner && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => handleRoleChange(user, user.role === 'admin' ? 'user' : 'admin')}
+                          style={{
+                            ...actionButtonStyle,
+                            color: user.role === 'admin' ? '#ffcf66' : 'var(--tk-green)'
+                          }}
+                        >
+                          {user.role === 'admin' ? t('admin.actions.removeAdmin') : t('admin.actions.makeAdmin')}
+                        </button>
+
+                        <button type="button" onClick={() => handleSendMessage(user)} style={actionButtonStyle}>
+                          {t('admin.actions.message')}
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteUser(user)}
+                          style={{
+                            ...actionButtonStyle,
+                            color: '#ff6b6b',
+                            borderColor: 'rgba(255,107,107,0.35)'
+                          }}
+                        >
+                          {t('common.delete')}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </section>
 
-        <section style={{ ...panelStyle, marginTop: '1.5rem' }}>
+        <section className="admin-mobile-panel admin-feedback-panel" style={{ ...panelStyle, marginTop: '1.5rem' }}>
           <div
+            className="admin-mobile-section-heading"
             style={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -638,6 +713,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
               return (
                 <article
                 key={item.id}
+                className="admin-mobile-ticket-card"
                 style={{
                   padding: '1rem',
                   borderRadius: '10px',
@@ -646,6 +722,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                 }}
               >
                 <div
+                  className="admin-mobile-ticket-layout"
                   style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -703,8 +780,8 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                     )}
                   </div>
 
-                  <div style={{ display: 'grid', gap: '0.5rem', minWidth: '260px' }}>
-                    <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <div className="admin-mobile-ticket-actions" style={{ display: 'grid', gap: '0.5rem', minWidth: '260px' }}>
+                    <div className="admin-mobile-ticket-status-actions" style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                       {['open', 'reviewing', 'closed'].map((status) => {
                         const isActive = item.status === status;
                         const statusStyle = feedbackStatusStyles[status];
@@ -729,7 +806,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                       })}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                    <div className="admin-mobile-ticket-reply-actions" style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                       <button
                         type="button"
                         onClick={() => handleReplyFeedback(item)}

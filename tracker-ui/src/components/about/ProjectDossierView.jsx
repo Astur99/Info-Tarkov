@@ -142,9 +142,9 @@ const modules = [
   },
   {
     name: 'Goons',
-    files: 'src/modules/goons/',
+    files: 'src/modules/goons/ + netlify/functions/goons-tracker.js',
     body:
-      'Consulta fuentes externas de rotacion. Es fragil por dependencia HTML/externa y tiene avisos/fallback.'
+      'Consulta tarkov-goon-tracker.com mediante /api/goons-tracker, una Netlify Function propia que evita CORS/proxies publicos, parsea la ubicacion activa PVP/PVE, extrae reportes recientes, cachea durante una ventana corta y conserva el ultimo dato valido si la fuente comunitaria falla temporalmente. El frontend solo consume JSON normalizado y muestra estado live/cached.'
   },
   {
     name: 'Perfil de PMC',

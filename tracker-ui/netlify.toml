@@ -10,3 +10,8 @@
   from = "/api/image-proxy"
   to = "/.netlify/functions/image-proxy"
   status = 200
+
+[[redirects]]
+  from = "/api/goons-tracker"
+  to = "/.netlify/functions/goons-tracker"
+  status = 200

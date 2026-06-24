@@ -63,6 +63,10 @@ body {
   display: none;
 }
 
+.admin-mobile-user-cards {
+  display: none;
+}
+
 /* EFECTO: Capa superior de Scanlines (Líneas de monitor militar CRT) */
 body::before {
   content: " ";
@@ -1023,6 +1027,192 @@ header span {
   .account-mobile-danger {
     margin-bottom: 1rem;
   }
+
+  .admin-mobile-root {
+    padding: 4.85rem 0.75rem 4rem !important;
+    overflow-x: hidden;
+  }
+
+  .admin-mobile-back {
+    position: static !important;
+    display: inline-flex;
+    margin: 0 0 1rem !important;
+    padding: 0.45rem 0 !important;
+  }
+
+  .admin-mobile-shell {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .admin-mobile-header h1 {
+    font-size: clamp(2rem, 9vw, 2.55rem) !important;
+  }
+
+  .admin-mobile-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+  }
+
+  .admin-mobile-stats article,
+  .admin-mobile-panel {
+    padding: 1rem !important;
+    border-radius: 10px !important;
+  }
+
+  .admin-mobile-stats p {
+    font-size: clamp(1.35rem, 7vw, 1.8rem) !important;
+  }
+
+  .admin-mobile-section-heading {
+    align-items: stretch !important;
+    gap: 0.8rem !important;
+  }
+
+  .admin-mobile-section-heading h2 {
+    font-size: 1.55rem;
+  }
+
+  .admin-mobile-section-heading button {
+    min-height: 42px;
+  }
+
+  .admin-mobile-filters {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-mobile-filters input,
+  .admin-mobile-filters select {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .admin-desktop-table-wrap {
+    display: none !important;
+  }
+
+  .admin-mobile-user-cards {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .admin-mobile-user-card {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.85rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.035);
+  }
+
+  .admin-mobile-user-summary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    padding: 0;
+    text-align: left;
+    font-family: 'Rajdhani', sans-serif;
+    cursor: pointer;
+  }
+
+  .admin-mobile-user-summary strong {
+    display: block;
+    font-size: 1.05rem;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-mobile-user-summary small {
+    display: block;
+    margin-top: 0.18rem;
+    color: var(--tk-text-muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+  }
+
+  .admin-mobile-user-summary > span:last-child {
+    flex: 0 0 auto;
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 999px;
+    padding: 0.2rem 0.48rem;
+    color: var(--tk-text-muted);
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .admin-mobile-user-summary > span:last-child.is-online {
+    color: var(--tk-green);
+    border-color: rgba(26,176,21,0.24);
+    background: rgba(26,176,21,0.08);
+  }
+
+  .admin-mobile-user-meta {
+    display: grid;
+    gap: 0.3rem;
+    color: var(--tk-text-muted);
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  .admin-mobile-user-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .admin-mobile-user-actions button {
+    justify-content: center;
+    width: 100%;
+    min-height: 40px;
+    font-size: 0.82rem;
+  }
+
+  .admin-mobile-ticket-card {
+    padding: 0.85rem !important;
+  }
+
+  .admin-mobile-ticket-layout {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .admin-mobile-ticket-layout > div:first-child {
+    min-width: 0;
+  }
+
+  .admin-mobile-ticket-layout h3 {
+    font-size: 1.1rem;
+  }
+
+  .admin-mobile-ticket-layout p {
+    overflow-wrap: anywhere;
+  }
+
+  .admin-mobile-ticket-actions {
+    min-width: 0 !important;
+    width: 100%;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .admin-mobile-ticket-status-actions,
+  .admin-mobile-ticket-reply-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    justify-content: stretch !important;
+  }
+
+  .admin-mobile-ticket-actions button {
+    width: 100%;
+    min-height: 40px;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 520px) {
@@ -1047,7 +1237,8 @@ header span {
   }
 
   .home-fixed-button,
-  .language-switcher button {
+  .language-switcher button,
+  .language-switcher select {
     font-size: 0.68rem !important;
     letter-spacing: 1px !important;
     padding: 0.48rem 0.62rem !important;

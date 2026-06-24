@@ -1,0 +1,87 @@
+{
+  "language": {
+    "label": "Lingua",
+    "es": "ES",
+    "en": "EN",
+    "de": "DE",
+    "fr": "FR",
+    "it": "IT",
+    "ru": "RU"
+  },
+  "common": {
+    "backToMenu": "Torna al menu",
+    "backToTerminal": "Torna al terminale",
+    "close": "Chiudi",
+    "delete": "Elimina"
+  },
+  "home": {
+    "serverStatus": "Stato server",
+    "admin": "Admin",
+    "report": "Report",
+    "login": "Accedi",
+    "logout": "Esci",
+    "sessionStarted": "Sessione avviata",
+    "adminSuffix": " · Admin",
+    "guestMode": "Modalita ospite",
+    "howToUse": "Guida",
+    "about": "About",
+    "patchNotes": "Changelog",
+    "dossier": "Dossier",
+    "configureUser": "Configura",
+    "userButton": "{{username}}",
+    "modules": {
+      "maps": {
+        "title": "MAPPE TATTICHE",
+        "desc": "Cartografia interattiva con estrazioni e punti di interesse."
+      },
+      "kappa": {
+        "title": "MISSIONI / KAPPA",
+        "desc": "Albero globale delle quest con filtri, missioni Kappa e checklist."
+      },
+      "story": {
+        "title": "DECISIONI / FINALI",
+        "desc": "Punti di non ritorno e scelte necessarie per ogni finale."
+      },
+      "bosses": {
+        "title": "INTEL: BOSS",
+        "desc": "Informazioni, posizioni, equipaggiamento, punti deboli e loot dei boss."
+      },
+      "goons": {
+        "title": "GOONS TRACKER",
+        "desc": "Rotazione, avvistamenti della community e posizione dei Goons."
+      },
+      "flea": {
+        "title": "FLEA MARKET TRACKER",
+        "desc": "Ricerca prezzi API, grafici di fluttuazione e calcolo profitti."
+      },
+      "hideout": {
+        "title": "GESTIONE HIDEOUT",
+        "desc": "Planner, checklist materiali e calcolo costi con prezzi live."
+      },
+      "simulator": {
+        "title": "SIMULATORE BALISTICO",
+        "desc": "Probabilita di penetrazione, rottura piastre e calcoli TTK."
+      },
+      "prestige": {
+        "title": "PRESTIGE",
+        "desc": "Requisiti, ricompense e checklist per ogni livello prestige PvP."
+      },
+      "keys": {
+        "title": "SISTEMA CHIAVI",
+        "desc": "Database tattico di chiavi con usi, quest collegate e priorita."
+      },
+      "questOptimizer": {
+        "title": "QUEST OPTIMIZER",
+        "desc": "Analizza le quest pendenti e consiglia la mappa migliore."
+      },
+      "pmcProfile": {
+        "title": "PROFILO PMC",
+        "desc": "Profilo con dati Tarkov, progresso, equipaggiamento, achievement e skill."
+      },
+      "trouble": {
+        "title": "TROUBLESHOOTING",
+        "desc": "Problemi noti, note di debug e soluzioni disponibili."
+      }
+    }
+  }
+}

@@ -13,7 +13,11 @@
   "language": {
     "label": "Language",
     "es": "ES",
-    "en": "EN"
+    "en": "EN",
+    "de": "DE",
+    "fr": "FR",
+    "it": "IT",
+    "ru": "RU"
   },
   "home": {
     "serverStatus": "Server Status",
@@ -1782,6 +1786,7 @@
     "telemetryError": "⚠ TELEMETRY ERROR",
     "telemetryOk": "✓ {{mode}}",
     "lastReport": "Last report: {{report}}",
+    "cachedReport": "Last saved data: {{report}}",
     "confirmedLocation": "⚠ REPORT: LOCATION CONFIRMED",
     "cleanTransmission": "✓ CLEAN TRANSMISSION",
     "consoleCaptureError": "Capture failed in {{mode}} mode:",

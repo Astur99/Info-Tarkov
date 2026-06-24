@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import { getIntlLocale } from '../../i18n/languages';
 import { fetchTarkovPlayerProfile } from './pmcApi';
 
 const MODE_STORAGE_KEY = 'info_tarkov_pmc_profile_mode';
@@ -53,8 +54,6 @@ const tableHeadStyle = {
   zIndex: 1,
   background: '#141416'
 };
-
-const getLocale = (language) => (language === 'en' ? 'en-US' : 'es-ES');
 
 const formatNumber = (value, locale = 'es-ES') => {
   if (value === null || value === undefined || value === '') return '-';
@@ -269,7 +268,7 @@ const getProfileUsername = (userProfile, session) =>
 
 export default function PmcProfileModule({ onViewChange, session, userProfile }) {
   const { i18n, t } = useTranslation();
-  const locale = getLocale(i18n.resolvedLanguage);
+  const locale = getIntlLocale(i18n.resolvedLanguage || i18n.language);
   const [activeMode, setActiveMode] = useState(() => localStorage.getItem(MODE_STORAGE_KEY) || readDefaultPlayableMode());
   const [remoteProfile, setRemoteProfile] = useState(null);
   const [status, setStatus] = useState('idle');

@@ -27,61 +27,6 @@ const MAPAS_OBJETIVO = [
   { id: 'lighthouse', name: 'Lighthouse' }
 ];
 
-const URLS_TRACKER = {
-  pvp: 'https://www.tarkov-goon-tracker.com/',
-  pve: 'https://www.tarkov-goon-tracker.com/pve'
-};
-
-function normalizarTexto(valor) {
-  return String(valor ?? '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim();
-}
-
-function extraerMapaDesdeHtml(html) {
-  const textoPlano = html
-    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const normalizado = normalizarTexto(textoPlano);
-
-  const match = normalizado.match(
-    /the goons were last seen on:\s*(customs|woods|shoreline|lighthouse)/i
-  );
-
-  if (match?.[1]) return match[1];
-
-  for (const mapa of MAPAS_OBJETIVO) {
-    if (normalizado.includes(mapa.id)) return mapa.id;
-  }
-
-  return null;
-}
-
-function extraerUltimoReporteDesdeHtml(html) {
-  const textoPlano = html
-    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const matchFecha = textoPlano.match(
-    /(?:Customs|Woods|Shoreline|Lighthouse)\s+([A-Z][a-z]+\s+\d{1,2},\s+\d{4}\s+\d{1,2}:\d{2}\s+[AP]M)\s+z/i
-  );
-
-  if (!matchFecha?.[1]) return new Date().toISOString();
-
-  const fecha = new Date(`${matchFecha[1]} UTC`);
-  return Number.isNaN(fecha.getTime()) ? new Date().toISOString() : fecha.toISOString();
-}
-
 export default function GoonsTracker({ onViewChange }) {
   const { t } = useTranslation();
   const [goonData, setGoonData] = useState(null);
@@ -96,10 +41,7 @@ export default function GoonsTracker({ onViewChange }) {
       setErrorRadar(null);
 
       try {
-        const targetUrl = URLS_TRACKER[modoJuego];
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-
-        const res = await fetch(proxyUrl, {
+        const res = await fetch(`/api/goons-tracker?mode=${modoJuego}`, {
           signal: controller.signal,
           cache: 'no-store'
         });
@@ -108,19 +50,15 @@ export default function GoonsTracker({ onViewChange }) {
           throw new Error(`HTTP ${res.status}`);
         }
 
-        const html = await res.text();
-        const activeMapId = extraerMapaDesdeHtml(html);
-        const lastDetected = extraerUltimoReporteDesdeHtml(html);
-
-        if (!activeMapId) {
-          throw new Error(t('goonsModule.errors.mapParse'));
+        const payload = await res.json();
+        if (!res.ok || payload?.status === 'error') {
+          throw new Error(payload?.error || `HTTP ${res.status}`);
         }
 
-        setGoonData({
-          activeMapId,
-          lastDetected,
-          sourceUrl: targetUrl
-        });
+        setGoonData(payload);
+        if (payload?.status === 'cached' && payload?.warning) {
+          setErrorRadar(payload.warning);
+        }
       } catch (err) {
         if (err.name !== 'AbortError') {
           console.error(t('goonsModule.consoleCaptureError', { mode: modoJuego.toUpperCase() }), err);
@@ -459,7 +397,9 @@ export default function GoonsTracker({ onViewChange }) {
               color: 'var(--tk-text-muted)',
               marginTop: '0.2rem'
             }}>
-              {errorRadar ? errorRadar : t('goonsModule.lastReport', { report: obtenerUltimoReporte() })}
+              {errorRadar
+                ? t('goonsModule.cachedReport', { report: obtenerUltimoReporte() })
+                : t('goonsModule.lastReport', { report: obtenerUltimoReporte() })}
             </div>
           </div>
         </div>

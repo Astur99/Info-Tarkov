@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import { getIntlLocale } from '../../i18n/languages';
 
 const MARKET_MODES = {
   PVP: 'regular',
@@ -179,7 +180,7 @@ export default function FleaTracker({ onViewChange }) {
 
     if (Number.isNaN(date.getTime())) return t('fleaModule.noDate');
 
-    return date.toLocaleString(i18n.language === 'en' ? 'en-US' : 'es-ES', {
+    return date.toLocaleString(getIntlLocale(i18n.resolvedLanguage || i18n.language), {
       day: '2-digit',
       month: 'short',
       hour: '2-digit',

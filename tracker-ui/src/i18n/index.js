@@ -3,11 +3,19 @@ import { initReactI18next } from 'react-i18next';
 
 import es from './locales/es.json';
 import en from './locales/en.json';
+import de from './locales/de.json';
+import fr from './locales/fr.json';
+import it from './locales/it.json';
+import ru from './locales/ru.json';
 import { supportedLanguages } from './languages';
 
 const resources = {
   es: { translation: es },
-  en: { translation: en }
+  en: { translation: en },
+  de: { translation: de },
+  fr: { translation: fr },
+  it: { translation: it },
+  ru: { translation: ru }
 };
 
 const getInitialLanguage = () => {
@@ -23,7 +31,7 @@ i18n
   .init({
     resources,
     lng: getInitialLanguage(),
-    fallbackLng: 'es',
+    fallbackLng: (code) => (code === 'es' ? ['es', 'en'] : ['en', 'es']),
     interpolation: {
       escapeValue: false
     }

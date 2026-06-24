@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import { getIntlLocale } from '../../i18n/languages';
 
 const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
 const MARKET_MODES = {
@@ -324,7 +325,7 @@ export default function KeysModule({ onViewChange }) {
   const [status, setStatus] = useState('');
   const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
   const gameMode = MARKET_MODES[modoMercado];
-  const locale = i18n.resolvedLanguage === 'en' ? 'en-US' : 'es-ES';
+  const locale = getIntlLocale(i18n.resolvedLanguage || i18n.language);
 
   useEffect(() => {
     let cancelled = false;

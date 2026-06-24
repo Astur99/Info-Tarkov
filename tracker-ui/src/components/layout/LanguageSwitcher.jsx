@@ -9,8 +9,10 @@ export default function LanguageSwitcher() {
     i18n.changeLanguage(language);
   };
 
+  const currentLanguage = i18n.language?.slice(0, 2) || i18n.resolvedLanguage || 'es';
+
   return (
-    <div
+    <label
       className="language-switcher"
       aria-label={t('language.label')}
       style={{
@@ -28,32 +30,33 @@ export default function LanguageSwitcher() {
         WebkitBackdropFilter: 'blur(14px)'
       }}
     >
-      {languageOptions.map((language) => {
-        const isActive = i18n.resolvedLanguage === language.code;
-
-        return (
-          <button
-            key={language.code}
-            type="button"
-            onClick={() => changeLanguage(language.code)}
-            style={{
-              minWidth: '2.2rem',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '0.32rem 0.45rem',
-              background: isActive ? 'rgba(26,176,21,0.18)' : 'transparent',
-              color: isActive ? 'var(--tk-green)' : 'var(--tk-text-muted)',
-              fontFamily: "'Rajdhani', sans-serif",
-              fontSize: '0.72rem',
-              fontWeight: '900',
-              letterSpacing: '1px',
-              cursor: 'pointer'
-            }}
-          >
+      <span style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+        {t('language.label')}
+      </span>
+      <select
+        value={currentLanguage}
+        onChange={(event) => changeLanguage(event.target.value)}
+        style={{
+          border: 'none',
+          borderRadius: '6px',
+          padding: '0.32rem 1.8rem 0.32rem 0.55rem',
+          background: 'rgba(26,176,21,0.18)',
+          color: 'var(--tk-green)',
+          fontFamily: "'Rajdhani', sans-serif",
+          fontSize: '0.72rem',
+          fontWeight: '900',
+          letterSpacing: '1px',
+          cursor: 'pointer',
+          textTransform: 'uppercase',
+          outline: 'none'
+        }}
+      >
+        {languageOptions.map((language) => (
+          <option key={language.code} value={language.code}>
             {t(language.labelKey)}
-          </button>
-        );
-      })}
-    </div>
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
