@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.3';
+export const APP_VERSION = '1.2.4';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,43 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.4',
+    date: '2026-06-24',
+    codename: 'Full Language Packs',
+    type: 'added',
+    title: {
+      es: 'Traducciones completas iniciales',
+      en: 'Initial full language packs'
+    },
+    summary: {
+      es: 'Los paquetes de aleman, frances, italiano y ruso pasan de base parcial a cobertura completa de la app, manteniendo fallback y validacion de claves.',
+      en: 'German, French, Italian and Russian move from partial base packs to full app coverage, keeping fallback and key validation.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'DE/FR/IT/RU ahora incluyen todas las claves presentes en ingles: navegacion, cuenta, admin, manual, changelog y modulos principales.',
+          en: 'DE/FR/IT/RU now include every key present in English: navigation, account, admin, manual, changelog and main modules.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Se anade tooling interno para regenerar y validar paquetes de idioma, comprobando estructura identica y placeholders `{{...}}` intactos.',
+          en: 'Internal tooling was added to regenerate and validate language packs, checking identical structure and intact `{{...}}` placeholders.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'Se corrigen placeholders sensibles en ruso y se protegen nombres propios, terminos de Tarkov y variables dinamicas durante la traduccion.',
+          en: 'Sensitive Russian placeholders were fixed and proper names, Tarkov terms and dynamic variables are protected during translation.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.3',
     date: '2026-06-24',

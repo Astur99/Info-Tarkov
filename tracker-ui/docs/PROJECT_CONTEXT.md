@@ -1,6 +1,6 @@
 # Info Tarkov - Project Context
 
-Last updated: 2026-05-22
+Last updated: 2026-06-24
 
 This document is the working context for continuing development in a fresh Codex/ChatGPT thread.
 
@@ -26,52 +26,23 @@ npm.cmd run lint
 
 `npm.cmd run lint` currently passes with no errors or warnings.
 
-## Translation and 1.0 Estimate
+## Translation and Release State
 
-Latest working estimate, recorded on 2026-05-22:
+Latest working state, recorded on 2026-06-24:
 
-- ES/EN i18n files are synchronized with 772 string leaves in each locale.
-- Visible app translation is estimated at roughly 65-70%.
-- Technical readiness for adding more languages after ES/EN is estimated at roughly 80-85%.
-- Overall distance to a serious 1.0 release is estimated at roughly 70-75% complete.
+- Info Tarkov has passed the 1.0 milestone and is currently in the 1.2.x post-launch polish phase.
+- ES/EN are the reviewed primary languages.
+- DE/FR/IT/RU have full initial locale coverage generated from `en.json`.
+- Locale validation reports 1,569 string leaves per language and confirms matching structure/placeholders across DE/FR/IT/RU.
+- ES/EN are bundled in the main app; DE/FR/IT/RU are loaded lazily through dynamic JSON imports to avoid inflating the initial bundle.
 
-Modules already well prepared or mostly translated:
+Before major promotion pushes, aim for:
 
-- Home/menu shell
-- Auth/login base
-- Account settings base
-- PMC Profile
-- Flea Market Tracker
-- Hideout
-- Bosses
-- Live Events
-- Prestiges
-- Story Decisions / Finales
-- Troubleshooting
-- Server Status
-- Large parts of Kappa and Goons
-
-Modules still needing translation or cleanup passes:
-
-- Keys
-- Quest Optimizer
-- Admin Panel
-- About
-- Project Dossier
-- Maps
-- Armor Simulator
-- remaining Goons/Kappa strings
-
-Before 1.0, aim for:
-
-- Full ES/EN coverage of visible UI.
-- No important hardcoded Spanish strings in components.
-- Clean lint/build.
-- Updated About, Changelog and Project Dossier.
-- Clear fallback/error states for external APIs.
-- Desktop/mobile visual QA.
-- Decision on whether Live Events remains experimental or gets hidden/removed.
-- Conscious decision on current Vite chunk-size warning.
+- Quick production smoke test after each release.
+- Visual scan of DE/FR/IT/RU for awkward machine-translation phrasing in high-traffic modules.
+- Keep `npm.cmd run locales:validate`, `npm.cmd run lint` and `npm.cmd run build` green.
+- Continue optimizing oversized visual assets and large chunks.
+- Keep About, Changelog and Project Dossier aligned with visible product changes.
 
 ## Stack
 
@@ -810,32 +781,28 @@ Behavior:
 
 ## i18n
 
-Base multilingual support exists.
+Multilingual support is active.
 
-Currently translated:
+Currently covered:
 
-- home menu
-- login/register
-- report/ticket UI
-- Misiones / Kappa main UI and Collector checklist UI
-- Account settings UI
-- Server status UI
-- Troubleshooting UI
-- Live events UI
-- Prestige UI
-- some shared text
+- Spanish (`es`)
+- English (`en`)
+- German (`de`)
+- French (`fr`)
+- Italian (`it`)
+- Russian (`ru`)
 
-Still pending:
+Validation:
 
-- most internal module text
-- admin panel
-- major data-heavy modules such as PMC Profile, Keys, Bosses, Flea, Hideout and simulator
+- `npm.cmd run locales:validate` checks that DE/FR/IT/RU match the English key structure and preserve interpolation placeholders.
+- `npm.cmd run locales:complete` can regenerate DE/FR/IT/RU from English through the maintenance script. Review output manually before shipping.
 
 Approach:
 
 - Use `useTranslation()`
-- Store translations in `src/i18n/locales/es.json` and `en.json`
-- Keep supported language metadata in `src/i18n/languages.js`; adding future languages should be a new locale JSON import/resource plus one `languageOptions` entry.
+- Store translations in `src/i18n/locales/*.json`
+- Keep supported language metadata in `src/i18n/languages.js`.
+- Keep ES/EN eagerly loaded and additional large language packs lazy-loaded from `src/i18n/index.js`.
 - Use interpolation placeholders such as `{{mode}}`, `{{count}}`, `{{total}}` instead of assembling translated phrases manually in components.
 - New or edited UI components should avoid hardcoded user-facing strings. Prefer `common.*` for repeated labels and module namespaces such as `account.*`, `serverStatus.*`, `kappa.*`.
 - Keep proper nouns like bosses, maps, quest names and items in their official names unless there is a strong reason to translate.
@@ -941,13 +908,12 @@ Registration stores those values in Supabase Auth metadata as a fallback. The ap
 
 Recommended next work:
 
-1. Test ticketing in browser with one user and admin side by side.
-2. Test ticketing in browser with one user and admin side by side.
-3. Expand `KeysModule` data or move key data into a separate data file.
-4. Improve `QuestOptimizerModule` with better task-map detection if `tarkov.dev` schema supports richer map/objective data.
-5. Start syncing PMC Profile with authenticated accounts.
-6. Continue i18n phase 2: AccountSettings, AdminPanel, ServerStatus, Troubleshooting, LiveEvents.
-7. Clean lint debt module by module.
+1. Production smoke test for v1.2.4 language switching and Goons Tracker.
+2. Visual QA pass for DE/FR/IT/RU on high-traffic modules.
+3. Optimize oversized module/background assets.
+4. Add recent report history to Goons Tracker UI.
+5. Expand `KeysModule` data or move key data into a separate data file.
+6. Improve `QuestOptimizerModule` with better task-map detection if `tarkov.dev` schema supports richer map/objective data.
 
 ## Important Behavior To Preserve
 

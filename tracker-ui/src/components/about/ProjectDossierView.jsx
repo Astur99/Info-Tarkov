@@ -22,7 +22,7 @@ const architectureBlocks = [
   {
     title: 'Estado 1.0',
     body:
-      'La version 1.0.0 marca el primer lanzamiento estable desktop-first. La app esta pensada para PC, la traduccion visible ES/EN esta revisada, Mapas 2.0 queda cerrado con briefings limpios y Live Events queda retirado porque no existe una fuente fiable que cumpla el estandar de calidad. La adaptacion movil queda planificada para despues de la 1.0 como una capa responsive progresiva, no como una app separada.'
+      'La version 1.0.0 marca el primer lanzamiento estable desktop-first. La app esta pensada para PC, Mapas 2.0 queda cerrado con briefings limpios y Live Events queda retirado porque no existe una fuente fiable que cumpla el estandar de calidad. Tras la 1.0 se anade una primera capa movil estable y se completa la expansion multilenguaje inicial.'
   },
   {
     title: 'Seguridad de producto',
@@ -90,7 +90,7 @@ const structure = [
   {
     path: 'src/i18n/',
     role:
-      'Configuracion multilenguaje, idiomas disponibles y diccionarios ES/EN. Preparado para crecer a mas idiomas.'
+      'Configuracion multilenguaje con ES/EN embebidos y DE/FR/IT/RU cargados bajo demanda mediante imports dinamicos. languages.js define metadatos, locales/*.json contiene diccionarios completos y scripts/locales:* permite regenerar y validar estructura/placeholders.'
   },
   {
     path: 'src/data/',

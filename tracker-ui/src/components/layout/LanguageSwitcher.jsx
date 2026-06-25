@@ -1,11 +1,13 @@
 import { useTranslation } from 'react-i18next';
+import { loadLanguageResources } from '../../i18n';
 import { languageOptions } from '../../i18n/languages';
 
 export default function LanguageSwitcher() {
   const { i18n, t } = useTranslation();
 
-  const changeLanguage = (language) => {
+  const changeLanguage = async (language) => {
     localStorage.setItem('info_tarkov_language', language);
+    await loadLanguageResources(language);
     i18n.changeLanguage(language);
   };
 

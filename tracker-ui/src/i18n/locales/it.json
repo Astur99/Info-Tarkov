@@ -1,4 +1,15 @@
 {
+  "common": {
+    "backToTerminal": "← TORNA AL TERMINALE",
+    "loading": "Caricamento...",
+    "processing": "Elaborazione...",
+    "save": "Salva",
+    "cancel": "Cancellare",
+    "delete": "Eliminare",
+    "close": "Vicino",
+    "reply": "Rispondere",
+    "backToMenu": "BACK TO MENU"
+  },
   "language": {
     "label": "Lingua",
     "es": "ES",
@@ -8,79 +19,2322 @@
     "it": "IT",
     "ru": "RU"
   },
-  "common": {
-    "backToMenu": "Torna al menu",
-    "backToTerminal": "Torna al terminale",
-    "close": "Chiudi",
-    "delete": "Elimina"
-  },
   "home": {
-    "serverStatus": "Stato server",
-    "admin": "Admin",
-    "report": "Report",
-    "login": "Accedi",
+    "serverStatus": "Stato del server",
+    "about": "ABOUT",
+    "patchNotes": "Registro delle modifiche",
+    "dossier": "DOSSIER",
+    "login": "Accedi / Crea un account",
     "logout": "Esci",
-    "sessionStarted": "Sessione avviata",
-    "adminSuffix": " · Admin",
-    "guestMode": "Modalita ospite",
-    "howToUse": "Guida",
-    "about": "About",
-    "patchNotes": "Changelog",
-    "dossier": "Dossier",
-    "configureUser": "Configura",
     "userButton": "{{username}}",
+    "configureUser": "SET UP",
+    "report": "REPORT",
+    "admin": "ADMIN",
+    "sessionStarted": "SESSION ACTIVE",
+    "adminSuffix": "· AMMINISTRATORE",
+    "guestMode": "MODALITÀ OSPITE · PUOI UTILIZZARE L'APP SENZA ACCOUNT",
     "modules": {
       "maps": {
-        "title": "MAPPE TATTICHE",
-        "desc": "Cartografia interattiva con estrazioni e punti di interesse."
+        "title": "TACTICAL MAPS",
+        "desc": "Cartografia interattiva ad alto dettaglio con estratti e punti di interesse."
       },
       "kappa": {
-        "title": "MISSIONI / KAPPA",
-        "desc": "Albero globale delle quest con filtri, missioni Kappa e checklist."
+        "title": "MISSIONS / KAPPA",
+        "desc": "Albero delle missioni globali con filtri delle missioni, missioni Kappa ed elenco di controllo del completamento."
       },
       "story": {
-        "title": "DECISIONI / FINALI",
-        "desc": "Punti di non ritorno e scelte necessarie per ogni finale."
+        "title": "DECISIONI/FINE",
+        "desc": "Punti di non ritorno e decisioni necessarie per raggiungere ciascun finale."
       },
       "bosses": {
-        "title": "INTEL: BOSS",
-        "desc": "Informazioni, posizioni, equipaggiamento, punti deboli e loot dei boss."
+        "title": "INTEL: BOSSES",
+        "desc": "Informazioni complete, posizioni, equipaggiamento, punti deboli e bottino per ogni boss."
       },
       "goons": {
         "title": "GOONS TRACKER",
-        "desc": "Rotazione, avvistamenti della community e posizione dei Goons."
+        "desc": "Stato della rotazione, avvistamenti della comunità e monitoraggio della posizione Goons in tempo reale."
       },
       "flea": {
-        "title": "FLEA MARKET TRACKER",
-        "desc": "Ricerca prezzi API, grafici di fluttuazione e calcolo profitti."
+        "title": "TRACKER DEL MERCATO DELLE PULCI",
+        "desc": "Ricerca dei prezzi in tempo reale API, grafici di fluttuazione e calcolo della redditività."
       },
       "hideout": {
-        "title": "GESTIONE HIDEOUT",
-        "desc": "Planner, checklist materiali e calcolo costi con prezzi live."
+        "title": "GESTIONE DEI NASCONDI",
+        "desc": "Pianificatore dell'infrastruttura, lista di controllo dei materiali unificata e calcolo dei costi in tempo reale."
       },
       "simulator": {
         "title": "SIMULATORE BALISTICO",
-        "desc": "Probabilita di penetrazione, rottura piastre e calcoli TTK."
+        "desc": "Probabilità di penetrazione, simulazione della rottura della piastra e calcoli dell'impatto TTK."
       },
       "prestige": {
         "title": "PRESTIGE",
-        "desc": "Requisiti, ricompense e checklist per ogni livello prestige PvP."
+        "desc": "Requisiti, premi e lista di controllo per preparare ogni livello di prestigio PvP."
       },
       "keys": {
-        "title": "SISTEMA CHIAVI",
-        "desc": "Database tattico di chiavi con usi, quest collegate e priorita."
+        "title": "KEY SYSTEM",
+        "desc": "Database delle chiavi tattiche con usi, missioni collegate e priorità acquista o mantieni."
       },
       "questOptimizer": {
         "title": "QUEST OPTIMIZER",
-        "desc": "Analizza le quest pendenti e consiglia la mappa migliore."
+        "desc": "Analizza le missioni in sospeso e consiglia la mappa migliore per il tuo prossimo raid."
       },
       "pmcProfile": {
-        "title": "PROFILO PMC",
-        "desc": "Profilo con dati Tarkov, progresso, equipaggiamento, achievement e skill."
+        "title": "PMC PROFILE",
+        "desc": "Riepilogo della pulizia locale con obiettivo principale, sopravvivenza, economia e progresso operativo."
       },
       "trouble": {
         "title": "TROUBLESHOOTING",
-        "desc": "Problemi noti, note di debug e soluzioni disponibili."
+        "desc": "Problemi noti dell'app, note di debug e soluzioni disponibili."
+      }
+    },
+    "howToUse": "GUIDE"
+  },
+  "changelog": {
+    "eyebrow": "Registro pubblico",
+    "title": "Registro delle modifiche",
+    "subtitle": "Info Tarkov cronologia degli aggiornamenti raggruppata per versioni pubbliche. Le voci combinano commit reali, contesto di sviluppo e modifiche visibili all'utente.",
+    "currentVersion": "Versione attuale",
+    "totalUpdates": "Versioni registrate",
+    "types": {
+      "added": "Aggiunto",
+      "changed": "Cambiato",
+      "fixed": "Fisso",
+      "feature": "Caratteristica",
+      "improvement": "Miglioramento",
+      "foundation": "Fondazione"
+    }
+  },
+  "keysModule": {
+    "eyebrow": "Accedi al motore di ricerca",
+    "title": "Sistema chiave",
+    "subtitle": "Ricerca in tempo reale di chiavi e keycard Tarkov con prezzi PVP/PVE separati e un livello tattico per evidenziare le chiavi più importanti.",
+    "searchPlaceholder": "Cerca qualsiasi chiave, tessera magnetica, missione, mappa o tag...",
+    "fallbackIcon": "KEY",
+    "empty": "Nessuna chiave corrisponde a questi filtri.",
+    "defaults": {
+      "use": "Chiave rilevata dal database tarkov.dev. Controlla la sua pagina wiki per la posizione esatta, le porte e il relativo bottino.",
+      "recommendation": "Questa chiave non è contrassegnata come priorità tattica. Cercalo se una missione, un percorso di bottino o un baratto lo richiedono."
+    },
+    "intel": {
+      "dorm206": {
+        "area": "Dormitori, dormitorio a due piani",
+        "use": "Apre la stanza 206 per individuare l'acqua nascosta.",
+        "recommendation": "Conservatelo fino al completamento della missione. Questa è una chiave di cancellazione anticipata molto importante."
+      },
+      "machinery": {
+        "area": "Cisterna per carburante da costruzione",
+        "use": "Apre il camion dove viene raccolto l'orologio da tasca in bronzo.",
+        "recommendation": "Priorità assoluta all'inizio della cancellazione. Se non ce l'hai, controlla la giacca fissa nei dormitori a tre piani."
+      },
+      "dorm114": {
+        "area": "Dormitori, dormitorio a due piani",
+        "use": "Apre la stanza 114 per recuperare il caso di Carbon.",
+        "recommendation": "Tienilo per la missione. Successivamente può ancora essere utile per il bottino sicuro e medico."
+      },
+      "factoryExit": {
+        "area": "Uscite ZB e porte della Fabbrica",
+        "use": "Sblocca estratti chiave e scorciatoie in Fabbrica e Dogana.",
+        "recommendation": "Compralo o tienilo sempre. È una chiave di utilità ad alto impatto per la sopravvivenza."
+      },
+      "resortWest216": {
+        "area": "Centro benessere, ala ovest",
+        "use": "Concede l'accesso a una stanza necessaria per la progressione di Therapist.",
+        "recommendation": "Conservatelo fino al completamento della catena. La progressione della linea costiera ha molti cancelli chiave."
+      },
+      "resortWest220": {
+        "area": "Centro benessere, ala ovest",
+        "use": "Una delle chiavi utilizzate per raggiungere il generatore del resort.",
+        "recommendation": "Conservalo se stai progredendo Peacekeeper. Potrebbe essere sostituibile a seconda del percorso o delle chiavi disponibili."
+      },
+      "cottageBackDoor": {
+        "area": "Zona cottage",
+        "use": "Ti consente di entrare nel cottage chiuso a chiave per raggiungere gli obiettivi della missione.",
+        "recommendation": "Vale davvero la pena tenerlo. Può bloccare la progressione se non appare sulle pulci a un prezzo ragionevole."
+      },
+      "rbSt": {
+        "area": "Garage e zona tecnica",
+        "use": "Apre un'importante riserva per obiettivi e bottino tecnico/militare.",
+        "recommendation": "Tienilo se lo trovi. Spesso ha un valore elevato grazie alla combinazione di ricerca e bottino."
+      },
+      "rbKprl": {
+        "area": "Cupola/edificio di guardia",
+        "use": "Accesso a una stanza con informazioni, contenitori e potenziale di valore costante.",
+        "recommendation": "Buono per i percorsi di bottino della Riserva, ma non è una priorità se stai solo effettuando missioni."
+      },
+      "emercomMedical": {
+        "area": "Unità medica EMERCOM",
+        "use": "Apre l'unità medica necessaria per le missioni e il bottino medico.",
+        "recommendation": "Conservalo per Therapist/Skier e portalo quando entri in Interchange con un obiettivo medico."
+      },
+      "oliLogistics": {
+        "area": "Uffici dell'OLI",
+        "use": "Ti consente di accedere ai documenti delle missioni all'interno di OLI.",
+        "recommendation": "Chiave di progressione. Conservalo fino al completamento dei percorsi Ragman su Interchange."
+      },
+      "zb014": {
+        "area": "Bunker ZB-014",
+        "use": "Apre il bunker e l'estratto condizionale con bottino utile.",
+        "recommendation": "Tienilo. Di solito non è troppo costoso e aiuta sia la ricerca che la sopravvivenza."
+      },
+      "operatingRoom": {
+        "area": "Trattamento delle acque/edifici sanitari",
+        "use": "Accesso a una stanza con bottino medico e tecnico.",
+        "recommendation": "Interessante se giochi regolarmente a Lighthouse. Non è una priorità per i nuovi giocatori."
+      },
+      "conferenceRoom": {
+        "area": "Strade di Tarkov",
+        "use": "Accesso a una posizione interna utilizzata nella progressione delle Strade.",
+        "recommendation": "Acquista solo quando hai la missione o un percorso Strade libero."
+      },
+      "dorm314Marked": {
+        "area": "Dormitori, dormitorio a tre piani",
+        "use": "Apre la stanza contrassegnata dalla dogana con un bottino variabile di alto valore.",
+        "recommendation": "Non è una chiave per principianti. Valutare il prezzo, gli usi rimanenti e il rischio dei dormitori."
+      },
+      "labsKeycard": {
+        "area": "Laboratorio",
+        "use": "Accesso ai Laboratori o ad aree laboratori speciali a seconda della tessera.",
+        "recommendation": "Potente, ma non una priorità per la progressione generale. Richiede esperienza in economia e nei laboratori."
+      }
+    },
+    "status": {
+      "loading": "Caricamento chiavi {{mode}} da tarkov.dev...",
+      "noKeys": "Nessuna chiave rilevata in tarkov.dev. Mostra il livello tattico locale.",
+      "connectionError": "Impossibile connettersi a tarkov.dev. Visualizzazione delle chiavi importanti salvate localmente."
+    },
+    "actions": {
+      "showImportant": "Mostra importante",
+      "clearFilters": "Cancella filtri",
+      "importantFirst": "Innanzitutto importante",
+      "openWiki": "OPEN WIKI"
+    },
+    "stats": {
+      "visible": "Chiavi visibili {{mode}}",
+      "catalog": "Catalogo caricato",
+      "important": "Visibile importante",
+      "maps": "Mappe coperte"
+    },
+    "filters": {
+      "maps": {
+        "Todos": "Tutto",
+        "Customs": "Dogana",
+        "Shoreline": "Litorale",
+        "Reserve": "Prenotare",
+        "Streets": "Strade",
+        "Interchange": "Scambio",
+        "Woods": "Boschi",
+        "Lighthouse": "Faro",
+        "Factory": "Fabbrica",
+        "Labs": "Laboratori",
+        "Ground Zero": "Punto Zero"
+      },
+      "categories": {
+        "Todas": "Tutto",
+        "Importantes": "Importante",
+        "Quest": "Ricerca",
+        "Loot": "Bottino",
+        "High value": "Alto valore",
+        "Utility": "Utilità",
+        "Sin clasificar": "Non classificato"
+      }
+    },
+    "priorities": {
+      "Alta": "Alto",
+      "Media": "Medio",
+      "Baja": "Basso"
+    },
+    "card": {
+      "type": "Tipo",
+      "importantType": "{{category}} - Importante",
+      "price": "Prezzo {{mode}}",
+      "size": "Misurare",
+      "quests": "Missioni",
+      "noPrice": "Nessun prezzo",
+      "noQuest": "Nessuna ricerca diretta contrassegnata"
+    }
+  },
+  "questOptimizer": {
+    "eyebrow": "Il prossimo miglior raid",
+    "title": "Ottimizzatore di missioni",
+    "subtitle": "Analizza missioni in sospeso, mappe, Kappa e chiavi consigliate per suggerire dove il tuo prossimo raid ha il miglior valore.",
+    "dynamicReason": "Gruppi di missioni in sospeso rilevati per mappa da tarkov.dev.",
+    "variableRisk": "Rischio variabile a seconda del percorso",
+    "mainRecommendation": "Raccomandazione principale",
+    "bestPlanSummary": "{{reason}} Punteggio tattico: {{score}}. Rischio: {{risk}}.",
+    "planMeta": "{{tasks}} missioni visibili · {{kappa}} Kappa",
+    "noCriticalKeys": "Nessuna chiave critica rilevata per questo percorso",
+    "empty": "Nessun percorso disponibile con questi filtri. Prova a disattivare Kappa o a cambiare mappa.",
+    "status": {
+      "loading": "Analisi delle missioni...",
+      "connectionError": "Impossibile connettersi a tarkov.dev. Visualizzazione dei consigli di base."
+    },
+    "actions": {
+      "kappaOnlyActive": "Kappa solo attivo",
+      "prioritizeKappa": "Dai priorità a Kappa"
+    },
+    "blocks": {
+      "suggestedQuests": "Missioni suggerite",
+      "keysToReview": "Chiavi da rivedere"
+    },
+    "maps": {
+      "Todos": "Tutto"
+    },
+    "fallbackPlans": {
+      "customs": {
+        "reason": "Mappa iniziale con molte catene Prapor, Therapist e Skier.",
+        "risk": "Alto intorno a dormitori e costruzioni"
+      },
+      "shoreline": {
+        "reason": "Forte concentrazione di missioni resort e progressione di Peacekeeper/Therapist.",
+        "risk": "Alto all'interno del resort"
+      },
+      "interchange": {
+        "reason": "Buona mappa per Ragman, oggetti nascosti e percorsi dei negozi.",
+        "risk": "Medio/alto all'interno del centro commerciale"
+      }
+    },
+    "risks": {
+      "customs": "Alto intorno a dormitori, costruzioni e stazioni di servizio",
+      "shoreline": "Alta all'interno del resort, media all'esterno",
+      "reserve": "Alto a causa di predoni, bunker e loot runner",
+      "interchange": "Medio/alto intorno a KIBA, negozi di articoli tecnologici ed estratti",
+      "woods": "Mire e boss lunghi, medi e pericolosi",
+      "lighthouse": "Alto intorno al trattamento dell'acqua e agli chalet",
+      "streets": "Elevato a causa della densità di giocatori e dei percorsi indoor",
+      "factory": "Combattimento molto alto e immediato",
+      "labs": "Molto alto, predoni e giocatori finali",
+      "groundZero": "Progressione precoce media e concentrata",
+      "terminal": "In attesa di dati stabili"
+    }
+  },
+  "armorModule": {
+    "loading": "CARICAMENTO AMBIENTE BALISTICO...",
+    "title": "ARMATURA TTK SIMULATORE",
+    "subtitle": "Simulatore balistico interattivo basato sulla penetrazione dell'inventario e sulla fisica dell'impatto.",
+    "searchAmmo": "SEARCH AMMO",
+    "searchAmmoExample": "Es: M61, BNS, M855A1, 5.56, BP...",
+    "searchArmor": "SEARCH ARMOR",
+    "searchArmorExample": "Esempio: Slick, Gen4, classe 6, ceramica...",
+    "noResults": "Nessun risultato",
+    "resultTitle": "RISULTATO DELLA SIMULAZIONE",
+    "shotSingular": "SHOT",
+    "shotPlural": "SHOTS",
+    "resultDescription": "Numero di impatti sul torace necessari per neutralizzare il bersaglio sotto fuoco prolungato.",
+    "armorLabel": "Armatura",
+    "armorMeta": "Classe {{class}} / {{durability}} dur. / {{material}}",
+    "telemetryTitle": "TELEMETRIA D'IMPATTO (LOG OPERATIVO)",
+    "shotLog": "# COLPO {{shot}}",
+    "penChance": "Probabilità di penetrazione: {{chance}}%",
+    "thorax": "Torace",
+    "plateRemaining": "Targa: {{remaining}} rem. (-{{damage}})",
+    "states": {
+      "waiting": "IN ATTESA DI PARAMETRI",
+      "immediateLethality": "LETALITÀ IMMEDIATA",
+      "directFight": "COINVOLGIMENTO DIRETTO",
+      "efficientProtection": "PROTEZIONE EFFICIENTE"
+    },
+    "simulation": {
+      "criticalPenetration": "PENETRAZIONE CRITICA",
+      "stoppedImpact": "STOPPED IMPACT"
+    },
+    "armorClassOption": "[CLASSE {{class}}] {{name}} / {{material}}",
+    "fallbackArmor": {
+      "granit": "Piastra balistica di classe 6 (Granit GOST)",
+      "granitShort": "Granito Cl.6",
+      "hexgrid": "Giubbotto armatura toracica Hexgrid Thor",
+      "hexgridShort": "Griglia esagonale Cl.6",
+      "korund": "Piastra balistica di classe 5 (Korund-VM)",
+      "korundShort": "Korund Cl.5",
+      "gen4": "Armatura IOTV Gen4",
+      "gen4Short": "Gen4 Cl.5",
+      "trooper": "Giubbotto corazzato HighCom Trooper TFO",
+      "trooperShort": "Soldato Cl.4",
+      "sixb23": "Armatura 6B23-1",
+      "sixb23Short": "6B23-1 Cl.3",
+      "paca": "Armatura PACA MK2",
+      "pacaShort": "PACA Cl.2"
+    }
+  },
+  "mapsModule": {
+    "title": "CARTOGRAFIA TATTICA",
+    "subtitle": "Mappe interattive, punti di interesse, luoghi di missione, spawn e percorsi di estrazione.",
+    "selectMap": "Seleziona la mappa",
+    "projectingFeed": "FEED DI PROGETTAZIONE: {{map}}",
+    "navigationSystem": "SISTEMA DI NAVIGAZIONE INTERATTIVO",
+    "iframeTitle": "{{map}} mappa",
+    "briefing": {
+      "eyebrow": "Briefing tattico",
+      "conflictZones": "Zone di conflitto",
+      "pointsOfInterest": "Punti di interesse",
+      "recommendedRoute": "Itinerario consigliato",
+      "warnings": "Avvertimenti tattici",
+      "stats": {
+        "players": "Giocatori",
+        "duration": "Durata",
+        "threat": "Minaccia",
+        "value": "Valore",
+        "size": "Misurare",
+        "bosses": "Boss"
+      },
+      "values": {
+        "5": "5",
+        "10-12": "10-12",
+        "12-16": "12-16",
+        "5-6": "5-6",
+        "10-14": "10-14",
+        "9-12": "9-12",
+        "10-13": "10-13",
+        "35 min": "35 minuti",
+        "50 min": "50 minuti",
+        "20 min": "20 minuti",
+        "40 min": "40 minuti",
+        "45 min": "45 minuti",
+        "medium": "Medio",
+        "mediumHigh": "Medio/Alto",
+        "high": "Alto",
+        "veryHigh": "Molto alto",
+        "low": "Basso",
+        "unknown": "Sconosciuto",
+        "variable": "Variabile",
+        "objective": "Obiettivo",
+        "strategic": "Strategico",
+        "1-3": "1-3",
+        "34x168 m": "34x168 mt",
+        "1-5": "1-5",
+        "118x110 m": "118x110 mt"
+      }
+    },
+    "briefingTags": {
+      "earlyProgression": "Progressione anticipata",
+      "compactPvP": "Compatto PvP",
+      "questDense": "Ricerca densa",
+      "highLoot": "Bottino elevato",
+      "densePvP": "Denso PvP",
+      "longRaid": "Lungo raid",
+      "instantPvP": "Istantaneo PvP",
+      "tagilla": "Tagilla",
+      "shortRaid": "Breve incursione",
+      "questHub": "Centro di ricerca",
+      "dorms": "Dormitori",
+      "reshala": "Reshala",
+      "longRange": "A lungo raggio",
+      "shturman": "Shturmann",
+      "stashes": "Scorte",
+      "killa": "Killa",
+      "techLoot": "Bottino tecnologico",
+      "darkInteriors": "Interni scuri",
+      "glukhar": "Glukhar",
+      "raiders": "Predoni",
+      "bunker": "Bunker",
+      "resortPvP": "Resort PvP",
+      "sanitar": "Sanitario",
+      "questHeavy": "Missione pesante",
+      "rogues": "Ladri",
+      "zryachiy": "Zryachiy",
+      "endgamePuzzle": "Finale/puzzle",
+      "specialObjective": "Obiettivo speciale",
+      "trapRisk": "Rischio trappola",
+      "tagillaVariant": "Minaccia speciale",
+      "futureContent": "Contenuti futuri",
+      "endgameArea": "Zona di fine partita",
+      "pendingIntel": "Informazioni in attesa",
+      "mapLinking": "Collegamento alla mappa",
+      "routePlanning": "Pianificazione del percorso",
+      "raidChain": "Catena di raid",
+      "blackDivision": "Divisione Nera",
+      "wedge": "Il Cuneo",
+      "verticalInterior": "Interno verticale",
+      "knight": "Knight"
+    },
+    "briefings": {
+      "groundzero": {
+        "title": "Punto Zero",
+        "summary": "Mappa compatta della progressione iniziale. Ottimo per imparare ritmo, audio verticale e percorsi brevi, ma molti giocatori convergono sugli stessi obiettivi.",
+        "conflictZones": {
+          "terragroupLobby": "Lobby TerraGroup e accesso interno",
+          "emercomCheckpoint": "Posto di controllo EMERCOM e strada aperta",
+          "nakatanStairs": "Scale Nakatani e attraversamenti verticali"
+        },
+        "pointsOfInterest": {
+          "capitalInsight": "Uffici Capital Insight per i primi obiettivi",
+          "fusionCafeteria": "Caffetteria fusion e bottino anticipato",
+          "undergroundParking": "Parcheggio sotterraneo per rotazioni coperte"
+        },
+        "route": {
+          "spawnRead": "Leggi il tuo spawn ed evita di attraversare le strade alla cieca.",
+          "questSweep": "Completa gli obiettivi vicini prima di inseguire PvP.",
+          "extractEarly": "Estrai presto se porti con te un oggetto della missione."
+        },
+        "warnings": {
+          "verticalAudio": "L'audio verticale può trarre in inganno all'interno degli edifici.",
+          "beginnerTraffic": "Traffico intenso da nuovi giocatori e missioni condivise.",
+          "openStreetCrossings": "Gli attraversamenti stradali aperti sono spesso puniti."
+        }
+      },
+      "streets": {
+        "title": "Strade di Tarkov",
+        "summary": "Mappa urbana di alto valore con contatti densi. Premia i percorsi di spigolo, la pazienza e la costruzione della consapevolezza; punisce il movimento negligente attraverso i viali.",
+        "conflictZones": {
+          "lexos": "LexOs e le sue vie di accesso",
+          "pinewood": "Pineta e piazza vicina",
+          "chekannaya": "Chekannaya ed edifici finanziari",
+          "climovMall": "Centro commerciale Klimov e strade centrali"
+        },
+        "pointsOfInterest": {
+          "relaxationRoom": "Sala relax e percorsi chiave",
+          "financialBuildings": "Edifici finanziari con bottino tecnologico",
+          "medicalBlocks": "Blocchi e uffici medici",
+          "concordia": "Concordia e appartamenti"
+        },
+        "route": {
+          "edgeRoute": "Inizia dai bordi ed evita i viali centrali.",
+          "lootAnchor": "Scegli un'ancora di bottino ed evita di concatenare troppi interni.",
+          "lateExtract": "Risparmia resistenza per un'estrazione lenta e coperta."
+        },
+        "warnings": {
+          "manyAngles": "Troppe finestre e angoli per correre all'aperto.",
+          "aiDensity": "L'intelligenza artificiale può rivelare la tua posizione sparando.",
+          "performanceRisk": "Mappa pesante: evita i percorsi dell'avidità quando il raid va male."
+        }
+      },
+      "factory": {
+        "title": "Fabbrica",
+        "summary": "Arena chiusa con combattimento immediato. Buono per PvP, missioni veloci e Tagilla, ma l'esitazione nei primi secondi viene punita.",
+        "conflictZones": {
+          "office": "Ufficio e corridoio superiore",
+          "underground": "Tunnel sotterranei",
+          "gateThree": "Gate 3 e vie di uscita"
+        },
+        "pointsOfInterest": {
+          "officeSafe": "Cassaforte per ufficio",
+          "medicalTent": "Area medica/tenda",
+          "cellars": "Cantine e percorsi bassi"
+        },
+        "route": {
+          "surviveOpening": "Sopravvivi al contatto iniziale prima di muoverti verso gli obiettivi.",
+          "clearVerticals": "Liberare sopra/sotto prima di attraversare il centro.",
+          "extractFast": "Se l'obiettivo è raggiunto, non restare oltre."
+        },
+        "warnings": {
+          "noReset": "C'è poco spazio per reimpostare un combattimento.",
+          "thirdParties": "Ogni scatto attira terzi.",
+          "soundPunish": "Il suono rivela ogni rotazione."
+        }
+      },
+      "customs": {
+        "title": "Dogana",
+        "summary": "Mappa di progressione classica con molte missioni. I percorsi sono facili da capire, ma i punti di strozzatura tra i lati creano costanti PvP.",
+        "conflictZones": {
+          "dorms": "Dormitori a due e tre piani",
+          "stronghold": "Fortezza e Crackhouse",
+          "newGas": "Nuova stazione di servizio",
+          "construction": "Costruzione e ponte"
+        },
+        "pointsOfInterest": {
+          "dormsSafes": "Casseforti e chiavi dei dormitori",
+          "crackhouse": "Crackhouse e intelligenza",
+          "warehouseArea": "Magazzini e macchinari",
+          "bigRed": "Big Red e uffici"
+        },
+        "route": {
+          "chooseSide": "Decidi se giocare dalla tua parte o crossare presto.",
+          "avoidCenterRush": "Evita il centro se non hai bisogno di dormitori/roccaforti.",
+          "extractOpposite": "Pianifica l'estratto opposto prima di caricare."
+        },
+        "warnings": {
+          "chokePoints": "Ponti e passaggi stretti concentrano le imboscate.",
+          "sniperScavs": "Gli scavi dei cecchini puniscono le rotte aperte.",
+          "questTraffic": "Molte missioni trascinano i giocatori negli stessi edifici."
+        }
+      },
+      "woods": {
+        "title": "Boschi",
+        "summary": "Mappa aperta costruita attorno all'orientamento e alle lunghe linee di vista. Eccellente per scorte, missioni all'aperto e Shturman, ma perdere i riferimenti può costare il raid.",
+        "conflictZones": {
+          "sawmill": "Segheria e litorali",
+          "usecCamp": "Campo USEC",
+          "scavBunker": "Scav bunker",
+          "emercomCamp": "Campo medico/EMERCOM"
+        },
+        "pointsOfInterest": {
+          "hiddenStashes": "Nascosti nascosti lungo i bordi",
+          "medicalCamp": "Campo medico",
+          "sawmill": "Segheria e scatola Shturman",
+          "village": "Villaggio e percorsi del nord"
+        },
+        "route": {
+          "landmarkCheck": "Utilizzare come riferimenti la montagna, il fiume e le linee elettriche.",
+          "edgeMovement": "Ruota dai bordi quando caricato.",
+          "avoidSawmillNoise": "Non entrare in segheria tardi senza informazioni."
+        },
+        "warnings": {
+          "mines": "Le mine e i limiti della mappa possono uccidere con poco preavviso visivo.",
+          "longSightlines": "Qualsiasi collina può contenere un tiratore.",
+          "orientationLoss": "La perdita dell’orientamento costringe ad aprire incroci."
+        }
+      },
+      "interchange": {
+        "title": "Scambio",
+        "summary": "Centro commerciale verticale scuro pieno di percorsi di bottino. Molto redditizio, ma gli estratti e i negozi di tecnologia sono PvP magneti.",
+        "conflictZones": {
+          "techlight": "Techlight, Rasmussen e Texho",
+          "kiba": "KIBA e centro commerciale centrale",
+          "ultra": "ULTRA medico",
+          "oliGoshanIdea": "Ingressi OLI/Goshan/IDEA"
+        },
+        "pointsOfInterest": {
+          "techStores": "Negozi di tecnologia",
+          "medicalRooms": "Ambulatori e farmacie",
+          "foodShelves": "Scaffali alimentari di Goshan",
+          "stashes": "Scorte esterne"
+        },
+        "route": {
+          "powerDecision": "Decidi se accendere o giocare su percorsi più silenziosi.",
+          "storeSweep": "Svuota negozio per negozio invece di correre per aprire i corridoi.",
+          "extractAwareness": "Aspettatevi campeggiatori agli estratti principali."
+        },
+        "warnings": {
+          "campedExtracts": "Emercom e Railway possono essere accampati.",
+          "lowVisibility": "L'oscurità favorisce gli angoli ciechi.",
+          "verticalAudio": "L'audio tra i piani può ingannarti."
+        }
+      },
+      "reserve": {
+        "title": "Prenotare",
+        "summary": "Base militare densa con bottino forte ed estratti impegnativi. Entra con un piano di estrazione prima di impegnarti nel bunker o nel treno.",
+        "conflictZones": {
+          "d2Bunker": "Bunker D2 e ​​sala di comando",
+          "trainStation": "Stazione ferroviaria",
+          "blackWhitePawn": "Edifici di pegni",
+          "queen": "Regina e tetti"
+        },
+        "pointsOfInterest": {
+          "militaryTech": "Bottino militare e tecnologico",
+          "markedRooms": "Stanze contrassegnate",
+          "bishopMedical": "Vescovo medico",
+          "bunkerSwitches": "Interruttori e sistemi bunker"
+        },
+        "route": {
+          "extractPlanFirst": "Scegli l'estrazione prima del saccheggio.",
+          "bunkerTiming": "Il bunker iniziale è pericoloso; il bunker in ritardo può essere accampato.",
+          "avoidTrainChaos": "Non dipendere dal treno quando è carico."
+        },
+        "warnings": {
+          "extractComplexity": "Molte uscite hanno condizioni.",
+          "raiderSpawns": "I predoni possono cambiare il ritmo all'istante.",
+          "roofSightlines": "Tetti e torri coprono metà della base."
+        }
+      },
+      "shoreline": {
+        "title": "Litorale",
+        "summary": "Mappa divisa tra resort ad alto PvP e periferia ricca di missioni. Decidi dallo spawn se stai combattendo in resort o giocando in loop sicuri.",
+        "conflictZones": {
+          "eastWing": "Resort nell'ala est",
+          "westWing": "Resort nell'ala ovest",
+          "cottages": "Cottage",
+          "pier": "Molo"
+        },
+        "pointsOfInterest": {
+          "healthResort": "Centro benessere e chiavi",
+          "cottageSafes": "Casseforti da cottage",
+          "weatherStation": "Stazione meteorologica",
+          "villageStashes": "Villaggio e scorte"
+        },
+        "route": {
+          "decideResort": "Se vai in resort, entra presto con un obiettivo chiaro.",
+          "outerQuestLoop": "Per le missioni, usa i percorsi esterni ed evita il centro.",
+          "latePierCheck": "Il molo tardivo è una trappola se non controlli l'ambiente circostante."
+        },
+        "warnings": {
+          "resortRush": "Il resort attira squadre e saccheggia giocatori.",
+          "openFields": "I campi aperti penalizzano i percorsi diretti.",
+          "pierTrap": "Pier può lasciarti senza un'uscita pulita."
+        }
+      },
+      "lighthouse": {
+        "title": "Faro",
+        "summary": "Mappa canaglia con ampia visuale e bottino consistente. Ha bisogno di percorsi basati sulla deposizione delle uova e di un rigoroso rispetto delle miniere, dei tetti e del trattamento delle acque.",
+        "conflictZones": {
+          "waterTreatment": "Trattamento delle acque",
+          "chalets": "Chalet",
+          "longRoad": "Lunga strada",
+          "islandBridge": "Lightkeeper ponte/isola"
+        },
+        "pointsOfInterest": {
+          "waterTreatmentLoot": "Bottino industriale per il trattamento delle acque",
+          "chalets": "Chalet e casseforti",
+          "village": "Villaggio",
+          "islandApproach": "Avvicinamento all'isola"
+        },
+        "route": {
+          "roguePlan": "Non entrare in Rogues senza un piano angolare.",
+          "routeBySpawn": "Il tuo spawn decide il nord, gli chalet o il gioco su strada.",
+          "avoidRoadTunnel": "Evita la strada aperta se senti un fuoco a lungo raggio."
+        },
+        "warnings": {
+          "rogueLasers": "I ladri puniscono le piccole esposizioni.",
+          "minefields": "I campi minati circondano le aree riservate.",
+          "sniperAngles": "Gli angoli del cecchino coprono interi percorsi."
+        }
+      },
+      "labyrinth": {
+        "title": "Labirinto",
+        "summary": "Mappa speciale su pressione, orientamento e obiettivi. Gioca lentamente, ricorda i percorsi ed evita di trattarlo come una normale mappa di bottino.",
+        "conflictZones": {
+          "centralMaze": "Nucleo del labirinto",
+          "trapSwitches": "Aree di trappola/scambio",
+          "extractionPuzzle": "Percorso di estrazione e lock-in"
+        },
+        "pointsOfInterest": {
+          "trapControls": "Controlli delle trappole",
+          "lockedRoutes": "Percorsi bloccati",
+          "objectiveRooms": "Stanze oggettive",
+          "labyrinthExit": "Uscita dal labirinto"
+        },
+        "route": {
+          "moveSlow": "Muoviti lentamente e conferma ogni incrocio.",
+          "markSwitches": "Memorizza cambi e cambi di percorso.",
+          "commitExtract": "Una volta aperta l'uscita, impegnati nell'estrazione."
+        },
+        "warnings": {
+          "limitedReliableData": "I dati pubblici sono ancora limitati; evitare affermazioni sul percorso esatto.",
+          "trapPunish": "Le trappole puniscono lo sprint o l'inseguimento alla cieca.",
+          "navigationPressure": "La pressione della mappa causa errori di orientamento."
+        }
+      },
+      "terminal": {
+        "title": "terminale",
+        "summary": "Mappa di fine gioco su scala limitata con forte presenza di boss. Dovrebbe essere riprodotto attraverso il controllo dell'angolo, la lettura del suono e la massima cautela quando si attraversano cortili o interni industriali.",
+        "conflictZones": {
+          "terminalApproaches": "Principali approcci al terminal",
+          "bossRoutes": "Percorsi dei boss e zone di contatto",
+          "containerYards": "Piazzali e aree container"
+        },
+        "pointsOfInterest": {
+          "terminalInterior": "Interno terminale",
+          "industrialAccess": "Punti di accesso industriali",
+          "extractionRoutes": "Vie di estrazione"
+        },
+        "route": {
+          "awaitReliableIntel": "Attendi informazioni affidabili prima di consigliare percorsi."
+        },
+        "warnings": {
+          "noStablePublicIntel": "Non utilizzare come una vera guida finché non esistono fonti verificate."
+        }
+      },
+      "transits": {
+        "title": "Transiti",
+        "summary": "Grafico di connessione tra le mappe. Questa sezione non ha lo scopo di fornire dati sui raid, ma di mostrare chiaramente quali mappe possono essere concatenate attraverso i transiti.",
+        "conflictZones": {
+          "transitTiming": "Finestra temporale di transito",
+          "extractionApproach": "Approccio di estrazione/transito"
+        },
+        "pointsOfInterest": {
+          "routeContinuity": "Continuità del percorso",
+          "questRouting": "Concatenamento di missioni",
+          "survivalChains": "Catene di sopravvivenza"
+        },
+        "route": {
+          "planBeforeRaid": "Definire la destinazione prima di entrare.",
+          "carryOnlyNeeded": "Non sovraccaricare se si concatenano le mappe.",
+          "confirmDestination": "Conferma il transito prima di impegnarti."
+        },
+        "warnings": {
+          "wrongTransit": "Il transito sbagliato interrompe il percorso.",
+          "lateRaidRisk": "Gli arrivi tardivi aumentano il rischio dei campeggiatori.",
+          "inventoryCommitment": "Il tuo inventario condiziona la mappa successiva."
+        }
+      },
+      "icebreaker": {
+        "title": "Rompighiaccio",
+        "summary": "Mappa speciale d'assalto interna ambientata su una nave. Versione 1.3: 1-3 PMCs, 50 minuti, dimensione 34x168 m, con The Wedge e Knight come principali minacce. Gioca con i mazzi, elimina gli angoli corti ed evita di spingere senza controllo verticale.",
+        "conflictZones": {
+          "levelThreeGym": "Palestra di livello 3 e area The Wedge/Knight",
+          "engineRooms": "Sale macchine e corridoi tecnici",
+          "sternRoutes": "Percorsi di poppa e ponti collegati",
+          "blackDivisionPatrols": "Contatti e scorte della Divisione Nera"
+        },
+        "pointsOfInterest": {
+          "wedgeContact": "Contatto principale con The Wedge e Knight",
+          "shipInterior": "Percorsi interni e multi-livello della nave",
+          "lockedRooms": "Stanze chiuse/obiettive",
+          "technicalCorridors": "Corridoi tecnici per rotazioni coperte"
+        },
+        "route": {
+          "secureEntry": "Assicurati l'ingresso e il primo corridoio prima di andare più in profondità.",
+          "clearByDecks": "Completa per ponte/livello; non mescolare percorsi verticali senza audio chiaro.",
+          "commitObjective": "Una volta raggiunto l'obiettivo, evita l'avidità e impegnati nell'estrazione."
+        },
+        "warnings": {
+          "guaranteedBoss": "Il Cuneo si genera al 100%; entra preparato per il capo, Knight e scorta.",
+          "tightAngles": "Angoli corti e porte favoriscono le imboscate.",
+          "limitedReliableData": "I dati pubblici sono ancora in crescita; evitare affermazioni sul percorso esatto non verificate."
+        }
+      }
+    }
+  },
+  "about": {
+    "eyebrow": "Memoria del progetto",
+    "title": "Informazioni su Info Tarkov",
+    "subtitle": "Riepilogo completo dello scopo, dell'ambito, dell'architettura e delle tecnologie dietro l'app.",
+    "modulesEyebrow": "Moduli dell'app",
+    "modulesTitle": "Strumenti a disposizione dell'utente",
+    "statusLabel": "Stato",
+    "techGroups": [
+      {
+        "title": "Fine frontale",
+        "items": [
+          "React",
+          "Vite",
+          "JavaScript",
+          "CSS in linea + variabili globali",
+          "React.pigro",
+          "Suspense"
+        ]
+      },
+      {
+        "title": "Backend",
+        "items": [
+          "Supabase",
+          "PostgreSQL",
+          "SQL RPC",
+          "Sicurezza a livello di riga",
+          "Supabase Auth"
+        ]
+      },
+      {
+        "title": "Persistenza",
+        "items": [
+          "localStorage",
+          "Dati Supabase per utente",
+          "stato_modulo_utente",
+          "Progressi PVP/PVE separati",
+          "Sessioni persistenti"
+        ]
+      },
+      {
+        "title": "Prodotto",
+        "items": [
+          "Netlify",
+          "GitHub",
+          "i18next",
+          "react-i18nextt",
+          "Esterno APIs",
+          "Sistema di biglietteria"
+        ]
+      }
+    ],
+    "sections": [
+      {
+        "title": "Cos'è Info Tarkov",
+        "body": "Info Tarkov è un hub modulare per Escape From Tarkov progettato come centro tattico per la ricerca, il monitoraggio e le decisioni. Raccoglie progressi nelle missioni, boss, server, combattimento, pianificazione, mappe tattiche, economia e dati pubblici PMC in un'unica interfaccia."
+      },
+      {
+        "title": "Cosa puoi fare",
+        "body": "L'app ti consente di consultare mappe con briefing, tenere traccia di Kappa, rivedere decisioni/finali, indagare sui boss, controllare Goons, esplorare PVP/PVE prezzi, pianificare Hideout, simulare combattimenti, ispezionare profili PMC e segnalare bug o suggerimenti."
+      },
+      {
+        "title": "Sistema utente",
+        "body": "Funziona come ospite o con un account. I progressi dell'ospite vengono memorizzati nel browser. Con un account, Supabase memorizza il nome utente Tarkov, la modalità principale e l'avanzamento del cloud separati per PVP e PVE."
+      },
+      {
+        "title": "Pannello di amministrazione",
+        "body": "L'app include un pannello di solo amministratore per metriche, utenti, ruoli, ticket, attività e azioni amministrative. L'account del proprietario è protetto da modifiche accidentali."
+      },
+      {
+        "title": "Comunicazione e supporto",
+        "body": "Il report funziona come un sistema di ticket tra gli utenti e lo sviluppatore. Mantiene conversazioni, risposte, stati e notifiche per entrambe le parti."
+      },
+      {
+        "title": "Architettura del frontend",
+        "body": "Il frontend è costruito con React e Vite. La navigazione è interna a App.jsx e ogni modulo viene caricato con React.lazy e Suspense per ridurre il peso iniziale."
+      },
+      {
+        "title": "Backend e persistenza",
+        "body": "Il backend utilizza Supabase, PostgreSQL, Supabase Auth e sicurezza a livello di riga. L'app combina il localStorage guest con la persistenza nel cloud quando esiste una sessione."
+      },
+      {
+        "title": "Principali tecnologie",
+        "body": "React, Vite, Supabase, PostgreSQL, Auth, RLS, localStorage, i18next, react-i18next, Netlify, GitHub e Tarkov esterni correlati APIs."
+      },
+      {
+        "title": "Stato attuale",
+        "body": "Il progetto include già autenticazione, ruoli, pannello di amministrazione, ticket, caricamento lento, base multilingue ES/EN rivista, preferenza PVP/PVE e un livello ibrido nelle missioni, Goons, pulce, chiavi, nascondiglio, mappe e profilo PMC. Il prestigio è contrassegnato SOLO PVP."
+      }
+    ],
+    "moduleDetails": [
+      {
+        "name": "Mappe tattiche",
+        "purpose": "Ricerca di mappe esterne con briefing chiari per mappa: descrizione, dati di base, zone di conflitto e punti di interesse.",
+        "actions": [
+          "Consulta le mappe",
+          "Leggi il briefing",
+          "Zone di revisione",
+          "Individua i punti chiave"
+        ],
+        "status": "Mappe 2.0 è pronto per il primo lancio su desktop; I transiti rimangono una tabella di connessione."
+      },
+      {
+        "name": "Missioni / Kappa",
+        "purpose": "Albero delle missioni globale collegato a tarkov.dev, progressi di PVP/PVE, dipendenze, Quest Optimizer e lista di controllo Collector.",
+        "actions": [
+          "Segna missioni",
+          "Filtra Kappa",
+          "Apri ottimizzatore",
+          "Collector lista di controllo",
+          "Sincronizza nuvola"
+        ],
+        "status": "Modulo di progressione critica con persistenza ibrida locale/cloud."
+      },
+      {
+        "name": "Decisioni/Finali",
+        "purpose": "Modulo per decisioni narrative, punti di non ritorno e percorsi in modalità storia.",
+        "actions": [
+          "Revisione dei percorsi",
+          "Identificare le serrature",
+          "Confronta le opzioni"
+        ],
+        "status": "Base di story intelligence per evitare decisioni irreversibili senza contesto."
+      },
+      {
+        "name": "Intel: Boss",
+        "purpose": "Dossier dei boss con posizioni, equipaggiamento, comportamento, punti deboli, bottino, difficoltà e squadre.",
+        "actions": [
+          "Filtra per mappa",
+          "Controlla le informazioni sul combattimento",
+          "Controlla il bottino",
+          "Preparare la strategia"
+        ],
+        "status": "Boss 2.0 con suddivisione tattica, zone di spawn e piano di ingresso."
+      },
+      {
+        "name": "Goons Localizzatore",
+        "purpose": "Consulta la rotazione o la posizione stimata delle Goons tramite fonti esterne.",
+        "actions": [
+          "Controlla il rapporto",
+          "Vedi la mappa attiva",
+          "Convalida la fonte",
+          "Preparare il raid"
+        ],
+        "status": "Dipende da fonti esterne e dall'analisi HTML; documentato in Risoluzione dei problemi."
+      },
+      {
+        "name": "Flea Market Localizzatore",
+        "purpose": "Ricerca di prezzi, fluttuazioni e redditività con mercati PVP/PVE separati.",
+        "actions": [
+          "Cambia mercato",
+          "Cerca elementi",
+          "Visualizza grafico",
+          "Valutare la redditività"
+        ],
+        "status": "Tracker economico ibrido collegato a tarkov.dev."
+      },
+      {
+        "name": "Hideout Gestione",
+        "purpose": "Hideout pianificatore con stazioni, materiali, prerequisiti, PVP/PVE prezzi e progressi realizzati.",
+        "actions": [
+          "Cambia modalità",
+          "Segna i materiali",
+          "Segna i livelli",
+          "Vedi bloccanti",
+          "Rileva FIR"
+        ],
+        "status": "Hideout 2.0 con ordine naturale, costi separati e checklist locale/cloud."
+      },
+      {
+        "name": "Simulatore balistico",
+        "purpose": "Strumento per comprendere penetrazione, danno, armatura e tempo stimato per uccidere.",
+        "actions": [
+          "Confronta le munizioni",
+          "Simula colpi",
+          "Stima TTK"
+        ],
+        "status": "Modulo tecnico con il potenziale per diventare un'Ammo Intelligence completa."
+      },
+      {
+        "name": "Prestigio",
+        "purpose": "PVP progressione del gioco finale con requisiti, ricompense, badge e lista di controllo per prestigio.",
+        "actions": [
+          "Seleziona il livello",
+          "Segna i requisiti",
+          "Rivedi i premi"
+        ],
+        "status": "Modulo indipendente PVP SOLO."
+      },
+      {
+        "name": "Sistema chiave",
+        "purpose": "Ricerca di chiavi e carte magnetiche collegata a tarkov.dev con un livello tattico di chiavi importanti.",
+        "actions": [
+          "Cambia PVP/PVE",
+          "Chiavi di ricerca",
+          "Filtra la mappa",
+          "Controlla il prezzo",
+          "ApriWiki"
+        ],
+        "status": "Ricerca live ibrida con fallback locale."
+      },
+      {
+        "name": "Ottimizzatore di missioni",
+        "purpose": "Strumento secondario che consiglia la mappa migliore dalle missioni in sospeso, Kappa, rischio e chiavi.",
+        "actions": [
+          "Analizzare i progressi",
+          "Raggruppa per mappa",
+          "Dai priorità a Kappa",
+          "Preparare le chiavi"
+        ],
+        "status": "Integrato all'interno delle missioni / Kappa."
+      },
+      {
+        "name": "PMC Profilo",
+        "purpose": "Pannello connesso ai giocatori pubblici.tarkov.dev JSON per profili PVP/PVE già indicizzati.",
+        "actions": [
+          "Cambia modalità",
+          "Cerca PMCs",
+          "Visualizza le statistiche",
+          "Visualizza l'attrezzatura",
+          "Carta di esportazione"
+        ],
+        "status": "Connesso tramite JSON statico con ricerca, risultati, competenze ed esportazione PNG."
+      }
+    ],
+    "howToUse": {
+      "eyebrow": "Come usare",
+      "title": "Guida completa all'app",
+      "body": "Manuale ricercabile che copre ogni modulo, sottosezione, connessione e azione chiave in Info Tarkov.",
+      "action": "OPEN GUIDE"
+    }
+  },
+  "admin": {
+    "title": "Pannello di amministrazione",
+    "subtitle": "Metriche di utilizzo interno e utenti registrati.",
+    "loading": "Caricamento metriche...",
+    "stats": {
+      "totalVisits": "Visite totali",
+      "todayVisits": "Visite oggi",
+      "registeredUsers": "Utenti registrati",
+      "onlineUsers": "Utenti in linea",
+      "onlineWindow": "Attivo negli ultimi 2 minuti"
+    },
+    "filters": {
+      "allRoles": "Tutti i ruoli",
+      "allActivity": "Tutto",
+      "online": "In linea",
+      "offline": "Non in linea"
+    },
+    "roles": {
+      "admin": "Ammin",
+      "user": "Utente",
+      "owner": "OWNER"
+    },
+    "users": {
+      "title": "Utenti",
+      "searchPlaceholder": "Cerca nome utente o email...",
+      "showing": "Visualizzazione di {{filtered}} di {{total}} utenti",
+      "unconfigured": "Non configurato",
+      "onlineBadge": "ONLINE",
+      "columns": {
+        "username": "Nome utente",
+        "email": "E-mail",
+        "role": "Ruolo",
+        "registered": "Registrato",
+        "lastActivity": "Ultima attività",
+        "actions": "Azioni"
+      }
+    },
+    "actions": {
+      "refresh": "Aggiorna",
+      "detail": "Dettaglio",
+      "makeAdmin": "Diventa amministratore",
+      "removeAdmin": "Rimuovi amministratore",
+      "message": "Messaggio"
+    },
+    "feedback": {
+      "title": "Rapporti",
+      "ticketCount": "{{count}} biglietti",
+      "empty": "Nessuna segnalazione o suggerimento.",
+      "noUser": "Nessun utente",
+      "noEmail": "nessuna e-mail",
+      "currentStatus": "Stato attuale: {{status}}",
+      "closedReplyTitle": "Non è possibile rispondere ai ticket chiusi",
+      "replyTitle": "Rispondi all'utente",
+      "replyUser": "Rispondi all'utente",
+      "deleteForAllTitle": "Elimina questo ticket per tutti",
+      "deleteForAll": "Elimina per tutti",
+      "types": {
+        "bug": "Insetto",
+        "suggestion": "Suggerimento",
+        "other": "Altro"
+      },
+      "status": {
+        "open": "Aprire",
+        "reviewing": "In revisione",
+        "closed": "Chiuso"
+      },
+      "statusActions": {
+        "open": "Segna aperto",
+        "reviewing": "Passa alla revisione",
+        "closed": "Chiudi biglietto"
+      },
+      "replyAuthors": {
+        "user": "Utente",
+        "admin": "Astur"
+      }
+    },
+    "detail": {
+      "title": "Dettaglio utente",
+      "role": "Ruolo",
+      "profile": "Profilo",
+      "profileStatus": {
+        "complete": "Completare",
+        "pending": "In attesa di"
+      },
+      "status": "Stato",
+      "lastActivity": "Ultima attività",
+      "loadingProgress": "Caricamento avanzamento...",
+      "cloudProgress": "Avanzamento del cloud per modulo",
+      "noModuleStates": "Nessuno stato cloud salvato.",
+      "saved": "Salvato",
+      "missions": "Missioni",
+      "noQuestProgress": "Nessun progresso nella missione cloud.",
+      "missionsMode": "{{mode}} missioni",
+      "completedCount": "{{count}} completato"
+    },
+    "prompts": {
+      "roleChange": "Vuoi convertire {{email}} in {{role}}?",
+      "deleteUser": "Stai per eliminare {{email}}. I progressi nel cloud andranno persi. Continuare?",
+      "typeDelete": "Digita BORRAR per confermare.",
+      "messageSubject": "Oggetto del messaggio",
+      "messageBody": "Messaggio",
+      "replyBody": "Risposta per l'utente",
+      "deleteTicket": "Vuoi eliminare il ticket \"{{subject}}\"?"
+    },
+    "messages": {
+      "loadError": "Impossibile caricare le metriche amministrative.",
+      "roleError": "Impossibile modificare il ruolo utente.",
+      "roleUpdated": "Ruolo aggiornato.",
+      "deleteCancelled": "Eliminazione annullata.",
+      "deleteError": "Impossibile eliminare l'account.",
+      "deleteSuccess": "Conto eliminato.",
+      "sendMessageError": "Impossibile inviare il messaggio: {{error}}",
+      "messageSent": "Messaggio inviato.",
+      "feedbackUpdateError": "Impossibile aggiornare il rapporto: {{error}}",
+      "feedbackUpdated": "Rapporto aggiornato.",
+      "feedbackReplyError": "Non è stato possibile rispondere alla segnalazione: {{error}}",
+      "replySent": "Risposta inviata.",
+      "feedbackDeleteError": "Impossibile eliminare il rapporto: {{error}}",
+      "feedbackDeleted": "Rapporto eliminato.",
+      "rpcUnavailable": "RPC non disponibile",
+      "progressLoadError": "Impossibile caricare i progressi nel cloud: {{error}}. Esegui l'SQL aggiornato se manca l'RPC."
+    }
+  },
+  "account": {
+    "title": "Account",
+    "adminProfile": "Profilo amministratore",
+    "userProfile": "Profilo utente",
+    "overview": {
+      "eyebrow": "Centro conti",
+      "noUser": "Nessun utente"
+    },
+    "summary": {
+      "title": "Sintesi operativa",
+      "loading": "Caricamento avanzamento...",
+      "mainMode": "Modalità principale",
+      "globalPreference": "Preferenza globale",
+      "missionsPvp": "PVP missioni",
+      "missionsPve": "PVE missioni",
+      "cloudCompleted": "Nuvola completata",
+      "collector": "Collector",
+      "collectorMarked": "PVP / PVE segnato",
+      "hideout": "Hideout",
+      "hideoutMaterials": "PVP / PVE materiali"
+    },
+    "quickActions": {
+      "title": "Accesso rapido",
+      "kappa": "Missioni / Kappa",
+      "kappaMeta": "Continua il progresso",
+      "hideout": "Hideout",
+      "hideoutMeta": "Gestire i materiali",
+      "flea": "Flea Market",
+      "fleaMeta": "Controlla l'economia",
+      "officialProfile": "Profilo ufficiale",
+      "officialProfileMeta": "Apri tarkov.dev"
+    },
+    "username": {
+      "title": "Nome utente",
+      "placeholder": "Il tuo nome utente",
+      "rules": "Il nome utente deve contenere da 3 a 20 caratteri. Utilizza lettere, numeri, trattino basso o trattino.",
+      "helper": "3-20 caratteri. Lettere, numeri, trattino basso o trattino. Deve essere unico.",
+      "primaryMode": "Modalità principale",
+      "save": "Salva nome utente",
+      "saving": "Risparmio..."
+    },
+    "password": {
+      "title": "Cambiare la password",
+      "placeholder": "Nuova password",
+      "save": "Cambiare la password",
+      "saving": "Aggiornamento..."
+    },
+    "delete": {
+      "title": "Elimina account",
+      "warning": "Questa azione eliminerà il tuo account e perderai i progressi ad esso collegati. Non è possibile annullarlo.",
+      "placeholder": "Digitare BORRAR",
+      "button": "Elimina account",
+      "deleting": "Eliminazione..."
+    },
+    "messages": {
+      "loginRequired": "Devi effettuare il login per configurare il tuo nome utente.",
+      "usernameTaken": "Quel nome utente è già in uso.",
+      "usernameSaveError": "Impossibile salvare il nome utente.",
+      "usernameSaved": "Nome utente salvato.",
+      "profileSavedLocalMode": "Profilo salvato. Esegui la migrazione Supabase per archiviare il nome utente e la modalità Tarkov nel cloud.",
+      "passwordSaveError": "Impossibile modificare la password.",
+      "passwordSaved": "Password aggiornata.",
+      "deleteConfirmRequired": "Digita BORRAR per confermare.",
+      "deleteError": "Impossibile eliminare l'account."
+    }
+  },
+  "auth": {
+    "titleLogin": "Login",
+    "titleRegister": "Creare un account",
+    "tarkovUsername": "Tarkov nome utente",
+    "tarkovUsernameRules": "Il nome utente Tarkov deve contenere da 3 a 20 caratteri. Utilizza lettere, numeri, trattino basso o trattino.",
+    "mainGameMode": "Modalità di gioco principale",
+    "email": "E-mail",
+    "password": "Password",
+    "submitLogin": "Entra",
+    "submitRegister": "Registro",
+    "switchToLogin": "Ho già un account",
+    "switchToRegister": "Creare un account",
+    "created": "Account creato con successo.",
+    "createdLoggedIn": "Account creato con successo. La sessione è iniziata.",
+    "confirmEmail": "Conto creato. Controlla la tua email per confermare il tuo indirizzo.",
+    "loggedIn": "La sessione è iniziata.",
+    "passwordRequirements": "La password deve contenere almeno 8 caratteri, una lettera maiuscola, una lettera minuscola, un numero e un simbolo.",
+    "modes": {
+      "pvp": "PVP",
+      "pve": "PVE",
+      "both": "Entrambi"
+    },
+    "checks": {
+      "length": "Almeno 8 caratteri",
+      "uppercase": "Una lettera maiuscola",
+      "lowercase": "Una lettera minuscola",
+      "number": "Un numero",
+      "symbol": "Un simbolo"
+    }
+  },
+  "report": {
+    "title": "Rapporto",
+    "subtitle": "Segnala bug, invia suggerimenti e continua la conversazione all'interno di ogni ticket.",
+    "createTitle": "Crea biglietto",
+    "types": {
+      "bug": "Insetto",
+      "suggestion": "Suggerimento",
+      "other": "Altro"
+    },
+    "status": {
+      "open": "Aprire",
+      "reviewing": "In revisione",
+      "closed": "Chiuso"
+    },
+    "subject": "Soggetto",
+    "bodyPlaceholder": "Descrivi cosa è successo o cosa vorresti vedere...",
+    "createButton": "Crea biglietto",
+    "sending": "Invio...",
+    "myTickets": "I miei biglietti",
+    "noTickets": "Non hai inviato alcun biglietto.",
+    "responses": "{{count}} risponde",
+    "replyPlaceholder": "Rispondi in questo ticket...",
+    "closeTicket": "Chiudi biglietto",
+    "deleteFromList": "Rimuovi dalla mia lista",
+    "authorUser": "Voi",
+    "authorAdmin": "Astur",
+    "errors": {
+      "load": "Non è stato possibile caricare i tuoi biglietti.",
+      "required": "Compila l'oggetto e la descrizione.",
+      "send": "Non è stato possibile inviare il biglietto.",
+      "emptyReply": "Scrivi una risposta prima di inviare.",
+      "replyWithMessage": "Non è stato possibile rispondere al ticket: {{message}}",
+      "closeWithMessage": "Impossibile chiudere il ticket: {{message}}",
+      "delete": "Impossibile rimuovere il biglietto."
+    },
+    "messages": {
+      "sent": "Biglietto inviato. Puoi continuare la conversazione in I miei biglietti.",
+      "replySent": "Risposta inviata.",
+      "closed": "Biglietto chiuso.",
+      "deleted": "Biglietto rimosso dalla tua lista."
+    },
+    "confirm": {
+      "close": "Vuoi chiudere il ticket \"{{subject}}\"?",
+      "delete": "Vuoi rimuovere \"{{subject}}\" dall'elenco dei biglietti?"
+    }
+  },
+  "astur": {
+    "eyebrow": "Creatore e sviluppatore",
+    "subtitle": "Info Tarkov è iniziato come uno strumento personale per centralizzare la vera intelligenza, progresso e utilità all'interno di Escape From Tarkov. Se vuoi seguire lo sviluppo, suggerire idee o unirti alla community, questi sono i miei social.",
+    "open": "Aprire",
+    "links": {
+      "twitch": "Stream, Tarkov, aggiornamenti sulla community e sui progetti.",
+      "x": "Aggiornamenti rapidi, idee e comunicazione diretta.",
+      "instagram": "Contenuti personali, clip e presenza sui social."
+    }
+  },
+  "troubleshooting": {
+    "title": "KNOWN ERROR LOG",
+    "subtitle": "Anomalie note dell'app e soluzioni alternative disponibili. Le correzioni sono ancora in fase di elaborazione.",
+    "symptomLabel": "SYMPTOM",
+    "fixLabel": "FIX",
+    "incidents": [
+      {
+        "code": "ERR_GRAPH_ISO_V1",
+        "title": "Isolamento della corrispondenza di ricerca",
+        "symptom": "Durante la ricerca di termini condivisi in Missioni / Kappa, come \"Crisi\", l'app filtra correttamente ma potrebbe prima esporre solo una corrispondenza visibile all'interno del trader attivo.",
+        "fix": "Se stai cercando una missione con un nome comune o condiviso, digita la parola nella casella di ricerca ed esamina le diverse schede dei commercianti per vedere tutte le corrispondenze."
+      },
+      {
+        "code": "SYS_GUEST_STORAGE_V2",
+        "title": "Progressi locali in modalità ospite",
+        "symptom": "Se utilizzi l'app senza effettuare l'accesso, i progressi della missione vengono salvati in localStorage. Può andare perso dopo aver cancellato i dati del browser, utilizzando una pulizia aggressiva, la modalità di navigazione in incognito o cambiando dispositivo.",
+        "fix": "Crea un account e accedi per salvare i progressi in Supabase. La modalità ospite funziona ancora, ma non deve essere trattata come persistenza permanente."
+      },
+      {
+        "code": "RETE_ESTERNA_APIS_V1",
+        "title": "Dipendenza API esterna",
+        "symptom": "Lo stato del server, Goons Tracker, Flea Market e alcuni dati Kappa dipendono da fonti esterne. Se un API, proxy o sito esterno fallisce, il modulo potrebbe mostrare dati vuoti, dati vecchi o un errore temporaneo.",
+        "fix": "Riprova dopo qualche minuto e controlla la connessione. I moduli critici mantengono fallback o messaggi di stato quando una fonte esterna non risponde."
+      },
+      {
+        "code": "GOONS_HTML_PARSE_V1",
+        "title": "Goons Lettura del tracker",
+        "symptom": "Goons Tracker estrae informazioni da HTML esterno. Se il sito di origine cambia struttura, l'app potrebbe non rilevare correttamente la mappa attiva.",
+        "fix": "Se viene visualizzato un errore di acquisizione o la mappa non sembra affidabile, convalidare i dati con la fonte originale finché il parser non viene aggiornato."
+      },
+      {
+        "code": "I18N_REVIEWED_PRE_1_0",
+        "title": "Copertura ES/EN rivista",
+        "symptom": "Il selettore ES/EN ora copre l'interfaccia pubblica principale: home, login, account, Report, Stato del server, Missioni / Kappa, PMC Profilo, Flea, Hideout, Boss, Prestigio, Sistema chiave, Quest Optimizer, Goons, Mappe, Informazioni e Simulatore balistico.",
+        "fix": "La traduzione visibile è stata rivista per la fase pre-1.0. Il dossier è escluso perché si tratta di documentazione di progetto privato; eventuali nuovi moduli dovranno essere aggiunti fin dall'inizio con le chiavi ES/EN i18n."
+      },
+      {
+        "code": "PMC_STATIC_INDEX_V1",
+        "title": "PMC Profilo e indice pubblico",
+        "symptom": "PMC Il profilo dipende dai giocatori pubblici.tarkov.dev JSON file. Possono apparire solo i giocatori già visualizzati su tarkov.dev/players e presenti nell'indice pubblico, e tale indice si aggiorna circa una volta al giorno.",
+        "fix": "Se un giocatore non appare, apri prima il suo profilo su tarkov.dev/players e attendi il prossimo aggiornamento dell'indice. L'app evita la ricerca protetta da Turnstile e utilizza solo i file JSON pubblici disponibili."
+      },
+      {
+        "code": "BUILD_CHUNK_SIZE_V1",
+        "title": "Avviso sulla dimensione del pacchetto",
+        "symptom": "La build di produzione viene superata, ma Vite avvisa in caso di blocchi di grandi dimensioni a causa delle dimensioni accumulate dell'app, delle risorse e dei moduli implementati.",
+        "fix": "Non blocca la produzione. I moduli principali utilizzano già il caricamento lento; prima della versione 1.0, gli asset pesanti e la suddivisione extra dovrebbero essere rivisti se la performance reale lo richiede."
+      }
+    ]
+  },
+  "serverStatus": {
+    "title": "RETE/TELEMETRIA BATTLEYE",
+    "subtitle": "Stato in tempo reale per server centrali, gateway di autenticazione e servizi logici di Battlestate Games.",
+    "loading": "ESTRAZIONE DATI SULLO STATO DEL SERVIZIO / RACCOLTA TELEMETRIA...",
+    "refresh": "AGGIORNA STATO SERVIZIO",
+    "resyncing": "RE-SYNCING...",
+    "warning": "ATTENZIONE: {{error}}",
+    "consoleError": "Errore durante il recupero dello stato:",
+    "errors": {
+      "network": "Errore di rete durante la connessione al radar del server."
+    },
+    "status": {
+      "operational": "OPERATIONAL",
+      "down": "DOWN",
+      "maintenance": "MAINTENANCE",
+      "degraded": "DEGRADED"
+    },
+    "services": {
+      "website": "WEBSITE",
+      "forum": "OFFICIAL FORUM",
+      "authentication": "AUTENTICAZIONE/LOGIN",
+      "launcher": "LAUNCHER",
+      "groupLobby": "GROUP LOBBY",
+      "trading": "COMMERCIO / COMMERCIANTI",
+      "matchmaking": "MATCHMAKING",
+      "friends": "MESSAGGI E AMICI",
+      "inventory": "OPERAZIONI DI INVENTARIO"
+    },
+    "header": {
+      "localTime": "ORA //ZONA_LOCALE",
+      "serviceStatus": "SERVICE STATUS",
+      "systems": "SISTEMI {{active}} DI {{total}}"
+    }
+  },
+  "kappa": {
+    "title": "ALBERO DELLE MISSIONI STRATEGICHE",
+    "subtitle": "Monitoraggio separato di PvP e PvE. Cambia modalità senza perdere i progressi in nessuno dei due rami.",
+    "loading": "COMPILAZIONE MATRICE GERARCHICA, ATTENDERE PREGO...",
+    "optimizerButton": "Ottimizzatore di missioni",
+    "searchPlaceholder": "GLOBAL SEARCH...",
+    "traderLabel": "Commerciante",
+    "panel": {
+      "activeProfile": "ACTIVE PROFILE",
+      "syncing": "SINCRONIZZAZIONE PROGRESSO...",
+      "cloudActive": "PROGRESSO CLOUD ATTIVO",
+      "localGuest": "MODALITÀ OSPITE: PROGRESSO LOCALE",
+      "kappaOnly": "Kappa missioni",
+      "showIncomplete": "Mostra solo incompleto",
+      "showingIncomplete": "Mostra solo incompleto",
+      "statsTitle": "Statistiche della missione:",
+      "resetProgress": "Reimposta {{mode}} Progressi"
+    },
+    "stats": {
+      "profile": "Profilo",
+      "total": "Conteggio totale delle missioni",
+      "completed": "Missioni completate",
+      "remaining": "Missioni rimanenti",
+      "kappaTotal": "Kappa missioni",
+      "kappaCompleted": "Completato per Kappa",
+      "kappaRemaining": "Rimanente per Kappa"
+    },
+    "node": {
+      "completedStatus": "● {{mode}} COMPLETATO",
+      "availableStatus": "○ DISPONIBILE",
+      "lockedStatus": "🔒 REQUISITI",
+      "completeButton": "COMPLETE",
+      "completedButton": "{{mode}} COMPLETATO",
+      "openWiki": "ApriWiki",
+      "completeTitle": "Completa questa missione e tutte le missioni precedenti in {{mode}}",
+      "uncompleteTitle": "Deseleziona questa missione e cancella il suo ramo in {{mode}}"
+    },
+    "collector": {
+      "eyebrow": "Fence - Collector",
+      "title": "Kappa Articoli",
+      "subtitle": "Lista di controllo locale per salvare e selezionare gli elementi Trovato negli oggetti Raid prima di consegnare Collector in {{mode}}.",
+      "fallbackIcon": "ITEM",
+      "cardButton": "ARTICOLI DA COLLEZIONE: {{completed}}/{{total}} - {{percent}}%",
+      "progress": "{{completed}}/{{total}} elementi contrassegnati",
+      "searchPlaceholder": "Cerca oggetto, suggerimento o spawn...",
+      "reset": "RESET",
+      "empty": "Nessun articolo corrisponde alla tua ricerca.",
+      "footer": "Elenco articoli base Collector/Kappa. I requisiti possono cambiare con le patch, quindi ricontrolla prima di consegnare. Totale caricato: {{total}}."
+    },
+    "confirm": {
+      "resetProgress": "Sei sicuro di voler reimpostare tutti i progressi della missione {{mode}}?",
+      "resetCollector": "Sei sicuro di voler reimpostare la lista di controllo {{mode}} Collector?"
+    },
+    "errors": {
+      "collectorImages": "Errore durante il caricamento delle immagini Collector",
+      "cloudLoad": "Impossibile caricare i progressi nel cloud. Conservare la copia locale.",
+      "cloudCreate": "Impossibile creare l'avanzamento cloud iniziale.",
+      "cloudSync": "Impossibile sincronizzare i progressi con Supabase.",
+      "serverCommunication": "Errore di comunicazione del server",
+      "centralApi": "Errore di collegamento centrale API."
+    }
+  },
+  "bossesModule": {
+    "title": "INTEL: BOSSES",
+    "subtitle": "Intelligenza critica per ogni boss del gioco.",
+    "searchPlaceholder": "SEARCH TARGET...",
+    "allMaps": "ALL MAPS",
+    "allDifficulties": "ALL DIFFICULTIES",
+    "visibleTargets": "{{count}} obiettivi visibili",
+    "loadingIntel": "SINCRONIZZAZIONE DELLE INFORMAZIONI DAL SERVER...",
+    "reviewedIntel": "RAPPORTO TATTICO REVISIONATO",
+    "solo": "SOLO",
+    "squad": "SQUAD",
+    "unknownExactZone": "Zona esatta in attesa di conferma",
+    "difficulty": {
+      "Medium": "MEDIUM",
+      "Hard": "HARD",
+      "Very Hard": "VERY HARD"
+    },
+    "spawnZones": {
+      "bigpipe": {
+        "Customs": {
+          "0": "Roccaforte",
+          "1": "Nuova stazione di servizio",
+          "2": "Avvicinamento ai dormitori",
+          "3": "Percorso dei Crackhouse"
+        },
+        "Lighthouse": {
+          "0": "Impianto di trattamento delle acque",
+          "1": "Cresta dello chalet",
+          "2": "Approccio al villaggio"
+        },
+        "Shoreline": {
+          "0": "Stazione meteorologica",
+          "1": "Cottage",
+          "2": "Avvicinamento al molo"
+        },
+        "Woods": {
+          "0": "Scav bunker",
+          "1": "Percorso del campo USEC",
+          "2": "Periferia della segheria"
+        }
+      },
+      "birdeye": {
+        "Customs": {
+          "0": "Sorveglianza della roccaforte",
+          "1": "Viste di Crackhouse",
+          "2": "Avvicinamento ai dormitori"
+        },
+        "Lighthouse": {
+          "0": "Scogliere di lunghe strade",
+          "1": "Sorveglianza sul trattamento delle acque",
+          "2": "Cresta dello chalet"
+        },
+        "Shoreline": {
+          "0": "Cresta della stazione meteorologica",
+          "1": "Viste dei cottage",
+          "2": "Avvicinamento al molo"
+        },
+        "Woods": {
+          "0": "Creste della segheria",
+          "1": "Percorso del campo USEC",
+          "2": "Scav boschi bunker"
+        }
+      },
+      "knight": {
+        "Customs": {
+          "0": "Roccaforte",
+          "1": "Spinta da crackhouse",
+          "2": "Avvicinamento ai dormitori"
+        },
+        "Lighthouse": {
+          "0": "Impianto di trattamento delle acque",
+          "1": "Chalet",
+          "2": "Approccio lungo la strada"
+        },
+        "Shoreline": {
+          "0": "Stazione meteorologica",
+          "1": "Cottage",
+          "2": "Avvicinamento al molo"
+        },
+        "Woods": {
+          "0": "Bordo della segheria",
+          "1": "Percorso del campo USEC",
+          "2": "Scav bunker"
+        }
+      },
+      "glukhar": {
+        "Reserve": {
+          "0": "Stazione ferroviaria",
+          "1": "Knight edifici",
+          "2": "Edifici di pegni",
+          "3": "edifici K",
+          "4": "Accesso al bunker sotterraneo"
+        }
+      },
+      "kaban": {
+        "Streets_of_Tarkov": {
+          "0": "Concessionaria LexOs",
+          "1": "Cortile di LexO",
+          "2": "Posizioni delle mitragliatrici",
+          "3": "Lato della gru crollato"
+        }
+      },
+      "killa": {
+        "Interchange": {
+          "0": "Goshan",
+          "1": "IDEA",
+          "2": "OLI",
+          "3": "Centro commerciale centrale",
+          "4": "Transizioni di parcheggio"
+        }
+      },
+      "kollontay": {
+        "Streets_of_Tarkov": {
+          "0": "Centro commerciale Klimov",
+          "1": "Albergo Pineta",
+          "2": "Aree di polizia",
+          "3": "Pattuglia nelle vie centrali"
+        }
+      },
+      "partisan": {
+        "Customs": {
+          "0": "Approcci boscosi",
+          "1": "Esterno dei dormitori",
+          "2": "Rotte dei contrabbandieri"
+        },
+        "Woods": {
+          "0": "Trappole della foresta",
+          "1": "Periferia della segheria",
+          "2": "Percorso del campo USEC"
+        },
+        "Shoreline": {
+          "0": "Boschi del villaggio",
+          "1": "Avvicinamento ai cottage",
+          "2": "Itinerario della stazione meteorologica"
+        },
+        "Factory": {
+          "0": "Tunnel di espansione",
+          "1": "Percorsi dei cancelli",
+          "2": "L'ufficio si avvicina"
+        }
+      },
+      "reshala": {
+        "Customs": {
+          "0": "Dormitori",
+          "1": "Nuova stazione di servizio",
+          "2": "Roccaforte",
+          "3": "Scav percorsi del checkpoint"
+        }
+      },
+      "sanitar": {
+        "Shoreline": {
+          "0": "Stazione di cura",
+          "1": "Cottage",
+          "2": "Molo",
+          "3": "Percorsi in ambulanza"
+        }
+      },
+      "shturman": {
+        "Woods": {
+          "0": "Segheria",
+          "1": "Mucchi di legno",
+          "2": "Viste di roccia da cecchino",
+          "3": "Percorsi di legname esterni"
+        }
+      },
+      "tagilla": {
+        "Factory": {
+          "0": "Zona ufficio",
+          "1": "Metropolitana",
+          "2": "Cancello 0/3 percorsi",
+          "3": "Corridoi di espansione"
+        }
+      },
+      "Zryachiy": {
+        "Lighthouse": {
+          "0": "Lightkeeper isola",
+          "1": "Avvicinamento al ponte",
+          "2": "Creste dell'isola"
+        }
+      },
+      "wedge": {
+        "Icebreaker": [
+          "Palestra di livello 3",
+          "Area di contatto della Divisione Nera",
+          "3-6 accompagnatori"
+        ]
+      }
+    },
+    "sections": {
+      "spawnByMap": "SPAWN BY MAP",
+      "knownSpawnZones": "ZONE DI SPAWN CONOSCIUTE",
+      "registeredLocations": "LOCALITÀ REGISTRATE",
+      "guards": "ESCALATION SQUADRA/GUARDIA",
+      "visuals": "DETTAGLI VISIVI E FISICI",
+      "behavior": "COMBAT BEHAVIOR",
+      "entryPlan": "PIANO D'INGRESSO CONSIGLIATO",
+      "weapons": "PRIMARY WEAPONS",
+      "ammo": "MUNIZIONI RILEVATE",
+      "weaknesses": "PUNTI DI IMPATTO CRITICI/PUNTI DI DEBOLEZZA",
+      "loot": "HIGH VALUE LOOT"
+    },
+    "plan": {
+      "confirmSpawn": "Priorità di apertura: conferma lo spawn su {{map}}.",
+      "avoidLongDuels": "Evita operazioni lunghe: {{weakness}}",
+      "expectedAmmo": "Munizioni previste: {{ammo}}. Entra con una vera copertura e un'uscita libera.",
+      "veryHard": {
+        "line1": "Non attraversare le linee di vista aperte senza previa informazione.",
+        "line2": "Utilizzare ottica, portata e copertura; supponendo che uno scontro frontale sia solitamente fatale."
+      },
+      "hard": {
+        "line1": "Eliminare le protezioni o gli angoli secondari prima di spingere.",
+        "line2": "Le granate e il riposizionamento valgono più dello scambio faccia a faccia."
+      },
+      "medium": {
+        "line1": "Isolare il bersaglio e tagliare i percorsi di spinta.",
+        "line2": "Non restare fermo dopo il primo sparo; riposizionare e forzare un altro angolo."
+      }
+    },
+    "dossiers": {
+      "bigpipe": {
+        "guards": "Accompagnato da Knight e Birdeye (Il Goons)",
+        "visuals": "Costruzione massiccia, tatuaggi estesi e la sua caratteristica pipa meccanica.",
+        "behavior": "Estremamente aggressivo. Spinge e fiancheggia a distanza ravvicinata mentre Knight esercita pressione.",
+        "weapons": "MGL 40mm, Remington 870, Colt M4A1",
+        "ammo": "40x46 mm HE, 12/70 AP-20, 5,56x45 mm M855A1",
+        "weaknesses": "Testa non protetta, nessun casco pesante e articolazioni esposte.",
+        "loot": "Lanciagranate MGL, zaino speciale di Pipe e chiavi ad alta priorità."
+      },
+      "birdeye": {
+        "guards": "Accompagnato da Knight e Big Pipe (Il Goons)",
+        "visuals": "Equipaggiamento mimetico leggero e cuffie tattiche avanzate.",
+        "behavior": "Tiratore silenzioso. Si riposiziona costantemente e i suoi passi sono appena udibili.",
+        "weapons": "Remington M700, SR-25, M4A1",
+        "ammo": "7,62x51 mm M61/M993, 5,56x45 mm SSA AP",
+        "weaknesses": "Torso e arti esposti; manca di un'armatura pesante sostenuta.",
+        "loot": "Fucile a ripetizione modificato, carte di accesso e munizioni militari premium."
+      },
+      "glukhar": {
+        "guards": "Da 6 a 7 guardie pesantemente corazzate",
+        "visuals": "Uniforme mimetica urbana russa, corporatura robusta e senza casco.",
+        "behavior": "Strategico e difensivo. Le sue guardie si divisero in ruoli d'assalto, esploratore e tiratore scelto.",
+        "weapons": "COME VAL, M1A, ASH-12",
+        "ammo": "9x39 mm SP-6/BP, 7,62x51 mm M62, 12,7x55 mm PS12B",
+        "weaknesses": "Colpi alla testa, soprattutto se isolati dalle sue guardie d'assalto.",
+        "loot": "Riserva chiavi militari, FIR ASH-12 e caricatori ad alta capacità."
+      },
+      "kaban": {
+        "guards": "Folto gruppo di guardie corazzate e cecchini statici",
+        "visuals": "Struttura enorme, abiti civili pesanti e posizione trincerata nella concessionaria di automobili.",
+        "behavior": "Statico ma letale. Utilizza mitragliatrici pesanti montate e un fuoco incessante e prolungato.",
+        "weapons": "PKP Pecheneg, PKM, Tokarev TT-33",
+        "ammo": "7,62x54mmR SNB/BT, 7,62x25mm PST",
+        "weaknesses": "Mobilità estremamente limitata; vulnerabile ai fianchi e alle granate.",
+        "loot": "Mitragliatrice PKP/PKM, chiavi Streets e custodie complete di munizioni."
+      },
+      "killa": {
+        "guards": "Si genera completamente da solo",
+        "visuals": "Tuta nera con tre strisce, armatura 6B13 e casco Maska con visiera.",
+        "behavior": "Cacciatore implacabile. Corre verso l'audio dei passi e spara lunghe raffiche.",
+        "weapons": "RPK-16, PP-19-01 Vityaz, AK-74M",
+        "ammo": "5,45x39 mm 7N40 / Igolnik, 9x19 mm PBP",
+        "weaknesses": "Punti ciechi laterali, parte posteriore della testa e gambe.",
+        "loot": "Casco Maska-1Sch e giubbotto antiproiettile in polietilene Killa di livello 5."
+      },
+      "knight": {
+        "guards": "Leader del trio, accompagnato da Big Pipe e Birdeye",
+        "visuals": "Maschera da teschio balistico e portapiatti d'assalto modulare.",
+        "behavior": "Operatore di punta. Rileva bersagli a distanza estrema e avvia inseguimenti letali.",
+        "weapons": "FN SCAR-H, MDR 5.56, Glock 18C",
+        "ammo": "7,62x51 mm BCP FMJ/M80, 5,56x45 mm M855A1",
+        "weaknesses": "Visiera e arti inferiori con maschera balistica.",
+        "loot": "Maschera da teschio, portapiatti d'assalto e stimolanti avanzati."
+      },
+      "kollontay": {
+        "guards": "Da 3 a 5 guardie con equipaggiamento della polizia russa",
+        "visuals": "Ex uniforme della polizia militare, berretto da ufficiale e manganello antisommossa.",
+        "behavior": "Pressione psicologica. Se si avvicina troppo, usa il bastone e può forzare il blocco dell'arma.",
+        "weapons": "RPK-16, Stechkin APS, bastone di gomma",
+        "ammo": "PPBS/BP da 5,45x39 mm, PBM da 9x18 mm",
+        "weaknesses": "Angoli laterali del busto; vulnerabile mentre corre con il testimone.",
+        "loot": "Bastone Kollontay unico, chiavi della stazione di polizia stradale ed equipaggiamento della polizia."
+      },
+      "partisan": {
+        "guards": "Si genera completamente da solo",
+        "visuals": "Mimetica boschiva usurata, barba folta e grande zaino tattico.",
+        "behavior": "Trappolatore ostile. Posiziona granate a innesco e steli nella vegetazione.",
+        "weapons": "AKM, SKS modificati, trappole a tripwire",
+        "ammo": "Granate 7,62x39mm BP / PP, F-1 / VOG-25",
+        "weaknesses": "Facile da abbandonare in terreno aperto se le sue trappole vengono rilevate prima del contatto.",
+        "loot": "Kit tripwire, AKM da collezione e piastrine da contrabbandiere."
+      },
+      "reshala": {
+        "guards": "4 guardie d'élite Zavodskoy",
+        "visuals": "Giacca di pelle marrone con motivi dorati e senza armatura visibile.",
+        "behavior": "Codardo ed evasivo. Si nasconde mentre le sue guardie assaltano e mettono in sicurezza l'area.",
+        "weapons": "Pistola TT dorata, AK-101, AK-74N",
+        "ammo": "PST Gzh, 5,56x45 mm M856A1, 5,45x39 mm BT",
+        "weaknesses": "Busto e testa; non ha un'armatura nativa.",
+        "loot": "Collector pistola TT dorata, chiave dell'ufficio doganale e bitcoin."
+      },
+      "sanitar": {
+        "guards": "2 guardie pesantemente armate",
+        "visuals": "Camice medico blu sopra abiti civili e una borsa per il kit chirurgico.",
+        "behavior": "Supporto dinamico. Cura e potenzia costantemente le sue guardie durante il combattimento.",
+        "weapons": "VSS Vintorez, OP-SKS, Kedr-B",
+        "ammo": "9x39mm SP-5, 7,62x39mm PS, 9x18mm SP7",
+        "weaknesses": "Finestre della testa e di animazione non protette durante l'iniezione di stimolanti.",
+        "loot": "Valigetta medica con stimolanti rari, oftalmoscopio, LedX e siringhe."
+      },
+      "shturman": {
+        "guards": "2 guardie equipaggiate con fucili a lungo raggio",
+        "visuals": "Cappotto invernale con cappuccio in pelliccia, viso esposto e forte controllo della segheria.",
+        "behavior": "Cecchino di zona. Scatta a distanze estreme con cadenza calcolata.",
+        "weapons": "SVDS, AK-105",
+        "ammo": "7,62x54mmR 7N1 / BNS, 5,45x39mmBT",
+        "weaknesses": "Testa e arti privi di armatura balistica rigida.",
+        "loot": "Chiave della scorta di Shturman, SVDS modificato e carte d'accesso rosse."
+      },
+      "tagilla": {
+        "guards": "Si genera completamente da solo",
+        "visuals": "Pantaloni bassi da saldatore, busto tatuato e maschera da saldatore pesante.",
+        "behavior": "Assalto implacabile a distanza ravvicinata. Insegue con la mazza e costringe al combattimento ravvicinato.",
+        "weapons": "Il martello di Tagilla, Saiga-12, MP-155 Ultima",
+        "ammo": "12/70 Flechette / AP-20, pallettoni Magnum",
+        "weaknesses": "Schiena e gambe esposte con elevata vulnerabilità ai danni alla carne.",
+        "loot": "Maschera da saldatura di livello 5, portapiatti rigido di Tagilla e mazza."
+      },
+      "Zryachiy": {
+        "guards": "2 cecchini di supporto nascosti sui pendii dell'isola",
+        "visuals": "Passamontagna bianco con motivo cucito e ottica montata sull'occhio.",
+        "behavior": "Cecchino difensivo assoluto. Apre il fuoco se attraversi il ponte senza un trasmettitore attivo.",
+        "weapons": "AXMC .338, SV-98",
+        "ammo": ".338 Lapua Magnum AP, 7,62x54 mmR BS",
+        "weaknesses": "Posizione difensiva statica; vulnerabile se interrompi la sua linea di vista iniziale.",
+        "loot": "Fucile tattico AXMC .338, munizioni Lapua AP da collezione e telemetria militare."
+      },
+      "wedge": {
+        "guards": "Boss della Divisione Nera con da 3 a 6 seguaci a seconda del numero di giocatori nel raid.",
+        "visuals": "Casco EXFIL nero con visiera, maschera antigas Avon e portatarga Spiritus LV-119.",
+        "behavior": "Contatto della Divisione Nera d'Elite nella palestra di livello 3 del Rompighiaccio. Trattalo come una squadra coordinata con armature pesanti e munizioni ad alta penetrazione.",
+        "weapons": "HK MP7A1, FN SCAR-H, X-17, DS Arms SA-58, Desert Tech MDR, HK USP e SOG Voodoo Hawk",
+        "ammo": "4,6x30 mm AP SX, 5,56x45 mm M995, 7,62x51 mm M993, 0,45 ACP AP",
+        "weaknesses": "880 salute e 3-6 follower; isolare prima le protezioni ed evitare angoli esposti all'interno di Icebreaker.",
+        "loot": "Portatarga Spiritus LV-119, custodia portabadge, Euro, Dollari e attrezzatura Black Division."
+      }
+    }
+  },
+  "goonsModule": {
+    "title": "GOONS TRACKER",
+    "subtitle": "Goons intelligence e la loro ultima posizione conosciuta.",
+    "loading": "Estrazione dei dati Goons in modalità {{mode}}...",
+    "channel": "{{mode}} CANALE",
+    "noReports": "NESSUN REPORT OPERATIVO",
+    "dateLocale": "it-USA",
+    "unknownMap": "SCONOSCIUTO (FUORI COPERTURA)",
+    "activeChannelGeolocation": "GEOLOCALIZZAZIONE DEL CANALE ATTIVO",
+    "detectedLocation": "POSIZIONE ATTUALE RILEVATA",
+    "gameMode": "GAME MODE",
+    "telemetryError": "⚠ ERRORE DI TELEMETRIA",
+    "telemetryOk": "✓ {{mode}}",
+    "lastReport": "Ultimo rapporto: {{report}}",
+    "cachedReport": "Ultimi dati salvati: {{report}}",
+    "confirmedLocation": "⚠ RAPPORTO: LOCAZIONE CONFIRMED",
+    "cleanTransmission": "✓ TRASMISSIONE PULITA",
+    "consoleCaptureError": "Acquisizione non riuscita in modalità {{mode}}:",
+    "errors": {
+      "mapParse": "Impossibile estrarre la mappa attiva dall'HTML del tracker"
+    },
+    "profiles": {
+      "knight": {
+        "role": "CAPO SQUADRA / ASSALTO",
+        "desc": "Il cervello tattico della squadra. Estremamente aggressivo, indossando la sua iconica maschera da teschio, si spinge direttamente verso la tua posizione e ti fiancheggia con implacabile fuoco soppressivo non appena rileva te o la tua squadra."
+      },
+      "bigPipe": {
+        "role": "SUPPORTO PESANTE/ARTIGLIERIA",
+        "desc": "Specialista in demolizioni e fuoco di copertura. Solitamente trasporta un lanciagranate multi-colpo M32A1 da 40 mm o mitragliatrici pesanti, fornendo una soppressione devastante mentre Knight avanza."
+      },
+      "birdeye": {
+        "role": "RECON / MARKSMAN",
+        "desc": "Il cecchino silenzioso del trio. I suoi passi sono molto silenziosi e apre il fuoco da lunga distanza."
+      }
+    },
+    "maps": {
+      "customs": {
+        "label": "ZONA: FORTEZZA/DORMITORI"
+      },
+      "woods": {
+        "label": "ZONA: CAMPO ANTENNA/SCAV"
+      },
+      "shoreline": {
+        "label": "ZONA: STAZIONE RADAR / RESORT"
+      },
+      "lighthouse": {
+        "label": "ZONA: CHALET / TRATTAMENTO ACQUE"
+      }
+    }
+  },
+  "hideoutModule": {
+    "title": "LOGISTICA DEL NASCONDIGLIO",
+    "subtitle": "Costi PVP/PVE separati, lista di controllo dei materiali locali, avvisi FIR e requisiti di stazione, commerciante e abilità.",
+    "loading": "CONNESSIONE AL MODULO HIDEOUT, ATTENDERE...",
+    "sync": {
+      "cloud": "PROGRESSO CLOUD ATTIVO",
+      "syncing": "SINCRONIZZAZIONE PROGRESSO...",
+      "local": "MODALITÀ LOCALE: ACCEDI ALLA SINCRONIZZAZIONE",
+      "localError": "MODALITÀ LOCALE: TABELLA CLOUD NON DISPONIBILE O ERRORE SINCRONIZZAZIONE"
+    },
+    "errors": {
+      "externalFallback": "Dati esterni non disponibili. Mostra fallback locale ridotto."
+    },
+    "list": {
+      "sections": "SECTIONS",
+      "progress": "Progressi",
+      "selectSection": "Seleziona sezione",
+      "availableUpgrades": "{{count}} aggiornamento/i sbloccato/i",
+      "blocked": "LOCK"
+    },
+    "detail": {
+      "targetLevel": "{{mode}} / LIVELLO OBIETTIVO",
+      "blockedBy": "Bloccato da:",
+      "stationLevel": "{{name}} livello {{level}}",
+      "built": "Costruito",
+      "notBuilt": "Non costruito",
+      "levelOption": "Livello {{level}}",
+      "budget": "{{mode}} BILANCIO",
+      "noCost": "NO COST",
+      "pendingChecklist": "IN ATTESA DELLA CHECKLIST",
+      "completeNoCost": "COMPLETO/NESSUN COSTO",
+      "constructionTime": "TEMPO DI COSTRUZIONE",
+      "immediate": "IMMEDIATE",
+      "minutes": "{{minutes}}MIN",
+      "hours": "{{hours}} ORE",
+      "hoursMinutes": "{{hours}}H {{minutes}}M",
+      "materials": "MATERIALS",
+      "materialsMarked": "{{completed}}/{{total}} MARCATO",
+      "firRequirementCount": "{{count}} FIR requisiti",
+      "noFir": "Nessun requisito FIR rilevato",
+      "requiredStations": "STAZIONI RICHIESTE",
+      "noRequiredStations": "Non sono necessarie altre stazioni di nascondiglio.",
+      "tradersSkills": "COMMERCIANTI E COMPETENZE",
+      "noTradersSkills": "Nessun commerciante o requisito di competenza registrato.",
+      "levelShort": "LIVELLO {{level}}",
+      "requiredObjects": "REQUIRED OBJECTS",
+      "priceEach": "Flea {{mode}} ciascuno: {{price}}",
+      "firRequired": "FIR REQUIRED",
+      "fleaOk": "FLEA OK",
+      "noMaterials": "Nessun materiale specifico registrato."
+    }
+  },
+  "storyModule": {
+    "title": "STORY DECISIONS",
+    "subtitle": "Tutti i percorsi, le decisioni e i punti di non ritorno che dovresti seguire per raggiungere i diversi finali della storia Tarkov.",
+    "noReturn": "Punto di non ritorno",
+    "armoredCaseQuestion": "Cosa fai con la custodia corazzata?",
+    "kermanQuestion": "Lavorare con Kerman o rifiutare Kerman?",
+    "evidenceQuestion": "Raccogli prove contro TerraGroup",
+    "difficulty": {
+      "medium": "Medio",
+      "hard": "Difficile",
+      "veryHard": "Molto difficile"
+    },
+    "initial": {
+      "fallingSkies": {
+        "badge": "Obiettivo della campagna",
+        "title": "FALLING SKIES",
+        "body": "Far avanzare la catena principale finché le decisioni che modellano l'accesso al Terminale e i finali non diventano disponibili."
+      },
+      "armoredCase": {
+        "badge": "Obiettivo del recupero",
+        "title": "RECUPERA VALIGETTA CORAZZATA",
+        "body": "Recupera la custodia corazzata dall'aereo precipitato a Woods. Da qui, consegnarlo o trattenerlo modifica successivamente costi, esigenze e percorsi."
+      }
+    },
+    "armoredChoices": {
+      "keep": "OPZIONE: MANTENERE LA CASSA CORAZZATA",
+      "prapor": "OPZIONE: CONSEGNARLO AL PRAPOR"
+    },
+    "keepPath": {
+      "badge": "Capitolo: Il biglietto",
+      "title": "CONTENITORE NELLE TUE MANI",
+      "body": "La custodia corazzata rimane sotto il tuo controllo. Eviti di fare affidamento su Prapor all'inizio, ma questa scelta può rendere un percorso successivo molto più costoso."
+    },
+    "praporPath": {
+      "badge": "Capitolo: Il biglietto",
+      "connectionBadge": "Collegare i punti",
+      "connectionTitle": "LA CASSA CORAZZATA È NELLE TUE MANI",
+      "steps": {
+        "lighthouse": {
+          "label": "Faro",
+          "body": "Trova materiale compromettente su Prapor su Lighthouse per fare leva contro di lui."
+        },
+        "access": {
+          "label": "Requisito di accesso",
+          "body": "Ottieni l'accesso a Lightkeeper. Il provider di rete 1 deve essere disponibile."
+        },
+        "bribe": {
+          "label": "Tangente commerciale",
+          "body": "Parla con Lightkeeper e consegnagli tre cartelle blu TerraGroup in modo che intervenga."
+        },
+        "signal": {
+          "label": "Segnale",
+          "body": "Spara un razzo giallo davanti all'Ultra Mall su Interchange per contrassegnare la finestra operativa."
+        },
+        "raidCondition": {
+          "label": "Condizione del raid",
+          "body": "Uccidi 15 bersagli senza morire durante lo stesso raid. Se fallisci, dovrai ripetere l'esecuzione."
+        },
+        "pickup": {
+          "label": "Raccolta",
+          "body": "Raccogli la custodia corazzata da Lightkeeper. Viene memorizzato nell'apposito slot e diventa nuovamente centrale nel percorso."
+        }
+      }
+    },
+    "containerOpening": {
+      "decryptBadge": "Decrittazione",
+      "decryptTitle": "APERTURA DEL CONTENITORE",
+      "decryptBody": "Trova il Signal Jammer in LABS per continuare l'apertura tecnica del container.",
+      "completeBadge": "Stato completo",
+      "completeTitle": "LA CASSA CORAZZATA E' APERTA",
+      "completeBody": "I progetti interni vengono esposti e puoi decidere cosa fare con le informazioni critiche."
+    },
+    "kermanChoices": {
+      "noKerman": "FILIALE: NON LAVORARE CON KERMAN",
+      "kerman": "FILIALE: LAVORA CON KERMAN"
+    },
+    "noKerman": {
+      "accessBadge": "Accesso al porto",
+      "easyWayTitle": "REALIZZAZIONE IN MODO FACILE",
+      "easyWayBody": "Recati all'ingresso del porto, usa il citofono e striscia la Keycard. Questo controllo conferma se l'uscita diretta è disponibile.",
+      "terminalBadge": "Risposta terminale",
+      "terminalTitle": "LA SCHEDA NON HA FUNZIONATO",
+      "terminalBody": "La carta viene rifiutata. Chiedi aiuto a Prapor per trovare un altro modo per accedere al Terminale.",
+      "showRequirements": "MOSTRA I REQUISITI DI AIUTO",
+      "hideRequirements": "NASCONDI REQUISITI DI AIUTO",
+      "standby": "Sistema in stand-by. Apri le richieste di aiuto per stimare il costo reale di questo ramo.",
+      "terminalPathBadge": "Percorso al terminale",
+      "terminalPathBody": "Recati a Shoreline tra le 21:00 e le 06:00, usa il citofono della torre e striscia la Keycard. Avvicinati al cancello del Terminal senza un'arma in mano e inizia il tuo tentativo di fuga.",
+      "terminalRetry": "Se il tentativo fallisce, dovrai acquistare una nuova banconota da Prapor per 5 milioni di rubli.",
+      "prapor": {
+        "prapor": {
+          "badge": "Storia: caso consegnato a Prapor",
+          "title": "QUOTA: 300 milioni di rubli",
+          "body": "Prapor chiede 300 milioni di rubli se gli dai la custodia corazzata. In cambio ti darà una nota per i soldati del Terminal."
+        },
+        "keep": {
+          "badge": "Storia: contenitore conservato",
+          "title": "QUOTA: 500 milioni di rubli + CONDIZIONI",
+          "body": "Prapor chiede 500 milioni di rubli se non gli hai dato la custodia corazzata. Richiede anche compiti a tempo.",
+          "items": [
+            "Trova 4 cartelle di report TerraGroup in LABS.",
+            "Dai a Prapor la chiavetta USB con i dati.",
+            "Uccidi 50 bersagli in Strade di Tarkov.",
+            "Uccidi 4 PMC e sopravvivi in ​​un singolo raid."
+          ],
+          "penalty": "Pena: queste attività devono essere completate in meno di 72 ore o dovrai consegnare il contenitore Kappa per progredire. Se completato in tempo, otterrai l'obiettivo Io sono la velocità."
+        }
+      }
+    },
+    "kermanIntro": {
+      "badge": "Prima fase Kerman",
+      "steps": {
+        "labs": {
+          "label": "Infiltrazione LABS",
+          "body": "Cerca la Masterkeycard e il dispositivo RFID in LABS."
+        },
+        "mechanic": {
+          "label": "Mechanic aiuto",
+          "body": "Se manca l'RFID, parla con Mechanic e pagagli 40 Bitcoin."
+        },
+        "streets": {
+          "label": "Strade",
+          "body": "Prendi la chiave dell'Elektroniks e vai nel suo appartamento in Streets per recuperare l'RFID."
+        },
+        "rfid": {
+          "label": "Attivazione della carta RFID",
+          "body": "Attiva la scheda RFID dalla custodia corazzata e avvicinala al lettore della porta."
+        }
+      }
+    },
+    "evidenceChoices": {
+      "fullEvidence": "OPZIONE A: FORNIRE TUTTE LE PROVE A KERMAN",
+      "lightkeeperTurn": "OPZIONE A-2: FORNIRE 2 OGGETTI DI PROVA E AFFIANCARE IL GUARDIANO",
+      "noEvidence": "OPZIONE B: RIFIUTARE DI AIUTARE KERMAN"
+    },
+    "routes": {
+      "fullEvidence": {
+        "badge": "Requisiti per questo percorso",
+        "items": [
+          "Costruisci il livello 3 dell'Intelligence Center nel Hideout.",
+          "Consegna tutte le 8 prove principali a Kerman.",
+          "Raggiungi la reputazione Fence 4.0.",
+          "Aumenta la reputazione del pilota BTR a 0,4.",
+          "Costruisci energia solare nel Hideout.",
+          "Crea l'RFID vuoto nel livello 3 dell'Intelligence Center.",
+          "Raid finale: Litorale tra le 21:00 e le 06:00, citofono, Keycard e varco Terminal disarmati."
+        ]
+      },
+      "lightkeeperTurn": {
+        "badge": "Requisiti per cambiare lato",
+        "items": [
+          "Costruisci il livello 3 dell'Intelligence Center nel Hideout.",
+          "Date solo 2 prove principali a Kerman e tagliate i legami.",
+          "Trova 5 mappe di ricognizione.",
+          "Consegna una chiavetta USB speciale a Lightkeeper.",
+          "Uccidi 30 PMC nei boschi e consegna 100 PMC piastrine.",
+          "Trova gli amuleti dei cultisti nelle stanze contrassegnate.",
+          "Lightkeeper ti dà la chiave magnetica del terminale.",
+          "Raid finale: Litorale tra le 21:00 e le 06:00, citofono, Keycard e avvicinamento al cancello non armato."
+        ]
+      },
+      "noEvidence": {
+        "badge": "Controllo dei costi",
+        "history": {
+          "prapor": "Azioni passate: hai dato la custodia corazzata a Prapor. Lo restituisce dopo averlo recuperato da Lightkeeper senza penalità aggiuntive.",
+          "keep": "Azioni passate: non hai consegnato il caso a Prapor. Richiede kit di riparazione, un contenitore sicuro e componenti militari."
+        },
+        "items": [
+          "Non consegnare alcuna prova a Kerman.",
+          "Vai a parlare con Prapor.",
+          "Recupera la valigetta con carico pericoloso e consegnala a Prapor.",
+          "Paga Prapor 1.000.000 di dollari.",
+          "Prapor ti dà una USB con codici Hash.",
+          "Costruisci energia solare nel Hideout.",
+          "Crea l'RFID vuoto nel livello 3 dell'Intelligence Center.",
+          "Raid finale: Litorale tra le 21:00 e le 06:00, citofono, Keycard e Terminal disarmati."
+        ]
+      }
+    },
+    "finals": {
+      "survivor": {
+        "title": "SURVIVOR ENDING",
+        "body": "Sei scappato sperando di scappare, ma la città bruciava dietro di te. Sei sopravvissuto, anche se Tarkov è rimasto in cenere."
+      },
+      "savior": {
+        "title": "SAVIOR ENDING",
+        "body": "Sei fuggito da Tarkov per l'umanità. L'attacco contro TerraGroup ha svelato i suoi segreti e rivelato la verità."
+      },
+      "debtor": {
+        "title": "DEBTOR ENDING",
+        "body": "Sei scappato da Tarkov, ma non da te stesso. Hai cambiato schieramento e sei rimasto legato ad un debito difficile da cancellare."
+      },
+      "fallen": {
+        "title": "FALLEN ENDING",
+        "body": "Sei scappato da Tarkov solo per cadere nell'oscurità. TerraGroup è sopravvissuto e il mondo ha cominciato a crollare."
+      }
+    }
+  },
+  "fleaModule": {
+    "title": "Flea Market Localizzatore",
+    "subtitle": "Analisi dinamica dei prezzi, grafici di fluttuazione e redditività degli articoli per PVP e PVE.",
+    "noDate": "Nessuna data",
+    "search": {
+      "title": "Ricerca ibrida ({{mode}}) - inglese/spagnolo senza accenti",
+      "placeholder": "Per esempio. zucchero, ledx, scheda grafica...",
+      "loading": "Ricerca nel database...",
+      "empty": "L'articolo richiesto non è stato trovato nel mercato {{mode}}"
+    },
+    "chart": {
+      "firstRecord": "Primo record",
+      "deltaVsPrevious": "{{delta}} rispetto al precedente",
+      "sevenDaysAgo": "7 giorni fa",
+      "min": "MIN:",
+      "max": "MAX:",
+      "now": "Ora"
+    },
+    "item": {
+      "space": "Spazio: {{width}}x{{height}} ({{slots}} slot)",
+      "pricePerSlot": "{{price}} / Slot",
+      "noRecord": "Nessun record"
+    },
+    "detail": {
+      "specificData": "Dati specifici - {{mode}}",
+      "historicalTrend": "Andamento storico ({{mode}}, ultimi 7 giorni)",
+      "avg24h": "Media globale 24 ore su 24:",
+      "currentLow": "Prezzo basso attuale:",
+      "traderValue": "Il commerciante acquista valore"
+    },
+    "hotDeals": {
+      "title": "Articoli più fluttuanti nel mercato {{mode}}:",
+      "loading": "Elenco elementi...",
+      "up": "Su {{pct}}",
+      "down": "Giù {{pct}}"
+    }
+  },
+  "prestigeModule": {
+    "eyebrow": "PVP progressione del gioco finale",
+    "pvpOnly": "PVP ONLY",
+    "title": "Prestigio",
+    "subtitle": "Requisiti, ricompense e una checklist locale per preparare ogni livello di prestigio. Il sistema di prestigio è disponibile solo in modalità PVP.",
+    "cardTitle": "Prestigio {{level}}",
+    "pmcLevel": "PMC {{level}}",
+    "detailSubtitle": "PMC livello {{level}} - {{money}}",
+    "summaryTitle": "Riepilogo",
+    "summaryBody": "{{done}} di {{total}} requisiti contrassegnati. Il denaro richiesto viene mostrato separatamente perché non viene tracciato automaticamente.",
+    "rewardsTitle": "Premi in primo piano",
+    "noteTitle": "Nota",
+    "noteBody": "I requisiti possono cambiare con le patch. I dati di base sono stati confrontati con il Wiki ufficiale Escape From Tarkov.",
+    "insigniaTitle": "Insegne di prestigio",
+    "insigniaAlt": "Insegne di prestigio {{level}}",
+    "groups": {
+      "quests": "Missioni",
+      "story": "Storia",
+      "skills": "Competenze",
+      "hideout": "Hideout"
+    },
+    "money": {
+      "p1": "10.000.000 di rubli",
+      "p2": "15.000.000 di rubli",
+      "p3": "15.000.000 di rubli",
+      "p4": "15.000.000 di rubli",
+      "p5": "20.000.000 di rubli",
+      "p6": "20.000.000 di rubli"
+    },
+    "requirements": {
+      "notRequired": "Non richiesto",
+      "p1Quest1": "Nuovo inizio (Prestigio 1)",
+      "p2Quest1": "Nuovo inizio (Prestigio 2)",
+      "p3Quest1": "Nuovo inizio (Prestigio 3)",
+      "p4Quest1": "Nuovo inizio (Prestigio 4)",
+      "p5Quest1": "Nuovo inizio (Prestigio 5)",
+      "p6Quest1": "Nuovo inizio (Prestigio 6)",
+      "collector": "Collector",
+      "tour": "Giro completo",
+      "fallingSkies": "Completa Cieli cadenti",
+      "ticketFromTarkov": "Ottieni il biglietto da Tarkov",
+      "theyAreAlreadyHere": "Completa Sono già qui",
+      "theTicket": "Completa il biglietto",
+      "strength10": "Livello di forza 10",
+      "endurance10": "Livello di resistenza 10",
+      "charisma7": "Livello di carisma 7",
+      "strength15": "Livello di forza 15",
+      "endurance15": "Livello di resistenza 15",
+      "charisma12": "Carisma livello 12",
+      "strength20": "Livello di forza 20",
+      "endurance20": "Livello di resistenza 20",
+      "charisma20": "Livello di carisma 20",
+      "intelligenceCenter1": "Centro di intelligence livello 1",
+      "intelligenceCenter2": "Centro di intelligence livello 2",
+      "security2": "Livello di sicurezza 2",
+      "security3": "Livello di sicurezza 3",
+      "restSpace2": "Spazio di riposo livello 2",
+      "restSpace3": "Spazio di riposo livello 3"
+    },
+    "rewards": {
+      "p1Reward1": "Prestigio 1 piastrina e fascia da braccio",
+      "p1Reward2": "Risultato prestigioso",
+      "p1Reward3": "+1 Carisma",
+      "p1Reward4": "5% di abilità e maestria nelle armi",
+      "p1Reward5": "Finestra di trasferimento 8x3",
+      "p2Reward1": "Targhetta e fascia da braccio Prestige 2",
+      "p2Reward2": "Risultati più prestigiosi",
+      "p2Reward3": "10% di abilità e maestria nelle armi",
+      "p2Reward4": "Finestra di trasferimento 8x4",
+      "p2Reward5": "+1 attività operativa giornaliera e +1 settimanale",
+      "p3Reward1": "Targhetta e fascia da braccio Prestige 3",
+      "p3Reward2": "Obiettivo Mantenere il passo",
+      "p3Reward3": "15% abilità e maestria nelle armi",
+      "p3Reward4": "Finestra di trasferimento 8x5",
+      "p3Reward5": "Voci BEAR/USEC sbloccabili",
+      "p4Reward1": "Targhetta e fascia da braccio Prestige 4",
+      "p4Reward2": "Risultati sempre più alti",
+      "p4Reward3": "20% di abilità e maestria nelle armi",
+      "p4Reward4": "Finestra di trasferimento 8x6",
+      "p4Reward5": "Abbigliamento BEAR/USEC Hawaii",
+      "p5Reward1": "Targhetta e fascia da braccio Prestige 5",
+      "p5Reward2": "Obiettivo Cinque Plus",
+      "p5Reward3": "25% di abilità e maestria nelle armi",
+      "p5Reward4": "Finestra di trasferimento 8x7",
+      "p5Reward5": "Coltello Finka dell'NKVD",
+      "p6Reward1": "Targhetta e fascia da braccio Prestige 6",
+      "p6Reward2": "Obiettivo Nessun limite alla perfezione",
+      "p6Reward3": "30% di abilità e maestria nelle armi",
+      "p6Reward4": "Finestra di trasferimento 8x8",
+      "p6Reward5": "Contenitore sicuro Gamma (Loui Peeton)"
+    }
+  },
+  "pmc": {
+    "header": {
+      "eyebrow": "Identità operativa",
+      "title": "PMC Profilo",
+      "subtitle": "Profilo collegato ai file player.tarkov.dev JSON pubblici. Vengono visualizzati solo i giocatori già visualizzati su tarkov.dev/players e l'indice pubblico si aggiorna una volta al giorno."
+    },
+    "actions": {
+      "refresh": "Aggiorna",
+      "search": "Ricerca",
+      "myProfile": "Il mio profilo",
+      "copyAccountId": "Copia ID acc",
+      "accountCopied": "ID account copiato",
+      "exportCard": "Carta di esportazione"
+    },
+    "search": {
+      "linkedUser": "Utente collegato",
+      "notConfigured": "Non configurato",
+      "placeholder": "Cerca un altro PMC...",
+      "history": "Storia"
+    },
+    "errors": {
+      "loadProfile": "Impossibile caricare il profilo PMC.",
+      "enterUsername": "Inserisci un nome utente Tarkov per eseguire la ricerca."
+    },
+    "stats": {
+      "level": "Livello",
+      "faction": "Fazione",
+      "xp": "XP",
+      "time": "Tempo",
+      "raids": "Raid",
+      "extracted": "Estratto",
+      "kills": "Uccide",
+      "pmcKills": "PMC uccide",
+      "account": "Account",
+      "achievements": "Risultati",
+      "activity": "Attività"
+    },
+    "sync": {
+      "status": "Stato",
+      "publicIndex": "Indice pubblico",
+      "localRead": "Lettura locale",
+      "noPublicDate": "Nessuna data pubblica",
+      "updatedMinutes": "Aggiornato {{count}} minuti fa",
+      "updatedHours": "Aggiornato {{count}} ore fa",
+      "updatedDays": "Aggiornato {{count}} giorni fa"
+    },
+    "status": {
+      "synced": "Sincronizzato",
+      "querying": "Interrogando",
+      "waiting": "In attesa",
+      "error": "Errore",
+      "syncedAt": "Sincronizzato · {{date}}",
+      "queryingProfile": "Interrogazione del profilo...",
+      "configureOrSearch": "Configura o cerca un utente",
+      "syncFailed": "Impossibile sincronizzare",
+      "preparing": "Preparazione della sincronizzazione"
+    },
+    "panels": {
+      "gear": "Equipaggiamento tattico",
+      "gearFallback": "Ingranaggio",
+      "favorites": "Preferiti"
+    },
+    "empty": {
+      "gear": "Nessun ingranaggio visibile",
+      "favorites": "Nessun preferito visibile"
+    },
+    "equipmentSlots": {
+      "firstPrimaryWeapon": "Arma primaria",
+      "secondPrimaryWeapon": "Arma secondaria",
+      "holster": "Pistola",
+      "scabbard": "Mischia",
+      "securedContainer": "Contenitore",
+      "armBand": "Fascia da braccio",
+      "headwear": "Copricapo",
+      "faceCover": "Copertura per il viso",
+      "armorVest": "Armatura",
+      "tacticalVest": "Impianto",
+      "backpack": "Zaino",
+      "eyewear": "Occhiali"
+    },
+    "achievements": {
+      "title": "Risultati del profilo",
+      "summary": "{{visible}} visibile su {{total}} completato. I risultati in primo piano mostrano le voci più esclusive nel profilo.",
+      "searchPlaceholder": "Cerca risultato...",
+      "empty": "Nessun risultato con questi filtri",
+      "top": "Risultati migliori",
+      "single": "Risultato",
+      "headers": {
+        "achievement": "Risultato",
+        "rarity": "Rarità",
+        "players": "Giocatori",
+        "completed": "Completato"
+      }
+    },
+    "achievementFilters": {
+      "all": "Tutto",
+      "legendary": "Leggendario",
+      "rare": "Raro",
+      "common": "Comune"
+    },
+    "achievementSorts": {
+      "date": "Data",
+      "rarity": "Rarità",
+      "name": "Nome"
+    },
+    "skills": {
+      "title": "Competenze agricole",
+      "summary": "{{count}} competenze rilevate nel profilo pubblico. Ordinati per progresso.",
+      "headers": {
+        "skill": "Abilità",
+        "level": "Livello",
+        "lastAccess": "Ultimo accesso"
+      }
+    },
+    "data": {
+      "title": "Dati disponibili",
+      "description": "Tarkov.dev protegge la ricerca diretta con Turnstile, ma pubblica i profili già visualizzati come statici JSON. Info Tarkov combina quel profilo con i cataloghi di oggetti/obiettivi per mostrare un foglio più utile.",
+      "lastPublicUpdate": "Ultimo aggiornamento pubblico: {{date}}",
+      "mainSkills": "Competenze principali: {{skills}}",
+      "detectedFields": "Campi rilevati: {{fields}}",
+      "noExtraFields": "Nessun campo aggiuntivo rilevato",
+      "noSkills": "Nessuna abilità rilevata"
+    },
+    "export": {
+      "title": "{{mode}} / INFOTARKOV PMC DOSSIER",
+      "topAchievement": "RISULTATO MIGLIORE: {{name}}",
+      "topAchievementEmpty": "MIGLIOR RISULTATO: -",
+      "syncedLine": "Sincronizzato: {{date}} · ID account: {{accountId}}",
+      "imageFallback": "Impossibile incorporare immagini esterne in questa esportazione.",
+      "sections": {
+        "gear": "Equipaggiamento tattico",
+        "favorites": "Preferiti",
+        "achievements": "Risultati in primo piano",
+        "skills": "Competenze agricole"
       }
     }
   }
