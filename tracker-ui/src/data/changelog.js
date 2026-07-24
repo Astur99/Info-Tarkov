@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.7';
+export const APP_VERSION = '1.2.8';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,36 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.8',
+    date: '2026-07-24',
+    codename: 'Flea Precision Chart',
+    type: 'changed',
+    title: {
+      es: 'Gráfica avanzada de fluctuación',
+      en: 'Advanced fluctuation chart'
+    },
+    summary: {
+      es: 'El Flea estrena una visualización precisa de precio medio y oferta mínima con escala, rejilla, rangos y detalles por escaneo.',
+      en: 'Flea gains a precise average-price and minimum-offer visualization with scale, grid, ranges and per-scan details.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'La gráfica representa simultáneamente el precio medio y la oferta mínima de cada muestra oficial.',
+          en: 'The chart simultaneously plots the average price and minimum offer from every official sample.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'Se añaden ejes calibrados, fechas, tooltip, número de ofertas y selectores de 24 horas, 7, 30 y 90 días.',
+          en: 'Calibrated axes, dates, tooltip, offer count and 24-hour, 7, 30 and 90-day selectors are added.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.7',
     date: '2026-07-24',

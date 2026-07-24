@@ -2093,7 +2093,10 @@
       "sevenDaysAgo": "7 days ago",
       "min": "MIN:",
       "max": "MAX:",
-      "now": "Now"
+      "now": "Now",
+      "range": "History range",
+      "averageSeries": "Average price",
+      "minimumSeries": "Minimum offer"
     },
     "item": {
       "space": "Space: {{width}}x{{height}} ({{slots}} slots)",

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { getIntlLocale } from '../../i18n/languages';
 import { fetchFleaHotDeals, fetchFleaPriceHistory, searchFleaItems } from './fleaApi';
+import FleaPriceChart from './FleaPriceChart';
 
 const MARKET_MODES = {
   PVP: 'regular',
@@ -25,7 +26,7 @@ export default function FleaTracker({ onViewChange }) {
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
   const [hotDeals, setHotDeals] = useState([]);
   const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
-  const [hoverSparkline, setHoverSparkline] = useState(null);
+  const [rangoHistorico, setRangoHistorico] = useState(7);
   const [errorBusqueda, setErrorBusqueda] = useState('');
   const [errorHotDeals, setErrorHotDeals] = useState('');
   const [cargandoHistorico, setCargandoHistorico] = useState(false);
@@ -198,119 +199,6 @@ export default function FleaTracker({ onViewChange }) {
     });
   };
 
-  // RENDERIZADOR DE GRÁFICAS REALES
-  const renderRealSparkline = (item) => {
-    const historicoLimpio = (item?.historicalPrices || [])
-      .filter(d => d && d.price && d.price > 0 && d.timestamp)
-      .sort((a, b) => Number(a.timestamp) - Number(b.timestamp));
-
-    const latestTimestamp = Number(historicoLimpio.at(-1)?.timestamp || 0);
-    const sevenDaysAgo = latestTimestamp - (7 * 24 * 60 * 60 * 1000);
-    const sevenDayHistory = historicoLimpio.filter(
-      (sample) => Number(sample.timestamp) >= sevenDaysAgo
-    );
-    const datosFinales = sevenDayHistory.length >= 2
-      ? sevenDayHistory
-      : historicoLimpio.slice(-2);
-    
-    const precios = datosFinales.map(d => d.price);
-    const maxPrecio = Math.max(...precios);
-    const minPrecio = Math.min(...precios);
-    const rango = (maxPrecio - minPrecio) === 0 ? 1 : (maxPrecio - minPrecio);
-
-    const svgWidth = 500;
-    const svgHeight = 100;
-    const paddingY = 20; 
-
-    const puntos = datosFinales.map((d, index) => {
-      const x = (index / (datosFinales.length - 1)) * svgWidth;
-      const y = svgHeight - paddingY - ((d.price - minPrecio) / rango) * (svgHeight - 2 * paddingY);
-      const previousPrice = datosFinales[index - 1]?.price || null;
-      const delta = previousPrice ? d.price - previousPrice : 0;
-      return { x, y, price: d.price, timestamp: d.timestamp, delta };
-    });
-
-    const pathD = puntos.reduce((acc, p, i) => i === 0 ? `M ${p.x},${p.y}` : `${acc} L ${p.x},${p.y}`, '');
-    const areaD = `${pathD} L ${puntos[puntos.length - 1].x},${svgHeight} L ${puntos[0].x},${svgHeight} Z`;
-
-    const esInflado = (item.lastLowPrice || 0) > (item.avg24hPrice || 0);
-    const colorGrafica = esInflado ? '#ff4444' : '#1ab015';
-
-    return (
-      <div style={{ position: 'relative', width: '100%', backgroundColor: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '6px', padding: '12px', overflow: 'visible' }}>
-        <div style={{ position: 'absolute', top: '20px', left: 0, right: 0, borderTop: '1px dashed rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, borderTop: '1px dashed rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
-
-        <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} preserveAspectRatio="none" style={{ width: '100%', height: '110px', display: 'block' }}>
-          <defs>
-            <linearGradient id={`gradienteFlea-${modoMercado}-${item.id}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={colorGrafica} stopOpacity="0.2" />
-              <stop offset="100%" stopColor={colorGrafica} stopOpacity="0.0" />
-            </linearGradient>
-          </defs>
-          <path d={areaD} fill={`url(#gradienteFlea-${modoMercado}-${item.id})`} />
-          <path d={pathD} fill="none" stroke={colorGrafica} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-          {puntos.map((p, i) => (
-            <g
-              key={i}
-              onMouseEnter={() => setHoverSparkline({ ...p, index: i, total: puntos.length })}
-              onMouseLeave={() => setHoverSparkline(null)}
-              style={{ cursor: 'crosshair' }}
-            >
-              <circle cx={p.x} cy={p.y} r="11" fill="transparent" />
-              <circle cx={p.x} cy={p.y} r="3.5" fill="#fff" stroke={colorGrafica} strokeWidth="2" />
-            </g>
-          ))}
-        </svg>
-
-        {hoverSparkline && (
-          <div
-            style={{
-              position: 'absolute',
-              left: `clamp(8px, calc(${(hoverSparkline.x / svgWidth) * 100}% - 78px), calc(100% - 164px))`,
-              top: '-76px',
-              width: '156px',
-              padding: '0.65rem 0.75rem',
-              borderRadius: '6px',
-              background: 'rgba(8,8,10,0.96)',
-              border: `1px solid ${colorGrafica}`,
-              boxShadow: `0 0 22px ${colorGrafica}22`,
-              pointerEvents: 'none',
-              zIndex: 4,
-              textAlign: 'left'
-            }}
-          >
-            <div style={{ color: '#fff', fontWeight: '900', fontSize: '1rem' }}>{formatRublos(hoverSparkline.price)}</div>
-            <div style={{ color: 'var(--tk-text-muted)', fontWeight: '800', fontSize: '0.78rem', marginTop: '0.15rem' }}>
-              {formatMarketDate(hoverSparkline.timestamp)}
-            </div>
-            <div
-              style={{
-                color: hoverSparkline.delta >= 0 ? '#ffcf66' : 'var(--tk-green)',
-                fontWeight: '900',
-                fontSize: '0.78rem',
-                marginTop: '0.3rem'
-              }}
-            >
-              {hoverSparkline.index === 0
-                ? t('fleaModule.chart.firstRecord')
-                : t('fleaModule.chart.deltaVsPrevious', {
-                  delta: `${hoverSparkline.delta >= 0 ? '+' : ''}${formatRublos(hoverSparkline.delta)}`
-                })}
-            </div>
-          </div>
-        )}
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.6rem', fontSize: '0.75rem', color: 'var(--tk-text-muted)', fontFamily: "'Rajdhani', sans-serif", fontWeight: '700', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: '8px' }}>
-          <span>{t('fleaModule.chart.sevenDaysAgo')}</span>
-          <div><span style={{ color: '#fff' }}>{t('fleaModule.chart.min')}</span> {formatRublos(minPrecio)}</div>
-          <div><span style={{ color: '#fff' }}>{t('fleaModule.chart.max')}</span> {formatRublos(maxPrecio)}</div>
-          <span>{t('fleaModule.chart.now')}</span>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="fade-in-slide terminal-panel flea-mobile-root" style={{ padding: '6rem 2rem 8rem 2rem', maxWidth: '1400px', margin: '0 auto', fontFamily: "'Rajdhani', sans-serif" }}>
       
@@ -415,7 +303,7 @@ export default function FleaTracker({ onViewChange }) {
       </section>
 
       {/* CAMBIO DE ORDEN: REJILLA DEL ÍTEM BUSCADO (PRIMERA PRIORIDAD BAJO INPUT) */}
-      <div className="flea-mobile-results" style={{ display: 'grid', gridTemplateColumns: itemSeleccionado ? '1.1fr 0.9fr' : '1fr', gap: '2rem', transition: 'all 0.3s', marginBottom: '4rem' }}>
+      <div className="flea-mobile-results" style={{ display: 'grid', gridTemplateColumns: itemSeleccionado ? 'minmax(300px, 0.7fr) minmax(0, 1.3fr)' : '1fr', gap: '2rem', transition: 'all 0.3s', marginBottom: '4rem' }}>
         <section style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {itemsResultados.map((item) => {
             const slots = item.width * item.height;
@@ -474,9 +362,30 @@ export default function FleaTracker({ onViewChange }) {
             </div>
 
             <div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.8rem', letterSpacing: '0.5px' }}>
-                {t('fleaModule.detail.historicalTrend', { mode: modoMercado })}
-              </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.8rem' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '0.5px' }}>
+                  {t('fleaModule.detail.historicalTrend', { mode: modoMercado })}
+                </span>
+                <select
+                  value={rangoHistorico}
+                  onChange={(event) => setRangoHistorico(Number(event.target.value))}
+                  aria-label={t('fleaModule.chart.range')}
+                  style={{
+                    background: 'rgba(0,0,0,0.45)',
+                    border: '1px solid rgba(185,170,120,0.55)',
+                    borderRadius: '5px',
+                    color: '#d8d2bc',
+                    padding: '0.45rem 0.7rem',
+                    fontFamily: 'inherit',
+                    fontWeight: '700'
+                  }}
+                >
+                  <option value={1}>24 h</option>
+                  <option value={7}>7 d</option>
+                  <option value={30}>30 d</option>
+                  <option value={90}>90 d</option>
+                </select>
+              </div>
               {cargandoHistorico ? (
                 <div style={{ color: 'var(--tk-green)', padding: '2rem 0' }}>
                   {t('fleaModule.search.loading')}
@@ -486,7 +395,11 @@ export default function FleaTracker({ onViewChange }) {
                   {errorHistorico || t('fleaModule.search.connectionError')}
                 </div>
               ) : (
-                renderRealSparkline(itemSeleccionado)
+                <FleaPriceChart
+                  item={itemSeleccionado}
+                  gameMode={modoMercado}
+                  rangeDays={rangoHistorico}
+                />
               )}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', fontSize: '0.85rem', marginTop: '0.8rem', paddingLeft: '4px' }}>
                 <div><span style={{ color: 'var(--tk-text-muted)' }}>{t('fleaModule.detail.avg24h')}</span> <span style={{ color: '#fff', fontWeight: '700', marginLeft: '4px' }}>{formatRublos(itemSeleccionado.avg24hPrice)}</span></div>

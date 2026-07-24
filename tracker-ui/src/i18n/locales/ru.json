@@ -2093,7 +2093,10 @@
       "sevenDaysAgo": "7 дней назад",
       "min": "MIN:",
       "max": "MAX:",
-      "now": "Сейчас"
+      "now": "Сейчас",
+      "range": "Диапазон истории",
+      "averageSeries": "Средняя цена",
+      "minimumSeries": "Минимальное предложение"
     },
     "item": {
       "space": "Пространство: {{width}}x{{height}} (слотов {{slots}})",
