@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { getIntlLocale } from '../../i18n/languages';
+import { loadJsonItemCatalog, postTarkovGraphql } from '../../services/tarkovDataApi';
 
-const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
 const MARKET_MODES = {
   PVP: 'regular',
   PVE: 'pve'
@@ -24,6 +24,7 @@ const getKeyQuery = (gameMode) => `
       id
       name
       shortName
+      types
       iconLink
       wikiLink
       avg24hPrice
@@ -250,7 +251,11 @@ const normalize = (value) =>
     .replace(/[\u0300-\u036f]/g, '');
 
 const isKeyItem = (item) => {
-  const name = normalize(`${item.name} ${item.shortName}`);
+  if (Array.isArray(item.types) && item.types.length) {
+    return item.types.includes('keys');
+  }
+
+  const name = normalize(`${item.name} ${item.shortName} ${item.normalizedName}`);
   return name.includes(' key') || name.endsWith('key') || name.includes('keycard') || name.includes('access card');
 };
 
@@ -335,19 +340,19 @@ export default function KeysModule({ onViewChange }) {
       setStatus('');
 
       try {
-        const response = await fetch(TARKOV_GRAPHQL_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-          },
-          body: JSON.stringify({ query: getKeyQuery(gameMode) })
-        });
+        let items;
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        const payload = await response.json();
-        const items = payload.data?.items;
+        try {
+          const data = await postTarkovGraphql(getKeyQuery(gameMode));
+          items = data.items;
+        } catch (graphqlError) {
+          console.warn('Keys GraphQL unavailable; using static JSON.', graphqlError);
+          const jsonCatalog = await loadJsonItemCatalog({
+            gameMode,
+            locale: i18n.resolvedLanguage
+          });
+          items = jsonCatalog.items;
+        }
 
         if (!Array.isArray(items)) throw new Error('Respuesta sin items');
 
@@ -373,7 +378,7 @@ export default function KeysModule({ onViewChange }) {
     return () => {
       cancelled = true;
     };
-  }, [gameMode, t]);
+  }, [gameMode, i18n.resolvedLanguage, t]);
 
   const allKeys = useMemo(() => rawKeys.map((key) => enrichKey(key, t)), [rawKeys, t]);
 

@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.5';
+export const APP_VERSION = '1.2.6';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,36 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.6',
+    date: '2026-07-24',
+    codename: 'Tools Recovery',
+    type: 'fixed',
+    title: {
+      es: 'Recuperación de Llaves y Balística',
+      en: 'Keys and Ballistics recovery'
+    },
+    summary: {
+      es: 'Llaves y el Simulador balístico siguen operativos mediante el catálogo JSON cuando GraphQL no responde.',
+      en: 'Keys and the Ballistics Simulator remain operational through the JSON catalog when GraphQL is unavailable.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'Llaves recupera 253 llaves reales en PVP y PVE desde JSON y excluye accesorios KeyMod y otros falsos positivos.',
+          en: 'Keys recovers 253 real keys in PVP and PVE from JSON while excluding KeyMod accessories and other false positives.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'El Simulador balístico carga munición, armaduras, placas, cascos y ranuras protegidas desde el formato JSON actual.',
+          en: 'The Ballistics Simulator loads ammunition, armor, plates, helmets and protected slots from the current JSON format.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.5',
     date: '2026-07-24',

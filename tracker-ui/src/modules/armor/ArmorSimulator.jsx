@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { loadJsonItemCatalog, postTarkovGraphql } from '../../services/tarkovDataApi';
 
 const POOL_AMMO_LOCAL = [
   { id: 'm1', name: '7.62x54mmR SNB gzh', shortName: '7.62x54 R SNB', penetration: 62, damage: 75, armorDamage: 88 },
@@ -274,23 +275,28 @@ function extractArmor(item) {
     props.armorSlots.forEach((slot) => {
       if (!slot) return;
 
-      if (slot.__typename === 'ItemArmorSlotLocked') {
+      const slotType = slot.__typename || slot.propertiesType;
+      const isLockedSlot =
+        slotType === 'ItemArmorSlotLocked' ||
+        (!slot.allowedPlates && Number(slot.class) > 0);
+
+      if (isLockedSlot) {
         const lockedArmor = normalizeArmor(
           item,
           {
             class: slot.class,
             durability: slot.durability,
-            material: slot.material,
+            material: slot.material || slot.armorMaterial,
             armorType: slot.armorType,
             zones: slot.zones
           },
-          slot.name || 'locked-slot'
+          slot.name || slot.nameId || 'locked-slot'
         );
 
         if (lockedArmor) result.push(lockedArmor);
       }
 
-      if (slot.__typename === 'ItemArmorSlotOpen') {
+      if (slotType === 'ItemArmorSlotOpen') {
         slot.allowedPlates?.forEach((plate) => {
           const plateArmor = normalizeArmor(
             plate,
@@ -341,7 +347,7 @@ function getMaterialFactor(material, materialData) {
 }
 
 export default function ArmorSimulator({ onViewChange }) {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const armorFallback = useMemo(() => getLocalArmorFallback(t), [t]);
   const [municiones, setMuniciones] = useState([]);
   const [armaduras, setArmaduras] = useState([]);
@@ -363,32 +369,40 @@ export default function ArmorSimulator({ onViewChange }) {
 
   useEffect(() => {
     const controller = new AbortController();
+    let cancelled = false;
 
-    fetch('https://api.tarkov.dev/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify({
-        query: QUERY_BALISTICA
-      }),
-      signal: controller.signal
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const items = result?.data?.items;
+    const loadBallistics = async () => {
+      try {
+        let items;
 
-        if (!Array.isArray(items)) {
-          cargarFallback();
-          return;
+        try {
+          const data = await postTarkovGraphql(QUERY_BALISTICA, {
+            signal: controller.signal
+          });
+          items = data.items;
+        } catch (graphqlError) {
+          if (graphqlError.name === 'AbortError') return;
+          console.warn('Ballistics GraphQL unavailable; using static JSON.', graphqlError);
+          const catalog = await loadJsonItemCatalog({
+            gameMode: 'regular',
+            locale: i18n.resolvedLanguage
+          });
+          items = catalog.items.filter((item) =>
+            item.types?.some((type) =>
+              ['ammo', 'armor', 'armorPlate', 'rig', 'helmet'].includes(type)
+            )
+          );
         }
+
+        if (cancelled) return;
+        if (!Array.isArray(items)) throw new Error('Respuesta sin items');
 
         const ammo = items
           .filter(
             (i) =>
               i?.types?.includes('ammo') &&
-              i?.properties?.__typename === 'ItemPropertiesAmmo' &&
+              (i?.properties?.__typename === 'ItemPropertiesAmmo' ||
+                i?.properties?.propertiesType === 'ItemPropertiesAmmo') &&
               Number(i?.properties?.penetrationPower) > 0 &&
               Number(i?.properties?.damage) > 0
           )
@@ -419,14 +433,20 @@ export default function ArmorSimulator({ onViewChange }) {
         setSelectedAmmo(ammo[0]);
         setSelectedArmor(armor[0]);
         setCargando(false);
-      })
-      .catch((err) => {
-        if (err.name === 'AbortError') return;
+      } catch (error) {
+        if (error.name === 'AbortError' || cancelled) return;
+        console.error(error);
         cargarFallback();
-      });
+      }
+    };
 
-    return () => controller.abort();
-  }, [cargarFallback]);
+    loadBallistics();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [cargarFallback, i18n.resolvedLanguage]);
 
   const municionesFiltradas = municiones.filter((m) => {
     const q = normalizarTexto(busquedaAmmo);

@@ -97,6 +97,8 @@ const normalizeJsonItem = (item, translations) => ({
   name: translate(translations, item.name, item.normalizedName),
   shortName: translate(translations, item.shortName, item.normalizedName),
   normalizedName: item.normalizedName,
+  types: item.types || [],
+  properties: item.properties || null,
   iconLink: item.iconLink,
   imageLink: item.image512pxLink || item.gridImageLink || item.iconLink,
   wikiLink: item.wikiLink,
