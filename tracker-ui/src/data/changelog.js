@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.6';
+export const APP_VERSION = '1.2.7';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,36 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.7',
+    date: '2026-07-24',
+    codename: 'Flea History',
+    type: 'fixed',
+    title: {
+      es: 'Histórico real del Flea Market',
+      en: 'Real Flea Market history'
+    },
+    summary: {
+      es: 'La gráfica del Flea usa el histórico JSON oficial por objeto y muestra claramente la antigüedad del último escaneo.',
+      en: 'The Flea chart now uses the official per-item JSON history and clearly shows the age of the latest scan.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'Se eliminan las gráficas planas fabricadas durante la caída de GraphQL y se cargan siete días reales de muestras en PVP y PVE.',
+          en: 'Fabricated flat charts during the GraphQL outage are removed and seven real days of PVP/PVE samples are loaded.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El precio se identifica como último mínimo escaneado y se acompaña de fecha, número de ofertas y mínimo de 24 horas.',
+          en: 'The price is identified as the last scanned minimum and includes scan time, offer count and the 24-hour minimum.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.6',
     date: '2026-07-24',

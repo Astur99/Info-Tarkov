@@ -1,5 +1,6 @@
 import {
   findJsonItemsByNames,
+  loadJsonPriceHistory,
   normalizeTarkovGameMode,
   postTarkovGraphql,
   searchJsonItems
@@ -93,4 +94,16 @@ export const fetchFleaHotDeals = async ({
       source: 'json'
     };
   }
+};
+
+export const fetchFleaPriceHistory = async ({ itemId, gameMode, signal }) => {
+  const samples = await loadJsonPriceHistory({ itemId, gameMode, signal });
+  const latest = samples.at(-1);
+
+  return {
+    historicalPrices: samples,
+    lastLowPrice: latest?.priceMin || 0,
+    lastOfferCount: latest?.offerCount || 0,
+    updated: latest?.timestamp || null
+  };
 };

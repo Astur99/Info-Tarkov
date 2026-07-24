@@ -107,12 +107,46 @@ const normalizeJsonItem = (item, translations) => ({
   basePrice: item.basePrice || 0,
   avg24hPrice: item.avg24hPrice || 0,
   lastLowPrice: item.lastLowPrice || 0,
+  low24hPrice: item.low24hPrice || 0,
+  high24hPrice: item.high24hPrice || 0,
+  lastOfferCount: item.lastOfferCount || 0,
+  updated: item.updated || null,
   historicalPrices: [],
   sellFor: (item.sellToTrader || []).map((offer) => ({
     price: offer.priceRUB || offer.price || 0,
     source: traderNamesById[offer.trader] || offer.trader
   }))
 });
+
+export const loadJsonPriceHistory = async ({ gameMode, itemId, signal }) => {
+  const mode = normalizeTarkovGameMode(gameMode);
+  const safeItemId = encodeURIComponent(String(itemId || '').trim());
+  if (!safeItemId) throw new Error('Missing item id');
+
+  const response = await fetch(`${TARKOV_JSON_URL}/${mode}/prices/${safeItemId}`, {
+    headers: { Accept: 'application/json' },
+    signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`tarkov.dev price history request failed (${response.status})`);
+  }
+
+  const payload = await response.json();
+  if (!Array.isArray(payload?.data)) {
+    throw new Error('tarkov.dev price history response was empty');
+  }
+
+  return payload.data
+    .filter((sample) => Number(sample?.timestamp) > 0 && Number(sample?.price) > 0)
+    .map((sample) => ({
+      price: Number(sample.price),
+      priceMin: Number(sample.priceMin || 0),
+      offerCount: Number(sample.offerCount || 0),
+      timestamp: Number(sample.timestamp)
+    }))
+    .sort((a, b) => a.timestamp - b.timestamp);
+};
 
 export const loadJsonItemCatalog = async ({ gameMode, locale = 'en' }) => {
   const mode = normalizeTarkovGameMode(gameMode);

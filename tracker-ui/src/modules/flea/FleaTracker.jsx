@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { getIntlLocale } from '../../i18n/languages';
-import { fetchFleaHotDeals, searchFleaItems } from './fleaApi';
+import { fetchFleaHotDeals, fetchFleaPriceHistory, searchFleaItems } from './fleaApi';
 
 const MARKET_MODES = {
   PVP: 'regular',
@@ -28,6 +28,8 @@ export default function FleaTracker({ onViewChange }) {
   const [hoverSparkline, setHoverSparkline] = useState(null);
   const [errorBusqueda, setErrorBusqueda] = useState('');
   const [errorHotDeals, setErrorHotDeals] = useState('');
+  const [cargandoHistorico, setCargandoHistorico] = useState(false);
+  const [errorHistorico, setErrorHistorico] = useState('');
   const gameMode = MARKET_MODES[modoMercado];
 
   // 1. RADAR AUTOMÁTICO DE ANOMALÍAS (HOT DEALS VIVO)
@@ -83,9 +85,17 @@ export default function FleaTracker({ onViewChange }) {
   const cambiarModoMercado = (mode) => {
     setModoMercado(mode);
     setItemSeleccionado(null);
+    setCargandoHistorico(false);
+    setErrorHistorico('');
     setItemsResultados([]);
     setErrorBusqueda('');
     setCargandoHotDeals(true);
+  };
+
+  const seleccionarItem = (item) => {
+    setItemSeleccionado(item);
+    setCargandoHistorico(true);
+    setErrorHistorico('');
   };
 
   // 2. BUSCADOR INTELIGENTE MULTI-IDIOMA CON TOLERANCIA DE TILDES
@@ -134,6 +144,41 @@ export default function FleaTracker({ onViewChange }) {
     };
   }, [busqueda, gameMode, i18n.resolvedLanguage, t]);
 
+  useEffect(() => {
+    if (!itemSeleccionado?.id) {
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    const selectedId = itemSeleccionado.id;
+    let cancelled = false;
+
+    fetchFleaPriceHistory({
+      itemId: selectedId,
+      gameMode,
+      signal: controller.signal
+    })
+      .then((marketData) => {
+        if (cancelled) return;
+        setItemSeleccionado((current) =>
+          current?.id === selectedId ? { ...current, ...marketData } : current
+        );
+      })
+      .catch((error) => {
+        if (cancelled || error.name === 'AbortError') return;
+        console.error(error);
+        setErrorHistorico(t('fleaModule.search.connectionError'));
+      })
+      .finally(() => {
+        if (!cancelled) setCargandoHistorico(false);
+      });
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [gameMode, itemSeleccionado?.id, t]);
+
   const formatRublos = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val);
   const formatMarketDate = (timestamp) => {
     if (!timestamp) return t('fleaModule.noDate');
@@ -159,9 +204,14 @@ export default function FleaTracker({ onViewChange }) {
       .filter(d => d && d.price && d.price > 0 && d.timestamp)
       .sort((a, b) => Number(a.timestamp) - Number(b.timestamp));
 
-    const datosFinales = historicoLimpio.length >= 2 
-      ? historicoLimpio.slice(-7)
-      : [{ price: item.lastLowPrice || item.avg24hPrice, timestamp: "1" }, { price: item.lastLowPrice || item.avg24hPrice, timestamp: "2" }];
+    const latestTimestamp = Number(historicoLimpio.at(-1)?.timestamp || 0);
+    const sevenDaysAgo = latestTimestamp - (7 * 24 * 60 * 60 * 1000);
+    const sevenDayHistory = historicoLimpio.filter(
+      (sample) => Number(sample.timestamp) >= sevenDaysAgo
+    );
+    const datosFinales = sevenDayHistory.length >= 2
+      ? sevenDayHistory
+      : historicoLimpio.slice(-2);
     
     const precios = datosFinales.map(d => d.price);
     const maxPrecio = Math.max(...precios);
@@ -376,7 +426,7 @@ export default function FleaTracker({ onViewChange }) {
             return (
               <div
                 key={item.id}
-                onClick={() => setItemSeleccionado(item)}
+                onClick={() => seleccionarItem(item)}
                 style={{
                   backgroundColor: 'var(--tk-glass)',
                   backdropFilter: 'blur(20px)',
@@ -427,11 +477,32 @@ export default function FleaTracker({ onViewChange }) {
               <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', display: 'block', marginBottom: '0.8rem', letterSpacing: '0.5px' }}>
                 {t('fleaModule.detail.historicalTrend', { mode: modoMercado })}
               </span>
-              {renderRealSparkline(itemSeleccionado)}
-              <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.85rem', marginTop: '0.8rem', paddingLeft: '4px' }}>
+              {cargandoHistorico ? (
+                <div style={{ color: 'var(--tk-green)', padding: '2rem 0' }}>
+                  {t('fleaModule.search.loading')}
+                </div>
+              ) : errorHistorico || (itemSeleccionado.historicalPrices || []).length < 2 ? (
+                <div style={{ color: '#ffcf66', padding: '2rem 0' }}>
+                  {errorHistorico || t('fleaModule.search.connectionError')}
+                </div>
+              ) : (
+                renderRealSparkline(itemSeleccionado)
+              )}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', fontSize: '0.85rem', marginTop: '0.8rem', paddingLeft: '4px' }}>
                 <div><span style={{ color: 'var(--tk-text-muted)' }}>{t('fleaModule.detail.avg24h')}</span> <span style={{ color: '#fff', fontWeight: '700', marginLeft: '4px' }}>{formatRublos(itemSeleccionado.avg24hPrice)}</span></div>
                 <div><span style={{ color: 'var(--tk-text-muted)' }}>{t('fleaModule.detail.currentLow')}</span> <span style={{ color: '#fff', fontWeight: '700', marginLeft: '4px' }}>{formatRublos(itemSeleccionado.lastLowPrice)}</span></div>
+                {itemSeleccionado.low24hPrice > 0 && (
+                  <div><span style={{ color: 'var(--tk-text-muted)' }}>{t('fleaModule.detail.low24h')}</span> <span style={{ color: '#fff', fontWeight: '700', marginLeft: '4px' }}>{formatRublos(itemSeleccionado.low24hPrice)}</span></div>
+                )}
               </div>
+              {itemSeleccionado.updated && (
+                <div style={{ color: 'var(--tk-text-muted)', fontSize: '0.78rem', marginTop: '0.5rem', paddingLeft: '4px' }}>
+                  {t('fleaModule.detail.lastScan', { date: formatMarketDate(itemSeleccionado.updated) })}
+                  {itemSeleccionado.lastOfferCount > 0
+                    ? ` · ${t('fleaModule.detail.offerCount', { count: itemSeleccionado.lastOfferCount })}`
+                    : ''}
+                </div>
+              )}
             </div>
 
             <div>
@@ -468,7 +539,7 @@ export default function FleaTracker({ onViewChange }) {
               return (
                 <div
                   key={deal.id}
-                  onClick={() => setItemSeleccionado(deal)}
+                  onClick={() => seleccionarItem(deal)}
                   style={{
                     backgroundColor: 'var(--tk-glass)',
                     backdropFilter: 'blur(25px)',

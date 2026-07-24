@@ -2104,7 +2104,10 @@
       "specificData": "Spezifische Daten – {{mode}}",
       "historicalTrend": "Historischer Trend ({{mode}}, letzte 7 Tage)",
       "avg24h": "Globaler 24-Stunden-Durchschnitt:",
-      "currentLow": "Aktueller Tiefpreis:",
+      "currentLow": "Zuletzt gescanntes Minimum:",
+      "low24h": "24-Std.-Minimum:",
+      "lastScan": "Letzter Scan: {{date}}",
+      "offerCount": "{{count}} Angebote",
       "traderValue": "Kaufwert des Händlers"
     },
     "hotDeals": {
