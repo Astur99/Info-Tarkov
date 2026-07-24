@@ -19,6 +19,10 @@
     "it": "IT",
     "ru": "RU"
   },
+  "incidentAlert": {
+    "title": "Problema temporaneo degli strumenti dati",
+    "body": "Flea Market, Rifugio, Sistema Chiavi e Simulatore Balistico potrebbero mostrare dati incompleti. Stiamo lavorando attivamente alla riparazione."
+  },
   "home": {
     "serverStatus": "Stato del server",
     "about": "ABOUT",
@@ -260,7 +264,7 @@
     "dynamicReason": "Gruppi di missioni in sospeso rilevati per mappa da tarkov.dev.",
     "variableRisk": "Rischio variabile a seconda del percorso",
     "mainRecommendation": "Raccomandazione principale",
-    "bestPlanSummary": "{{reason}} Punteggio tattico: {{score}}. Rischio: {{risk}}.",
+    "bestPlanSummary": "{{reason}} Quest in sospeso: {{tasks}}. Rischio: {{risk}}.",
     "planMeta": "{{tasks}} missioni visibili · {{kappa}} Kappa",
     "noCriticalKeys": "Nessuna chiave critica rilevata per questo percorso",
     "empty": "Nessun percorso disponibile con questi filtri. Prova a disattivare Kappa o a cambiare mappa.",
@@ -2080,7 +2084,8 @@
       "title": "Ricerca ibrida ({{mode}}) - inglese/spagnolo senza accenti",
       "placeholder": "Per esempio. zucchero, ledx, scheda grafica...",
       "loading": "Ricerca nel database...",
-      "empty": "L'articolo richiesto non è stato trovato nel mercato {{mode}}"
+      "empty": "L'articolo richiesto non è stato trovato nel mercato {{mode}}",
+      "connectionError": "Al momento non sono disponibili né il mercato live né il catalogo statico degli oggetti."
     },
     "chart": {
       "firstRecord": "Primo record",
@@ -2105,6 +2110,7 @@
     "hotDeals": {
       "title": "Articoli più fluttuanti nel mercato {{mode}}:",
       "loading": "Elenco elementi...",
+      "connectionError": "Non è stato possibile caricare le opportunità da nessuna fonte dati.",
       "up": "Su {{pct}}",
       "down": "Giù {{pct}}"
     }

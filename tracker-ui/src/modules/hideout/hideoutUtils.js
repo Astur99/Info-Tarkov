@@ -69,14 +69,21 @@ export const poolHideoutLocal = [
   }
 ];
 
+const normalizeStationOrderKey = (value) =>
+  String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
 export const getHideoutStorageKeys = (mode) => ({
   storageKey: `${STORAGE_PREFIX}_${mode.toLowerCase()}`,
   levelStorageKey: `${LEVEL_STORAGE_PREFIX}_${mode.toLowerCase()}`
 });
 
 export const getStationOrderScore = (station) => {
+  const stationKeys = new Set([
+    normalizeStationOrderKey(station?.name),
+    normalizeStationOrderKey(station?.normalizedName)
+  ]);
   const manualIndex = NATURAL_STATION_ORDER.findIndex(
-    (name) => name.toLowerCase() === station?.name?.toLowerCase()
+    (name) => stationKeys.has(normalizeStationOrderKey(name))
   );
 
   if (manualIndex >= 0) return manualIndex;

@@ -22,7 +22,7 @@ import {
 import QuestOptimizerModule from './QuestOptimizerModule';
 
 export default function KappaTree({ onViewChange, session, initialTool = 'tree' }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [modoJuego, setModoJuego] = useState(readActiveMode);
 
   const [todasLasMisiones, setTodasLasMisiones] = useState([]);
@@ -160,17 +160,28 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   }, [completadas, modoJuego, session?.user?.id, syncLoading, t]);
 
   useEffect(() => {
-    fetchKappaTasks()
+    let cancelled = false;
+
+    fetchKappaTasks({
+      locale: i18n.resolvedLanguage,
+      gameMode: modoJuego
+    })
       .then((tasks) => {
+        if (cancelled) return;
         setTodasLasMisiones(tasks);
         setLoading(false);
       })
       .catch((err) => {
+        if (cancelled) return;
         console.error(err);
         setError(t('kappa.errors.centralApi'));
         setLoading(false);
       });
-  }, [t]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [i18n.resolvedLanguage, modoJuego, t]);
 
   const cambiarModoJuego = (nuevoModo) => {
     if (nuevoModo === modoJuego) return;

@@ -19,6 +19,10 @@
     "it": "IT",
     "ru": "RU"
   },
+  "incidentAlert": {
+    "title": "Temporary data-tools incident",
+    "body": "Flea Market, Hideout, Key System and Ballistics Simulator may show incomplete data. We are actively working on repairs."
+  },
   "home": {
     "serverStatus": "Server Status",
     "about": "ABOUT",
@@ -260,7 +264,7 @@
     "dynamicReason": "Groups pending quests detected per map from tarkov.dev.",
     "variableRisk": "Variable risk depending on route",
     "mainRecommendation": "Main recommendation",
-    "bestPlanSummary": "{{reason}} Tactical score: {{score}}. Risk: {{risk}}.",
+    "bestPlanSummary": "{{reason}} Pending quests: {{tasks}}. Risk: {{risk}}.",
     "planMeta": "{{tasks}} visible quests · {{kappa}} Kappa",
     "noCriticalKeys": "No critical keys detected for this route",
     "empty": "No routes are available with these filters. Try disabling Kappa or changing map.",
@@ -2080,7 +2084,8 @@
       "title": "Hybrid search ({{mode}}) - English / Spanish without accents",
       "placeholder": "E.g. sugar, ledx, graphics card...",
       "loading": "Searching the database...",
-      "empty": "The requested item was not found in the {{mode}} market"
+      "empty": "The requested item was not found in the {{mode}} market",
+      "connectionError": "Neither the live market nor the static item catalog is available right now."
     },
     "chart": {
       "firstRecord": "First record",
@@ -2105,6 +2110,7 @@
     "hotDeals": {
       "title": "Most fluctuating items in the {{mode}} market:",
       "loading": "Listing items...",
+      "connectionError": "Market opportunities could not be loaded from either data source.",
       "up": "Up {{pct}}",
       "down": "Down {{pct}}"
     }

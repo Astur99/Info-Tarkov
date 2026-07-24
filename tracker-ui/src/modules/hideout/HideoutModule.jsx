@@ -19,7 +19,7 @@ import {
 } from './hideoutUtils';
 
 export default function HideoutModule({ onViewChange, session }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [estaciones, setEstaciones] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [estacionSeleccionada, setEstacionSeleccionada] = useState(null);
@@ -127,8 +127,8 @@ export default function HideoutModule({ onViewChange, session }) {
   useEffect(() => {
     let cancelled = false;
 
-    fetchHideoutStations(gameMode)
-      .then((datosFiltrados) => {
+    fetchHideoutStations(gameMode, i18n.resolvedLanguage)
+      .then(({ stations: datosFiltrados }) => {
         if (cancelled) return;
 
         const estacionAnteriorId = selectedStationIdRef.current;
@@ -153,7 +153,7 @@ export default function HideoutModule({ onViewChange, session }) {
     return () => {
       cancelled = true;
     };
-  }, [cargarLocal, gameMode]);
+  }, [cargarLocal, gameMode, i18n.resolvedLanguage]);
 
   const datosNivel = useMemo(
     () => estacionSeleccionada?.levels?.find((level) => level.level === nivelObjetivo) || null,

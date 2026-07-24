@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { getIntlLocale } from '../../i18n/languages';
+import { fetchFleaHotDeals, searchFleaItems } from './fleaApi';
 
 const MARKET_MODES = {
   PVP: 'regular',
@@ -25,72 +26,66 @@ export default function FleaTracker({ onViewChange }) {
   const [hotDeals, setHotDeals] = useState([]);
   const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
   const [hoverSparkline, setHoverSparkline] = useState(null);
+  const [errorBusqueda, setErrorBusqueda] = useState('');
+  const [errorHotDeals, setErrorHotDeals] = useState('');
   const gameMode = MARKET_MODES[modoMercado];
 
   // 1. RADAR AUTOMÁTICO DE ANOMALÍAS (HOT DEALS VIVO)
   useEffect(() => {
     const controller = new AbortController();
+    let cancelled = false;
 
-    const queryHotDeals = JSON.stringify({
-      query: `
-        query GetHotDeals {
-          items(names: ${JSON.stringify(ITEMS_INTERES)}, gameMode: ${gameMode}) {
-            id
-            name
-            shortName
-            iconLink
-            width
-            height
-            avg24hPrice
-            lastLowPrice
-            historicalPrices {
-              price
-              timestamp
-            }
-            sellFor { price source }
-          }
-        }
-      `
-    });
+    const loadHotDeals = async () => {
+      setErrorHotDeals('');
 
-    fetch('https://api.tarkov.dev/graphql', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: queryHotDeals,
-      signal: controller.signal
-    })
-      .then(res => res.json())
-      .then(result => {
-        if (result?.data?.items) {
-          const anomalías = result.data.items
-            .map(item => {
-              const precioActual = item.lastLowPrice || 0;
-              const media = item.avg24hPrice || 1;
-              const desviacion = (precioActual - media) / media;
-              const slots = item.width * item.height;
-              const pricePerSlot = Math.round(precioActual / slots);
+      try {
+        const { items } = await fetchFleaHotDeals({
+          names: ITEMS_INTERES,
+          gameMode,
+          locale: i18n.resolvedLanguage,
+          signal: controller.signal
+        });
+        if (cancelled) return;
 
-              return { ...item, desviacion, pricePerSlot, slots };
-            })
-            .filter(item => Math.abs(item.desviacion) >= 0.12 && item.lastLowPrice > 0)
-            .sort((a, b) => Math.abs(b.desviacion) - Math.abs(a.desviacion))
-            .slice(0, 12);
+        const anomalies = items
+          .map((item) => {
+            const currentPrice = item.lastLowPrice || 0;
+            const averagePrice = item.avg24hPrice || 1;
+            const deviation = (currentPrice - averagePrice) / averagePrice;
+            const slots = (item.width || 1) * (item.height || 1);
+            const pricePerSlot = Math.round(currentPrice / slots);
 
-          setHotDeals(anomalías);
-        }
-        setCargandoHotDeals(false);
-      })
-      .catch((error) => {
-        if (error.name !== 'AbortError') setCargandoHotDeals(false);
-      });
+            return { ...item, desviacion: deviation, pricePerSlot, slots };
+          })
+          .filter((item) => Math.abs(item.desviacion) >= 0.12 && item.lastLowPrice > 0)
+          .sort((a, b) => Math.abs(b.desviacion) - Math.abs(a.desviacion))
+          .slice(0, 12);
 
-    return () => controller.abort();
-  }, [gameMode]);
+        setHotDeals(anomalies);
+      } catch (error) {
+        if (cancelled || error.name === 'AbortError') return;
+        console.error(error);
+        setErrorHotDeals(t('fleaModule.hotDeals.connectionError'));
+        setHotDeals([]);
+      } finally {
+        if (!cancelled) setCargandoHotDeals(false);
+      }
+    };
+
+    loadHotDeals();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [gameMode, i18n.resolvedLanguage, t]);
 
   const cambiarModoMercado = (mode) => {
     setModoMercado(mode);
     setItemSeleccionado(null);
     setItemsResultados([]);
+    setErrorBusqueda('');
+    setCargandoHotDeals(true);
   };
 
   // 2. BUSCADOR INTELIGENTE MULTI-IDIOMA CON TOLERANCIA DE TILDES
@@ -99,75 +94,45 @@ export default function FleaTracker({ onViewChange }) {
       const resetResults = window.setTimeout(() => {
         setItemsResultados([]);
         setCargando(false);
+        setErrorBusqueda('');
       }, 0);
       return () => window.clearTimeout(resetResults);
     }
 
+    const controller = new AbortController();
+    let cancelled = false;
+
     const delayDebounce = setTimeout(() => {
       setCargando(true);
+      setErrorBusqueda('');
 
-      const queryBuscador = JSON.stringify({
-        query: `
-          query SearchItems {
-            items(gameMode: ${gameMode}) {
-              id
-              name
-              shortName
-              iconLink
-              width
-              height
-              avg24hPrice
-              lastLowPrice
-              historicalPrices {
-                price
-                timestamp
-              }
-              sellFor { price source }
-            }
-          }
-        `
-      });
-
-      fetch('https://api.tarkov.dev/graphql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: queryBuscador
+      searchFleaItems({
+        query: busqueda,
+        gameMode,
+        locale: i18n.resolvedLanguage,
+        signal: controller.signal
       })
-        .then(res => res.json())
-        .then(result => {
-          if (result?.data?.items) {
-            const normalizar = (str) => 
-              str ? str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
-
-            const inputLimpio = normalizar(busqueda);
-
-            const filtrados = result.data.items.filter(item => {
-              const itemIngles = normalizar(item.name);
-              const itemCorto = normalizar(item.shortName);
-              
-              let equivalenciaEspanol = "";
-              if (itemIngles.includes("sugar")) equivalenciaEspanol = "azucar";
-              if (itemIngles.includes("graphics card")) equivalenciaEspanol = "tarjeta grafica tarjeta de graficos";
-              if (itemIngles.includes("water filter")) equivalenciaEspanol = "filtro de agua";
-              if (itemIngles.includes("ledx")) equivalenciaEspanol = "ledx";
-              if (itemIngles.includes("bitcoin")) equivalenciaEspanol = "bitcoin fisico btc";
-
-              return (
-                itemIngles.includes(inputLimpio) || 
-                itemCorto.includes(inputLimpio) || 
-                equivalenciaEspanol.includes(inputLimpio)
-              );
-            });
-
-            setItemsResultados(filtrados.slice(0, 6));
-          }
-          setCargando(false);
+        .then(({ items }) => {
+          if (cancelled) return;
+          setItemsResultados(items.slice(0, 6));
         })
-        .catch(() => setCargando(false));
+        .catch((error) => {
+          if (cancelled || error.name === 'AbortError') return;
+          console.error(error);
+          setItemsResultados([]);
+          setErrorBusqueda(t('fleaModule.search.connectionError'));
+        })
+        .finally(() => {
+          if (!cancelled) setCargando(false);
+        });
     }, 350);
 
-    return () => clearTimeout(delayDebounce);
-  }, [busqueda, gameMode]);
+    return () => {
+      cancelled = true;
+      clearTimeout(delayDebounce);
+      controller.abort();
+    };
+  }, [busqueda, gameMode, i18n.resolvedLanguage, t]);
 
   const formatRublos = (val) => new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'RUB', maximumFractionDigits: 0 }).format(val);
   const formatMarketDate = (timestamp) => {
@@ -378,8 +343,13 @@ export default function FleaTracker({ onViewChange }) {
           }}
         />
         {cargando && <p style={{ color: 'var(--tk-green)', marginTop: '0.5rem', fontSize: '0.9rem', letterSpacing: '1px' }}>{t('fleaModule.search.loading')}</p>}
+        {errorBusqueda && (
+          <p style={{ color: '#ffcf66', marginTop: '1rem', fontSize: '1rem', fontWeight: '700' }}>
+            {errorBusqueda}
+          </p>
+        )}
         
-        {!cargando && busqueda.length >= 3 && itemsResultados.length === 0 && (
+        {!cargando && !errorBusqueda && busqueda.length >= 3 && itemsResultados.length === 0 && (
           <p style={{ 
             color: '#ff4444', 
             marginTop: '1rem', 
@@ -487,6 +457,8 @@ export default function FleaTracker({ onViewChange }) {
         
         {cargandoHotDeals ? (
           <div style={{ color: 'var(--tk-text-muted)', fontSize: '0.95rem', letterSpacing: '1px' }}>{t('fleaModule.hotDeals.loading')}</div>
+        ) : errorHotDeals ? (
+          <div style={{ color: '#ffcf66', fontSize: '0.95rem', letterSpacing: '0.5px' }}>{errorHotDeals}</div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {hotDeals.map((deal) => {

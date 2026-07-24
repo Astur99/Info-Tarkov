@@ -40,11 +40,65 @@ body {
 #root {
   position: relative;
   z-index: 2;
+  --service-alert-height: 56px;
 }
 
 .app-content {
   position: relative;
   z-index: 2;
+  padding-top: var(--service-alert-height);
+}
+
+.service-incident-alert {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 10000;
+  min-height: var(--service-alert-height);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.55rem 1rem;
+  color: #fff;
+  background:
+    linear-gradient(90deg, rgba(95, 0, 0, 0.98), rgba(190, 20, 20, 0.98), rgba(95, 0, 0, 0.98));
+  border-bottom: 1px solid rgba(255, 145, 145, 0.65);
+  box-shadow: 0 8px 30px rgba(120, 0, 0, 0.4);
+  font-family: 'Rajdhani', sans-serif;
+  text-align: left;
+}
+
+.service-incident-alert__signal {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.service-incident-alert strong {
+  display: block;
+  font-size: 0.82rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.service-incident-alert div > span {
+  display: block;
+  margin-top: 0.08rem;
+  font-size: 0.83rem;
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.home-fixed-button,
+.language-switcher {
+  top: calc(1.5rem + var(--service-alert-height)) !important;
 }
 
 .kappa-mobile-stats-toggle {
@@ -276,6 +330,23 @@ header span {
 }
 
 @media (max-width: 900px) {
+  #root {
+    --service-alert-height: 78px;
+  }
+
+  .service-incident-alert {
+    justify-content: flex-start;
+    padding-inline: 0.75rem;
+  }
+
+  .service-incident-alert strong {
+    font-size: 0.75rem;
+  }
+
+  .service-incident-alert div > span {
+    font-size: 0.76rem;
+  }
+
   html,
   body,
   #root,

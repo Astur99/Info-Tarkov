@@ -19,6 +19,10 @@
     "it": "IT",
     "ru": "RU"
   },
+  "incidentAlert": {
+    "title": "Incident temporaire des outils de données",
+    "body": "Le Flea Market, le Repaire, le système de clés et le simulateur balistique peuvent afficher des données incomplètes. Nous travaillons activement à leur réparation."
+  },
   "home": {
     "serverStatus": "Statut du serveur",
     "about": "ABOUT",
@@ -260,7 +264,7 @@
     "dynamicReason": "Groupes en attente de quêtes détectés par carte de tarkov.dev.",
     "variableRisk": "Risque variable selon l'itinéraire",
     "mainRecommendation": "Recommandation principale",
-    "bestPlanSummary": "{{reason}} Score tactique : {{score}}. Risque : {{risk}}.",
+    "bestPlanSummary": "{{reason}} Quêtes en attente : {{tasks}}. Risque : {{risk}}.",
     "planMeta": "{{tasks}} quêtes visibles · {{kappa}} Kappa",
     "noCriticalKeys": "Aucune clé critique détectée pour cet itinéraire",
     "empty": "Aucun itinéraire n'est disponible avec ces filtres. Essayez de désactiver Kappa ou de changer de carte.",
@@ -2080,7 +2084,8 @@
       "title": "Recherche hybride ({{mode}}) - Anglais / Espagnol sans accents",
       "placeholder": "Par ex. sucre, ledx, carte graphique...",
       "loading": "Recherche dans la base de données...",
-      "empty": "L'article demandé n'a pas été trouvé sur le marché {{mode}}"
+      "empty": "L'article demandé n'a pas été trouvé sur le marché {{mode}}",
+      "connectionError": "Ni le marché en direct ni le catalogue statique d'objets ne sont disponibles actuellement."
     },
     "chart": {
       "firstRecord": "Premier enregistrement",
@@ -2105,6 +2110,7 @@
     "hotDeals": {
       "title": "Articles les plus fluctuants sur le marché {{mode}} :",
       "loading": "Liste des éléments...",
+      "connectionError": "Impossible de charger les opportunités depuis les deux sources de données.",
       "up": "Jusqu'à {{pct}}",
       "down": "Vers le bas {{pct}}"
     }

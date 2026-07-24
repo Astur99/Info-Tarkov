@@ -1,10 +1,15 @@
 import { sortHideoutStations } from './hideoutUtils';
+import {
+  loadJsonHideoutStations,
+  normalizeTarkovGameMode,
+  postTarkovGraphql
+} from '../../services/tarkovDataApi';
 
-export const fetchHideoutStations = async (gameMode) => {
-  const queryHideout = JSON.stringify({
-    query: `
+export const fetchHideoutStations = async (gameMode, locale = 'en') => {
+  const mode = normalizeTarkovGameMode(gameMode);
+  const queryHideout = `
       query GetHideoutData {
-        hideoutStations(gameMode: ${gameMode}) {
+        hideoutStations(gameMode: ${mode}) {
           id
           name
           normalizedName
@@ -65,29 +70,21 @@ export const fetchHideoutStations = async (gameMode) => {
           }
         }
       }
-    `
-  });
+  `;
 
-  const response = await fetch('https://api.tarkov.dev/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
-    body: queryHideout
-  });
-
-  const result = await response.json();
-
-  if (!Array.isArray(result?.data?.hideoutStations)) {
-    throw new Error('Hideout stations response was not available.');
+  try {
+    const result = await postTarkovGraphql(queryHideout);
+    const stations = sortHideoutStations(result.hideoutStations || []);
+    if (!stations.length) throw new Error('Hideout stations response was empty.');
+    return { stations, source: 'graphql' };
+  } catch (graphqlError) {
+    console.warn('Hideout GraphQL unavailable; using static JSON.', graphqlError);
+    const stations = sortHideoutStations(
+      await loadJsonHideoutStations({ gameMode: mode, locale })
+    );
+    if (!stations.length) {
+      throw new Error('Hideout JSON response was empty.', { cause: graphqlError });
+    }
+    return { stations, source: 'json' };
   }
-
-  const stations = sortHideoutStations(result.data.hideoutStations);
-
-  if (stations.length === 0) {
-    throw new Error('Hideout stations response was empty.');
-  }
-
-  return stations;
 };

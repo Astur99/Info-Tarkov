@@ -19,6 +19,10 @@
     "it": "IT",
     "ru": "RU"
   },
+  "incidentAlert": {
+    "title": "Incidencia temporal en herramientas de datos",
+    "body": "Flea Market, Refugio, Sistema de Llaves y Simulador Balístico pueden mostrar datos incompletos. Estamos trabajando activamente en la reparación."
+  },
   "home": {
     "serverStatus": "Estado de Servidores",
     "about": "ABOUT",
@@ -260,7 +264,7 @@
     "dynamicReason": "Agrupa quests pendientes detectadas por mapa desde tarkov.dev.",
     "variableRisk": "Riesgo variable según ruta",
     "mainRecommendation": "Recomendación principal",
-    "bestPlanSummary": "{{reason}} Score táctico: {{score}}. Riesgo: {{risk}}.",
+    "bestPlanSummary": "{{reason}} Quests pendientes: {{tasks}}. Riesgo: {{risk}}.",
     "planMeta": "{{tasks}} quests visibles · {{kappa}} Kappa",
     "noCriticalKeys": "Sin llaves críticas detectadas para esta ruta",
     "empty": "No hay rutas disponibles con estos filtros. Prueba a desactivar Kappa o cambiar de mapa.",
@@ -2080,7 +2084,8 @@
       "title": "Buscador híbrido ({{mode}}) - inglés / español sin tildes",
       "placeholder": "EJ: sugar, ledx, graphics card...",
       "loading": "Buscando en la base de datos...",
-      "empty": "No se ha encontrado el objeto deseado en el mercado {{mode}}"
+      "empty": "No se ha encontrado el objeto deseado en el mercado {{mode}}",
+      "connectionError": "Ahora mismo no están disponibles ni el mercado en vivo ni el catálogo estático de objetos."
     },
     "chart": {
       "firstRecord": "Primer registro",
@@ -2105,6 +2110,7 @@
     "hotDeals": {
       "title": "Radar de items más fluctuantes en el mercado {{mode}}:",
       "loading": "Listando items...",
+      "connectionError": "No se pudieron cargar oportunidades desde ninguna de las dos fuentes.",
       "up": "Sube {{pct}}",
       "down": "Baja {{pct}}"
     }

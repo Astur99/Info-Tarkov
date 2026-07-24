@@ -19,6 +19,10 @@
     "it": "IT",
     "ru": "RU"
   },
+  "incidentAlert": {
+    "title": "Vorübergehende Störung der Datenwerkzeuge",
+    "body": "Flea Market, Unterschlupf, Schlüsselsystem und Ballistiksimulator können unvollständige Daten anzeigen. Wir arbeiten aktiv an der Reparatur."
+  },
   "home": {
     "serverStatus": "Serverstatus",
     "about": "ABOUT",
@@ -260,7 +264,7 @@
     "dynamicReason": "Pro Karte wurden Gruppen mit ausstehenden Quests von tarkov.dev erkannt.",
     "variableRisk": "Je nach Route unterschiedliches Risiko",
     "mainRecommendation": "Hauptempfehlung",
-    "bestPlanSummary": "{{reason}} Taktischer Punktestand: {{score}}. Risiko: {{risk}}.",
+    "bestPlanSummary": "{{reason}} Offene Quests: {{tasks}}. Risiko: {{risk}}.",
     "planMeta": "{{tasks}} sichtbare Quests · {{kappa}} Kappa",
     "noCriticalKeys": "Für diese Route wurden keine kritischen Schlüssel erkannt",
     "empty": "Mit diesen Filtern sind keine Routen verfügbar. Versuchen Sie, Kappa zu deaktivieren oder die Karte zu ändern.",
@@ -2080,7 +2084,8 @@
       "title": "Hybridsuche ({{mode}}) – Englisch/Spanisch ohne Akzente",
       "placeholder": "Z.B. Zucker, LEDX, Grafikkarte...",
       "loading": "Suche in der Datenbank...",
-      "empty": "Der angeforderte Artikel wurde im Markt {{mode}} nicht gefunden"
+      "empty": "Der angeforderte Artikel wurde im Markt {{mode}} nicht gefunden",
+      "connectionError": "Weder der Live-Markt noch der statische Gegenstandskatalog ist derzeit verfügbar."
     },
     "chart": {
       "firstRecord": "Erste Aufnahme",
@@ -2105,6 +2110,7 @@
     "hotDeals": {
       "title": "Die am stärksten schwankenden Artikel auf dem {{mode}}-Markt:",
       "loading": "Artikel auflisten...",
+      "connectionError": "Marktchancen konnten aus keiner Datenquelle geladen werden.",
       "up": "Up {{pct}}",
       "down": "Unten {{pct}}"
     }

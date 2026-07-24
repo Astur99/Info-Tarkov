@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.4';
+export const APP_VERSION = '1.2.5';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,50 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.5',
+    date: '2026-07-24',
+    codename: 'Service Resilience',
+    type: 'fixed',
+    title: {
+      es: 'Resiliencia ante incidencias de datos',
+      en: 'Data incident resilience'
+    },
+    summary: {
+      es: 'La app avisa de la incidencia temporal y añade rutas JSON de respaldo para mantener operativos Flea, Refugio y Misiones cuando GraphQL no responde.',
+      en: 'The app now warns about the temporary incident and adds JSON fallback paths to keep Flea, Hideout and Missions operational when GraphQL is unavailable.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'Se muestra una alerta roja global y localizada mientras se revisan las herramientas que dependen de datos externos.',
+          en: 'A localized global red alert is shown while externally sourced tools are being reviewed.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'Flea Market usa búsqueda dirigida y un catálogo JSON cacheado como respaldo, con errores de conexión diferenciados de una búsqueda sin resultados.',
+          en: 'Flea Market now uses targeted search and a cached JSON catalog fallback, distinguishing connection errors from empty results.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'Refugio reconstruye sus 26 estaciones, requisitos, precios y estados FIR desde JSON cuando GraphQL no está disponible.',
+          en: 'Hideout rebuilds its 26 stations, requirements, prices and FIR states from JSON when GraphQL is unavailable.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'Misiones y Quest Optimizer separan correctamente los catálogos PVP/PVE y comparten la capa JSON/GraphQL.',
+          en: 'Missions and Quest Optimizer now use separate PVP/PVE catalogs through the shared JSON/GraphQL layer.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.4',
     date: '2026-06-24',

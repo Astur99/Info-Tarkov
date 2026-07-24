@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import { fetchKappaTaskDataset } from './kappaApi';
 
 const STORAGE_PREFIX = 'sherpa_progreso_misiones_';
 const MODE_STORAGE_KEY = 'sherpa_modo_misiones_activo';
@@ -77,6 +78,7 @@ const riskMapKeys = {
 const getFallbackPlans = (t) =>
   fallbackPlanDefinitions.map((plan) => ({
     ...plan,
+    pendingCount: plan.tasks.length,
     reason: t(`questOptimizer.fallbackPlans.${plan.copyKey}.reason`),
     risk: t(`questOptimizer.fallbackPlans.${plan.copyKey}.risk`)
   }));
@@ -118,35 +120,8 @@ const getTaskMaps = (task) => {
   return [...maps].filter((map) => map && map !== 'Any');
 };
 
-const taskQuery = `
-  query {
-    tasks {
-      id
-      name
-      wikiLink
-      kappaRequired
-      trader {
-        name
-      }
-      map {
-        name
-        normalizedName
-      }
-      objectives {
-        id
-        type
-        description
-        maps {
-          name
-          normalizedName
-        }
-      }
-    }
-  }
-`;
-
 export default function QuestOptimizerModule({ onViewChange, session }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [mode, setMode] = useState(() => localStorage.getItem(MODE_STORAGE_KEY) || readDefaultPlayableMode());
   const [tasks, setTasks] = useState([]);
   const [completedIds, setCompletedIds] = useState(() => readLocalProgress(mode));
@@ -197,20 +172,12 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
       setStatus('');
 
       try {
-        const response = await fetch('https://api.tarkov.dev/graphql', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-          },
-          body: JSON.stringify({ query: taskQuery })
+        const { tasks: loadedTasks } = await fetchKappaTaskDataset({
+          locale: i18n.resolvedLanguage,
+          gameMode: mode
         });
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const payload = await response.json();
-        if (!payload.data?.tasks) throw new Error('Missing tasks response');
-
-        if (!cancelled) setTasks(payload.data.tasks);
+        if (!cancelled) setTasks(loadedTasks);
       } catch (error) {
         console.error(error);
         if (!cancelled) setStatus(t('questOptimizer.status.connectionError'));
@@ -224,7 +191,7 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
     return () => {
       cancelled = true;
     };
-  }, [t]);
+  }, [i18n.resolvedLanguage, mode, t]);
 
   const plans = useMemo(() => {
     if (!tasks.length) return getFallbackPlans(t);
@@ -263,6 +230,7 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
     return [...byMap.values()]
       .map((plan) => ({
         ...plan,
+        pendingCount: plan.tasks.length,
         score: plan.tasks.length * 3 + plan.kappaCount * 2 + Math.min(plan.keys.length, 3),
         traders: [...plan.traders],
         tasks: plan.tasks
@@ -384,7 +352,11 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
             </span>
             <h2 style={{ color: '#fff', margin: '0.35rem 0' }}>{bestPlan.map}</h2>
             <p style={{ color: 'var(--tk-text-muted)', margin: 0, lineHeight: 1.55 }}>
-              {t('questOptimizer.bestPlanSummary', { reason: bestPlan.reason, score: bestPlan.score, risk: bestPlan.risk })}
+              {t('questOptimizer.bestPlanSummary', {
+                reason: bestPlan.reason,
+                tasks: bestPlan.pendingCount ?? bestPlan.tasks.length,
+                risk: bestPlan.risk
+              })}
             </p>
           </section>
         )}
@@ -406,18 +378,18 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
                 <div>
                   <h2 style={{ color: '#fff', margin: 0 }}>{plan.map}</h2>
                   <p style={{ color: 'var(--tk-text-muted)', margin: '0.25rem 0 0' }}>
-                    {t('questOptimizer.planMeta', { tasks: plan.tasks.length, kappa: plan.kappaCount || 0 })}
+                    {t('questOptimizer.planMeta', { tasks: plan.pendingCount ?? plan.tasks.length, kappa: plan.kappaCount || 0 })}
                   </p>
                 </div>
-                <strong style={{ color: 'var(--tk-green)', fontSize: '1.5rem' }}>{plan.score}</strong>
+                <strong style={{ color: 'var(--tk-green)', fontSize: '1.5rem' }}>{plan.pendingCount ?? plan.tasks.length}</strong>
               </div>
 
               <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.55 }}>{plan.risk}</p>
 
               <InfoBlock title={t('questOptimizer.blocks.suggestedQuests')}>
                 {plan.tasks.map((task) => (
-                  <li key={task.id}>
-                    {task.name}
+                  <li key={task.id || task.name || task}>
+                    {task.name || task}
                     {task.kappaRequired && <strong style={{ color: 'var(--tk-green)' }}> · Kappa</strong>}
                     {task.trader?.name && <span style={{ color: 'var(--tk-text-muted)' }}> · {task.trader.name}</span>}
                   </li>
