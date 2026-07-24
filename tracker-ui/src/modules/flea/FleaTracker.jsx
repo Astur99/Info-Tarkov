@@ -307,9 +307,8 @@ export default function FleaTracker({ onViewChange }) {
         <section style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {itemsResultados.map((item) => {
             const slots = item.width * item.height;
-            const fleaPrice = item.lastLowPrice || 0;
+            const fleaPrice = item.avg24hPrice || item.lastLowPrice || 0;
             const pricePerSlot = Math.round(fleaPrice / slots);
-            const inflado = fleaPrice > item.avg24hPrice * 1.15;
 
             return (
               <div
@@ -339,10 +338,13 @@ export default function FleaTracker({ onViewChange }) {
                 </div>
 
                 <div style={{ textAlign: 'right' }}>
+                  <div style={{ color: 'var(--tk-text-muted)', fontSize: '0.72rem', fontWeight: '700' }}>
+                    {t('fleaModule.detail.avg24h')}
+                  </div>
                   <div style={{ color: '#fff', fontSize: '1.2rem', fontWeight: '700' }}>{formatRublos(fleaPrice)}</div>
                   <span style={{ 
-                    backgroundColor: inflado ? 'rgba(255,68,68,0.1)' : 'rgba(26,176,21,0.1)', 
-                    color: inflado ? '#ff4444' : 'var(--tk-green)', 
+                    backgroundColor: 'rgba(26,176,21,0.1)',
+                    color: 'var(--tk-green)',
                     fontSize: '0.75rem', fontWeight: '800', padding: '3px 8px', borderRadius: '4px' 
                   }}>
                     {pricePerSlot ? t('fleaModule.item.pricePerSlot', { price: formatRublos(pricePerSlot) }) : t('fleaModule.item.noRecord')}

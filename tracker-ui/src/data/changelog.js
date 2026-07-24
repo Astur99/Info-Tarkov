@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.8';
+export const APP_VERSION = '1.2.9';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,29 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.9',
+    date: '2026-07-24',
+    codename: 'Stable Flea Pricing',
+    type: 'changed',
+    title: {
+      es: 'Precio medio en resultados del Flea',
+      en: 'Average price in Flea results'
+    },
+    summary: {
+      es: 'Las tarjetas de búsqueda muestran la media de 24 horas y calculan con ella el valor por slot.',
+      en: 'Search result cards now show the 24-hour average and use it for per-slot value.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'El último mínimo escaneado sigue disponible en el detalle, pero deja de ser el precio principal del buscador.',
+          en: 'The last scanned minimum remains available in details but is no longer the search result primary price.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.8',
     date: '2026-07-24',
