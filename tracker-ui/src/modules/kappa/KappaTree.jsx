@@ -391,6 +391,8 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
       return;
     }
 
+    e.preventDefault();
+    window.getSelection?.()?.removeAllRanges();
     setIsDown(true);
 
     setStartPan({
@@ -556,7 +558,9 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
     boxShadow: '0 20px 50px rgba(0,0,0,0.65)',
     backdropFilter: 'blur(18px)',
     WebkitBackdropFilter: 'blur(18px)',
-    pointerEvents: 'auto'
+    pointerEvents: 'auto',
+    userSelect: 'none',
+    WebkitUserSelect: 'none'
   };
 
   const statRowStyle = {

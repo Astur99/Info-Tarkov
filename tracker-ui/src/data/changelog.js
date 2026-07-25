@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.9';
+export const APP_VERSION = '1.2.10';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,29 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.10',
+    date: '2026-07-25',
+    codename: 'Clean Quest Panning',
+    type: 'fixed',
+    title: {
+      es: 'Arrastre limpio en Misiones',
+      en: 'Clean Missions dragging'
+    },
+    summary: {
+      es: 'El paneo del organigrama ya no selecciona ni resalta accidentalmente el texto del panel de estadísticas.',
+      en: 'Panning the mission tree no longer accidentally selects or highlights text in the statistics panel.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'Se cancela la selección nativa al iniciar el arrastre y se protege el texto del panel lateral sin bloquear sus controles.',
+          en: 'Native selection is cancelled when dragging starts and sidebar text is protected without blocking its controls.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.9',
     date: '2026-07-24',
