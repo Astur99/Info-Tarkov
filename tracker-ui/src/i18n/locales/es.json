@@ -1340,15 +1340,17 @@
     "refresh": "REFRESCAR ESTADO DE SERVICIO",
     "resyncing": "RE-SINCRONIZANDO...",
     "warning": "ADVERTENCIA: {{error}}",
+    "source": "FUENTE: {{source}} · VERIFICADO: {{time}}",
     "consoleError": "Error al obtener el estado:",
     "errors": {
-      "network": "Error de red al conectar con el radar de servidores."
+      "network": "No hay una fuente de telemetría disponible. El estado de los servicios se muestra como desconocido; no se presupone que estén operativos."
     },
     "status": {
       "operational": "OPERATIVO",
       "down": "CAÍDO",
       "maintenance": "MANTENIMIENTO",
       "degraded": "DEGRADADO"
+      ,"unknown": "SIN DATOS"
     },
     "services": {
       "website": "SITIO WEB",
@@ -1438,6 +1440,10 @@
     "visibleTargets": "{{count}} objetivos visibles",
     "loadingIntel": "SINCRONIZANDO INTEL DESDE EL SERVIDOR...",
     "reviewedIntel": "INFORME TÁCTICO REVISADO",
+    "dataSource": {
+      "live": "PROBABILIDADES ACTUALIZADAS · JSON TARKOV.DEV",
+      "fallback": "DATOS DE RESERVA · LA FUENTE EXTERNA NO RESPONDE"
+    },
     "solo": "SOLO",
     "squad": "SQUAD",
     "unknownExactZone": "Zona exacta pendiente de confirmar",

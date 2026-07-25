@@ -30,6 +30,7 @@ export default function HideoutModule({ onViewChange, session }) {
   const [errorFuente, setErrorFuente] = useState('');
   const [syncStatus, setSyncStatus] = useState('local');
   const suppressSaveRef = useRef(false);
+  const hydratedProgressKeyRef = useRef(null);
   const selectedStationIdRef = useRef(null);
   const selectedLevelRef = useRef(1);
 
@@ -69,6 +70,7 @@ export default function HideoutModule({ onViewChange, session }) {
     let cancelled = false;
 
     const loadProgress = async () => {
+      hydratedProgressKeyRef.current = null;
       setSyncStatus(session?.user?.id ? 'syncing' : 'local');
       suppressSaveRef.current = Boolean(session?.user?.id);
 
@@ -83,6 +85,7 @@ export default function HideoutModule({ onViewChange, session }) {
       setItemsMarcados(progress.items);
       setNivelesConstruidos(progress.levels);
       setSyncStatus(progress.syncStatus);
+      hydratedProgressKeyRef.current = `${session?.user?.id || 'guest'}:${modoMercado}`;
 
       window.setTimeout(() => {
         if (!cancelled) suppressSaveRef.current = false;
@@ -94,15 +97,17 @@ export default function HideoutModule({ onViewChange, session }) {
       setItemsMarcados({});
       setNivelesConstruidos({});
       setSyncStatus(session?.user?.id ? 'local-error' : 'local');
+      hydratedProgressKeyRef.current = `${session?.user?.id || 'guest'}:${modoMercado}`;
     });
 
     return () => {
       cancelled = true;
     };
-  }, [levelStorageKey, modoMercado, session, session?.user?.id, storageKey]);
+  }, [levelStorageKey, modoMercado, session, storageKey]);
 
   useEffect(() => {
-    if (suppressSaveRef.current) return;
+    const progressKey = `${session?.user?.id || 'guest'}:${modoMercado}`;
+    if (hydratedProgressKeyRef.current !== progressKey || suppressSaveRef.current) return;
 
     let cancelled = false;
     setSyncStatus(session?.user?.id ? 'syncing' : 'local');
@@ -122,7 +127,7 @@ export default function HideoutModule({ onViewChange, session }) {
     return () => {
       cancelled = true;
     };
-  }, [itemsMarcados, levelStorageKey, nivelesConstruidos, modoMercado, session, session?.user?.id, storageKey]);
+  }, [itemsMarcados, levelStorageKey, nivelesConstruidos, modoMercado, session, storageKey]);
 
   useEffect(() => {
     let cancelled = false;

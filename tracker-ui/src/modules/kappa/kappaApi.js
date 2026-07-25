@@ -1,5 +1,6 @@
 import { collectorItemNames } from './kappaData';
 import { normalizeCollectorName } from './kappaUtils';
+import { loadJsonItemCatalog } from '../../services/tarkovDataApi';
 
 const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
 const TARKOV_JSON_URL = 'https://json.tarkov.dev';
@@ -213,18 +214,39 @@ const fetchGraphqlTasks = async () => {
   return tasks;
 };
 
-export const fetchCollectorItemAssets = async () => {
-  const response = await postTarkovQuery({
-    query: collectorItemsQuery,
-    variables: { names: collectorItemNames }
-  });
+export const fetchCollectorItemAssets = async ({
+  locale = 'en',
+  gameMode = 'regular'
+} = {}) => {
+  try {
+    const { items } = await loadJsonItemCatalog({ gameMode, locale });
+    const wantedNames = new Set(collectorItemNames.map(normalizeCollectorName));
+    const assets = {};
 
-  const assets = {};
-  (response.data?.items || []).forEach((item) => {
-    assets[normalizeCollectorName(item.name)] = item;
-  });
+    items.forEach((item) => {
+      const candidates = [item.name, item.shortName, item.normalizedName]
+        .map(normalizeCollectorName);
+      if (!candidates.some((name) => wantedNames.has(name))) return;
+      candidates.forEach((name) => {
+        if (name) assets[name] = item;
+      });
+    });
 
-  return assets;
+    if (Object.keys(assets).length) return assets;
+    throw new Error('Collector JSON item response was empty');
+  } catch (jsonError) {
+    console.warn('Static Collector items unavailable; using GraphQL fallback.', jsonError);
+    const response = await postTarkovQuery({
+      query: collectorItemsQuery,
+      variables: { names: collectorItemNames }
+    });
+
+    const assets = {};
+    (response.data?.items || []).forEach((item) => {
+      assets[normalizeCollectorName(item.name)] = item;
+    });
+    return assets;
+  }
 };
 
 export const fetchKappaTaskDataset = async ({

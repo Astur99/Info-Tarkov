@@ -1,12 +1,14 @@
 {
   "name": "tracker-ui",
   "private": true,
-  "version": "1.2.10",
+  "version": "1.2.11",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test": "node --test tests/*.test.js",
+    "smoke:hybrid": "node scripts/smoke-hybrid.mjs",
     "locales:complete": "node scripts/complete-locales.mjs",
     "locales:normalize": "node scripts/normalize-locales.mjs",
     "locales:validate": "node scripts/validate-locales.mjs",

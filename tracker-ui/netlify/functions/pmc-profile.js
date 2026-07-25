@@ -1,3 +1,5 @@
+import { parseProfileCatalog } from './lib/static-items-catalog.js';
+
 const STATIC_PLAYER_BASES = {
   PVP: 'https://players.tarkov.dev/profile',
   PVE: 'https://players.tarkov.dev/pve'
@@ -6,6 +8,8 @@ const STATIC_PLAYER_BASES = {
 const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
 const TARKOV_STATIC_TASKS_URL = 'https://json.tarkov.dev/regular/tasks';
 const TARKOV_STATIC_TASK_TRANSLATIONS_URL = 'https://json.tarkov.dev/regular/tasks_en';
+const TARKOV_STATIC_ITEMS_URL = 'https://json.tarkov.dev/regular/items';
+const TARKOV_STATIC_ITEM_TRANSLATIONS_URL = 'https://json.tarkov.dev/regular/items_en';
 
 const MEMBER_FLAGS = {
   Developer: 1,
@@ -336,6 +340,40 @@ const fetchItemsByIds = async (ids) => {
   return new Map((data.items || []).map((item) => [item.id, item]));
 };
 
+const normalizeSkillsCatalog = (skills) =>
+  new Map((skills || []).flatMap((skill) => {
+    const normalizedSkill = {
+      name: skill.name,
+      imageLink: skill.imageLink
+    };
+    return [
+      [skill.id, normalizedSkill],
+      [String(skill.id || '').toLowerCase(), normalizedSkill]
+    ];
+  }));
+
+const fetchStaticProfileCatalog = async (ids) => {
+  const [catalogText, translationsText] = await Promise.all([
+    fetchText(TARKOV_STATIC_ITEMS_URL),
+    fetchText(TARKOV_STATIC_ITEM_TRANSLATIONS_URL).catch(() => '')
+  ]);
+  const { playerLevels, skills, items } = parseProfileCatalog(
+    catalogText,
+    ids,
+    translationsText
+  );
+
+  if (!playerLevels.length || !skills.length) {
+    throw new Error('El catalogo JSON de perfil esta incompleto.');
+  }
+
+  return {
+    playerLevels,
+    skillsCatalog: normalizeSkillsCatalog(skills),
+    itemMap: new Map(items.map((item) => [item.id, item]))
+  };
+};
+
 const fetchAchievementsCatalog = async () => {
   const [tasksPayload, translationsPayload] = await Promise.all([
     fetchJson(TARKOV_STATIC_TASKS_URL),
@@ -429,11 +467,16 @@ export const loadPmcProfile = async ({ username, mode }) => {
   const [accountId, indexedName] = indexedPlayer;
   const profilePayload = await fetchJson(`${baseUrl}/${encodeURIComponent(accountId)}.json`);
   const relevantItemIds = getRelevantItemTemplates(profilePayload);
-  const [playerLevels, itemMap, achievementsCatalog, skillsCatalog] = await Promise.all([
-    fetchPlayerLevels().catch(() => []),
-    fetchItemsByIds(relevantItemIds).catch(() => new Map()),
-    fetchAchievementsCatalog().catch(() => ({})),
-    fetchSkillsCatalog().catch(() => new Map())
+  const [profileCatalog, achievementsCatalog] = await Promise.all([
+    fetchStaticProfileCatalog(relevantItemIds).catch(async () => {
+      const [playerLevels, itemMap, skillsCatalog] = await Promise.all([
+        fetchPlayerLevels().catch(() => []),
+        fetchItemsByIds(relevantItemIds).catch(() => new Map()),
+        fetchSkillsCatalog().catch(() => new Map())
+      ]);
+      return { playerLevels, itemMap, skillsCatalog };
+    }),
+    fetchAchievementsCatalog().catch(() => ({}))
   ]);
 
   const profile = normalizeProfile(profilePayload, {
@@ -442,10 +485,10 @@ export const loadPmcProfile = async ({ username, mode }) => {
     mode: normalizedMode,
     updatedAt: findUpdatedTimestamp(updatedText, accountId)
   }, {
-    playerLevels,
-    itemMap,
+    playerLevels: profileCatalog.playerLevels,
+    itemMap: profileCatalog.itemMap,
     achievementsCatalog,
-    skillsCatalog
+    skillsCatalog: profileCatalog.skillsCatalog
   });
 
   return jsonResponse(200, { profile });

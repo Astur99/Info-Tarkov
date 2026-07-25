@@ -5,7 +5,7 @@ import './index.css';
 import { supabase } from './lib/supabaseClient';
 import { buildProfileFromSessionMetadata, hydrateGameModePreference } from './lib/userProfilePreferences';
 import LanguageSwitcher from './components/layout/LanguageSwitcher';
-import { APP_VERSION } from './data/changelog';
+import { APP_VERSION } from './data/appVersion';
 
 import mapasImage from './assets/backgrounds/mapas.png';
 import kappaCaseImage from './assets/backgrounds/kappa.png';

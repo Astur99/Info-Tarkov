@@ -2,6 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { FALLBACK_BOSSES } from './bossesData';
 import { BOSS_SPAWN_ZONES } from './bossSpawnZones';
+import { fetchBossSpawnData, mergeBossSpawnData } from './bossesApi';
 
 const bossImageModules = import.meta.glob('../../assets/bosses/*', {
   eager: true,
@@ -90,6 +91,7 @@ export default function BossesView({ onViewChange }) {
   const [bossSeleccionado, setBossSeleccionado] = useState(null);
   const [bossesData, setBossesData] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [dataSource, setDataSource] = useState('local');
 
   const poolBossesTraducido = useMemo(
     () =>
@@ -106,73 +108,23 @@ export default function BossesView({ onViewChange }) {
     [t]
   );
 
-  // FETCH GRAPHQL PARA MAPAS Y SPAWNS
   useEffect(() => {
-    const queryGraphQL = JSON.stringify({
-      query: `{
-        bosses {
-          name
-          maps {
-            name
-            spawnChance
-          }
-        }
-      }`
-    });
+    const fallbackPool = poolBossesTraducido.map((boss) => ({
+      ...boss,
+      mapa: boss.mapaDefault,
+      spawn: boss.spawnDefault,
+      spawnDetails: buildFallbackSpawnDetails(boss)
+    }));
 
-    fetch('https://api.tarkov.dev/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: queryGraphQL,
-    })
-      .then(res => res.json())
-      .then(result => {
-        if (result?.data?.bosses) {
-          const poolActualizado = poolBossesTraducido.map(bossLocal => {
-            const bossAPI = result.data.bosses.find(b => b.name.toLowerCase() === bossLocal.name.toLowerCase());
-            
-            if (bossAPI && bossAPI.maps && bossAPI.maps.length > 0) {
-              const listaMapas = bossAPI.maps.map(m => m.name).join(', ');
-              const ratioPorcentaje = `${Math.round(bossAPI.maps[0].spawnChance * 100)}%`;
-              
-              return {
-                ...bossLocal,
-                mapa: listaMapas,
-                spawn: ratioPorcentaje,
-                spawnDetails: bossAPI.maps.map((map) => ({
-                  name: map.name,
-                  chance: Math.round(map.spawnChance * 100)
-                })).sort((a, b) => b.chance - a.chance)
-              };
-            }
-            return {
-              ...bossLocal,
-              mapa: bossLocal.mapaDefault,
-              spawn: bossLocal.spawnDefault,
-              spawnDetails: buildFallbackSpawnDetails(bossLocal)
-            };
-          });
-          setBossesData(poolActualizado);
-        } else {
-          setBossesData(poolBossesTraducido.map(b => ({
-            ...b,
-            mapa: b.mapaDefault,
-            spawn: b.spawnDefault,
-            spawnDetails: buildFallbackSpawnDetails(b)
-          })));
-        }
+    fetchBossSpawnData()
+      .then((payload) => {
+        setBossesData(mergeBossSpawnData(fallbackPool, payload));
+        setDataSource('json');
         setCargando(false);
       })
       .catch(() => {
-        setBossesData(poolBossesTraducido.map(b => ({
-          ...b,
-          mapa: b.mapaDefault,
-          spawn: b.spawnDefault,
-          spawnDetails: buildFallbackSpawnDetails(b)
-        })));
+        setBossesData(fallbackPool);
+        setDataSource('local');
         setCargando(false);
       });
   }, [poolBossesTraducido]);
@@ -294,6 +246,11 @@ export default function BossesView({ onViewChange }) {
           <h2 style={{ fontSize: '2.2rem', letterSpacing: '1.5px', fontWeight: '700', color: '#fff' }}>{t('bossesModule.title')}</h2>
           <p style={{ color: 'var(--tk-text-muted)', fontSize: '1rem', marginTop: '0.3rem' }}>
             {t('bossesModule.subtitle')}
+          </p>
+          <p style={{ color: dataSource === 'json' ? 'var(--tk-green)' : '#ffcf66', fontSize: '0.78rem', marginTop: '0.5rem', fontWeight: '800', letterSpacing: '1px' }}>
+            {dataSource === 'json'
+              ? t('bossesModule.dataSource.live')
+              : t('bossesModule.dataSource.fallback')}
           </p>
         </div>
         

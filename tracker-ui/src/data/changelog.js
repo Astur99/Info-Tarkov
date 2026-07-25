@@ -1,4 +1,4 @@
-export const APP_VERSION = '1.2.10';
+export { APP_VERSION } from './appVersion';
 
 export const VERSION_POLICY = {
   current: '1.x',
@@ -17,6 +17,43 @@ export const VERSION_POLICY = {
 };
 
 export const changelogEntries = [
+  {
+    version: '1.2.11',
+    date: '2026-07-25',
+    codename: 'Resilient Intel',
+    type: 'fixed',
+    title: {
+      es: 'Telemetría e inteligencia resistentes',
+      en: 'Resilient telemetry and intelligence'
+    },
+    summary: {
+      es: 'Estado de servidores, perfiles PMC, Bosses y Collector dejan de depender de una única fuente GraphQL.',
+      en: 'Server status, PMC profiles, Bosses and Collector no longer depend on a single GraphQL source.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'El estado de servidores usa JSON como fuente primaria y muestra SIN DATOS si ninguna fuente responde, evitando falsos positivos.',
+          en: 'Server status now uses JSON first and shows NO DATA when every source fails, preventing false positives.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Perfiles PMC recuperan niveles, skills e items mediante extracción JSON ligera; Bosses obtiene probabilidades actuales desde mapas JSON.',
+          en: 'PMC profiles recover levels, skills and items through lightweight JSON extraction; Bosses reads current chances from JSON maps.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Los catálogos de idioma y el historial de cambios salen del paquete inicial, reduciendo notablemente la descarga de entrada.',
+          en: 'Locale catalogs and changelog history leave the initial bundle, substantially reducing the entry download.'
+        }
+      }
+    ]
+  },
   {
     version: '1.2.10',
     date: '2026-07-25',

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getIntlLocale } from '../../i18n/languages';
+import { fetchServerStatus } from './serverStatusApi';
 
 const SERVICES = [
   'Website',
@@ -27,6 +28,10 @@ const serviceKeyByName = {
 };
 
 const getStatusMeta = (rawStatus, t) => {
+  if (!rawStatus || rawStatus.includes('unknown')) {
+    return { label: t('serverStatus.status.unknown'), color: '#9ca3af', level: 'unknown' };
+  }
+
   if (rawStatus.includes('outage') || rawStatus.includes('down') || rawStatus.includes('issue')) {
     return { label: t('serverStatus.status.down'), color: '#ff4d4d', level: 'bad' };
   }
@@ -47,41 +52,26 @@ export default function ServerStatus({ onViewChange }) {
   const [apiData, setApiData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [source, setSource] = useState(null);
+  const [updatedAt, setUpdatedAt] = useState(null);
 
   const loadStatus = useCallback(() => {
     setLoading(true);
     setError(null);
 
-    fetch('https://api.tarkov.dev/graphql', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        query: `
-          query GetServerStatus {
-            vanguardStatus {
-              name
-              status
-            }
-          }
-        `
-      })
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        const statuses = result?.data?.vanguardStatus;
-
-        if (Array.isArray(statuses) && statuses.length > 0) {
-          setApiData(statuses);
-          setError(null);
-        } else {
-          setApiData([]);
-        }
-
+    fetchServerStatus()
+      .then(({ statuses, source: nextSource }) => {
+        setApiData(statuses);
+        setSource(nextSource);
+        setUpdatedAt(new Date());
+        setError(null);
         setLoading(false);
       })
       .catch((statusError) => {
         console.error(t('serverStatus.consoleError'), statusError);
         setError(t('serverStatus.errors.network'));
+        setApiData([]);
+        setSource(null);
         setLoading(false);
       });
   }, [t]);
@@ -97,7 +87,7 @@ export default function ServerStatus({ onViewChange }) {
         (item) => item?.name?.toLowerCase() === serviceName.toLowerCase()
       );
 
-      const rawStatus = matched ? matched.status.toLowerCase() : 'ok';
+      const rawStatus = matched ? String(matched.status).toLowerCase() : 'unknown';
       const statusMeta = getStatusMeta(rawStatus, t);
       const serviceKey = serviceKeyByName[serviceName.toLowerCase()];
 
@@ -195,6 +185,14 @@ export default function ServerStatus({ onViewChange }) {
       </div>
 
       <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+        {updatedAt && (
+          <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 1rem', fontWeight: '700' }}>
+            {t('serverStatus.source', {
+              source: source === 'json' ? 'JSON tarkov.dev' : 'GraphQL tarkov.dev',
+              time: updatedAt.toLocaleTimeString(getIntlLocale(i18n.resolvedLanguage))
+            })}
+          </p>
+        )}
         <button
           onClick={loadStatus}
           disabled={loading}

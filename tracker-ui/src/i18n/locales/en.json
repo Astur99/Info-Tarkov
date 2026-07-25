@@ -1340,15 +1340,17 @@
     "refresh": "REFRESH SERVICE STATUS",
     "resyncing": "RE-SYNCING...",
     "warning": "WARNING: {{error}}",
+    "source": "SOURCE: {{source}} · VERIFIED: {{time}}",
     "consoleError": "Error fetching status:",
     "errors": {
-      "network": "Network error while connecting to the server radar."
+      "network": "No telemetry source is available. Service status is shown as unknown and is not assumed to be operational."
     },
     "status": {
       "operational": "OPERATIONAL",
       "down": "DOWN",
       "maintenance": "MAINTENANCE",
       "degraded": "DEGRADED"
+      ,"unknown": "NO DATA"
     },
     "services": {
       "website": "WEBSITE",
@@ -1438,6 +1440,10 @@
     "visibleTargets": "{{count}} visible targets",
     "loadingIntel": "SYNCING INTEL FROM THE SERVER...",
     "reviewedIntel": "REVIEWED TACTICAL REPORT",
+    "dataSource": {
+      "live": "UPDATED SPAWN CHANCES · TARKOV.DEV JSON",
+      "fallback": "FALLBACK DATA · EXTERNAL SOURCE IS UNAVAILABLE"
+    },
     "solo": "SOLO",
     "squad": "SQUAD",
     "unknownExactZone": "Exact zone pending confirmation",

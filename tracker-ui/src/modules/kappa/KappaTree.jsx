@@ -62,7 +62,10 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   useEffect(() => {
     let cancelled = false;
 
-    fetchCollectorItemAssets()
+    fetchCollectorItemAssets({
+      locale: i18n.resolvedLanguage,
+      gameMode: modoJuego
+    })
       .then((assets) => {
         if (cancelled) return;
         setCollectorItemAssets(assets);
@@ -74,7 +77,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
     return () => {
       cancelled = true;
     };
-  }, [t]);
+  }, [i18n.resolvedLanguage, modoJuego]);
 
   useEffect(() => {
     let cancelled = false;

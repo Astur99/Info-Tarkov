@@ -1340,6 +1340,7 @@
     "refresh": "AGGIORNA STATO SERVIZIO",
     "resyncing": "RE-SYNCING...",
     "warning": "ATTENZIONE: {{error}}",
+    "source": "FONTE: {{source}} · VERIFICATO: {{time}}",
     "consoleError": "Errore durante il recupero dello stato:",
     "errors": {
       "network": "Errore di rete durante la connessione al radar del server."
@@ -1348,7 +1349,8 @@
       "operational": "OPERATIONAL",
       "down": "DOWN",
       "maintenance": "MAINTENANCE",
-      "degraded": "DEGRADED"
+      "degraded": "DEGRADED",
+      "unknown": "NESSUN DATO"
     },
     "services": {
       "website": "WEBSITE",
@@ -1438,6 +1440,10 @@
     "visibleTargets": "{{count}} obiettivi visibili",
     "loadingIntel": "SINCRONIZZAZIONE DELLE INFORMAZIONI DAL SERVER...",
     "reviewedIntel": "RAPPORTO TATTICO REVISIONATO",
+    "dataSource": {
+      "live": "PROBABILITÀ DI SPAWN AGGIORNATE · JSON TARKOV.DEV",
+      "fallback": "DATI DI RISERVA · FONTE ESTERNA NON DISPONIBILE"
+    },
     "solo": "SOLO",
     "squad": "SQUAD",
     "unknownExactZone": "Zona esatta in attesa di conferma",

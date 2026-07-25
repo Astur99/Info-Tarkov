@@ -1,16 +1,11 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import es from './locales/es.json';
-import en from './locales/en.json';
 import { supportedLanguages } from './languages';
 
-const resources = {
-  es: { translation: es },
-  en: { translation: en }
-};
-
 const localeLoaders = {
+  es: () => import('./locales/es.json'),
+  en: () => import('./locales/en.json'),
   de: () => import('./locales/de.json'),
   fr: () => import('./locales/fr.json'),
   it: () => import('./locales/it.json'),
@@ -36,23 +31,22 @@ export const loadLanguageResources = async (language) => {
   i18n.addResourceBundle(normalizedLanguage, 'translation', locale.default, true, true);
 };
 
-const initialLanguage = getInitialLanguage();
+export const initializeI18n = async () => {
+  const initialLanguage = getInitialLanguage();
+  const locale = await localeLoaders[initialLanguage]();
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: initialLanguage,
-    fallbackLng: (code) => (code === 'es' ? ['es', 'en'] : ['en', 'es']),
-    interpolation: {
-      escapeValue: false
-    }
-  });
-
-loadLanguageResources(initialLanguage).then(() => {
-  if (initialLanguage !== 'es' && initialLanguage !== 'en') {
-    i18n.changeLanguage(initialLanguage);
-  }
-});
+  await i18n
+    .use(initReactI18next)
+    .init({
+      resources: {
+        [initialLanguage]: { translation: locale.default }
+      },
+      lng: initialLanguage,
+      fallbackLng: false,
+      interpolation: {
+        escapeValue: false
+      }
+    });
+};
 
 export default i18n;
