@@ -17,7 +17,7 @@ const architectureBlocks = [
   {
     title: 'Datos externos',
     body:
-      'Los modulos de economia, llaves, misiones y refugio consumen tarkov.dev por GraphQL o JSON API. Perfil PMC usa los JSON publicos estaticos de players.tarkov.dev para perfiles ya indexados. Goons y server status dependen de fuentes externas distintas y por eso tienen fallbacks o avisos cuando la fuente falla.'
+      'Los modulos de economia, llaves, misiones y refugio consumen la API JSON de tarkov.dev. Perfil PMC usa los JSON publicos estaticos de players.tarkov.dev para perfiles ya indexados. Goons y server status dependen de fuentes externas distintas y por eso conservan cache o avisos cuando la fuente falla.'
   },
   {
     title: 'Estado 1.0',
@@ -120,7 +120,7 @@ const modules = [
     name: 'Gestion del Refugio',
     files: 'src/modules/hideout/',
     body:
-      'Modulo ya saneado en capas: HideoutModule como contenedor, HideoutHeader, HideoutStationList, HideoutStationDetail, hideoutApi para GraphQL, hideoutStorage para local/cloud y hideoutUtils para reglas puras.'
+      'Modulo ya saneado en capas: HideoutModule como contenedor, HideoutHeader, HideoutStationList, HideoutStationDetail, hideoutApi para JSON oficial, hideoutStorage para local/cloud y hideoutUtils para reglas puras.'
   },
   {
     name: 'Flea Market Tracker',
@@ -150,7 +150,7 @@ const modules = [
     name: 'Perfil de PMC',
     files: 'src/modules/pmc/',
     body:
-      'Lee el usuario Tarkov guardado en la cuenta y permite buscar otros PMCs por nombre, con historial local de busquedas. El frontend llama a /api/pmc-profile, una Netlify Function sin cache que busca accountId en players.tarkov.dev/profile/index.json o /pve/index.json sin parsear el indice completo en memoria, normaliza el JSON publico del perfil y calcula el nivel acumulando los tramos de playerLevels como hace tarkov.dev. Para evitar OutOfMemory en producción no carga catálogos JSON completos: usa GraphQL solo para playerLevels, skills e items visibles/favoritos necesarios, y toma los metadatos de logros desde el JSON estatico de tasks/traducciones. Devuelve todos los logros completados para el panel filtrable, una lista limitada de logros raros/exclusivos, habilidades farmeadas con icono oficial, nivel decimal y ultimo acceso, top logro integrado en la ficha principal, boton principal a tarkov.dev en la barra de busqueda, acciones para copiar AccID/exportar un dossier publico PNG con stats/equipo/favoritos/logros/skills y estado de sincronizacion claro. El PNG usa /api/image-proxy para incrustar iconos externos en canvas sin problemas CORS. No usa el endpoint de busqueda protegido por Turnstile.'
+      'Lee el usuario Tarkov guardado en la cuenta y permite buscar otros PMCs por nombre, con historial local de busquedas. El frontend llama a /api/pmc-profile, una Netlify Function sin cache que busca accountId en players.tarkov.dev/profile/index.json o /pve/index.json sin parsear el indice completo en memoria, normaliza el JSON publico del perfil y enriquece los datos con los catalogos JSON estaticos de tarkov.dev cuando estan disponibles. Si esos catalogos fallan, el perfil base sigue cargando. Devuelve todos los logros completados para el panel filtrable, una lista limitada de logros raros/exclusivos, habilidades farmeadas, equipo y favoritos, ademas de acciones para copiar AccID y exportar un dossier publico PNG. No usa el endpoint de busqueda protegido por Turnstile.'
   },
   {
     name: 'Prestigios',

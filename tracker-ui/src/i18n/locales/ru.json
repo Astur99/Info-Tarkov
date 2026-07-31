@@ -215,6 +215,7 @@
     "stats": {
       "visible": "Видимые клавиши {{mode}}",
       "catalog": "Загруженный каталог",
+      "mapped": "Подтвержденная карта",
       "important": "Видимое важное",
       "maps": "Крытые карты"
     },
@@ -230,7 +231,8 @@
         "Lighthouse": "Маяк",
         "Factory": "Фабрика",
         "Labs": "Лаборатории",
-        "Ground Zero": "Граунд Зеро"
+        "Ground Zero": "Граунд Зеро",
+        "Sin mapa confirmado": "Неподтвержденная карта"
       },
       "categories": {
         "Todas": "Все",
@@ -1842,6 +1844,10 @@
       "local": "ЛОКАЛЬНЫЙ РЕЖИМ: ВОЙДИТЕ ДЛЯ СИНХРОНИЗАЦИИ",
       "localError": "ЛОКАЛЬНЫЙ РЕЖИМ: ОБЛАЧНАЯ ТАБЛИЦА НЕДОСТУПНА ИЛИ ОШИБКА СИНХРОНИЗАЦИИ"
     },
+    "economy": {
+      "summary": "JSON tarkov.dev · крафты: {{crafts}} · бартеры: {{barters}} · торговцы: {{traders}}",
+      "stationCrafts": "Официальных крафтов на этой станции: {{count}}"
+    },
     "errors": {
       "externalFallback": "Внешние данные недоступны. Показан уменьшенный локальный резервный вариант."
     },
@@ -2142,6 +2148,14 @@
     "noteBody": "Требования могут меняться с патчами. Базовые данные были сверены с официальной Escape From Tarkov Wiki.",
     "insigniaTitle": "Престижные знаки отличия",
     "insigniaAlt": "Престижный знак {{level}}",
+    "officialConditions": {
+      "playerLevel": "Уровень PMC {{level}}",
+      "taskStatus": "Выполнить задание: {{task}}",
+      "skill": "{{skill}}, уровень {{level}}",
+      "hideoutStation": "{{station}}, уровень {{level}}",
+      "haveItem": "{{count}} × {{item}}",
+      "types": { "playerLevel": "Уровень PMC", "taskStatus": "Задания", "skill": "Навыки", "hideoutStation": "Убежище", "haveItem": "Предметы" }
+    },
     "groups": {
       "quests": "Квесты",
       "story": "История",

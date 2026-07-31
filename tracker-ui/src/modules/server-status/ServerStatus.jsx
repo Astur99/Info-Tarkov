@@ -60,11 +60,13 @@ export default function ServerStatus({ onViewChange }) {
     setError(null);
 
     fetchServerStatus()
-      .then(({ statuses, source: nextSource }) => {
+      .then(({ statuses, source: nextSource, stale, fetchedAt }) => {
         setApiData(statuses);
         setSource(nextSource);
-        setUpdatedAt(new Date());
-        setError(null);
+        setUpdatedAt(new Date(fetchedAt || Date.now()));
+        setError(stale ? t('serverStatus.errors.cached', {
+          defaultValue: 'La fuente no responde. Mostrando el último estado válido guardado.'
+        }) : null);
         setLoading(false);
       })
       .catch((statusError) => {
@@ -188,7 +190,7 @@ export default function ServerStatus({ onViewChange }) {
         {updatedAt && (
           <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 1rem', fontWeight: '700' }}>
             {t('serverStatus.source', {
-              source: source === 'json' ? 'JSON tarkov.dev' : 'GraphQL tarkov.dev',
+              source: source === 'json' ? 'JSON tarkov.dev' : 'CACHE · JSON tarkov.dev',
               time: updatedAt.toLocaleTimeString(getIntlLocale(i18n.resolvedLanguage))
             })}
           </p>

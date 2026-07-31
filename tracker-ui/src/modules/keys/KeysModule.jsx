@@ -9,7 +9,8 @@ const MARKET_MODES = {
   PVE: 'pve'
 };
 
-const maps = ['Todos', 'Customs', 'Shoreline', 'Reserve', 'Streets', 'Interchange', 'Woods', 'Lighthouse', 'Factory', 'Labs', 'Ground Zero', 'Terminal', 'Labyrinth'];
+const UNCONFIRMED_MAP = 'Sin mapa confirmado';
+const maps = ['Todos', 'Customs', 'Shoreline', 'Reserve', 'Streets', 'Interchange', 'Woods', 'Lighthouse', 'Factory', 'Labs', 'Ground Zero', 'Terminal', 'Labyrinth', UNCONFIRMED_MAP];
 const categories = ['Todas', 'Importantes', 'Quest', 'Loot', 'High value', 'Utility', 'Sin clasificar'];
 
 const priorityStyles = {
@@ -290,7 +291,8 @@ const enrichKey = (item, t) => {
   return {
     ...item,
     map,
-    maps: itemMaps.length ? itemMaps : ['Sin clasificar'],
+    maps: itemMaps.length ? itemMaps : [UNCONFIRMED_MAP],
+    mapSource: item.mapSource || (officialMaps.length ? 'official' : 'local'),
     area: intel?.copyKey
       ? t(`keysModule.intel.${intel.copyKey}.area`, { defaultValue: intel.area })
       : (itemMaps.join(' / ') || map),
@@ -321,6 +323,7 @@ export default function KeysModule({ onViewChange }) {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
   const [dataSource, setDataSource] = useState('local');
+  const [mappedKeyCount, setMappedKeyCount] = useState(0);
   const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
   const gameMode = MARKET_MODES[modoMercado];
   const locale = getIntlLocale(i18n.resolvedLanguage || i18n.language);
@@ -344,6 +347,7 @@ export default function KeysModule({ onViewChange }) {
         if (!cancelled) {
           setRawKeys(keys.length ? keys : fallbackKeys);
           setDataSource(keys.length ? 'json' : 'local');
+          setMappedKeyCount(jsonCatalog.mappedKeyCount || 0);
           setStatus(keys.length ? '' : t('keysModule.status.noKeys'));
         }
       } catch (error) {
@@ -351,6 +355,7 @@ export default function KeysModule({ onViewChange }) {
         if (!cancelled) {
           setRawKeys(fallbackKeys);
           setDataSource('local');
+          setMappedKeyCount(0);
           setStatus(t('keysModule.status.connectionError'));
         }
       } finally {
@@ -372,7 +377,11 @@ export default function KeysModule({ onViewChange }) {
 
     return allKeys
       .filter((key) => {
-        const matchesMap = selectedMap === 'Todos' || key.maps.includes(selectedMap);
+        const matchesMap = selectedMap === 'Todos' || (
+          selectedMap === UNCONFIRMED_MAP
+            ? key.mapSource !== 'official'
+            : key.maps.includes(selectedMap)
+        );
         const matchesCategory =
           selectedCategory === 'Todas' ||
           (selectedCategory === 'Importantes' ? key.isImportant : key.category === selectedCategory);
@@ -539,11 +548,15 @@ export default function KeysModule({ onViewChange }) {
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
           <StatCard label={t('keysModule.stats.visible', { mode: modoMercado })} value={filteredKeys.length} />
           <StatCard label={t('keysModule.stats.catalog')} value={allKeys.length} />
+          <StatCard
+            label={t('keysModule.stats.mapped', { defaultValue: 'Con mapa confirmado' })}
+            value={`${mappedKeyCount}/${allKeys.length}`}
+          />
           <StatCard label={t('keysModule.stats.important')} value={`${visibleImportantCount}/${importantCount}`} />
           <StatCard
             label={t('keysModule.stats.maps')}
-            value={selectedMap === 'Todos'
-              ? new Set(filteredKeys.flatMap((key) => key.maps).filter((map) => map !== 'Sin clasificar')).size
+            value={selectedMap === 'Todos' || selectedMap === UNCONFIRMED_MAP
+              ? new Set(filteredKeys.flatMap((key) => key.maps).filter((map) => map !== UNCONFIRMED_MAP)).size
               : Number(filteredKeys.length > 0)}
           />
         </section>

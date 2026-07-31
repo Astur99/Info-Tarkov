@@ -2,7 +2,6 @@ import { collectorItemNames } from './kappaData';
 import { normalizeCollectorName } from './kappaUtils';
 import { loadJsonItemCatalog } from '../../services/tarkovDataApi';
 
-const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
 const TARKOV_JSON_URL = 'https://json.tarkov.dev';
 const SUPPORTED_TASK_LOCALES = new Set([
   'cs', 'de', 'en', 'es', 'fr', 'hu', 'id', 'it', 'ja', 'ko',
@@ -50,73 +49,6 @@ const mapNamesById = {
 
 const taskDatasetCache = new Map();
 const taskDatasetRequests = new Map();
-
-const collectorItemsQuery = `
-  query GetCollectorItems($names: [String]) {
-    items(names: $names) {
-      id
-      name
-      shortName
-      iconLink
-      imageLink
-      wikiLink
-    }
-  }
-`;
-
-const tasksQuery = `
-  {
-    tasks {
-      id
-      name
-      wikiLink
-      kappaRequired
-      trader {
-        name
-      }
-      map {
-        name
-        normalizedName
-      }
-      objectives {
-        id
-        type
-        description
-        maps {
-          name
-          normalizedName
-        }
-      }
-      taskRequirements {
-        task {
-          id
-          name
-          trader {
-            name
-          }
-        }
-      }
-    }
-  }
-`;
-
-const postTarkovQuery = async (body) => {
-  const response = await fetch(TARKOV_GRAPHQL_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) throw new Error('tarkov.dev request failed');
-  const payload = await response.json();
-  if (payload.errors?.length) {
-    throw new Error(payload.errors[0]?.message || 'tarkov.dev GraphQL request failed');
-  }
-  return payload;
-};
 
 const fetchJson = async (url) => {
   const response = await fetch(url, {
@@ -207,46 +139,27 @@ const fetchJsonTasks = async (locale, gameMode) => {
   return tasks;
 };
 
-const fetchGraphqlTasks = async () => {
-  const response = await postTarkovQuery({ query: tasksQuery });
-  const tasks = response.data?.tasks || [];
-  if (!tasks.length) throw new Error('tarkov.dev GraphQL tasks response is empty');
-  return tasks;
-};
-
 export const fetchCollectorItemAssets = async ({
   locale = 'en',
   gameMode = 'regular'
 } = {}) => {
-  try {
-    const { items } = await loadJsonItemCatalog({ gameMode, locale });
-    const wantedNames = new Set(collectorItemNames.map(normalizeCollectorName));
-    const assets = {};
+  const { items } = await loadJsonItemCatalog({ gameMode, locale });
+  const wantedNames = new Set(collectorItemNames.map(normalizeCollectorName));
+  const assets = {};
 
-    items.forEach((item) => {
-      const candidates = [item.name, item.shortName, item.normalizedName]
-        .map(normalizeCollectorName);
-      if (!candidates.some((name) => wantedNames.has(name))) return;
-      candidates.forEach((name) => {
-        if (name) assets[name] = item;
-      });
+  items.forEach((item) => {
+    const candidates = [item.name, item.shortName, item.normalizedName]
+      .map(normalizeCollectorName);
+    if (!candidates.some((name) => wantedNames.has(name))) return;
+    candidates.forEach((name) => {
+      if (name) assets[name] = item;
     });
+  });
 
-    if (Object.keys(assets).length) return assets;
-    throw new Error('Collector JSON item response was empty');
-  } catch (jsonError) {
-    console.warn('Static Collector items unavailable; using GraphQL fallback.', jsonError);
-    const response = await postTarkovQuery({
-      query: collectorItemsQuery,
-      variables: { names: collectorItemNames }
-    });
-
-    const assets = {};
-    (response.data?.items || []).forEach((item) => {
-      assets[normalizeCollectorName(item.name)] = item;
-    });
-    return assets;
+  if (!Object.keys(assets).length) {
+    throw new Error('Collector JSON item response is empty');
   }
+  return assets;
 };
 
 export const fetchKappaTaskDataset = async ({
@@ -260,18 +173,10 @@ export const fetchKappaTaskDataset = async ({
   if (taskDatasetRequests.has(cacheKey)) return taskDatasetRequests.get(cacheKey);
 
   const request = (async () => {
-    try {
-      return {
-        tasks: await fetchJsonTasks(language, mode),
-        source: 'json'
-      };
-    } catch (jsonError) {
-      console.warn('Static tarkov.dev tasks unavailable; using GraphQL fallback.', jsonError);
-      return {
-        tasks: await fetchGraphqlTasks(),
-        source: 'graphql'
-      };
-    }
+    return {
+      tasks: await fetchJsonTasks(language, mode),
+      source: 'json'
+    };
   })();
 
   taskDatasetRequests.set(cacheKey, request);

@@ -215,6 +215,7 @@
     "stats": {
       "visible": "Sichtbare Schlüssel {{mode}}",
       "catalog": "Geladener Katalog",
+      "mapped": "Bestätigte Karte",
       "important": "Sichtbar wichtig",
       "maps": "Abgedeckte Karten"
     },
@@ -230,7 +231,8 @@
         "Lighthouse": "Leuchtturm",
         "Factory": "Fabrik",
         "Labs": "Labore",
-        "Ground Zero": "Ground Zero"
+        "Ground Zero": "Ground Zero",
+        "Sin mapa confirmado": "Unbestätigte Karte"
       },
       "categories": {
         "Todas": "Alle",
@@ -1842,6 +1844,10 @@
       "local": "LOKALER MODUS: ANMELDEN, UM ZU SYNCHRONISIEREN",
       "localError": "LOKALER MODUS: CLOUD-TABELLE NICHT VERFÜGBAR ODER SYNC-FEHLER"
     },
+    "economy": {
+      "summary": "JSON tarkov.dev · {{crafts}} Crafts · {{barters}} Tauschgeschäfte · {{traders}} Händler",
+      "stationCrafts": "{{count}} offizielle Crafts an dieser Station"
+    },
     "errors": {
       "externalFallback": "Externe Daten nicht verfügbar. Zeigt reduzierten lokalen Fallback."
     },
@@ -2142,6 +2148,14 @@
     "noteBody": "Anforderungen können sich mit Patches ändern. Die Basisdaten wurden mit dem offiziellen Escape From Tarkov-Wiki abgeglichen.",
     "insigniaTitle": "Prestige-Abzeichen",
     "insigniaAlt": "Prestige-{{level}}-Abzeichen",
+    "officialConditions": {
+      "playerLevel": "PMC-Level {{level}}",
+      "taskStatus": "Aufgabe abschließen: {{task}}",
+      "skill": "{{skill}} Level {{level}}",
+      "hideoutStation": "{{station}} Level {{level}}",
+      "haveItem": "{{count}} × {{item}}",
+      "types": { "playerLevel": "PMC-Level", "taskStatus": "Aufgaben", "skill": "Fertigkeiten", "hideoutStation": "Hideout", "haveItem": "Gegenstände" }
+    },
     "groups": {
       "quests": "Quests",
       "story": "Geschichte",

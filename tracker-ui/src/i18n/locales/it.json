@@ -215,6 +215,7 @@
     "stats": {
       "visible": "Chiavi visibili {{mode}}",
       "catalog": "Catalogo caricato",
+      "mapped": "Mappa confermata",
       "important": "Visibile importante",
       "maps": "Mappe coperte"
     },
@@ -230,7 +231,8 @@
         "Lighthouse": "Faro",
         "Factory": "Fabbrica",
         "Labs": "Laboratori",
-        "Ground Zero": "Punto Zero"
+        "Ground Zero": "Punto Zero",
+        "Sin mapa confirmado": "Mappa non confermata"
       },
       "categories": {
         "Todas": "Tutto",
@@ -1842,6 +1844,10 @@
       "local": "MODALITÀ LOCALE: ACCEDI ALLA SINCRONIZZAZIONE",
       "localError": "MODALITÀ LOCALE: TABELLA CLOUD NON DISPONIBILE O ERRORE SINCRONIZZAZIONE"
     },
+    "economy": {
+      "summary": "JSON tarkov.dev · {{crafts}} creazioni · {{barters}} baratti · {{traders}} mercanti",
+      "stationCrafts": "{{count}} creazioni ufficiali in questa stazione"
+    },
     "errors": {
       "externalFallback": "Dati esterni non disponibili. Mostra fallback locale ridotto."
     },
@@ -2142,6 +2148,14 @@
     "noteBody": "I requisiti possono cambiare con le patch. I dati di base sono stati confrontati con il Wiki ufficiale Escape From Tarkov.",
     "insigniaTitle": "Insegne di prestigio",
     "insigniaAlt": "Insegne di prestigio {{level}}",
+    "officialConditions": {
+      "playerLevel": "Livello PMC {{level}}",
+      "taskStatus": "Completa missione: {{task}}",
+      "skill": "{{skill}} livello {{level}}",
+      "hideoutStation": "{{station}} livello {{level}}",
+      "haveItem": "{{count}} × {{item}}",
+      "types": { "playerLevel": "Livello PMC", "taskStatus": "Missioni", "skill": "Abilità", "hideoutStation": "Rifugio", "haveItem": "Oggetti" }
+    },
     "groups": {
       "quests": "Missioni",
       "story": "Storia",

@@ -5,7 +5,6 @@ const STATIC_PLAYER_BASES = {
   PVE: 'https://players.tarkov.dev/pve'
 };
 
-const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
 const TARKOV_STATIC_TASKS_URL = 'https://json.tarkov.dev/regular/tasks';
 const TARKOV_STATIC_TASK_TRANSLATIONS_URL = 'https://json.tarkov.dev/regular/tasks_en';
 const TARKOV_STATIC_ITEMS_URL = 'https://json.tarkov.dev/regular/items';
@@ -58,7 +57,7 @@ const jsonResponse = (statusCode, body) => ({
 
 const fetchJson = async (url) => {
   const response = await fetch(url, {
-    headers: { Accept: 'application/json', 'User-Agent': 'InfoTarkov/0.14.8' }
+    headers: { Accept: 'application/json', 'User-Agent': 'InfoTarkov/1.2.14' }
   });
 
   if (!response.ok) {
@@ -70,7 +69,7 @@ const fetchJson = async (url) => {
 
 const fetchText = async (url) => {
   const response = await fetch(url, {
-    headers: { Accept: 'application/json', 'User-Agent': 'InfoTarkov/0.14.8' }
+    headers: { Accept: 'application/json', 'User-Agent': 'InfoTarkov/1.2.14' }
   });
 
   if (!response.ok) {
@@ -78,29 +77,6 @@ const fetchText = async (url) => {
   }
 
   return response.text();
-};
-
-const fetchGraphql = async (query, variables = {}) => {
-  const response = await fetch(TARKOV_GRAPHQL_URL, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'User-Agent': 'InfoTarkov/0.14.8'
-    },
-    body: JSON.stringify({ query, variables })
-  });
-
-  if (!response.ok) {
-    throw new Error(`GraphQL tarkov.dev no disponible (${response.status}).`);
-  }
-
-  const payload = await response.json();
-  if (payload?.errors?.length) {
-    throw new Error(payload.errors[0]?.message || 'Error GraphQL en tarkov.dev.');
-  }
-
-  return payload.data || {};
 };
 
 const escapeRegExp = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -286,60 +262,6 @@ const getRelevantItemTemplates = (payload) => {
   return [...itemIds].filter(Boolean);
 };
 
-const fetchPlayerLevels = async () => {
-  const data = await fetchGraphql(`
-    query GetPlayerLevels {
-      playerLevels {
-        level
-        exp
-      }
-    }
-  `);
-  return data.playerLevels || [];
-};
-
-const fetchSkillsCatalog = async () => {
-  const data = await fetchGraphql(`
-    query GetSkillsCatalog {
-      skills {
-        id
-        name
-        imageLink
-      }
-    }
-  `);
-
-  return new Map((data.skills || []).flatMap((skill) => {
-    const normalizedSkill = {
-      name: skill.name,
-      imageLink: skill.imageLink
-    };
-    return [
-      [skill.id, normalizedSkill],
-      [String(skill.id || '').toLowerCase(), normalizedSkill]
-    ];
-  }));
-};
-
-const fetchItemsByIds = async (ids) => {
-  if (!ids.length) return new Map();
-
-  const data = await fetchGraphql(`
-    query GetProfileItems($ids: [ID]) {
-      items(ids: $ids) {
-        id
-        name
-        shortName
-        iconLink
-        gridImageLink
-        baseImageLink
-      }
-    }
-  `, { ids });
-
-  return new Map((data.items || []).map((item) => [item.id, item]));
-};
-
 const normalizeSkillsCatalog = (skills) =>
   new Map((skills || []).flatMap((skill) => {
     const normalizedSkill = {
@@ -468,14 +390,11 @@ export const loadPmcProfile = async ({ username, mode }) => {
   const profilePayload = await fetchJson(`${baseUrl}/${encodeURIComponent(accountId)}.json`);
   const relevantItemIds = getRelevantItemTemplates(profilePayload);
   const [profileCatalog, achievementsCatalog] = await Promise.all([
-    fetchStaticProfileCatalog(relevantItemIds).catch(async () => {
-      const [playerLevels, itemMap, skillsCatalog] = await Promise.all([
-        fetchPlayerLevels().catch(() => []),
-        fetchItemsByIds(relevantItemIds).catch(() => new Map()),
-        fetchSkillsCatalog().catch(() => new Map())
-      ]);
-      return { playerLevels, itemMap, skillsCatalog };
-    }),
+    fetchStaticProfileCatalog(relevantItemIds).catch(() => ({
+      playerLevels: [],
+      itemMap: new Map(),
+      skillsCatalog: new Map()
+    })),
     fetchAchievementsCatalog().catch(() => ({}))
   ]);
 

@@ -215,6 +215,7 @@
     "stats": {
       "visible": "Visible keys {{mode}}",
       "catalog": "Official keys loaded",
+      "mapped": "Confirmed map",
       "important": "Visible important",
       "maps": "Covered maps"
     },
@@ -230,7 +231,8 @@
         "Lighthouse": "Lighthouse",
         "Factory": "Factory",
         "Labs": "Labs",
-        "Ground Zero": "Ground Zero"
+        "Ground Zero": "Ground Zero",
+        "Sin mapa confirmado": "Unconfirmed map"
       },
       "categories": {
         "Todas": "All",
@@ -1842,6 +1844,10 @@
       "local": "LOCAL MODE: SIGN IN TO SYNC",
       "localError": "LOCAL MODE: CLOUD TABLE UNAVAILABLE OR SYNC ERROR"
     },
+    "economy": {
+      "summary": "JSON tarkov.dev · {{crafts}} crafts · {{barters}} barters · {{traders}} traders",
+      "stationCrafts": "{{count}} official crafts at this station"
+    },
     "errors": {
       "externalFallback": "External data unavailable. Showing reduced local fallback."
     },
@@ -2136,12 +2142,26 @@
     "pmcLevel": "PMC {{level}}",
     "detailSubtitle": "PMC level {{level}} - {{money}}",
     "summaryTitle": "Summary",
-    "summaryBody": "{{done}} of {{total}} requirements marked. Required money is shown separately because it is not tracked automatically.",
+    "summaryBody": "{{done}} of {{total}} official requirements marked.",
     "rewardsTitle": "Featured rewards",
     "noteTitle": "Note",
-    "noteBody": "Requirements can change with patches. Base data was checked against the official Escape From Tarkov Wiki.",
+    "noteBody": "Requirements can change with patches. This list syncs with the official tarkov.dev JSON data.",
     "insigniaTitle": "Prestige insignia",
     "insigniaAlt": "Prestige {{level}} insignia",
+    "officialConditions": {
+      "playerLevel": "PMC level {{level}}",
+      "taskStatus": "Complete task: {{task}}",
+      "skill": "{{skill}} level {{level}}",
+      "hideoutStation": "{{station}} level {{level}}",
+      "haveItem": "{{count}} × {{item}}",
+      "types": {
+        "playerLevel": "PMC level",
+        "taskStatus": "Tasks",
+        "skill": "Skills",
+        "hideoutStation": "Hideout",
+        "haveItem": "Items"
+      }
+    },
     "groups": {
       "quests": "Quests",
       "story": "Story",

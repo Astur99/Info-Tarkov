@@ -333,8 +333,8 @@ export const loadJsonEconomy = async ({ gameMode, locale = 'en' }) => {
   const mode = normalizeTarkovGameMode(gameMode);
   const language = normalizeTarkovLocale(locale);
   const [barters, crafts, traders, catalog] = await Promise.all([
-    loadJsonDataset({ path: `${mode}/barters`, locale: language }),
-    loadJsonDataset({ path: `${mode}/crafts`, locale: language }),
+    loadJsonDataset({ path: `${mode}/barters` }),
+    loadJsonDataset({ path: `${mode}/crafts` }),
     loadJsonDataset({ path: `${mode}/traders`, locale: language }),
     loadJsonItemCatalog({ gameMode: mode, locale: language })
   ]);
@@ -367,6 +367,39 @@ export const loadJsonProgression = async ({ gameMode, locale = 'en' }) => {
     translations: dataset.translations,
     source: 'json'
   };
+};
+
+export const loadJsonPrestigeDetails = async ({ locale = 'en' } = {}) => {
+  const language = normalizeTarkovLocale(locale);
+  const [progression, catalog, stations] = await Promise.all([
+    loadJsonProgression({ gameMode: 'regular', locale: language }),
+    loadJsonItemCatalog({ gameMode: 'regular', locale: language }),
+    loadJsonHideoutStations({ gameMode: 'regular', locale: language })
+  ]);
+  const tasksById = new Map(progression.tasks.map((task) => [task.id, task]));
+  const stationsById = new Map(stations.map((station) => [station.id, station]));
+
+  return progression.prestige.map((prestige) => ({
+    ...prestige,
+    name: translate(
+      progression.translations,
+      prestige.name,
+      `Prestige ${prestige.prestigeLevel}`
+    ),
+    conditions: (prestige.conditions || []).map((condition) => {
+      const task = tasksById.get(condition.task);
+      return {
+        ...condition,
+        taskName: task
+          ? translate(progression.translations, task.name, task.normalizedName)
+          : condition.task,
+        stationName: stationsById.get(condition.station)?.name || condition.station,
+        itemNames: (condition.items || []).map((itemId) =>
+          catalog.itemsById.get(itemId)?.name || itemId
+        )
+      };
+    })
+  }));
 };
 
 export const loadJsonMaps = async ({ gameMode, locale = 'en' }) => {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import { loadJsonEconomy } from '../../services/tarkovDataApi';
 import { fetchHideoutStations } from './hideoutApi';
 import HideoutHeader from './HideoutHeader';
 import HideoutStationDetail from './HideoutStationDetail';
@@ -28,6 +29,7 @@ export default function HideoutModule({ onViewChange, session }) {
   const [itemsMarcados, setItemsMarcados] = useState({});
   const [nivelesConstruidos, setNivelesConstruidos] = useState({});
   const [errorFuente, setErrorFuente] = useState('');
+  const [economy, setEconomy] = useState(null);
   const [syncStatus, setSyncStatus] = useState('local');
   const suppressSaveRef = useRef(false);
   const hydratedProgressKeyRef = useRef(null);
@@ -160,6 +162,23 @@ export default function HideoutModule({ onViewChange, session }) {
     };
   }, [cargarLocal, gameMode, i18n.resolvedLanguage]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    loadJsonEconomy({ gameMode, locale: i18n.resolvedLanguage })
+      .then((data) => {
+        if (!cancelled) setEconomy(data);
+      })
+      .catch((error) => {
+        console.warn('Official economy JSON unavailable.', error);
+        if (!cancelled) setEconomy(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [gameMode, i18n.resolvedLanguage]);
+
   const datosNivel = useMemo(
     () => estacionSeleccionada?.levels?.find((level) => level.level === nivelObjetivo) || null,
     [estacionSeleccionada?.levels, nivelObjetivo]
@@ -193,6 +212,11 @@ export default function HideoutModule({ onViewChange, session }) {
   const hideoutProgress = useMemo(() => {
     return getHideoutProgress(estaciones, nivelesConstruidos);
   }, [estaciones, nivelesConstruidos]);
+
+  const stationCraftCount = useMemo(
+    () => economy?.crafts?.filter((craft) => craft.station === estacionSeleccionada?.id).length || 0,
+    [economy?.crafts, estacionSeleccionada?.id]
+  );
 
   const stationAvailability = (station) => {
     return getStationAvailability(station, nivelesConstruidos);
@@ -273,6 +297,11 @@ export default function HideoutModule({ onViewChange, session }) {
         modoMercado={modoMercado}
         setModoMercado={handleModeChange}
         onViewChange={onViewChange}
+        economyStats={economy ? {
+          crafts: economy.crafts.length,
+          barters: economy.barters.length,
+          traders: economy.traders.length
+        } : null}
       />
 
       <div
@@ -309,6 +338,7 @@ export default function HideoutModule({ onViewChange, session }) {
           traderRequirements={traderRequirements}
           itemsMarcados={itemsMarcados}
           toggleItem={toggleItem}
+          stationCraftCount={stationCraftCount}
         />
       </div>
     </div>

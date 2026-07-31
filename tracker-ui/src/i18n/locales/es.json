@@ -215,6 +215,7 @@
     "stats": {
       "visible": "Llaves visibles {{mode}}",
       "catalog": "Llaves oficiales cargadas",
+      "mapped": "Con mapa confirmado",
       "important": "Importantes visibles",
       "maps": "Mapas cubiertos"
     },
@@ -230,7 +231,8 @@
         "Lighthouse": "Lighthouse",
         "Factory": "Factory",
         "Labs": "Labs",
-        "Ground Zero": "Ground Zero"
+        "Ground Zero": "Ground Zero",
+        "Sin mapa confirmado": "Sin mapa confirmado"
       },
       "categories": {
         "Todas": "Todas",
@@ -1842,6 +1844,10 @@
       "local": "MODO LOCAL: INICIA SESIÓN PARA SINCRONIZAR",
       "localError": "MODO LOCAL: TABLA CLOUD NO DISPONIBLE O ERROR DE SINCRONIZACIÓN"
     },
+    "economy": {
+      "summary": "JSON tarkov.dev · {{crafts}} crafteos · {{barters}} trueques · {{traders}} comerciantes",
+      "stationCrafts": "{{count}} crafteos oficiales en esta estación"
+    },
     "errors": {
       "externalFallback": "Datos externos no disponibles. Mostrando fallback local reducido."
     },
@@ -2136,12 +2142,26 @@
     "pmcLevel": "PMC {{level}}",
     "detailSubtitle": "Nivel PMC {{level}} - {{money}}",
     "summaryTitle": "Resumen",
-    "summaryBody": "{{done}} de {{total}} requisitos marcados. El dinero requerido se muestra aparte porque no se trackea automáticamente.",
+    "summaryBody": "{{done}} de {{total}} requisitos oficiales marcados.",
     "rewardsTitle": "Recompensas destacadas",
     "noteTitle": "Nota",
-    "noteBody": "Los requisitos pueden cambiar con parches. Datos base revisados contra la wiki oficial de Escape From Tarkov.",
+    "noteBody": "Los requisitos pueden cambiar con parches. Esta lista se sincroniza con el JSON oficial de tarkov.dev.",
     "insigniaTitle": "Insignia de prestigio",
     "insigniaAlt": "Insignia Prestige {{level}}",
+    "officialConditions": {
+      "playerLevel": "Nivel PMC {{level}}",
+      "taskStatus": "Completar misión: {{task}}",
+      "skill": "{{skill}} nivel {{level}}",
+      "hideoutStation": "{{station}} nivel {{level}}",
+      "haveItem": "{{count}} × {{item}}",
+      "types": {
+        "playerLevel": "Nivel PMC",
+        "taskStatus": "Misiones",
+        "skill": "Habilidades",
+        "hideoutStation": "Refugio",
+        "haveItem": "Objetos"
+      }
+    },
     "groups": {
       "quests": "Quests",
       "story": "Historia",

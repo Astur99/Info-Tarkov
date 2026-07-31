@@ -22,7 +22,8 @@ export default function HideoutStationDetail({
   skillRequirements,
   traderRequirements,
   itemsMarcados,
-  toggleItem
+  toggleItem,
+  stationCraftCount
 }) {
   const { t } = useTranslation();
 
@@ -76,6 +77,12 @@ export default function HideoutStationDetail({
           >
             {estacionSeleccionada.name.toUpperCase()}
           </h3>
+          <p style={{ color: 'var(--tk-green)', margin: '0.35rem 0 0', fontWeight: '800' }}>
+            {t('hideoutModule.economy.stationCrafts', {
+              count: stationCraftCount,
+              defaultValue: '{{count}} official crafts at this station'
+            })}
+          </p>
           {stationAvailability(estacionSeleccionada).blockedBy.length > 0 && (
             <p style={{ color: '#ffcf66', margin: '0.45rem 0 0', fontWeight: '800' }}>
               {t('hideoutModule.detail.blockedBy')}{' '}

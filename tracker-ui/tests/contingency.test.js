@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parseProfileCatalog } from '../netlify/functions/lib/static-items-catalog.js';
 import {
+  clearServerStatusCache,
   fetchServerStatus,
   normalizeStatusPayload
 } from '../src/modules/server-status/serverStatusApi.js';
@@ -59,7 +60,8 @@ test('server status normalizes official numeric JSON states', () => {
   assert.deepEqual(statuses.map((item) => item.status), ['ok', 'degraded', 'down']);
 });
 
-test('server status prefers JSON and falls back to GraphQL', async () => {
+test('server status prefers JSON and falls back to the last valid JSON snapshot', async () => {
+  clearServerStatusCache();
   const jsonResult = await fetchServerStatus(async () =>
     response({
       data: { currentStatuses: [{ name: 'Website', statusCode: 'OK' }] }
@@ -67,22 +69,19 @@ test('server status prefers JSON and falls back to GraphQL', async () => {
   );
   assert.equal(jsonResult.source, 'json');
 
-  let calls = 0;
-  const fallbackResult = await fetchServerStatus(async () => {
-    calls += 1;
-    if (calls === 1) return response({}, { ok: false, status: 503 });
-    return response({
-      data: { vanguardStatus: [{ name: 'Website', status: 'ok' }] }
-    });
-  });
-  assert.equal(fallbackResult.source, 'graphql');
-  assert.equal(calls, 2);
+  const fallbackResult = await fetchServerStatus(async () =>
+    response({}, { ok: false, status: 503 })
+  );
+  assert.equal(fallbackResult.source, 'cache');
+  assert.equal(fallbackResult.stale, true);
+  assert.equal(fallbackResult.statuses[0].name, 'Website');
 });
 
 test('server status never invents operational data when every source fails', async () => {
+  clearServerStatusCache();
   await assert.rejects(
     fetchServerStatus(async () => response({}, { ok: false, status: 503 })),
-    AggregateError
+    /JSON status unavailable/
   );
 });
 

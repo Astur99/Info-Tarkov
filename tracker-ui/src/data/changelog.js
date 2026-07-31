@@ -18,6 +18,43 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.2.14',
+    date: '2026-07-31',
+    codename: 'JSON Hardening',
+    type: 'changed',
+    title: {
+      es: 'Capa JSON reforzada y datos oficiales ampliados',
+      en: 'Hardened JSON layer and expanded official data'
+    },
+    summary: {
+      es: 'La app elimina rutas GraphQL obsoletas, aprovecha más endpoints JSON y distingue los datos confirmados de los inferidos.',
+      en: 'The app removes obsolete GraphQL paths, uses more JSON endpoints and distinguishes confirmed data from inferred matches.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'Prestigio carga sus condiciones oficiales y Hideout muestra la cobertura real de crafteos, trueques y comerciantes.',
+          en: 'Prestige loads its official conditions and Hideout shows live craft, barter and trader coverage.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'Llaves separa mapas confirmados por tarkov.dev de asociaciones inferidas y permite localizar las no confirmadas.',
+          en: 'Keys separates tarkov.dev-confirmed maps from inferred associations and lets users find unconfirmed ones.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Estado de servidores, Kappa y Perfil PMC dejan de intentar GraphQL; las pruebas de humo cubren también PVE.',
+          en: 'Server Status, Kappa and PMC Profile no longer attempt GraphQL; smoke tests now cover PVE as well.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.2.13',
     date: '2026-07-31',
     codename: 'Mapped Keys',

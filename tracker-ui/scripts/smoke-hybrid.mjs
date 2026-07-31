@@ -5,7 +5,7 @@ const checks = [
     validate: (payload) => payload?.data?.currentStatuses?.length > 0
   },
   {
-    name: 'Catálogo de items / Flea / Llaves / Balística / PMC',
+    name: 'Catálogo PVP / Flea / Llaves / Balística / PMC',
     url: 'https://json.tarkov.dev/regular/items',
     validate: (payload) =>
       Object.keys(payload?.data?.items || {}).length > 0 &&
@@ -16,8 +16,24 @@ const checks = [
       payload?.data?.skills?.length > 0
   },
   {
+    name: 'Catálogo PVE / Flea / Llaves / Balística',
+    url: 'https://json.tarkov.dev/pve/items',
+    validate: (payload) =>
+      Object.keys(payload?.data?.items || {}).length > 0 &&
+      Object.values(payload?.data?.items || {}).filter((item) =>
+        item?.types?.includes('keys')
+      ).length >= 250
+  },
+  {
     name: 'Hideout',
     url: 'https://json.tarkov.dev/regular/hideout',
+    validate: (payload) => Object.values(payload?.data || {}).some(
+      (station) => station?.id && Array.isArray(station?.levels)
+    )
+  },
+  {
+    name: 'Hideout PVE',
+    url: 'https://json.tarkov.dev/pve/hideout',
     validate: (payload) => Object.values(payload?.data || {}).some(
       (station) => station?.id && Array.isArray(station?.levels)
     )
@@ -66,7 +82,7 @@ let failures = 0;
 for (const check of checks) {
   try {
     const response = await fetch(check.url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'InfoTarkov-Smoke/1.2.12' }
+      headers: { Accept: 'application/json', 'User-Agent': 'InfoTarkov-Smoke/1.2.14' }
     });
     const payload = await response.json();
     const valid = response.ok && check.validate(payload);
@@ -79,7 +95,7 @@ for (const check of checks) {
 }
 
 if (failures > 0) {
-  console.error(`\n${failures} comprobaciones híbridas han fallado.`);
+  console.error(`\n${failures} comprobaciones JSON han fallado.`);
   process.exit(1);
 }
 

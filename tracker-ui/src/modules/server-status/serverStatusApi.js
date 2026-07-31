@@ -1,5 +1,6 @@
 const STATUS_URL = 'https://json.tarkov.dev/status';
-const GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
+
+let lastGoodStatus = null;
 
 const normalizeStatus = (status) => {
   const code = String(status?.statusCode || status?.status || '').toLowerCase();
@@ -17,7 +18,8 @@ export const normalizeStatusPayload = (payload) =>
 
 const fetchJsonStatus = async (fetchImpl) => {
   const response = await fetchImpl(STATUS_URL, {
-    headers: { Accept: 'application/json' }
+    headers: { Accept: 'application/json' },
+    cache: 'no-cache'
   });
   if (!response.ok) throw new Error(`JSON status unavailable (${response.status})`);
 
@@ -26,37 +28,22 @@ const fetchJsonStatus = async (fetchImpl) => {
   return statuses;
 };
 
-const fetchGraphqlStatus = async (fetchImpl) => {
-  const response = await fetchImpl(GRAPHQL_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      query: 'query GetServerStatus { vanguardStatus { name status } }'
-    })
-  });
-
-  const payload = await response.json().catch(() => null);
-  if (!response.ok || payload?.errors?.length) {
-    throw new Error(`GraphQL status unavailable (${response.status})`);
-  }
-
-  const statuses = payload?.data?.vanguardStatus || [];
-  if (!statuses.length) throw new Error('GraphQL status response was empty');
-  return statuses;
+export const clearServerStatusCache = () => {
+  lastGoodStatus = null;
 };
 
 export const fetchServerStatus = async (fetchImpl = fetch) => {
   try {
-    return { statuses: await fetchJsonStatus(fetchImpl), source: 'json' };
-  } catch (jsonError) {
-    try {
-      return { statuses: await fetchGraphqlStatus(fetchImpl), source: 'graphql' };
-    } catch (graphqlError) {
-      throw new AggregateError(
-        [jsonError, graphqlError],
-        'No server-status data source is available',
-        { cause: graphqlError }
-      );
+    const statuses = await fetchJsonStatus(fetchImpl);
+    lastGoodStatus = {
+      statuses,
+      fetchedAt: new Date().toISOString()
+    };
+    return { ...lastGoodStatus, source: 'json', stale: false };
+  } catch (error) {
+    if (lastGoodStatus) {
+      return { ...lastGoodStatus, source: 'cache', stale: true, warning: error.message };
     }
+    throw error;
   }
 };

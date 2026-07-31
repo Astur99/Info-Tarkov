@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { MARKET_MODES } from './hideoutUtils';
 
-export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, setModoMercado, onViewChange }) {
+export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, setModoMercado, onViewChange, economyStats }) {
   const { t } = useTranslation();
 
   return (
@@ -43,6 +43,16 @@ export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, se
         {errorFuente && (
           <p style={{ color: '#ffcf66', marginTop: '0.5rem', fontWeight: '800', letterSpacing: '0.8px' }}>
             {errorFuente}
+          </p>
+        )}
+        {economyStats && (
+          <p style={{ color: 'var(--tk-green)', marginTop: '0.45rem', fontWeight: '900', letterSpacing: '0.8px' }}>
+            {t('hideoutModule.economy.summary', {
+              crafts: economyStats.crafts,
+              barters: economyStats.barters,
+              traders: economyStats.traders,
+              defaultValue: 'JSON tarkov.dev · {{crafts}} crafts · {{barters}} barters · {{traders}} traders'
+            })}
           </p>
         )}
         <p

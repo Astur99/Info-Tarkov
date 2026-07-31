@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { loadJsonProgression } from '../../services/tarkovDataApi';
+import { loadJsonPrestigeDetails } from '../../services/tarkovDataApi';
 import { prestigeIcons, prestigeLevels, requirementGroups, STORAGE_KEY } from './prestigeData';
 
 const panelStyle = {
@@ -12,6 +12,45 @@ const panelStyle = {
 };
 
 const getRequirementId = (prestigeId, groupKey, itemKey) => `${prestigeId}:${groupKey}:${itemKey}`;
+
+const officialConditionOrder = ['playerLevel', 'taskStatus', 'skill', 'hideoutStation', 'haveItem'];
+
+const formatOfficialCondition = (condition, t, locale) => {
+  if (condition.type === 'playerLevel') {
+    return t('prestigeModule.officialConditions.playerLevel', {
+      level: condition.playerLevel,
+      defaultValue: 'PMC level {{level}}'
+    });
+  }
+  if (condition.type === 'taskStatus') {
+    return t('prestigeModule.officialConditions.taskStatus', {
+      task: condition.taskName || condition.task,
+      defaultValue: 'Complete task: {{task}}'
+    });
+  }
+  if (condition.type === 'skill') {
+    return t('prestigeModule.officialConditions.skill', {
+      skill: condition.skill,
+      level: condition.level,
+      defaultValue: '{{skill}} level {{level}}'
+    });
+  }
+  if (condition.type === 'hideoutStation') {
+    return t('prestigeModule.officialConditions.hideoutStation', {
+      station: condition.stationName || condition.station,
+      level: condition.stationLevel,
+      defaultValue: '{{station}} level {{level}}'
+    });
+  }
+  if (condition.type === 'haveItem') {
+    return t('prestigeModule.officialConditions.haveItem', {
+      count: new Intl.NumberFormat(locale).format(Number(condition.count) || 0),
+      item: condition.itemNames?.join(', ') || condition.items?.join(', '),
+      defaultValue: '{{count}} × {{item}}'
+    });
+  }
+  return condition.description || condition.id;
+};
 
 export default function PrestigeModule({ onViewChange }) {
   const { i18n, t } = useTranslation();
@@ -28,8 +67,8 @@ export default function PrestigeModule({ onViewChange }) {
   useEffect(() => {
     let cancelled = false;
 
-    loadJsonProgression({ gameMode: 'regular', locale: i18n.resolvedLanguage })
-      .then(({ prestige }) => {
+    loadJsonPrestigeDetails({ locale: i18n.resolvedLanguage })
+      .then((prestige) => {
         if (!cancelled) setOfficialPrestige(prestige);
       })
       .catch((error) => {
@@ -57,7 +96,7 @@ export default function PrestigeModule({ onViewChange }) {
         ...prestige,
         pmcLevel: Number(playerLevel) || prestige.pmcLevel,
         officialId: official?.id || null,
-        officialConditionCount: official?.conditions?.length || 0
+        officialConditions: official?.conditions || []
       };
     });
   }, [officialPrestige]);
@@ -72,9 +111,15 @@ export default function PrestigeModule({ onViewChange }) {
   }, [completed]);
 
   const progress = useMemo(() => {
-    const allRequirements = requirementGroups.flatMap((group) =>
-      selectedPrestige.groups[group.key].map((itemKey) => getRequirementId(selectedPrestige.id, group.key, itemKey))
-    );
+    const allRequirements = selectedPrestige.officialConditions.length
+      ? selectedPrestige.officialConditions.map((condition) =>
+          getRequirementId(selectedPrestige.id, 'official', condition.id)
+        )
+      : requirementGroups.flatMap((group) =>
+          selectedPrestige.groups[group.key].map((itemKey) =>
+            getRequirementId(selectedPrestige.id, group.key, itemKey)
+          )
+        );
     const realRequirements = allRequirements.filter((id) => !id.endsWith(':notRequired'));
     const done = realRequirements.filter((id) => completed[id]).length;
 
@@ -84,6 +129,17 @@ export default function PrestigeModule({ onViewChange }) {
       percent: realRequirements.length ? Math.round((done / realRequirements.length) * 100) : 100
     };
   }, [completed, selectedPrestige]);
+
+  const officialConditionGroups = useMemo(() => {
+    const grouped = new Map();
+    selectedPrestige.officialConditions.forEach((condition) => {
+      if (!grouped.has(condition.type)) grouped.set(condition.type, []);
+      grouped.get(condition.type).push(condition);
+    });
+    return officialConditionOrder
+      .filter((type) => grouped.has(type))
+      .map((type) => ({ type, conditions: grouped.get(type) }));
+  }, [selectedPrestige]);
 
   const toggleRequirement = (id) => {
     setCompleted((current) => ({
@@ -227,7 +283,44 @@ export default function PrestigeModule({ onViewChange }) {
             </div>
 
             <div style={{ display: 'grid', gap: '1rem' }}>
-              {requirementGroups.map((group) => (
+              {officialConditionGroups.length > 0 ? officialConditionGroups.map((group) => (
+                <div key={group.type}>
+                  <h3 style={{ color: '#fff', margin: '0 0 0.65rem', fontSize: '1rem', textTransform: 'uppercase' }}>
+                    {t(`prestigeModule.officialConditions.types.${group.type}`, {
+                      defaultValue: group.type
+                    })}
+                  </h3>
+                  <div style={{ display: 'grid', gap: '0.5rem' }}>
+                    {group.conditions.map((condition) => {
+                      const id = getRequirementId(selectedPrestige.id, 'official', condition.id);
+                      const isDone = Boolean(completed[id]);
+                      return (
+                        <label
+                          key={id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.65rem',
+                            color: isDone ? 'var(--tk-green)' : '#fff',
+                            background: 'rgba(255,255,255,0.035)',
+                            border: `1px solid ${isDone ? 'rgba(26,176,21,0.25)' : 'rgba(255,255,255,0.07)'}`,
+                            borderRadius: '8px',
+                            padding: '0.7rem 0.8rem',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isDone}
+                            onChange={() => toggleRequirement(id)}
+                          />
+                          <span>{formatOfficialCondition(condition, t, i18n.resolvedLanguage)}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )) : requirementGroups.map((group) => (
                 <div key={group.key}>
                   <h3 style={{ color: '#fff', margin: '0 0 0.65rem', fontSize: '1rem', textTransform: 'uppercase' }}>
                     {t(`prestigeModule.groups.${group.labelKey}`)}

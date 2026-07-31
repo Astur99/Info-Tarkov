@@ -215,6 +215,7 @@
     "stats": {
       "visible": "Touches visibles {{mode}}",
       "catalog": "Catalogue chargé",
+      "mapped": "Carte confirmée",
       "important": "Visible important",
       "maps": "Cartes couvertes"
     },
@@ -230,7 +231,8 @@
         "Lighthouse": "Phare",
         "Factory": "Usine",
         "Labs": "Laboratoires",
-        "Ground Zero": "Point Zéro"
+        "Ground Zero": "Point Zéro",
+        "Sin mapa confirmado": "Carte non confirmée"
       },
       "categories": {
         "Todas": "Tous",
@@ -1842,6 +1844,10 @@
       "local": "MODE LOCAL : CONNEXION POUR SYNCHRONISER",
       "localError": "MODE LOCAL : TABLE CLOUD INDISPONIBLE OU ERREUR DE SYNC"
     },
+    "economy": {
+      "summary": "JSON tarkov.dev · {{crafts}} fabrications · {{barters}} trocs · {{traders}} marchands",
+      "stationCrafts": "{{count}} fabrications officielles dans cette station"
+    },
     "errors": {
       "externalFallback": "Données externes indisponibles. Affichage d'un repli local réduit."
     },
@@ -2142,6 +2148,14 @@
     "noteBody": "Les exigences peuvent changer avec les correctifs. Les données de base ont été vérifiées par rapport au wiki officiel Escape From Tarkov.",
     "insigniaTitle": "Insignes de prestige",
     "insigniaAlt": "Insigne de prestige {{level}}",
+    "officialConditions": {
+      "playerLevel": "Niveau PMC {{level}}",
+      "taskStatus": "Terminer la mission : {{task}}",
+      "skill": "{{skill}} niveau {{level}}",
+      "hideoutStation": "{{station}} niveau {{level}}",
+      "haveItem": "{{count}} × {{item}}",
+      "types": { "playerLevel": "Niveau PMC", "taskStatus": "Missions", "skill": "Compétences", "hideoutStation": "Cachette", "haveItem": "Objets" }
+    },
     "groups": {
       "quests": "Quêtes",
       "story": "Histoire",

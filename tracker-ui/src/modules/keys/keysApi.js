@@ -56,7 +56,8 @@ export const loadJsonKeys = async ({ gameMode, locale }) => {
     .filter(isKeyItem)
     .map((item) => ({
       ...item,
-      maps: mapIndex.get(item.id) || []
+      maps: mapIndex.get(item.id) || [],
+      mapSource: mapIndex.has(item.id) ? 'official' : 'unconfirmed'
     }));
 
   return {
