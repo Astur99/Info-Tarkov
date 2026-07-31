@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { getIntlLocale } from '../../i18n/languages';
-import { loadJsonItemCatalog } from '../../services/tarkovDataApi';
+import { loadJsonKeys } from './keysApi';
 
 const MARKET_MODES = {
   PVP: 'regular',
   PVE: 'pve'
 };
 
-const maps = ['Todos', 'Customs', 'Shoreline', 'Reserve', 'Streets', 'Interchange', 'Woods', 'Lighthouse', 'Factory', 'Labs', 'Ground Zero'];
+const maps = ['Todos', 'Customs', 'Shoreline', 'Reserve', 'Streets', 'Interchange', 'Woods', 'Lighthouse', 'Factory', 'Labs', 'Ground Zero', 'Terminal', 'Labyrinth'];
 const categories = ['Todas', 'Importantes', 'Quest', 'Loot', 'High value', 'Utility', 'Sin clasificar'];
 
 const priorityStyles = {
@@ -230,16 +230,9 @@ const normalize = (value) =>
   String(value || '')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-
-const isKeyItem = (item) => {
-  if (Array.isArray(item.types) && item.types.length) {
-    return item.types.includes('keys');
-  }
-
-  const name = normalize(`${item.name} ${item.shortName} ${item.normalizedName}`);
-  return name.includes(' key') || name.endsWith('key') || name.includes('keycard') || name.includes('access card');
-};
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim();
 
 const getMapFromName = (itemName) => {
   const name = normalize(itemName);
@@ -274,26 +267,43 @@ const formatRoubles = (value, locale, emptyLabel) => {
 };
 
 const getIntelForItem = (item) => {
-  const itemName = normalize(item.name);
-  return importantKeyIntel.find((intel) => intel.aliases.some((alias) => normalize(alias) === itemName));
+  const itemNames = [item.name, item.shortName, item.normalizedName].map(normalize);
+  return importantKeyIntel.find((intel) =>
+    intel.aliases.some((alias) => itemNames.includes(normalize(alias)))
+  );
 };
 
 const enrichKey = (item, t) => {
   const intel = getIntelForItem(item);
-  const map = intel?.map || getMapFromName(item.name);
-  const category = inferCategory(item.name, intel);
+  const fallbackMap = getMapFromName(`${item.normalizedName} ${item.name}`);
+  const officialMaps = item.maps || [];
+  const itemMaps = officialMaps.length
+    ? officialMaps
+    : [...new Set([
+        ...(intel?.map ? [intel.map] : []),
+        ...(fallbackMap !== 'Sin clasificar' ? [fallbackMap] : [])
+      ])];
+  const map = intel?.map || itemMaps[0] || 'Sin clasificar';
+  const category = inferCategory(`${item.normalizedName} ${item.name}`, intel);
   const isImportant = Boolean(intel);
 
   return {
     ...item,
     map,
-    area: intel?.copyKey ? t(`keysModule.intel.${intel.copyKey}.area`, { defaultValue: intel.area }) : map,
+    maps: itemMaps.length ? itemMaps : ['Sin clasificar'],
+    area: intel?.copyKey
+      ? t(`keysModule.intel.${intel.copyKey}.area`, { defaultValue: intel.area })
+      : (itemMaps.join(' / ') || map),
     category,
     priority: intel?.priority || 'Baja',
     quests: intel?.quests || [],
     use: intel?.copyKey ? t(`keysModule.intel.${intel.copyKey}.use`, { defaultValue: intel.use }) : t('keysModule.defaults.use'),
     recommendation: intel?.copyKey ? t(`keysModule.intel.${intel.copyKey}.recommendation`, { defaultValue: intel.recommendation }) : t('keysModule.defaults.recommendation'),
-    tags: [...new Set(intel?.tags || [map.toLowerCase(), category.toLowerCase(), 'tarkov.dev'])],
+    tags: [...new Set(intel?.tags || [
+      ...itemMaps.map((mapName) => mapName.toLowerCase()),
+      category.toLowerCase(),
+      'tarkov.dev'
+    ])],
     isImportant,
     price: item.lastLowPrice || item.avg24hPrice || item.basePrice || 0
   };
@@ -323,15 +333,13 @@ export default function KeysModule({ onViewChange }) {
       setStatus('');
 
       try {
-        const jsonCatalog = await loadJsonItemCatalog({
+        const jsonCatalog = await loadJsonKeys({
           gameMode,
           locale: i18n.resolvedLanguage
         });
-        const items = jsonCatalog.items;
+        const keys = jsonCatalog.keys;
 
-        if (!Array.isArray(items)) throw new Error('Respuesta sin items');
-
-        const keys = items.filter(isKeyItem);
+        if (!Array.isArray(keys)) throw new Error('Respuesta sin items');
 
         if (!cancelled) {
           setRawKeys(keys.length ? keys : fallbackKeys);
@@ -364,7 +372,7 @@ export default function KeysModule({ onViewChange }) {
 
     return allKeys
       .filter((key) => {
-        const matchesMap = selectedMap === 'Todos' || key.map === selectedMap;
+        const matchesMap = selectedMap === 'Todos' || key.maps.includes(selectedMap);
         const matchesCategory =
           selectedCategory === 'Todas' ||
           (selectedCategory === 'Importantes' ? key.isImportant : key.category === selectedCategory);
@@ -532,13 +540,18 @@ export default function KeysModule({ onViewChange }) {
           <StatCard label={t('keysModule.stats.visible', { mode: modoMercado })} value={filteredKeys.length} />
           <StatCard label={t('keysModule.stats.catalog')} value={allKeys.length} />
           <StatCard label={t('keysModule.stats.important')} value={`${visibleImportantCount}/${importantCount}`} />
-          <StatCard label={t('keysModule.stats.maps')} value={new Set(filteredKeys.map((key) => key.map)).size} />
+          <StatCard
+            label={t('keysModule.stats.maps')}
+            value={selectedMap === 'Todos'
+              ? new Set(filteredKeys.flatMap((key) => key.maps).filter((map) => map !== 'Sin clasificar')).size
+              : Number(filteredKeys.length > 0)}
+          />
         </section>
 
         {loading && <p style={{ color: 'var(--tk-green)', marginBottom: '1rem' }}>{t('keysModule.status.loading', { mode: modoMercado })}</p>}
         {!loading && dataSource === 'json' && (
           <p style={{ color: 'var(--tk-green)', margin: '0 0 1rem', fontWeight: '900', letterSpacing: '0.8px' }}>
-            JSON TARKOV.DEV · {allKeys.length} ITEMS TYPE: KEYS · {modoMercado}
+            JSON TARKOV.DEV · {t('keysModule.stats.catalog')}: {allKeys.length} · {modoMercado}
           </p>
         )}
         {status && <p style={{ color: '#ffcf66', marginBottom: '1rem' }}>{status}</p>}

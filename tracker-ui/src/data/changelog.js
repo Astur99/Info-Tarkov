@@ -18,6 +18,43 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.2.13',
+    date: '2026-07-31',
+    codename: 'Mapped Keys',
+    type: 'fixed',
+    title: {
+      es: 'Filtros de mapas reparados en Llaves',
+      en: 'Fixed map filters in Keys'
+    },
+    summary: {
+      es: 'Las llaves se relacionan con cada mapa mediante locks y accessKeys del JSON oficial, incluso cuando el nombre visible esta traducido.',
+      en: 'Keys are now related to each map through the official JSON locks and accessKeys, even when the visible name is translated.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'El filtro Shoreline vuelve a mostrar sus llaves; la prueba actual devuelve 46 resultados validos en PVP.',
+          en: 'The Shoreline filter shows its keys again; the current test returns 46 valid PVP results.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'La capa de llaves importantes funciona tambien con nombres traducidos y slugs normalizados.',
+          en: 'The important-key layer now also works with translated names and normalized slugs.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El contador aclara que 256 es el total oficial de items tipados como keys, no un limite de resultados.',
+          en: 'The counter clarifies that 256 is the official total of items typed as keys, not a result limit.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.2.12',
     date: '2026-07-31',
     codename: 'JSON Recovery',

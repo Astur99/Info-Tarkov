@@ -214,7 +214,7 @@
     },
     "stats": {
       "visible": "Visible keys {{mode}}",
-      "catalog": "Loaded catalog",
+      "catalog": "Official keys loaded",
       "important": "Visible important",
       "maps": "Covered maps"
     },

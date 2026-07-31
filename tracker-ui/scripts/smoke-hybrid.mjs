@@ -47,7 +47,12 @@ const checks = [
     url: 'https://json.tarkov.dev/regular/maps',
     validate: (payload) =>
       Object.keys(payload?.data?.maps || {}).length > 0 &&
-      Object.keys(payload?.data?.mobs || {}).length > 0
+      Object.keys(payload?.data?.mobs || {}).length > 0 &&
+      new Set(
+        (Object.values(payload?.data?.maps || {}).find(
+          (map) => map?.normalizedName === 'shoreline'
+        )?.locks || []).map((lock) => lock?.key).filter(Boolean)
+      ).size >= 30
   },
   {
     name: 'Histórico Flea',

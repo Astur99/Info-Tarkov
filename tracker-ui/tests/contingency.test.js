@@ -7,6 +7,7 @@ import {
 } from '../src/modules/server-status/serverStatusApi.js';
 import { mergeBossSpawnData } from '../src/modules/bosses/bossesApi.js';
 import { handler as goonsHandler } from '../netlify/functions/goons-tracker.js';
+import { buildKeyMapIndex, isKeyItem } from '../src/modules/keys/keysApi.js';
 
 const response = (body, { ok = true, status = 200 } = {}) => ({
   ok,
@@ -146,4 +147,34 @@ test('Goons tracker reads the latest official JSON map report', async () => {
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test('Keys use official map locks and merge duplicate map variants', () => {
+  const index = buildKeyMapIndex([
+    {
+      normalizedName: 'shoreline',
+      locks: [
+        { key: 'resort-104', lockType: 'door' },
+        { key: 'resort-112', lockType: 'door' },
+        { key: '5448ba0b4bdc2d02308b456c', lockType: 'trunk' }
+      ],
+      accessKeys: []
+    },
+    {
+      normalizedName: 'factory',
+      locks: [{ key: 'factory-exit' }],
+      accessKeys: []
+    },
+    {
+      normalizedName: 'night-factory',
+      locks: [{ key: 'factory-exit' }],
+      accessKeys: []
+    }
+  ]);
+
+  assert.deepEqual(index.get('resort-104'), ['Shoreline']);
+  assert.equal(index.has('5448ba0b4bdc2d02308b456c'), false);
+  assert.deepEqual(index.get('factory-exit'), ['Factory']);
+  assert.equal(isKeyItem({ types: ['keys'] }), true);
+  assert.equal(isKeyItem({ types: ['container'], normalizedName: 'key-tool' }), false);
 });

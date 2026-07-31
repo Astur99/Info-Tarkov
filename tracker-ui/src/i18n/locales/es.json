@@ -214,7 +214,7 @@
     },
     "stats": {
       "visible": "Llaves visibles {{mode}}",
-      "catalog": "Catálogo cargado",
+      "catalog": "Llaves oficiales cargadas",
       "important": "Importantes visibles",
       "maps": "Mapas cubiertos"
     },
