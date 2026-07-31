@@ -1,79 +1,7 @@
+import { TARKOV_NEWS_FALLBACK } from '../../src/data/tarkovNewsFallback.js';
+
 const TIMELINE_URL = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/tarkov?dnt=true&frame=false&lang=en&theme=dark';
 const CACHE_TTL_MS = 5 * 60 * 1000;
-
-// X frequently rate-limits server-side requests and its browser widget is blocked by
-// tracking protection. Keep a last-known-good public snapshot so the news panel never
-// collapses into an empty state while the automatic refresh recovers.
-const FALLBACK_POSTS = [
-  {
-    id: '2067608325085143407',
-    text: 'Preliminary plan for #EscapefromTarkov updates up to Q4 2026. https://t.co/chaJ8fpwOb',
-    createdAt: '2026-06-18T14:00:13.000Z',
-    url: 'https://x.com/tarkov/status/2067608325085143407',
-    author: {
-      name: 'Escape from Tarkov',
-      username: 'tarkov',
-      avatar: 'https://pbs.twimg.com/profile_images/2058838438900617216/3MT4g_A3_normal.jpg',
-      verified: true
-    },
-    metrics: { replies: 310, reposts: 287, likes: 2411 },
-    media: [{
-      type: 'photo',
-      url: 'https://pbs.twimg.com/media/HLGPraxWkAEUiPo.jpg'
-    }]
-  },
-  {
-    id: '1913276027960181109',
-    text: 'AK-50\n#EscapefromTarkov https://t.co/fkUVcIKeKO',
-    createdAt: '2025-04-18T16:58:46.000Z',
-    url: 'https://x.com/tarkov/status/1913276027960181109',
-    author: {
-      name: 'Escape from Tarkov',
-      username: 'tarkov',
-      avatar: 'https://pbs.twimg.com/profile_images/2058838438900617216/3MT4g_A3_normal.jpg',
-      verified: true
-    },
-    metrics: { replies: 119, reposts: 631, likes: 7338 },
-    media: [{
-      type: 'video',
-      url: 'https://pbs.twimg.com/amplify_video_thumb/1913275546194116608/img/lhzGiqYKzuY9aTo8.jpg'
-    }]
-  },
-  {
-    id: '1913272330962206931',
-    text: 'Marlin MXLR\n#EscapefromTarkov https://t.co/wMlAaDBkPw',
-    createdAt: '2025-04-18T16:44:05.000Z',
-    url: 'https://x.com/tarkov/status/1913272330962206931',
-    author: {
-      name: 'Escape from Tarkov',
-      username: 'tarkov',
-      avatar: 'https://pbs.twimg.com/profile_images/2058838438900617216/3MT4g_A3_normal.jpg',
-      verified: true
-    },
-    metrics: { replies: 129, reposts: 753, likes: 7761 },
-    media: [{
-      type: 'video',
-      url: 'https://pbs.twimg.com/amplify_video_thumb/1913271938429927424/img/0Xw9YhbRiOwarPaA.jpg'
-    }]
-  },
-  {
-    id: '1823684091289510306',
-    text: 'Escape from Tarkov Beta — 0.15.0 Patch trailer (feat. Partisan)\n\n#EscapefromTarkov https://t.co/TAhL9N7DYF',
-    createdAt: '2024-08-14T11:32:24.000Z',
-    url: 'https://x.com/tarkov/status/1823684091289510306',
-    author: {
-      name: 'Escape from Tarkov',
-      username: 'tarkov',
-      avatar: 'https://pbs.twimg.com/profile_images/2058838438900617216/3MT4g_A3_normal.jpg',
-      verified: true
-    },
-    metrics: { replies: 594, reposts: 1724, likes: 6988 },
-    media: [{
-      type: 'video',
-      url: 'https://pbs.twimg.com/ext_tw_video_thumb/1823638923861458944/pu/img/X521xiop4LgM8asm.jpg'
-    }]
-  }
-];
 
 let lastGoodResponse = null;
 
@@ -181,7 +109,7 @@ export const handler = async () => {
       });
     }
     return response(200, {
-      posts: FALLBACK_POSTS,
+      posts: TARKOV_NEWS_FALLBACK,
       source: 'bundled-fallback',
       fetchedAt: '2026-07-31T00:00:00.000Z',
       warning: error.message || 'Official X timeline unavailable.'

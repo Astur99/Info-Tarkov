@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TARKOV_NEWS_FALLBACK } from '../../data/tarkovNewsFallback';
 
 const TARKOV_X_URL = 'https://x.com/tarkov';
 
@@ -31,35 +32,23 @@ const fetchOfficialNews = async (signal) => {
 
 export default function OfficialNewsPanel() {
   const { i18n, t } = useTranslation();
-  const [posts, setPosts] = useState([]);
-  const [status, setStatus] = useState('loading');
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [posts, setPosts] = useState(TARKOV_NEWS_FALLBACK);
   const locale = i18n.resolvedLanguage || i18n.language || 'en';
 
   useEffect(() => {
     const controller = new AbortController();
     fetchOfficialNews(controller.signal)
       .then((nextPosts) => {
-        setPosts(nextPosts);
-        setStatus(nextPosts.length ? 'ready' : 'empty');
+        if (nextPosts.length) setPosts(nextPosts);
       })
-      .catch((error) => {
-        if (error.name !== 'AbortError') setStatus('error');
-      });
+      .catch(() => {});
     return () => controller.abort();
-  }, [refreshKey]);
+  }, []);
 
   return (
     <aside className="home-news-panel" aria-labelledby="official-news-title">
       <header className="home-news-panel__header">
-        <div className="home-news-panel__identity">
-          <span className="home-news-panel__mark" aria-hidden="true">IT</span>
-          <div>
-            <span className="home-news-panel__eyebrow">{t('home.news.channel')}</span>
-            <h2 id="official-news-title">{t('home.news.title')}</h2>
-            <span className="home-news-panel__account">@tarkov</span>
-          </div>
-        </div>
+        <h2 id="official-news-title">{t('home.news.title')}</h2>
         <a
           className="home-news-panel__x-link"
           href={TARKOV_X_URL}
@@ -77,33 +66,7 @@ export default function OfficialNewsPanel() {
       </div>
 
       <div className="home-news-panel__timeline" aria-live="polite">
-        {status === 'loading' && (
-          <div className="home-news-panel__loading" aria-label={t('home.news.loading')}>
-            <span />
-            <span />
-            <span />
-          </div>
-        )}
-
-        {status === 'error' && (
-          <div className="home-news-panel__error" role="status">
-            <XLogo />
-            <p>{t('home.news.unavailable')}</p>
-            <button
-              type="button"
-              onClick={() => {
-                setStatus('loading');
-                setRefreshKey((current) => current + 1);
-              }}
-            >
-              {t('home.news.retry')}
-            </button>
-          </div>
-        )}
-
-        {status === 'empty' && <p className="home-news-panel__empty">{t('home.news.empty')}</p>}
-
-        {status === 'ready' && posts.map((post) => (
+        {posts.map((post) => (
           <article className="home-news-post" key={post.id}>
             <div className="home-news-post__author">
               {post.author.avatar ? (

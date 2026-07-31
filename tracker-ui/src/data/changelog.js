@@ -18,6 +18,36 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.2.17',
+    date: '2026-07-31',
+    codename: 'Always-On News',
+    type: 'fixed',
+    title: {
+      es: 'Noticias visibles incluso sin conexión con X',
+      en: 'News remains visible when X cannot be reached'
+    },
+    summary: {
+      es: 'El panel arranca con la última copia oficial disponible y se actualiza en segundo plano, sin volver a mostrar un bloque vacío.',
+      en: 'The panel starts with the latest available official snapshot and refreshes in the background without showing an empty block.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'El respaldo vive también en el cliente, por lo que bloqueadores, cachés o fallos del endpoint ya no impiden mostrar publicaciones.',
+          en: 'The fallback now also lives in the client, so blockers, caches or endpoint failures can no longer hide every post.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'La cabecera queda reducida a OFFICIAL NEWS y el icono de X.',
+          en: 'The header is reduced to OFFICIAL NEWS and the X icon.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.2.16',
     date: '2026-07-31',
     codename: 'Newswire Direct',
