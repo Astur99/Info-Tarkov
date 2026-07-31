@@ -9,11 +9,40 @@ import {
 import { mergeBossSpawnData } from '../src/modules/bosses/bossesApi.js';
 import { handler as goonsHandler } from '../netlify/functions/goons-tracker.js';
 import { buildKeyMapIndex, isKeyItem } from '../src/modules/keys/keysApi.js';
+import { parseTimelineHtml } from '../netlify/functions/tarkov-news.js';
 
 const response = (body, { ok = true, status = 200 } = {}) => ({
   ok,
   status,
   json: async () => body
+});
+
+test('official news parser keeps @tarkov posts in reverse chronological order', () => {
+  const tweet = (id, createdAt) => ({
+    id_str: id,
+    full_text: `Post ${id}`,
+    created_at: createdAt,
+    permalink: `/tarkov/status/${id}`,
+    user: { name: 'Escape from Tarkov', screen_name: 'tarkov' }
+  });
+  const payload = {
+    props: {
+      pageProps: {
+        timeline: {
+          entries: [
+            { type: 'tweet', content: { tweet: tweet('old', 'Wed Dec 28 05:12:54 +0000 2022') } },
+            { type: 'tweet', content: { tweet: tweet('new', 'Thu Jun 18 14:00:13 +0000 2026') } }
+          ]
+        }
+      }
+    }
+  };
+  const posts = parseTimelineHtml(
+    `<script id="__NEXT_DATA__" type="application/json">${JSON.stringify(payload)}</script>`
+  );
+
+  assert.deepEqual(posts.map((post) => post.id), ['new', 'old']);
+  assert.equal(posts[0].createdAt, '2026-06-18T14:00:13.000Z');
 });
 
 test('PMC static catalog extracts only requested metadata and items', () => {

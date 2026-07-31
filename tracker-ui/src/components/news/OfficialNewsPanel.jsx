@@ -1,91 +1,147 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const X_WIDGET_SCRIPT_ID = 'x-widgets-script';
-const X_WIDGET_SCRIPT_URL = 'https://platform.twitter.com/widgets.js';
 const TARKOV_X_URL = 'https://x.com/tarkov';
 
+const XLogo = () => (
+  <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15">
+    <path
+      fill="currentColor"
+      d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+    />
+  </svg>
+);
+
+const formatMetric = (value, locale) => new Intl.NumberFormat(locale, {
+  notation: Number(value) >= 1000 ? 'compact' : 'standard',
+  maximumFractionDigits: 1
+}).format(Number(value) || 0);
+
+const fetchOfficialNews = async (signal) => {
+  const request = await fetch('/api/tarkov-news', {
+    headers: { Accept: 'application/json' },
+    signal
+  });
+  const payload = await request.json();
+  if (!request.ok || !Array.isArray(payload.posts)) {
+    throw new Error(payload.error || 'Official news unavailable.');
+  }
+  return payload.posts;
+};
+
 export default function OfficialNewsPanel() {
-  const { t } = useTranslation();
-  const timelineRef = useRef(null);
-  const [widgetState, setWidgetState] = useState('loading');
+  const { i18n, t } = useTranslation();
+  const [posts, setPosts] = useState([]);
+  const [status, setStatus] = useState('loading');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const locale = i18n.resolvedLanguage || i18n.language || 'en';
 
   useEffect(() => {
-    const renderTimeline = () => {
-      if (window.twttr?.widgets && timelineRef.current) {
-        window.twttr.widgets.load(timelineRef.current);
-      }
-    };
-
-    const visibilityCheck = window.setInterval(() => {
-      const iframe = timelineRef.current?.querySelector('iframe');
-      if (iframe?.getBoundingClientRect().height > 100) {
-        setWidgetState('ready');
-        window.clearInterval(visibilityCheck);
-      }
-    }, 500);
-    const unavailableTimeout = window.setTimeout(() => {
-      setWidgetState((current) => current === 'ready' ? current : 'unavailable');
-      window.clearInterval(visibilityCheck);
-    }, 8000);
-
-    const cleanup = (script) => {
-      script?.removeEventListener('load', renderTimeline);
-      window.clearInterval(visibilityCheck);
-      window.clearTimeout(unavailableTimeout);
-    };
-
-    const existingScript = document.getElementById(X_WIDGET_SCRIPT_ID);
-    if (existingScript) {
-      if (window.twttr?.widgets) renderTimeline();
-      else existingScript.addEventListener('load', renderTimeline, { once: true });
-      return () => cleanup(existingScript);
-    }
-
-    const script = document.createElement('script');
-    script.id = X_WIDGET_SCRIPT_ID;
-    script.src = X_WIDGET_SCRIPT_URL;
-    script.async = true;
-    script.charset = 'utf-8';
-    script.addEventListener('load', renderTimeline, { once: true });
-    document.body.appendChild(script);
-
-    return () => cleanup(script);
-  }, []);
+    const controller = new AbortController();
+    fetchOfficialNews(controller.signal)
+      .then((nextPosts) => {
+        setPosts(nextPosts);
+        setStatus(nextPosts.length ? 'ready' : 'empty');
+      })
+      .catch((error) => {
+        if (error.name !== 'AbortError') setStatus('error');
+      });
+    return () => controller.abort();
+  }, [refreshKey]);
 
   return (
     <aside className="home-news-panel" aria-labelledby="official-news-title">
       <header className="home-news-panel__header">
-        <div>
-          <span className="home-news-panel__eyebrow">@tarkov · X</span>
-          <h2 id="official-news-title">{t('home.news.title')}</h2>
+        <div className="home-news-panel__identity">
+          <span className="home-news-panel__mark" aria-hidden="true">IT</span>
+          <div>
+            <span className="home-news-panel__eyebrow">{t('home.news.channel')}</span>
+            <h2 id="official-news-title">{t('home.news.title')}</h2>
+            <span className="home-news-panel__account">@tarkov</span>
+          </div>
         </div>
-        <span className="home-news-panel__live" aria-label={t('home.news.automatic')}>
-          <span aria-hidden="true" />
-          LIVE
-        </span>
+        <a
+          className="home-news-panel__x-link"
+          href={TARKOV_X_URL}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={t('home.news.openProfile')}
+        >
+          <XLogo />
+        </a>
       </header>
 
-      <p className="home-news-panel__description">{t('home.news.description')}</p>
+      <div className="home-news-panel__status">
+        <span aria-hidden="true" />
+        {t('home.news.automatic')}
+      </div>
 
-      <div className={`home-news-panel__timeline home-news-panel__timeline--${widgetState}`} ref={timelineRef}>
-        <a
-          className="twitter-timeline"
-          href={TARKOV_X_URL}
-          data-theme="dark"
-          data-chrome="noheader nofooter noborders transparent"
-          data-dnt="true"
-          data-height="520"
-          data-link-color="#8f9f7f"
-        >
-          {t('home.news.loading')}
-        </a>
-        {widgetState === 'unavailable' && (
-          <div className="home-news-panel__fallback" role="status">
-            <strong aria-hidden="true">X</strong>
-            <span>{t('home.news.unavailable')}</span>
+      <div className="home-news-panel__timeline" aria-live="polite">
+        {status === 'loading' && (
+          <div className="home-news-panel__loading" aria-label={t('home.news.loading')}>
+            <span />
+            <span />
+            <span />
           </div>
         )}
+
+        {status === 'error' && (
+          <div className="home-news-panel__error" role="status">
+            <XLogo />
+            <p>{t('home.news.unavailable')}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setStatus('loading');
+                setRefreshKey((current) => current + 1);
+              }}
+            >
+              {t('home.news.retry')}
+            </button>
+          </div>
+        )}
+
+        {status === 'empty' && <p className="home-news-panel__empty">{t('home.news.empty')}</p>}
+
+        {status === 'ready' && posts.map((post) => (
+          <article className="home-news-post" key={post.id}>
+            <div className="home-news-post__author">
+              {post.author.avatar ? (
+                <img src={post.author.avatar} alt="" loading="lazy" />
+              ) : (
+                <span aria-hidden="true">IT</span>
+              )}
+              <div>
+                <strong>{post.author.name}</strong>
+                <span>@{post.author.username}</span>
+              </div>
+              <a href={post.url} target="_blank" rel="noreferrer" aria-label={t('home.news.openPost')}>
+                <XLogo />
+              </a>
+            </div>
+
+            <a className="home-news-post__body" href={post.url} target="_blank" rel="noreferrer">
+              <p>{post.text}</p>
+              {post.media?.[0]?.url && (
+                <img
+                  className="home-news-post__media"
+                  src={post.media[0].url}
+                  alt=""
+                  loading="lazy"
+                />
+              )}
+              <time dateTime={post.createdAt}>
+                {new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(post.createdAt))}
+              </time>
+            </a>
+
+            <div className="home-news-post__metrics" aria-label={t('home.news.metrics')}>
+              <span>↩ {formatMetric(post.metrics.replies, locale)}</span>
+              <span>↻ {formatMetric(post.metrics.reposts, locale)}</span>
+              <span>♥ {formatMetric(post.metrics.likes, locale)}</span>
+            </div>
+          </article>
+        ))}
       </div>
 
       <a
@@ -94,7 +150,8 @@ export default function OfficialNewsPanel() {
         target="_blank"
         rel="noreferrer"
       >
-        {t('home.news.openProfile')} ↗
+        {t('home.news.openProfile')}
+        <span aria-hidden="true">↗</span>
       </a>
     </aside>
   );

@@ -38,11 +38,17 @@
     "adminSuffix": "· ADMIN",
     "guestMode": "GASTMODUS · SIE KÖNNEN DIE APP OHNE KONTO NUTZEN",
     "news": {
+      "channel": "Offizieller Kanal",
       "title": "Offizielle Nachrichten",
       "description": "Neueste Beiträge des offiziellen Escape from Tarkov-Kontos.",
       "automatic": "Automatische Aktualisierung",
       "loading": "Beiträge von @tarkov werden geladen...",
       "unavailable": "X konnte die Timeline nicht laden. Die Nachrichten sind im offiziellen Profil verfügbar.",
+      "timelineTitle": "Neueste offizielle Escape from Tarkov-Beiträge",
+      "retry": "Erneut versuchen",
+      "empty": "Derzeit sind keine Beiträge verfügbar.",
+      "openPost": "Beitrag auf X öffnen",
+      "metrics": "Antworten, Reposts und Likes",
       "openProfile": "Offizielles Profil öffnen"
     },
     "modules": {

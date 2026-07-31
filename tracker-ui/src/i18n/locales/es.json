@@ -38,11 +38,17 @@
     "adminSuffix": " · ADMIN",
     "guestMode": "MODO INVITADO · PUEDES USAR LA APP SIN CUENTA",
     "news": {
+      "channel": "Canal oficial",
       "title": "Noticias oficiales",
       "description": "Últimas publicaciones de la cuenta oficial de Escape from Tarkov.",
       "automatic": "Actualización automática",
       "loading": "Cargando publicaciones de @tarkov...",
       "unavailable": "X no ha podido cargar el timeline. Puedes consultar las noticias desde el perfil oficial.",
+      "timelineTitle": "Últimas publicaciones oficiales de Escape from Tarkov",
+      "retry": "Reintentar",
+      "empty": "No hay publicaciones disponibles.",
+      "openPost": "Abrir publicación en X",
+      "metrics": "Respuestas, republicaciones y me gusta",
       "openProfile": "Abrir perfil oficial"
     },
     "modules": {

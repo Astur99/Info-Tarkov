@@ -38,11 +38,17 @@
     "adminSuffix": "· ADMINISTRATEUR",
     "guestMode": "MODE INVITÉ · VOUS POUVEZ UTILISER L'APPLICATION SANS COMPTE",
     "news": {
+      "channel": "Canal officiel",
       "title": "Actualités officielles",
       "description": "Dernières publications du compte officiel Escape from Tarkov.",
       "automatic": "Mise à jour automatique",
       "loading": "Chargement des publications de @tarkov...",
       "unavailable": "X n'a pas pu charger la timeline. Les actualités restent disponibles sur le profil officiel.",
+      "timelineTitle": "Dernières publications officielles d'Escape from Tarkov",
+      "retry": "Réessayer",
+      "empty": "Aucune publication n'est disponible.",
+      "openPost": "Ouvrir la publication sur X",
+      "metrics": "Réponses, republications et mentions J'aime",
       "openProfile": "Ouvrir le profil officiel"
     },
     "modules": {

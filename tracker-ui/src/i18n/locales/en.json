@@ -38,11 +38,17 @@
     "adminSuffix": " · ADMIN",
     "guestMode": "GUEST MODE · YOU CAN USE THE APP WITHOUT AN ACCOUNT",
     "news": {
+      "channel": "Official channel",
       "title": "Official news",
       "description": "Latest posts from the official Escape from Tarkov account.",
       "automatic": "Automatic updates",
       "loading": "Loading posts from @tarkov...",
       "unavailable": "X could not load the timeline. You can read the news on the official profile.",
+      "timelineTitle": "Latest official Escape from Tarkov posts",
+      "retry": "Try again",
+      "empty": "No posts are currently available.",
+      "openPost": "Open post on X",
+      "metrics": "Replies, reposts and likes",
       "openProfile": "Open official profile"
     },
     "modules": {

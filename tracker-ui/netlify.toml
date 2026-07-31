@@ -15,3 +15,8 @@
   from = "/api/goons-tracker"
   to = "/.netlify/functions/goons-tracker"
   status = 200
+
+[[redirects]]
+  from = "/api/tarkov-news"
+  to = "/.netlify/functions/tarkov-news"
+  status = 200

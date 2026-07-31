@@ -38,11 +38,17 @@
     "adminSuffix": "· AMMINISTRATORE",
     "guestMode": "MODALITÀ OSPITE · PUOI UTILIZZARE L'APP SENZA ACCOUNT",
     "news": {
+      "channel": "Canale ufficiale",
       "title": "Notizie ufficiali",
       "description": "Ultimi post dell'account ufficiale di Escape from Tarkov.",
       "automatic": "Aggiornamento automatico",
       "loading": "Caricamento dei post di @tarkov...",
       "unavailable": "X non ha potuto caricare la timeline. Le notizie sono disponibili sul profilo ufficiale.",
+      "timelineTitle": "Ultimi post ufficiali di Escape from Tarkov",
+      "retry": "Riprova",
+      "empty": "Al momento non sono disponibili post.",
+      "openPost": "Apri il post su X",
+      "metrics": "Risposte, repost e Mi piace",
       "openProfile": "Apri il profilo ufficiale"
     },
     "modules": {

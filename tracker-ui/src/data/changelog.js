@@ -18,6 +18,43 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.2.16',
+    date: '2026-07-31',
+    codename: 'Newswire Direct',
+    type: 'fixed',
+    title: {
+      es: 'Timeline de noticias reparado',
+      en: 'Fixed news timeline'
+    },
+    summary: {
+      es: 'El panel deja de depender del widget bloqueado de X y muestra las publicaciones oficiales como tarjetas nativas con respaldo local.',
+      en: 'The panel no longer depends on X’s blocked widget and renders official posts as native cards with a local fallback.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'Se evita el iframe oculto con altura cero que impedía mostrar las publicaciones de @tarkov.',
+          en: 'The hidden zero-height iframe that prevented @tarkov posts from appearing is bypassed.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Nueva cabecera editorial sin las etiquetas @tarkov · X y LIVE, con identidad más limpia y enlace discreto a X.',
+          en: 'A cleaner editorial header replaces the @tarkov · X and LIVE labels with subtle official-channel identity and an X link.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'La actualización automática conserva la última copia válida cuando X limita temporalmente las peticiones, evitando paneles vacíos.',
+          en: 'Automatic refresh preserves the last valid copy when X temporarily rate-limits requests, preventing empty panels.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.2.15',
     date: '2026-07-31',
     codename: 'Official News Wire',
