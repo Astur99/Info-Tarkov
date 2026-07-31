@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { getIntlLocale } from '../../i18n/languages';
-import { loadJsonItemCatalog, postTarkovGraphql } from '../../services/tarkovDataApi';
+import { loadJsonItemCatalog } from '../../services/tarkovDataApi';
 
 const MARKET_MODES = {
   PVP: 'regular',
@@ -17,24 +17,6 @@ const priorityStyles = {
   Media: { color: 'var(--tk-green)', border: 'rgba(26,176,21,0.28)', bg: 'rgba(26,176,21,0.08)' },
   Baja: { color: 'var(--tk-text-muted)', border: 'rgba(255,255,255,0.12)', bg: 'rgba(255,255,255,0.04)' }
 };
-
-const getKeyQuery = (gameMode) => `
-  query GetKeyItems {
-    items(gameMode: ${gameMode}) {
-      id
-      name
-      shortName
-      types
-      iconLink
-      wikiLink
-      avg24hPrice
-      lastLowPrice
-      basePrice
-      width
-      height
-    }
-  }
-`;
 
 const importantKeyIntel = [
   {
@@ -311,7 +293,7 @@ const enrichKey = (item, t) => {
     quests: intel?.quests || [],
     use: intel?.copyKey ? t(`keysModule.intel.${intel.copyKey}.use`, { defaultValue: intel.use }) : t('keysModule.defaults.use'),
     recommendation: intel?.copyKey ? t(`keysModule.intel.${intel.copyKey}.recommendation`, { defaultValue: intel.recommendation }) : t('keysModule.defaults.recommendation'),
-    tags: intel?.tags || [map.toLowerCase(), category.toLowerCase(), 'tarkov.dev'],
+    tags: [...new Set(intel?.tags || [map.toLowerCase(), category.toLowerCase(), 'tarkov.dev'])],
     isImportant,
     price: item.lastLowPrice || item.avg24hPrice || item.basePrice || 0
   };
@@ -328,6 +310,7 @@ export default function KeysModule({ onViewChange }) {
   const [rawKeys, setRawKeys] = useState(fallbackKeys);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('');
+  const [dataSource, setDataSource] = useState('local');
   const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
   const gameMode = MARKET_MODES[modoMercado];
   const locale = getIntlLocale(i18n.resolvedLanguage || i18n.language);
@@ -340,19 +323,11 @@ export default function KeysModule({ onViewChange }) {
       setStatus('');
 
       try {
-        let items;
-
-        try {
-          const data = await postTarkovGraphql(getKeyQuery(gameMode));
-          items = data.items;
-        } catch (graphqlError) {
-          console.warn('Keys GraphQL unavailable; using static JSON.', graphqlError);
-          const jsonCatalog = await loadJsonItemCatalog({
-            gameMode,
-            locale: i18n.resolvedLanguage
-          });
-          items = jsonCatalog.items;
-        }
+        const jsonCatalog = await loadJsonItemCatalog({
+          gameMode,
+          locale: i18n.resolvedLanguage
+        });
+        const items = jsonCatalog.items;
 
         if (!Array.isArray(items)) throw new Error('Respuesta sin items');
 
@@ -360,12 +335,14 @@ export default function KeysModule({ onViewChange }) {
 
         if (!cancelled) {
           setRawKeys(keys.length ? keys : fallbackKeys);
+          setDataSource(keys.length ? 'json' : 'local');
           setStatus(keys.length ? '' : t('keysModule.status.noKeys'));
         }
       } catch (error) {
         console.error(error);
         if (!cancelled) {
           setRawKeys(fallbackKeys);
+          setDataSource('local');
           setStatus(t('keysModule.status.connectionError'));
         }
       } finally {
@@ -559,6 +536,11 @@ export default function KeysModule({ onViewChange }) {
         </section>
 
         {loading && <p style={{ color: 'var(--tk-green)', marginBottom: '1rem' }}>{t('keysModule.status.loading', { mode: modoMercado })}</p>}
+        {!loading && dataSource === 'json' && (
+          <p style={{ color: 'var(--tk-green)', margin: '0 0 1rem', fontWeight: '900', letterSpacing: '0.8px' }}>
+            JSON TARKOV.DEV · {allKeys.length} ITEMS TYPE: KEYS · {modoMercado}
+          </p>
+        )}
         {status && <p style={{ color: '#ffcf66', marginBottom: '1rem' }}>{status}</p>}
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1rem' }}>

@@ -1,4 +1,3 @@
-const TARKOV_GRAPHQL_URL = 'https://api.tarkov.dev/graphql';
 const TARKOV_JSON_URL = 'https://json.tarkov.dev';
 
 const SUPPORTED_LOCALES = new Set([
@@ -23,6 +22,7 @@ const traderNamesById = {
 const itemCatalogRequests = new Map();
 const hideoutRequests = new Map();
 const jsonDataRequests = new Map();
+const JSON_CACHE_TTL_MS = 5 * 60 * 1000;
 
 export const normalizeTarkovGameMode = (gameMode) =>
   String(gameMode || '').toLowerCase() === 'pve' ? 'pve' : 'regular';
@@ -40,12 +40,15 @@ const normalizeSearchText = (value) =>
     .replace(/[^\p{L}\p{N}]+/gu, ' ')
     .trim();
 
-const fetchJsonData = async (path) => {
-  if (jsonDataRequests.has(path)) return jsonDataRequests.get(path);
+const fetchJsonPayload = async (path) => {
+  const controller = new AbortController();
+  const timeout = globalThis.setTimeout(() => controller.abort(), 15000);
 
-  const request = (async () => {
+  try {
     const response = await fetch(`${TARKOV_JSON_URL}/${path}`, {
-      headers: { Accept: 'application/json' }
+      headers: { Accept: 'application/json' },
+      cache: 'no-cache',
+      signal: controller.signal
     });
 
     if (!response.ok) {
@@ -54,39 +57,46 @@ const fetchJsonData = async (path) => {
 
     const payload = await response.json();
     if (!payload?.data) throw new Error('tarkov.dev JSON response was empty');
-    return payload.data;
-  })();
-
-  jsonDataRequests.set(path, request);
-  try {
-    return await request;
-  } catch (error) {
-    jsonDataRequests.delete(path);
-    throw error;
+    return payload;
+  } finally {
+    globalThis.clearTimeout(timeout);
   }
 };
 
-export const postTarkovGraphql = async (query, { signal } = {}) => {
-  const response = await fetch(TARKOV_GRAPHQL_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
-    body: JSON.stringify({ query }),
-    signal
-  });
+export const loadJsonDataset = async ({ path, locale, ttlMs = JSON_CACHE_TTL_MS }) => {
+  const language = locale ? normalizeTarkovLocale(locale) : null;
+  const cacheKey = `${path}:${language || 'raw'}`;
+  const cached = jsonDataRequests.get(cacheKey);
+  if (cached && Date.now() - cached.createdAt < ttlMs) return cached.request;
 
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new Error(payload?.errors?.[0] || `tarkov.dev GraphQL request failed (${response.status})`);
+  const request = (async () => {
+    const [payload, translationPayload, englishPayload] = await Promise.all([
+      fetchJsonPayload(path),
+      language ? fetchJsonPayload(`${path}_${language}`) : Promise.resolve(null),
+      language && language !== 'en'
+        ? fetchJsonPayload(`${path}_en`)
+        : Promise.resolve(null)
+    ]);
+
+    return {
+      data: payload.data,
+      translations: {
+        ...(englishPayload?.data || {}),
+        ...(translationPayload?.data || {})
+      },
+      translationPaths: payload.translations || [],
+      source: 'json',
+      fetchedAt: new Date().toISOString()
+    };
+  })();
+
+  jsonDataRequests.set(cacheKey, { createdAt: Date.now(), request });
+  try {
+    return await request;
+  } catch (error) {
+    jsonDataRequests.delete(cacheKey);
+    throw error;
   }
-  if (payload?.errors?.length) {
-    const message = payload.errors[0]?.message || payload.errors[0];
-    throw new Error(message || 'tarkov.dev GraphQL request failed');
-  }
-  if (!payload?.data) throw new Error('tarkov.dev GraphQL response was empty');
-  return payload.data;
 };
 
 const translate = (translations, key, fallback = '') =>
@@ -156,10 +166,10 @@ export const loadJsonItemCatalog = async ({ gameMode, locale = 'en' }) => {
   if (itemCatalogRequests.has(cacheKey)) return itemCatalogRequests.get(cacheKey);
 
   const request = (async () => {
-    const [itemData, translations] = await Promise.all([
-      fetchJsonData(`${mode}/items`),
-      fetchJsonData(`${mode}/items_${language}`)
-    ]);
+    const { data: itemData, translations } = await loadJsonDataset({
+      path: `${mode}/items`,
+      locale: language
+    });
 
     const items = Object.values(itemData.items || {}).map((item) =>
       normalizeJsonItem(item, translations)
@@ -212,7 +222,7 @@ const normalizeRequirementAttributes = (attributes) =>
     value
   }));
 
-const normalizeJsonHideout = (stationData, translations, itemCatalog) => {
+const normalizeJsonHideout = (stationData, translations, itemCatalog, tradersById) => {
   const rawStations = Object.values(stationData || {});
   const stationRefs = new Map(
     rawStations.map((station) => [
@@ -254,7 +264,8 @@ const normalizeJsonHideout = (stationData, translations, itemCatalog) => {
         level: requirement.value || requirement.level,
         trader: {
           id: requirement.trader,
-          name: traderNamesById[requirement.trader] || requirement.trader
+          name: tradersById.get(requirement.trader)?.name ||
+            traderNamesById[requirement.trader] || requirement.trader
         }
       })),
       itemRequirements: (level.itemRequirements || []).map((requirement) => ({
@@ -282,13 +293,31 @@ export const loadJsonHideoutStations = async ({ gameMode, locale = 'en' }) => {
   if (hideoutRequests.has(cacheKey)) return hideoutRequests.get(cacheKey);
 
   const request = (async () => {
-    const [stationData, translations, { itemsById }] = await Promise.all([
-      fetchJsonData(`${mode}/hideout`),
-      fetchJsonData(`${mode}/hideout_${language}`),
-      loadJsonItemCatalog({ gameMode: mode, locale: language })
+    const [hideoutDataset, { itemsById }, tradersDataset] = await Promise.all([
+      loadJsonDataset({ path: `${mode}/hideout`, locale: language }),
+      loadJsonItemCatalog({ gameMode: mode, locale: language }),
+      loadJsonDataset({ path: `${mode}/traders`, locale: language })
     ]);
+    const tradersById = new Map(
+      Object.values(tradersDataset.data || {}).map((trader) => [
+        trader.id,
+        {
+          ...trader,
+          name: translate(
+            tradersDataset.translations,
+            trader.name,
+            trader.normalizedName
+          )
+        }
+      ])
+    );
 
-    return normalizeJsonHideout(stationData, translations, itemsById);
+    return normalizeJsonHideout(
+      hideoutDataset.data,
+      hideoutDataset.translations,
+      itemsById,
+      tradersById
+    );
   })();
 
   hideoutRequests.set(cacheKey, request);
@@ -298,4 +327,61 @@ export const loadJsonHideoutStations = async ({ gameMode, locale = 'en' }) => {
     hideoutRequests.delete(cacheKey);
     throw error;
   }
+};
+
+export const loadJsonEconomy = async ({ gameMode, locale = 'en' }) => {
+  const mode = normalizeTarkovGameMode(gameMode);
+  const language = normalizeTarkovLocale(locale);
+  const [barters, crafts, traders, catalog] = await Promise.all([
+    loadJsonDataset({ path: `${mode}/barters`, locale: language }),
+    loadJsonDataset({ path: `${mode}/crafts`, locale: language }),
+    loadJsonDataset({ path: `${mode}/traders`, locale: language }),
+    loadJsonItemCatalog({ gameMode: mode, locale: language })
+  ]);
+
+  return {
+    barters: Array.isArray(barters.data) ? barters.data : [],
+    crafts: Array.isArray(crafts.data) ? crafts.data : [],
+    traders: Object.values(traders.data || {}).map((trader) => ({
+      ...trader,
+      name: translate(traders.translations, trader.name, trader.normalizedName)
+    })),
+    itemsById: catalog.itemsById,
+    source: 'json'
+  };
+};
+
+export const loadJsonProgression = async ({ gameMode, locale = 'en' }) => {
+  const mode = normalizeTarkovGameMode(gameMode);
+  const language = normalizeTarkovLocale(locale);
+  const dataset = await loadJsonDataset({
+    path: `${mode}/tasks`,
+    locale: language
+  });
+
+  return {
+    tasks: Object.values(dataset.data?.tasks || {}),
+    questItems: Object.values(dataset.data?.questItems || {}),
+    achievements: Object.values(dataset.data?.achievements || {}),
+    prestige: Array.isArray(dataset.data?.prestige) ? dataset.data.prestige : [],
+    translations: dataset.translations,
+    source: 'json'
+  };
+};
+
+export const loadJsonMaps = async ({ gameMode, locale = 'en' }) => {
+  const mode = normalizeTarkovGameMode(gameMode);
+  const language = normalizeTarkovLocale(locale);
+  const dataset = await loadJsonDataset({
+    path: `${mode}/maps`,
+    locale: language
+  });
+
+  return {
+    maps: Object.values(dataset.data?.maps || {}),
+    mobs: Object.values(dataset.data?.mobs || {}),
+    goonReports: dataset.data?.goonReports || [],
+    translations: dataset.translations,
+    source: 'json'
+  };
 };

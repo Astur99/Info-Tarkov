@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { loadJsonProgression } from '../../services/tarkovDataApi';
 import { prestigeIcons, prestigeLevels, requirementGroups, STORAGE_KEY } from './prestigeData';
 
 const panelStyle = {
@@ -13,8 +14,9 @@ const panelStyle = {
 const getRequirementId = (prestigeId, groupKey, itemKey) => `${prestigeId}:${groupKey}:${itemKey}`;
 
 export default function PrestigeModule({ onViewChange }) {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [selectedPrestigeId, setSelectedPrestigeId] = useState(prestigeLevels[0].id);
+  const [officialPrestige, setOfficialPrestige] = useState([]);
   const [completed, setCompleted] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
@@ -23,7 +25,46 @@ export default function PrestigeModule({ onViewChange }) {
     }
   });
 
-  const selectedPrestige = prestigeLevels.find((prestige) => prestige.id === selectedPrestigeId) || prestigeLevels[0];
+  useEffect(() => {
+    let cancelled = false;
+
+    loadJsonProgression({ gameMode: 'regular', locale: i18n.resolvedLanguage })
+      .then(({ prestige }) => {
+        if (!cancelled) setOfficialPrestige(prestige);
+      })
+      .catch((error) => {
+        console.warn('Official prestige JSON unavailable; using the local checklist.', error);
+        if (!cancelled) setOfficialPrestige([]);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [i18n.resolvedLanguage]);
+
+  const displayedPrestigeLevels = useMemo(() => {
+    const officialByLevel = new Map(
+      officialPrestige.map((prestige) => [Number(prestige.prestigeLevel), prestige])
+    );
+
+    return prestigeLevels.map((prestige) => {
+      const official = officialByLevel.get(prestige.level);
+      const playerLevel = official?.conditions?.find(
+        (condition) => condition.type === 'playerLevel'
+      )?.playerLevel;
+
+      return {
+        ...prestige,
+        pmcLevel: Number(playerLevel) || prestige.pmcLevel,
+        officialId: official?.id || null,
+        officialConditionCount: official?.conditions?.length || 0
+      };
+    });
+  }, [officialPrestige]);
+
+  const selectedPrestige = displayedPrestigeLevels.find(
+    (prestige) => prestige.id === selectedPrestigeId
+  ) || displayedPrestigeLevels[0];
   const selectedPrestigeIcon = prestigeIcons[selectedPrestige.level];
 
   useEffect(() => {
@@ -101,6 +142,11 @@ export default function PrestigeModule({ onViewChange }) {
             >
               {t('prestigeModule.pvpOnly')}
             </div>
+            {officialPrestige.length > 0 && (
+              <div style={{ color: 'var(--tk-green)', fontWeight: '900', letterSpacing: '1px', marginBottom: '0.6rem' }}>
+                JSON TARKOV.DEV · {officialPrestige.length} PRESTIGE LEVELS
+              </div>
+            )}
             <h1 style={{ color: '#fff', margin: 0, fontSize: '2.7rem', textTransform: 'uppercase' }}>
               {t('prestigeModule.title')}
             </h1>
@@ -129,7 +175,7 @@ export default function PrestigeModule({ onViewChange }) {
         </header>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
-          {prestigeLevels.map((prestige) => {
+          {displayedPrestigeLevels.map((prestige) => {
             const isActive = prestige.id === selectedPrestige.id;
 
             return (

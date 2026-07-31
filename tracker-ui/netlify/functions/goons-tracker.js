@@ -1,7 +1,4 @@
-const TRACKER_URLS = {
-  pvp: 'https://www.tarkov-goon-tracker.com/',
-  pve: 'https://www.tarkov-goon-tracker.com/pve'
-};
+const JSON_API_URL = 'https://json.tarkov.dev';
 
 const MAPS = {
   customs: { id: 'customs', name: 'Customs' },
@@ -25,117 +22,77 @@ const jsonResponse = (statusCode, body, cacheControl = 'no-store, max-age=0') =>
   body: JSON.stringify(body)
 });
 
-const decodeHtml = (value) =>
-  String(value || '')
-    .replace(/&nbsp;/gi, ' ')
-    .replace(/&amp;/gi, '&')
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>');
+const normalizeReport = (report, mapsById) => {
+  const sourceMap = mapsById.get(report?.map);
+  const map = MAPS[sourceMap?.normalizedName];
+  const timestamp = Number(report?.timestamp);
 
-const toPlainText = (html) =>
-  decodeHtml(html)
-    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-const normalizeMapId = (value) => {
-  const normalized = String(value || '').trim().toLowerCase();
-  return MAPS[normalized]?.id || null;
-};
-
-const parseReportDate = (value) => {
-  const parsed = new Date(`${value} UTC`);
-  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
-};
-
-const parseActiveMap = (text) => {
-  const match = text.match(/The Goons were last seen on:\s*(Customs|Woods|Shoreline|Lighthouse)/i);
-  const mapId = normalizeMapId(match?.[1]);
-  if (!mapId) return null;
-  return MAPS[mapId];
-};
-
-const parseRecentReports = (text) => {
-  const reports = [];
-  const reportPattern =
-    /\b(Customs|Woods|Shoreline|Lighthouse)\s+([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4}\s+\d{1,2}:\d{2}\s+[AP]M)\s+z\s+(.+?)\s+(true|false)\b/gi;
-
-  let match;
-  while ((match = reportPattern.exec(text)) && reports.length < 12) {
-    const mapId = normalizeMapId(match[1]);
-    const reportedAt = parseReportDate(match[2]);
-    if (!mapId || !reportedAt) continue;
-
-    reports.push({
-      mapId,
-      mapName: MAPS[mapId].name,
-      reportedAt,
-      reporter: String(match[3] || '').trim(),
-      verified: match[4] === 'true'
-    });
-  }
-
-  return reports;
-};
-
-const buildPayload = (mode, html) => {
-  const text = toPlainText(html);
-  const activeMap = parseActiveMap(text);
-
-  if (!activeMap) {
-    throw new Error('Could not parse active Goons map from tracker HTML.');
-  }
-
-  const reports = parseRecentReports(text);
-  const lastReport = reports.find((report) => report.mapId === activeMap.id) || reports[0] || null;
+  if (!map || !Number.isFinite(timestamp) || timestamp <= 0) return null;
 
   return {
-    mode,
-    status: 'live',
-    activeMapId: activeMap.id,
-    activeMapName: activeMap.name,
-    lastDetected: lastReport?.reportedAt || new Date().toISOString(),
-    reports,
-    sourceUrl: TRACKER_URLS[mode],
-    fetchedAt: new Date().toISOString()
+    mapId: map.id,
+    mapName: map.name,
+    reportedAt: new Date(timestamp).toISOString(),
+    reporter: 'tarkov.dev',
+    verified: true
   };
 };
 
-const fetchTrackerHtml = async (url) => {
-  const response = await fetch(url, {
+const fetchJsonReports = async (mode) => {
+  const apiMode = mode === 'pve' ? 'pve' : 'regular';
+  const sourceUrl = `${JSON_API_URL}/${apiMode}/maps`;
+  const response = await fetch(sourceUrl, {
     headers: {
-      Accept: 'text/html,application/xhtml+xml',
-      'User-Agent': 'InfoTarkov/1.2.3 (+https://infotarkov.com)'
+      Accept: 'application/json',
+      'User-Agent': 'InfoTarkov/1.2.12 (+https://infotarkov.com)'
     }
   });
 
   if (!response.ok) {
-    throw new Error(`Goon tracker source unavailable (${response.status}).`);
+    throw new Error(`tarkov.dev maps JSON unavailable (${response.status}).`);
   }
 
-  return response.text();
+  const payload = await response.json();
+  const mapsById = new Map(
+    Object.values(payload?.data?.maps || {}).map((map) => [map.id, map])
+  );
+  const reports = (payload?.data?.goonReports || [])
+    .map((report) => normalizeReport(report, mapsById))
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.reportedAt) - new Date(a.reportedAt));
+
+  if (!reports.length) {
+    throw new Error('tarkov.dev maps JSON contains no valid Goons reports.');
+  }
+
+  return {
+    mode,
+    status: 'live',
+    activeMapId: reports[0].mapId,
+    activeMapName: reports[0].mapName,
+    lastDetected: reports[0].reportedAt,
+    reports: reports.slice(0, 12),
+    source: 'json',
+    sourceUrl,
+    fetchedAt: new Date().toISOString()
+  };
 };
 
 export const handler = async (event) => {
-  const mode = String(event.queryStringParameters?.mode || 'pvp').toLowerCase() === 'pve' ? 'pve' : 'pvp';
+  const mode = String(event.queryStringParameters?.mode || 'pvp').toLowerCase() === 'pve'
+    ? 'pve'
+    : 'pvp';
   const now = Date.now();
   const cached = cache.get(mode);
 
   if (cached && now - cached.createdAt < CACHE_TTL_MS) {
-    return jsonResponse(200, { ...cached.payload, status: cached.payload.status || 'live' }, 'public, max-age=60');
+    return jsonResponse(200, cached.payload, 'public, max-age=60');
   }
 
   try {
-    const html = await fetchTrackerHtml(TRACKER_URLS[mode]);
-    const payload = buildPayload(mode, html);
-
+    const payload = await fetchJsonReports(mode);
     cache.set(mode, { createdAt: now, payload });
     lastGood.set(mode, payload);
-
     return jsonResponse(200, payload, 'public, max-age=60');
   } catch (error) {
     const fallback = lastGood.get(mode) || cached?.payload;
@@ -144,7 +101,7 @@ export const handler = async (event) => {
       return jsonResponse(200, {
         ...fallback,
         status: 'cached',
-        warning: error?.message || 'Goon tracker source unavailable.',
+        warning: error?.message || 'Goons JSON source unavailable.',
         fetchedAt: new Date().toISOString()
       });
     }
@@ -152,7 +109,7 @@ export const handler = async (event) => {
     return jsonResponse(502, {
       mode,
       status: 'error',
-      error: error?.message || 'Goon tracker extraction failed.'
+      error: error?.message || 'Goons JSON extraction failed.'
     });
   }
 };

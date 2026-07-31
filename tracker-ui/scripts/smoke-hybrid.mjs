@@ -9,6 +9,9 @@ const checks = [
     url: 'https://json.tarkov.dev/regular/items',
     validate: (payload) =>
       Object.keys(payload?.data?.items || {}).length > 0 &&
+      Object.values(payload?.data?.items || {}).filter((item) =>
+        item?.types?.includes('keys')
+      ).length >= 250 &&
       payload?.data?.playerLevels?.length > 0 &&
       payload?.data?.skills?.length > 0
   },
@@ -18,6 +21,21 @@ const checks = [
     validate: (payload) => Object.values(payload?.data || {}).some(
       (station) => station?.id && Array.isArray(station?.levels)
     )
+  },
+  {
+    name: 'Traders',
+    url: 'https://json.tarkov.dev/regular/traders',
+    validate: (payload) => Object.keys(payload?.data || {}).length >= 10
+  },
+  {
+    name: 'Barters',
+    url: 'https://json.tarkov.dev/regular/barters',
+    validate: (payload) => Array.isArray(payload?.data) && payload.data.length > 100
+  },
+  {
+    name: 'Crafts',
+    url: 'https://json.tarkov.dev/regular/crafts',
+    validate: (payload) => Array.isArray(payload?.data) && payload.data.length > 100
   },
   {
     name: 'Misiones / Kappa',
@@ -43,7 +61,7 @@ let failures = 0;
 for (const check of checks) {
   try {
     const response = await fetch(check.url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'InfoTarkov-Smoke/1.2.11' }
+      headers: { Accept: 'application/json', 'User-Agent': 'InfoTarkov-Smoke/1.2.12' }
     });
     const payload = await response.json();
     const valid = response.ok && check.validate(payload);

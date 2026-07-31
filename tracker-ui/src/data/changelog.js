@@ -18,6 +18,43 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.2.12',
+    date: '2026-07-31',
+    codename: 'JSON Recovery',
+    type: 'fixed',
+    title: {
+      es: 'Recuperacion completa mediante JSON',
+      en: 'Full recovery through JSON'
+    },
+    summary: {
+      es: 'Flea, Hideout, Llaves, Balistica, Prestigio y Goons abandonan GraphQL en sus rutas principales y vuelven a cargar desde las fuentes JSON oficiales.',
+      en: 'Flea, Hideout, Keys, Ballistics, Prestige and Goons leave GraphQL behind on their primary paths and load from the official JSON sources again.'
+    },
+    changes: [
+      {
+        type: 'fixed',
+        text: {
+          es: 'Llaves carga y muestra los 256 items oficiales tipados como keys tanto en PVP como en PVE, sin esperar al GraphQL caido.',
+          en: 'Keys loads and displays all 256 official items typed as keys in both PVP and PVE without waiting for the unavailable GraphQL service.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Flea, Hideout y Balistica consumen el catalogo JSON directamente; Hideout resuelve tambien los traders actuales y Flea mantiene precio medio e historico preciso.',
+          en: 'Flea, Hideout and Ballistics now consume the JSON catalog directly; Hideout also resolves current traders while Flea retains average pricing and precise history.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Goons usa los reportes oficiales de maps JSON, Prestigio sincroniza sus seis niveles desde tasks y la alerta roja global se retira al recuperarse las rutas criticas.',
+          en: 'Goons uses official maps JSON reports, Prestige synchronizes its six levels from tasks, and the global red warning is removed after critical routes recover.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.2.11',
     date: '2026-07-25',
     codename: 'Resilient Intel',

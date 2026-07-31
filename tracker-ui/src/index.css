@@ -40,7 +40,7 @@ body {
 #root {
   position: relative;
   z-index: 2;
-  --service-alert-height: 56px;
+  --service-alert-height: 0px;
 }
 
 .app-content {
@@ -331,7 +331,7 @@ header span {
 
 @media (max-width: 900px) {
   #root {
-    --service-alert-height: 78px;
+    --service-alert-height: 0px;
   }
 
   .service-incident-alert {

@@ -6,6 +6,7 @@ import {
   normalizeStatusPayload
 } from '../src/modules/server-status/serverStatusApi.js';
 import { mergeBossSpawnData } from '../src/modules/bosses/bossesApi.js';
+import { handler as goonsHandler } from '../netlify/functions/goons-tracker.js';
 
 const response = (body, { ok = true, status = 200 } = {}) => ({
   ok,
@@ -112,4 +113,37 @@ test('Bosses merges JSON spawn chances with local tactical dossiers', () => {
   assert.equal(tagilla.mapa, 'Factory');
   assert.equal(tagilla.spawn, '50%');
   assert.deepEqual(tagilla.spawnDetails, [{ name: 'Factory', chance: 50 }]);
+});
+
+test('Goons tracker reads the latest official JSON map report', async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => response({
+    data: {
+      maps: {
+        customs: {
+          id: 'customs-id',
+          normalizedName: 'customs'
+        },
+        woods: {
+          id: 'woods-id',
+          normalizedName: 'woods'
+        }
+      },
+      goonReports: [
+        { map: 'customs-id', timestamp: '1000' },
+        { map: 'woods-id', timestamp: '2000' }
+      ]
+    }
+  });
+
+  try {
+    const result = await goonsHandler({ queryStringParameters: { mode: 'pvp' } });
+    const payload = JSON.parse(result.body);
+    assert.equal(result.statusCode, 200);
+    assert.equal(payload.source, 'json');
+    assert.equal(payload.activeMapId, 'woods');
+    assert.equal(payload.reports.length, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });

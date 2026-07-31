@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { loadJsonItemCatalog, postTarkovGraphql } from '../../services/tarkovDataApi';
+import { loadJsonItemCatalog } from '../../services/tarkovDataApi';
 
 const POOL_AMMO_LOCAL = [
   { id: 'm1', name: '7.62x54mmR SNB gzh', shortName: '7.62x54 R SNB', penetration: 62, damage: 75, armorDamage: 88 },
@@ -20,209 +20,6 @@ const POOL_ARMOR_LOCAL = [
   { id: 'v6', nameKey: 'sixb23', shortNameKey: 'sixb23Short', clase: 3, durabilidad: 60, material: 'Steel' },
   { id: 'v7', nameKey: 'paca', shortNameKey: 'pacaShort', clase: 2, durabilidad: 40, material: 'Aramid' }
 ];
-
-const QUERY_BALISTICA = `
-query GetBallistics {
-  items(types: [ammo, armor, armorPlate, rig, helmet]) {
-    id
-    name
-    shortName
-    types
-
-    properties {
-      __typename
-
-      ... on ItemPropertiesAmmo {
-        damage
-        penetrationPower
-        armorDamage
-      }
-
-      ... on ItemPropertiesArmor {
-        class
-        durability
-        armorType
-        bluntThroughput
-        zones
-
-        material {
-          id
-          name
-          destructibility
-        }
-
-        armorSlots {
-          __typename
-
-          ... on ItemArmorSlotLocked {
-            name
-            class
-            durability
-            armorType
-            bluntThroughput
-
-            material {
-              id
-              name
-              destructibility
-            }
-          }
-
-          ... on ItemArmorSlotOpen {
-            name
-
-            allowedPlates {
-              id
-              name
-              shortName
-              types
-
-              properties {
-                __typename
-
-                ... on ItemPropertiesArmor {
-                  class
-                  durability
-                  armorType
-                  bluntThroughput
-                  zones
-
-                  material {
-                    id
-                    name
-                    destructibility
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      ... on ItemPropertiesChestRig {
-        class
-        durability
-        armorType
-        bluntThroughput
-        zones
-
-        material {
-          id
-          name
-          destructibility
-        }
-
-        armorSlots {
-          __typename
-
-          ... on ItemArmorSlotLocked {
-            name
-            class
-            durability
-            armorType
-            bluntThroughput
-
-            material {
-              id
-              name
-              destructibility
-            }
-          }
-
-          ... on ItemArmorSlotOpen {
-            name
-
-            allowedPlates {
-              id
-              name
-              shortName
-              types
-
-              properties {
-                __typename
-
-                ... on ItemPropertiesArmor {
-                  class
-                  durability
-                  armorType
-                  bluntThroughput
-                  zones
-
-                  material {
-                    id
-                    name
-                    destructibility
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      ... on ItemPropertiesHelmet {
-        class
-        durability
-        armorType
-        bluntThroughput
-
-        material {
-          id
-          name
-          destructibility
-        }
-
-        armorSlots {
-          __typename
-
-          ... on ItemArmorSlotLocked {
-            name
-            class
-            durability
-            armorType
-            bluntThroughput
-
-            material {
-              id
-              name
-              destructibility
-            }
-          }
-
-          ... on ItemArmorSlotOpen {
-            name
-
-            allowedPlates {
-              id
-              name
-              shortName
-              types
-
-              properties {
-                __typename
-
-                ... on ItemPropertiesArmor {
-                  class
-                  durability
-                  armorType
-                  bluntThroughput
-                  zones
-
-                  material {
-                    id
-                    name
-                    destructibility
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-`;
 
 function normalizarTexto(texto) {
   return String(texto || '')
@@ -373,26 +170,15 @@ export default function ArmorSimulator({ onViewChange }) {
 
     const loadBallistics = async () => {
       try {
-        let items;
-
-        try {
-          const data = await postTarkovGraphql(QUERY_BALISTICA, {
-            signal: controller.signal
-          });
-          items = data.items;
-        } catch (graphqlError) {
-          if (graphqlError.name === 'AbortError') return;
-          console.warn('Ballistics GraphQL unavailable; using static JSON.', graphqlError);
-          const catalog = await loadJsonItemCatalog({
-            gameMode: 'regular',
-            locale: i18n.resolvedLanguage
-          });
-          items = catalog.items.filter((item) =>
-            item.types?.some((type) =>
-              ['ammo', 'armor', 'armorPlate', 'rig', 'helmet'].includes(type)
-            )
-          );
-        }
+        const catalog = await loadJsonItemCatalog({
+          gameMode: 'regular',
+          locale: i18n.resolvedLanguage
+        });
+        const items = catalog.items.filter((item) =>
+          item.types?.some((type) =>
+            ['ammo', 'armor', 'armorPlate', 'rig', 'helmet'].includes(type)
+          )
+        );
 
         if (cancelled) return;
         if (!Array.isArray(items)) throw new Error('Respuesta sin items');
