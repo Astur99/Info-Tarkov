@@ -37,6 +37,14 @@
     "sessionStarted": "SESSION ACTIVE",
     "adminSuffix": "· ADMIN",
     "guestMode": "GASTMODUS · SIE KÖNNEN DIE APP OHNE KONTO NUTZEN",
+    "news": {
+      "title": "Offizielle Nachrichten",
+      "description": "Neueste Beiträge des offiziellen Escape from Tarkov-Kontos.",
+      "automatic": "Automatische Aktualisierung",
+      "loading": "Beiträge von @tarkov werden geladen...",
+      "unavailable": "X konnte die Timeline nicht laden. Die Nachrichten sind im offiziellen Profil verfügbar.",
+      "openProfile": "Offizielles Profil öffnen"
+    },
     "modules": {
       "maps": {
         "title": "TACTICAL MAPS",

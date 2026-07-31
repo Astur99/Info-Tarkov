@@ -37,6 +37,14 @@
     "sessionStarted": "SESSION ACTIVE",
     "adminSuffix": "· AMMINISTRATORE",
     "guestMode": "MODALITÀ OSPITE · PUOI UTILIZZARE L'APP SENZA ACCOUNT",
+    "news": {
+      "title": "Notizie ufficiali",
+      "description": "Ultimi post dell'account ufficiale di Escape from Tarkov.",
+      "automatic": "Aggiornamento automatico",
+      "loading": "Caricamento dei post di @tarkov...",
+      "unavailable": "X non ha potuto caricare la timeline. Le notizie sono disponibili sul profilo ufficiale.",
+      "openProfile": "Apri il profilo ufficiale"
+    },
     "modules": {
       "maps": {
         "title": "TACTICAL MAPS",

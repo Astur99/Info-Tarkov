@@ -37,6 +37,14 @@
     "sessionStarted": "SESSION ACTIVE",
     "adminSuffix": "· АДМИН",
     "guestMode": "ГОСТЕВОЙ РЕЖИМ · ВЫ МОЖЕТЕ ИСПОЛЬЗОВАТЬ ПРИЛОЖЕНИЕ БЕЗ УЧЕТНОЙ ЗАПИСИ",
+    "news": {
+      "title": "Официальные новости",
+      "description": "Последние публикации официального аккаунта Escape from Tarkov.",
+      "automatic": "Автоматическое обновление",
+      "loading": "Загрузка публикаций @tarkov...",
+      "unavailable": "X не удалось загрузить ленту. Новости доступны в официальном профиле.",
+      "openProfile": "Открыть официальный профиль"
+    },
     "modules": {
       "maps": {
         "title": "TACTICAL MAPS",

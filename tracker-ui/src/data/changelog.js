@@ -18,6 +18,36 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.2.15',
+    date: '2026-07-31',
+    codename: 'Official News Wire',
+    type: 'feature',
+    title: {
+      es: 'Panel de noticias oficiales en portada',
+      en: 'Official news panel on the home screen'
+    },
+    summary: {
+      es: 'La portada incorpora un canal lateral con las publicaciones más recientes de la cuenta oficial @tarkov en X.',
+      en: 'The home screen gains a side channel with the latest posts from the official @tarkov account on X.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'El timeline oficial se actualiza automáticamente mediante el widget publicado por X y conserva un enlace directo de respaldo.',
+          en: 'The official timeline updates automatically through the widget published by X and keeps a direct fallback link.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El panel ocupa la columna libre de la derecha en pantallas ultrapanorámicas y se integra bajo los módulos en resoluciones menores.',
+          en: 'The panel occupies the free right column on ultrawide screens and moves below the modules at smaller resolutions.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.2.14',
     date: '2026-07-31',
     codename: 'JSON Hardening',

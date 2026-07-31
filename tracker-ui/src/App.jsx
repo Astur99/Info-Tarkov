@@ -5,6 +5,7 @@ import './index.css';
 import { supabase } from './lib/supabaseClient';
 import { buildProfileFromSessionMetadata, hydrateGameModePreference } from './lib/userProfilePreferences';
 import LanguageSwitcher from './components/layout/LanguageSwitcher';
+import OfficialNewsPanel from './components/news/OfficialNewsPanel';
 import { APP_VERSION } from './data/appVersion';
 
 import mapasImage from './assets/backgrounds/mapas.png';
@@ -842,6 +843,8 @@ function App() {
             </button>
           ))}
         </div>
+
+        <OfficialNewsPanel />
         <div
           className="home-version-label"
           style={{
