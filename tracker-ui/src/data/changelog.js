@@ -18,6 +18,29 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.2.18',
+    date: '2026-07-31',
+    codename: 'Centered Newswire',
+    type: 'changed',
+    title: {
+      es: 'Panel de noticias centrado',
+      en: 'Centered news panel'
+    },
+    summary: {
+      es: 'El panel lateral queda centrado verticalmente respecto a la aplicación en pantallas panorámicas.',
+      en: 'The side news panel is vertically centered against the application on widescreen displays.'
+    },
+    changes: [
+      {
+        type: 'changed',
+        text: {
+          es: 'La posición deja de depender de una distancia fija desde arriba y se adapta a la altura disponible.',
+          en: 'Positioning no longer depends on a fixed top offset and adapts to the available viewport height.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.2.17',
     date: '2026-07-31',
     codename: 'Always-On News',

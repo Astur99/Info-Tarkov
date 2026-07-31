@@ -258,11 +258,12 @@ body {
 @media (min-width: 2040px) {
   .home-news-panel {
     position: fixed;
-    top: 16.5rem;
+    top: 50%;
     right: 2.5rem;
     z-index: 30;
     width: 280px;
     margin-top: 0;
+    transform: translateY(-50%);
   }
 }
 
