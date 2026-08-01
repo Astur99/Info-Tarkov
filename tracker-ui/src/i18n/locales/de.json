@@ -1028,6 +1028,22 @@
     "title": "Admin-Panel",
     "subtitle": "Interne Nutzungsmetriken und registrierte Benutzer.",
     "loading": "Messwerte werden geladen...",
+    "health": {
+      "eyebrow": "Betriebliche Telemetrie",
+      "title": "Zuverlässigkeitsmonitor",
+      "description": "Automatische Prüfungen der JSON-Quellen kritischer Module.",
+      "checking": "Prüfung...",
+      "loadError": "Der Zustandsmonitor konnte nicht geladen werden",
+      "overall": "Gesamtstatus",
+      "healthyModules": "Gesunde Module",
+      "affectedModules": "Betroffene Module",
+      "lastCheck": "Letzte Prüfung",
+      "sources": "Quelldetails",
+      "records": "{{count}} Einträge",
+      "dataUpdated": "Daten: {{date}}",
+      "validated": "Struktur geprüft",
+      "status": { "operational": "Betriebsbereit", "degraded": "Beeinträchtigt", "down": "Ausgefallen" }
+    },
     "stats": {
       "totalVisits": "Gesamtbesuche",
       "todayVisits": "Besuche heute",

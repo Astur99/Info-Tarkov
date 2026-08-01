@@ -10,6 +10,7 @@ import { mergeBossSpawnData } from '../src/modules/bosses/bossesApi.js';
 import { handler as goonsHandler } from '../netlify/functions/goons-tracker.js';
 import { buildKeyMapIndex, isKeyItem } from '../src/modules/keys/keysApi.js';
 import { parseTimelineHtml } from '../netlify/functions/tarkov-news.js';
+import { buildHealthReport } from '../netlify/functions/lib/app-health.js';
 
 const response = (body, { ok = true, status = 200 } = {}) => ({
   ok,
@@ -43,6 +44,37 @@ test('official news parser keeps @tarkov posts in reverse chronological order', 
 
   assert.deepEqual(posts.map((post) => post.id), ['new', 'old']);
   assert.equal(posts[0].createdAt, '2026-06-18T14:00:13.000Z');
+});
+
+test('health monitor validates critical PVP and PVE JSON sources', async () => {
+  const makeResponse = (url) => {
+    if (url.includes('/api/tarkov-news')) {
+      return { ok: true, status: 200, json: async () => ({ posts: [{ id: 'post-1' }] }) };
+    }
+    const path = new URL(url).pathname;
+    let data;
+    if (path.endsWith('/items')) {
+      data = { items: Object.fromEntries(Array.from({ length: 2000 }, (_, index) => [
+        `item-${index}`,
+        { id: `item-${index}`, types: index < 256 ? ['keys'] : ['barter'] }
+      ])) };
+    } else if (path.endsWith('/tasks')) {
+      data = { tasks: Object.fromEntries(Array.from({ length: 300 }, (_, index) => [`task-${index}`, {}])) };
+    } else if (path.endsWith('/hideout')) {
+      data = Object.fromEntries(Array.from({ length: 20 }, (_, index) => [`station-${index}`, {}]));
+    } else {
+      data = {
+        maps: Object.fromEntries(Array.from({ length: 10 }, (_, index) => [`map-${index}`, {}])),
+        goonReports: [{}]
+      };
+    }
+    return { ok: true, status: 200, json: async () => ({ data }) };
+  };
+
+  const report = await buildHealthReport({ fetchImpl: async (url) => makeResponse(url) });
+  assert.equal(report.overall, 'operational');
+  assert.equal(report.modules.length, 7);
+  assert.equal(report.sources.find((source) => source.id === 'items-pvp').details.keys, 256);
 });
 
 test('PMC static catalog extracts only requested metadata and items', () => {

@@ -1028,6 +1028,22 @@
     "title": "Panneau d'administration",
     "subtitle": "Métriques d’utilisation interne et utilisateurs enregistrés.",
     "loading": "Chargement des métriques...",
+    "health": {
+      "eyebrow": "Télémétrie opérationnelle",
+      "title": "Moniteur de fiabilité",
+      "description": "Contrôles automatiques des sources JSON utilisées par les modules critiques.",
+      "checking": "Vérification...",
+      "loadError": "Le moniteur de santé n'a pas pu être chargé",
+      "overall": "État général",
+      "healthyModules": "Modules sains",
+      "affectedModules": "Modules affectés",
+      "lastCheck": "Dernier contrôle",
+      "sources": "Détail des sources",
+      "records": "{{count}} entrées",
+      "dataUpdated": "Données : {{date}}",
+      "validated": "Structure validée",
+      "status": { "operational": "Opérationnel", "degraded": "Dégradé", "down": "Indisponible" }
+    },
     "stats": {
       "totalVisits": "Visites totales",
       "todayVisits": "Visites aujourd'hui",

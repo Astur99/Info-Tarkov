@@ -20,3 +20,8 @@
   from = "/api/tarkov-news"
   to = "/.netlify/functions/tarkov-news"
   status = 200
+
+[[redirects]]
+  from = "/api/app-health"
+  to = "/.netlify/functions/app-health"
+  status = 200

@@ -1028,6 +1028,22 @@
     "title": "Admin Panel",
     "subtitle": "Internal usage metrics and registered users.",
     "loading": "Loading metrics...",
+    "health": {
+      "eyebrow": "Operational telemetry",
+      "title": "Reliability monitor",
+      "description": "Automatic checks for the JSON sources used by critical modules.",
+      "checking": "Checking...",
+      "loadError": "The health monitor could not be loaded",
+      "overall": "Overall status",
+      "healthyModules": "Healthy modules",
+      "affectedModules": "Affected modules",
+      "lastCheck": "Last check",
+      "sources": "Source details",
+      "records": "{{count}} records",
+      "dataUpdated": "Data: {{date}}",
+      "validated": "Structure validated",
+      "status": { "operational": "Operational", "degraded": "Degraded", "down": "Down" }
+    },
     "stats": {
       "totalVisits": "Total visits",
       "todayVisits": "Visits today",

@@ -18,6 +18,43 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.3.0',
+    date: '2026-08-01',
+    codename: 'Watchtower',
+    type: 'feature',
+    title: {
+      es: 'Monitorización y fiabilidad centralizadas',
+      en: 'Centralized monitoring and reliability'
+    },
+    summary: {
+      es: 'Info Tarkov comprueba automáticamente las fuentes críticas PVP/PVE y muestra su estado operativo en el panel de administración.',
+      en: 'Info Tarkov automatically checks critical PVP/PVE sources and exposes their operational status in the admin panel.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'Nuevo monitor para Flea, Llaves, Hideout, Misiones, Balística, Goons y Noticias con latencia, conteos, estado general y detalle por fuente.',
+          en: 'A new monitor covers Flea, Keys, Hideout, Missions, Ballistics, Goons and News with latency, record counts, overall status and per-source details.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'Netlify ejecuta una comprobación programada cada 15 minutos y puede enviar alertas mediante HEALTH_ALERT_WEBHOOK_URL.',
+          en: 'Netlify runs a scheduled check every 15 minutes and can deliver alerts through HEALTH_ALERT_WEBHOOK_URL.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'La capa JSON compartida conserva la última respuesta válida cuando falla una actualización posterior.',
+          en: 'The shared JSON layer preserves the last valid response when a later refresh fails.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.2.18',
     date: '2026-07-31',
     codename: 'Centered Newswire',

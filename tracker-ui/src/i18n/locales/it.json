@@ -1028,6 +1028,22 @@
     "title": "Pannello di amministrazione",
     "subtitle": "Metriche di utilizzo interno e utenti registrati.",
     "loading": "Caricamento metriche...",
+    "health": {
+      "eyebrow": "Telemetria operativa",
+      "title": "Monitor di affidabilità",
+      "description": "Controlli automatici delle fonti JSON usate dai moduli critici.",
+      "checking": "Controllo...",
+      "loadError": "Impossibile caricare il monitor di stato",
+      "overall": "Stato generale",
+      "healthyModules": "Moduli integri",
+      "affectedModules": "Moduli interessati",
+      "lastCheck": "Ultimo controllo",
+      "sources": "Dettagli delle fonti",
+      "records": "{{count}} record",
+      "dataUpdated": "Dati: {{date}}",
+      "validated": "Struttura convalidata",
+      "status": { "operational": "Operativo", "degraded": "Degradato", "down": "Non disponibile" }
+    },
     "stats": {
       "totalVisits": "Visite totali",
       "todayVisits": "Visite oggi",

@@ -287,6 +287,151 @@ body {
   display: none;
 }
 
+.admin-health-panel {
+  margin-bottom: 1.5rem;
+  padding: 1.4rem;
+  border: 1px solid rgba(143, 159, 127, 0.16);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(143, 159, 127, 0.055), rgba(255, 255, 255, 0.02));
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.admin-health-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-health-panel__header span {
+  color: var(--tk-green);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.admin-health-panel__header h2 {
+  margin: 0.15rem 0 0;
+  color: #fff;
+  font-size: 1.35rem;
+}
+
+.admin-health-panel__header p {
+  margin: 0.3rem 0 0;
+  color: var(--tk-text-muted);
+  font-weight: 700;
+}
+
+.admin-health-panel__header button {
+  padding: 0.55rem 0.8rem;
+  color: var(--tk-green);
+  border: 1px solid rgba(143, 159, 127, 0.24);
+  border-radius: 8px;
+  background: rgba(143, 159, 127, 0.07);
+  font-family: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.admin-health-panel__header button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.admin-health-panel__error {
+  color: #ff8a8a;
+  font-weight: 800;
+}
+
+.admin-health-summary,
+.admin-health-modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.65rem;
+}
+
+.admin-health-summary article,
+.admin-health-modules article {
+  padding: 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.admin-health-summary span,
+.admin-health-summary strong,
+.admin-health-modules strong,
+.admin-health-modules div > span {
+  display: block;
+}
+
+.admin-health-summary span,
+.admin-health-modules div > span {
+  color: var(--tk-text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.admin-health-summary strong {
+  margin-top: 0.2rem;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.admin-health-modules {
+  margin-top: 0.75rem;
+}
+
+.admin-health-modules article {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.admin-health-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 9px currentColor;
+}
+
+.admin-health-sources {
+  margin-top: 0.85rem;
+  color: var(--tk-text-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.admin-health-sources summary {
+  color: var(--tk-green);
+  cursor: pointer;
+}
+
+.admin-health-sources > div {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.65rem;
+}
+
+.admin-health-sources article {
+  display: grid;
+  grid-template-columns: 8px minmax(140px, 1fr) 110px 70px minmax(120px, 1fr);
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.55rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+.admin-health-sources small {
+  overflow: hidden;
+  color: #ffcf66;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* EFECTO: Capa superior de Scanlines (Líneas de monitor militar CRT) */
 body::before {
   content: " ";
@@ -1293,6 +1438,33 @@ header span {
 
   .admin-mobile-stats p {
     font-size: clamp(1.35rem, 7vw, 1.8rem) !important;
+  }
+
+  .admin-health-panel {
+    padding: 1rem;
+  }
+
+  .admin-health-panel__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-health-panel__header button {
+    min-height: 42px;
+  }
+
+  .admin-health-summary,
+  .admin-health-modules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-health-sources article {
+    grid-template-columns: 8px minmax(0, 1fr) auto;
+  }
+
+  .admin-health-sources article > span:nth-of-type(2),
+  .admin-health-sources article > small {
+    grid-column: 2 / -1;
   }
 
   .admin-mobile-section-heading {

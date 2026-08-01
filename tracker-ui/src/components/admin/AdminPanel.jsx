@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
+import HealthMonitorPanel from './HealthMonitorPanel';
 
 const panelStyle = {
   padding: '1.4rem',
@@ -408,6 +409,8 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
             </article>
           </section>
         )}
+
+        <HealthMonitorPanel />
 
         <section className="admin-mobile-panel admin-users-panel" style={panelStyle}>
           <div

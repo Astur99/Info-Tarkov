@@ -22,6 +22,7 @@ const traderNamesById = {
 const itemCatalogRequests = new Map();
 const hideoutRequests = new Map();
 const jsonDataRequests = new Map();
+const lastGoodJsonData = new Map();
 const JSON_CACHE_TTL_MS = 5 * 60 * 1000;
 
 export const normalizeTarkovGameMode = (gameMode) =>
@@ -78,7 +79,7 @@ export const loadJsonDataset = async ({ path, locale, ttlMs = JSON_CACHE_TTL_MS 
         : Promise.resolve(null)
     ]);
 
-    return {
+    const result = {
       data: payload.data,
       translations: {
         ...(englishPayload?.data || {}),
@@ -88,6 +89,8 @@ export const loadJsonDataset = async ({ path, locale, ttlMs = JSON_CACHE_TTL_MS 
       source: 'json',
       fetchedAt: new Date().toISOString()
     };
+    lastGoodJsonData.set(cacheKey, result);
+    return result;
   })();
 
   jsonDataRequests.set(cacheKey, { createdAt: Date.now(), request });
@@ -95,6 +98,15 @@ export const loadJsonDataset = async ({ path, locale, ttlMs = JSON_CACHE_TTL_MS 
     return await request;
   } catch (error) {
     jsonDataRequests.delete(cacheKey);
+    const fallback = lastGoodJsonData.get(cacheKey);
+    if (fallback) {
+      return {
+        ...fallback,
+        source: 'stale-cache',
+        stale: true,
+        warning: error?.message || 'JSON refresh failed.'
+      };
+    }
     throw error;
   }
 };
