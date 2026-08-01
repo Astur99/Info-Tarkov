@@ -2285,7 +2285,10 @@
     },
     "errors": {
       "loadProfile": "Impossibile caricare il profilo PMC.",
-      "enterUsername": "Inserisci un nome utente Tarkov per eseguire la ricerca."
+      "enterUsername": "Inserisci un nome utente Tarkov per eseguire la ricerca.",
+      "usernameRequired": "Configura il tuo nome utente Tarkov nell'account oppure inseriscine uno per la ricerca.",
+      "profileNotIndexed": "Questo giocatore non è ancora presente nell'indice pubblico di players.tarkov.dev. Apri o cerca il suo profilo su tarkov.dev/players e attendi il prossimo aggiornamento giornaliero dell'indice.",
+      "upstreamUnavailable": "La fonte pubblica dei profili PMC è temporaneamente non disponibile. Riprova più tardi."
     },
     "stats": {
       "level": "Livello",

@@ -317,7 +317,7 @@ export default function PmcProfileModule({ onViewChange, session, userProfile })
       console.error(profileError);
       setRemoteProfile(null);
       setStatus('error');
-      setError(profileError.message || t('pmc.errors.loadProfile'));
+      setError(t(profileError.translationKey || 'pmc.errors.loadProfile'));
     }
   }, [activeMode, profileUsername, t]);
 

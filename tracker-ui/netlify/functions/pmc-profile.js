@@ -370,7 +370,10 @@ export const loadPmcProfile = async ({ username, mode }) => {
   const baseUrl = STATIC_PLAYER_BASES[normalizedMode];
 
   if (!cleanUsername) {
-    return jsonResponse(400, { error: 'Configura tu usuario de Tarkov en Cuenta para sincronizar el perfil.' });
+    return jsonResponse(400, {
+      errorCode: 'PMC_USERNAME_REQUIRED',
+      error: 'A Tarkov username is required.'
+    });
   }
 
   const [indexText, updatedText] = await Promise.all([
@@ -382,7 +385,8 @@ export const loadPmcProfile = async ({ username, mode }) => {
 
   if (!indexedPlayer) {
     return jsonResponse(404, {
-      error: 'Este jugador no aparece aun en el indice publico de players.tarkov.dev. Abre o busca su perfil en tarkov.dev/players y espera a la actualizacion diaria del indice.'
+      errorCode: 'PMC_PROFILE_NOT_INDEXED',
+      error: 'The player is not available in the public players.tarkov.dev index yet.'
     });
   }
 
@@ -421,6 +425,7 @@ export const handler = async (event) => {
     });
   } catch (error) {
     return jsonResponse(502, {
+      errorCode: 'PMC_UPSTREAM_UNAVAILABLE',
       error: error?.message || 'No se pudo cargar el perfil de PMC.'
     });
   }

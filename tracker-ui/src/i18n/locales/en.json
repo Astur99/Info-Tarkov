@@ -2291,7 +2291,10 @@
     },
     "errors": {
       "loadProfile": "The PMC profile could not be loaded.",
-      "enterUsername": "Enter a Tarkov username to search."
+      "enterUsername": "Enter a Tarkov username to search.",
+      "usernameRequired": "Configure your Tarkov username in Account or enter one to search.",
+      "profileNotIndexed": "This player is not yet in the public players.tarkov.dev index. Open or search for their profile at tarkov.dev/players and wait for the next daily index update.",
+      "upstreamUnavailable": "The public PMC profile source is temporarily unavailable. Please try again later."
     },
     "stats": {
       "level": "Level",
