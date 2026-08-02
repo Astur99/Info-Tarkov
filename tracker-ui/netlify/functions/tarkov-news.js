@@ -105,6 +105,7 @@ const markdownToText = (value) => String(value || '')
   .replace(/\[([^\]]+)\]\([^)]+\)/g, ' $1 ')
   .replace(/\s*Show more\s*$/i, '')
   .replace(/\s+/g, ' ')
+  .replace(/\s+([.,!?;:])/g, '$1')
   .trim();
 
 const extractReaderPost = (segment) => {
