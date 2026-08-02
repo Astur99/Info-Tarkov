@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
 const env = globalThis.process?.env || {};
-const SUPABASE_URL = env.SUPABASE_URL || env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY || env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = env.SUPABASE_URL || env.VITE_SUPABASE_URL || 'https://fannlkktvoxcwvxbmwcy.supabase.co';
+const SUPABASE_ANON_KEY = env.SUPABASE_ANON_KEY || env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_Bg1PipWT97F8FYodvnCqPg_N892ahhl';
 const SERVICE_ROLE_KEY = env.SUPABASE_SERVICE_ROLE_KEY;
 const OWNER_EMAIL = 'juancarfele@gmail.com';
 const ALLOWED_ORIGINS = new Set([
