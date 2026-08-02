@@ -129,8 +129,6 @@ export default function AdminSecurityGate({ children, onBack, forceChallenge = f
       return;
     }
 
-    await supabase.auth.refreshSession();
-
     try {
       await onVerified?.();
       setStatus('verified');

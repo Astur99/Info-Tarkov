@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import './index.css';
 
 import { supabase } from './lib/supabaseClient';
+import { shouldReloadIdentityForAuthEvent } from './lib/authState';
 import { buildProfileFromSessionMetadata, hydrateGameModePreference } from './lib/userProfilePreferences';
 import LanguageSwitcher from './components/layout/LanguageSwitcher';
 import OfficialNewsPanel from './components/news/OfficialNewsPanel';
@@ -237,8 +238,14 @@ function App() {
 
     const {
       data: { subscription }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
+
+      // Token refreshes and successful MFA challenges do not change the
+      // signed-in identity. Reloading the role/profile here temporarily sets
+      // roleLoading and unmounts protected views, losing their local state.
+      if (!shouldReloadIdentityForAuthEvent(event)) return;
+
       window.setTimeout(() => {
         syncSessionData(session);
       }, 0);
