@@ -794,6 +794,28 @@
     }
   },
   "about": {
+    "presentation": {
+      "eyebrow": "À propos du projet",
+      "title": "Une façon plus simple de vivre Tarkov",
+      "lead": "Info Tarkov est l'endroit qui me manquait : une seule application pour préparer un raid, trouver une réponse et continuer à avancer sans se perdre entre les onglets.",
+      "originTitle": "Tout a commencé avec trop d'onglets ouverts",
+      "originParagraphs": [
+        "L'idée est née en jouant. Comme beaucoup, je finissais avec un site pour les quêtes, un autre pour les prix, un autre pour les clés, plusieurs cartes et un guide ouvert au cas où. L'information existait, mais y accéder était plus fatigant que nécessaire.",
+        "C'est ainsi qu'Info Tarkov a commencé : d'abord comme une solution personnelle pour tout garder à portée de main, puis comme un projet capable d'aider d'autres joueurs."
+      ],
+      "purposeTitle": "Conçue pour gagner du temps, pas ajouter du bruit",
+      "purposeParagraphs": [
+        "L'objectif a toujours été simple : après dix heures ou plusieurs wipes, chacun doit pouvoir trouver ce dont il a besoin en quelques clics. L'application cherche donc à être belle, fonctionnelle, intuitive, gratuite et multilingue. Vous pouvez l'utiliser sans compte ou en créer un pour retrouver votre progression depuis n'importe quel appareil.",
+        "C'est un projet indépendant que je développe et entretiens moi-même. Il grandit aussi grâce à la communauté : aux personnes qui signalent un bug, corrigent une information ou proposent une idée. Cette façon de travailler ensemble fait partie de la philosophie de l'application."
+      ],
+      "toolsTitle": "Ce que vous trouverez",
+      "toolsParagraphs": [
+        "Info Tarkov réunit cartes et briefings, suivi des quêtes et de Kappa, décisions de l'histoire, informations sur les Boss et les Goons, prix du Flea Market, planification du Hideout, clés, Prestige, profils PMC et simulateur balistique.",
+        "Vous n'avez pas besoin de tout utiliser. Chaque outil est là lorsque vous en avez besoin, et passer de l'un à l'autre doit rester naturel, sans changer de site ni apprendre une nouvelle interface."
+      ],
+      "closing": "Info Tarkov continuera d'évoluer avec le jeu et les personnes qui l'utilisent. Si l'application vous épargne quelques recherches et vous aide à entrer en raid un peu mieux préparé, elle remplit déjà sa mission.",
+      "signature": "Créée par un joueur, améliorée par la communauté."
+    },
     "eyebrow": "Mémoire du projet",
     "title": "À propos de Info Tarkov",
     "subtitle": "Résumé complet de l'objectif, de la portée, de l'architecture et des technologies derrière l'application.",

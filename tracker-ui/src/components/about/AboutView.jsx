@@ -1,11 +1,35 @@
 import { useTranslation } from 'react-i18next';
 
+const sectionTitleStyle = {
+  color: '#fff',
+  margin: '0 0 1rem',
+  fontSize: '1.55rem',
+  letterSpacing: '0.7px'
+};
+
+const paragraphStyle = {
+  color: 'var(--tk-text-muted)',
+  margin: '0 0 1rem',
+  fontSize: '1.08rem',
+  lineHeight: 1.8
+};
+
+function StorySection({ title, paragraphs }) {
+  return (
+    <section style={{ marginTop: '3.5rem' }}>
+      <h2 style={sectionTitleStyle}>{title}</h2>
+      {paragraphs.map((paragraph) => (
+        <p key={paragraph} style={paragraphStyle}>{paragraph}</p>
+      ))}
+    </section>
+  );
+}
 
 export default function AboutView({ onViewChange }) {
   const { t } = useTranslation();
-  const localizedSections = t('about.sections', { returnObjects: true, defaultValue: [] });
-  const localizedModuleDetails = t('about.moduleDetails', { returnObjects: true, defaultValue: [] });
-  const localizedTechGroups = t('about.techGroups', { returnObjects: true, defaultValue: [] });
+  const origin = t('about.presentation.originParagraphs', { returnObjects: true, defaultValue: [] });
+  const purpose = t('about.presentation.purposeParagraphs', { returnObjects: true, defaultValue: [] });
+  const tools = t('about.presentation.toolsParagraphs', { returnObjects: true, defaultValue: [] });
 
   return (
     <div
@@ -13,211 +37,77 @@ export default function AboutView({ onViewChange }) {
       style={{
         minHeight: '100vh',
         background: '#0a0a0c',
-        padding: '6rem 2rem 8rem',
+        padding: 'clamp(2rem, 7vw, 6rem) clamp(1.25rem, 4vw, 2rem) 8rem',
         fontFamily: "'Rajdhani', sans-serif"
       }}
     >
-      <main style={{ width: 'min(1120px, 100%)', margin: '0 auto' }}>
-        <header
+      <main style={{ width: 'min(1080px, 100%)', margin: '0 auto' }}>
+        <button
+          type="button"
+          onClick={() => onViewChange('home')}
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            gap: '2rem',
-            alignItems: 'flex-start',
-            borderBottom: '1px solid rgba(255,255,255,0.07)',
-            paddingBottom: '1.5rem',
-            marginBottom: '2rem'
+            background: 'transparent',
+            color: 'var(--tk-text-muted)',
+            border: 0,
+            padding: 0,
+            cursor: 'pointer',
+            fontWeight: '900',
+            letterSpacing: '1.2px',
+            fontFamily: "'Rajdhani', sans-serif"
           }}
         >
-          <div>
-            <p
-              style={{
-                color: 'var(--tk-green)',
-                margin: '0 0 0.45rem',
-                fontWeight: '900',
-                letterSpacing: '2px',
-                textTransform: 'uppercase'
-              }}
-            >
-              {t('about.eyebrow')}
-            </p>
-            <h1
-              style={{
-                color: '#fff',
-                margin: 0,
-                fontSize: '2.8rem',
-                letterSpacing: '1.5px',
-                textTransform: 'uppercase'
-              }}
-            >
-              {t('about.title')}
-            </h1>
-            <p style={{ color: 'var(--tk-text-muted)', maxWidth: '760px', lineHeight: 1.6, fontSize: '1rem' }}>
-              {t('about.subtitle')}
-            </p>
-          </div>
+          ← {t('common.backToMenu')}
+        </button>
 
-          <button
-            type="button"
-            onClick={() => onViewChange('home')}
+        <header style={{ padding: 'clamp(3rem, 8vw, 6rem) 0 3rem' }}>
+          <h1
             style={{
-              backgroundColor: 'rgba(255,255,255,0.04)',
               color: '#fff',
-              border: '1px solid rgba(255,255,255,0.1)',
-              padding: '0.8rem 1.2rem',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '900',
-              letterSpacing: '1px',
-              whiteSpace: 'nowrap'
+              margin: 0,
+              maxWidth: '1080px',
+              fontSize: 'clamp(2.7rem, 6.2vw, 5.2rem)',
+              lineHeight: 0.98,
+              letterSpacing: '-1px',
+              textTransform: 'uppercase'
             }}
           >
-            {t('common.backToMenu')}
-          </button>
+            {t('about.presentation.title')}
+          </h1>
+          <p
+            style={{
+              color: '#d8d8d8',
+              maxWidth: '820px',
+              margin: '1.75rem 0 0',
+              fontSize: 'clamp(1.18rem, 2.4vw, 1.42rem)',
+              lineHeight: 1.6
+            }}
+          >
+            {t('about.presentation.lead')}
+          </p>
         </header>
 
-        <section
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '1rem',
-            marginBottom: '2rem'
-          }}
-        >
-          {localizedTechGroups.map((group) => (
-            <article
-              key={group.title}
-              style={{
-                background: 'rgba(255,255,255,0.035)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '8px',
-                padding: '1.2rem'
-              }}
-            >
-              <h2 style={{ color: '#fff', marginTop: 0, fontSize: '1.1rem' }}>{group.title}</h2>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.45rem' }}>
-                {group.items.map((item) => (
-                  <span
-                    key={item}
-                    style={{
-                      color: 'var(--tk-green)',
-                      background: 'rgba(26,176,21,0.08)',
-                      border: '1px solid rgba(26,176,21,0.18)',
-                      borderRadius: '999px',
-                      padding: '0.25rem 0.55rem',
-                      fontWeight: '800',
-                      fontSize: '0.78rem'
-                    }}
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </article>
-          ))}
-        </section>
+        <div style={{ width: 'min(820px, 100%)' }}>
+          <div style={{ width: '72px', height: '2px', background: 'var(--tk-green)', opacity: 0.75 }} />
 
-        <section style={{ marginBottom: '2rem' }}>
-          <div style={{ marginBottom: '1rem' }}>
-            <p
-              style={{
-                color: 'var(--tk-green)',
-                margin: '0 0 0.35rem',
-                fontWeight: '900',
-                letterSpacing: '2px',
-                textTransform: 'uppercase'
-              }}
-            >
-              {t('about.modulesEyebrow')}
+          <StorySection title={t('about.presentation.originTitle')} paragraphs={origin} />
+          <StorySection title={t('about.presentation.purposeTitle')} paragraphs={purpose} />
+          <StorySection title={t('about.presentation.toolsTitle')} paragraphs={tools} />
+
+          <footer
+            style={{
+              marginTop: '4.5rem',
+              paddingTop: '2rem',
+              borderTop: '1px solid rgba(255,255,255,0.08)'
+            }}
+          >
+            <p style={{ ...paragraphStyle, color: '#fff', fontSize: '1.22rem', fontWeight: '700' }}>
+              {t('about.presentation.closing')}
             </p>
-            <h2 style={{ color: '#fff', margin: 0, fontSize: '1.8rem', textTransform: 'uppercase' }}>
-              {t('about.modulesTitle')}
-            </h2>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '1rem' }}>
-            {localizedModuleDetails.map((module) => (
-              <article
-                key={module.name}
-                style={{
-                  background: 'rgba(255,255,255,0.035)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: '8px',
-                  padding: '1.35rem',
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)'
-                }}
-              >
-                <h3
-                  style={{
-                    color: '#fff',
-                    margin: '0 0 0.6rem',
-                    fontSize: '1.2rem',
-                    letterSpacing: '0.6px',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  {module.name}
-                </h3>
-                <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.6, margin: '0 0 0.9rem' }}>
-                  {module.purpose}
-                </p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.9rem' }}>
-                  {module.actions.map((action) => (
-                    <span
-                      key={action}
-                      style={{
-                        color: 'var(--tk-green)',
-                        background: 'rgba(26,176,21,0.07)',
-                        border: '1px solid rgba(26,176,21,0.16)',
-                        borderRadius: '999px',
-                        padding: '0.22rem 0.55rem',
-                        fontWeight: '800',
-                        fontSize: '0.76rem'
-                      }}
-                    >
-                      {action}
-                    </span>
-                  ))}
-                </div>
-                <p style={{ color: '#d8d8d8', lineHeight: 1.55, margin: 0 }}>
-                  <strong style={{ color: '#fff' }}>{t('about.statusLabel')}:</strong> {module.status}
-                </p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section style={{ display: 'grid', gap: '1rem' }}>
-          {localizedSections.map((section) => (
-            <article
-              key={section.title}
-              style={{
-                background: 'var(--tk-glass)',
-                border: '1px solid var(--tk-glass-border)',
-                borderRadius: '8px',
-                padding: '1.5rem',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)'
-              }}
-            >
-              <h2
-                style={{
-                  color: '#fff',
-                  margin: '0 0 0.65rem',
-                  fontSize: '1.25rem',
-                  letterSpacing: '0.8px',
-                  textTransform: 'uppercase'
-                }}
-              >
-                {section.title}
-              </h2>
-              <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.65, margin: 0 }}>
-                {section.body}
-              </p>
-            </article>
-          ))}
-        </section>
+            <p style={{ color: 'var(--tk-green)', margin: '1.5rem 0 0', fontWeight: '900', letterSpacing: '1.5px' }}>
+              {t('about.presentation.signature')}
+            </p>
+          </footer>
+        </div>
       </main>
     </div>
   );
