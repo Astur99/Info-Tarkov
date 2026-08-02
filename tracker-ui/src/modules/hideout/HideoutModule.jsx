@@ -4,11 +4,13 @@ import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { loadJsonEconomy } from '../../services/tarkovDataApi';
 import { fetchHideoutStations } from './hideoutApi';
 import HideoutHeader from './HideoutHeader';
+import HideoutGlobalNeeds from './HideoutGlobalNeeds';
 import HideoutStationDetail from './HideoutStationDetail';
 import HideoutStationList from './HideoutStationList';
 import { loadHideoutProgress, saveHideoutProgress, writeLocalHideoutProgress } from './hideoutStorage';
 import {
   MARKET_MODES,
+  getGlobalHideoutNeeds,
   getHideoutProgress,
   getHideoutStorageKeys,
   getRequirementCount,
@@ -31,6 +33,7 @@ export default function HideoutModule({ onViewChange, session }) {
   const [errorFuente, setErrorFuente] = useState('');
   const [economy, setEconomy] = useState(null);
   const [syncStatus, setSyncStatus] = useState('local');
+  const [activeView, setActiveView] = useState('stations');
   const suppressSaveRef = useRef(false);
   const hydratedProgressKeyRef = useRef(null);
   const selectedStationIdRef = useRef(null);
@@ -213,6 +216,13 @@ export default function HideoutModule({ onViewChange, session }) {
     return getHideoutProgress(estaciones, nivelesConstruidos);
   }, [estaciones, nivelesConstruidos]);
 
+  const globalNeeds = useMemo(() => getGlobalHideoutNeeds({
+    stations: estaciones,
+    builtLevels: nivelesConstruidos,
+    markedItems: itemsMarcados,
+    mode: modoMercado
+  }), [estaciones, itemsMarcados, modoMercado, nivelesConstruidos]);
+
   const stationCraftCount = useMemo(
     () => economy?.crafts?.filter((craft) => craft.station === estacionSeleccionada?.id).length || 0,
     [economy?.crafts, estacionSeleccionada?.id]
@@ -264,6 +274,17 @@ export default function HideoutModule({ onViewChange, session }) {
     });
   };
 
+  const openGlobalRequirement = ({ stationId, level }) => {
+    const station = estaciones.find((currentStation) => currentStation.id === stationId);
+    if (!station) return;
+
+    selectedStationIdRef.current = station.id;
+    selectedLevelRef.current = level;
+    setEstacionSeleccionada(station);
+    setNivelObjetivo(level);
+    setActiveView('stations');
+  };
+
   if (cargando) {
     return (
       <div
@@ -297,50 +318,73 @@ export default function HideoutModule({ onViewChange, session }) {
         modoMercado={modoMercado}
         setModoMercado={handleModeChange}
         onViewChange={onViewChange}
-        economyStats={economy ? {
-          crafts: economy.crafts.length,
-          barters: economy.barters.length,
-          traders: economy.traders.length
-        } : null}
       />
 
-      <div
-        className="hideout-mobile-layout"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '340px 1fr',
-          gap: '2rem'
-        }}
-      >
-        <HideoutStationList
-          hideoutProgress={hideoutProgress}
-          estaciones={estaciones}
-          estacionSeleccionada={estacionSeleccionada}
-          stationAvailability={stationAvailability}
-          nivelesConstruidos={nivelesConstruidos}
-          setEstacionSeleccionada={handleStationSelect}
-          setNivelObjetivo={handleTargetLevelChange}
-        />
+      <nav className="hideout-view-switch" aria-label={t('hideoutModule.global.navigationLabel')}>
+        <button
+          type="button"
+          className={activeView === 'stations' ? 'is-active' : ''}
+          onClick={() => setActiveView('stations')}
+        >
+          {t('hideoutModule.global.stationView')}
+        </button>
+        <button
+          type="button"
+          className={activeView === 'global' ? 'is-active' : ''}
+          onClick={() => setActiveView('global')}
+        >
+          {t('hideoutModule.global.globalView')}
+          <span>{globalNeeds.uniqueItems}</span>
+        </button>
+      </nav>
 
-        <HideoutStationDetail
-          estacionSeleccionada={estacionSeleccionada}
-          modoMercado={modoMercado}
-          nivelObjetivo={nivelObjetivo}
-          setNivelObjetivo={handleTargetLevelChange}
-          nivelesConstruidos={nivelesConstruidos}
-          setStationBuiltLevel={setStationBuiltLevel}
-          stationAvailability={stationAvailability}
-          itemStats={itemStats}
-          datosNivel={datosNivel}
-          itemRequirements={itemRequirements}
-          stationRequirements={stationRequirements}
-          skillRequirements={skillRequirements}
-          traderRequirements={traderRequirements}
-          itemsMarcados={itemsMarcados}
-          toggleItem={toggleItem}
-          stationCraftCount={stationCraftCount}
+      {activeView === 'global' ? (
+        <HideoutGlobalNeeds
+          stations={estaciones}
+          builtLevels={nivelesConstruidos}
+          markedItems={itemsMarcados}
+          mode={modoMercado}
+          onOpenRequirement={openGlobalRequirement}
         />
-      </div>
+      ) : (
+        <div
+          className="hideout-mobile-layout"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '340px 1fr',
+            gap: '2rem'
+          }}
+        >
+          <HideoutStationList
+            hideoutProgress={hideoutProgress}
+            estaciones={estaciones}
+            estacionSeleccionada={estacionSeleccionada}
+            stationAvailability={stationAvailability}
+            nivelesConstruidos={nivelesConstruidos}
+            setEstacionSeleccionada={handleStationSelect}
+            setNivelObjetivo={handleTargetLevelChange}
+          />
+
+          <HideoutStationDetail
+            estacionSeleccionada={estacionSeleccionada}
+            modoMercado={modoMercado}
+            nivelObjetivo={nivelObjetivo}
+            setNivelObjetivo={handleTargetLevelChange}
+            nivelesConstruidos={nivelesConstruidos}
+            setStationBuiltLevel={setStationBuiltLevel}
+            stationAvailability={stationAvailability}
+            itemStats={itemStats}
+            datosNivel={datosNivel}
+            itemRequirements={itemRequirements}
+            stationRequirements={stationRequirements}
+            skillRequirements={skillRequirements}
+            traderRequirements={traderRequirements}
+            itemsMarcados={itemsMarcados}
+            toggleItem={toggleItem}
+            stationCraftCount={stationCraftCount}
+          />
+        </div>
+      )}
     </div>
   );
 }

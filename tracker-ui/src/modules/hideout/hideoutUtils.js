@@ -139,6 +139,86 @@ export const getRequirementPrice = (req) => {
   return price > 0 ? price : 0;
 };
 
+const CURRENCY_ITEM_IDS = new Set([
+  '5449016a4bdc2d6f028b456f', // Roubles
+  '5696686a4bdc2da3298b456a', // Dollars
+  '569668774bdc2da2298b4568' // Euros
+]);
+
+export const isCurrencyItem = (item) => {
+  if (CURRENCY_ITEM_IDS.has(item?.id)) return true;
+  return (item?.types || []).some((type) => String(type).toLowerCase() === 'currency');
+};
+
+export const getGlobalHideoutNeeds = ({
+  stations,
+  builtLevels,
+  markedItems,
+  mode,
+  nextLevelOnly = false
+}) => {
+  const groupedItems = new Map();
+
+  (stations || []).forEach((station) => {
+    const builtLevel = Number(builtLevels?.[station.id]) || 0;
+    const pendingLevels = (station.levels || []).filter((level) => (
+      level.level > builtLevel && (!nextLevelOnly || level.level === builtLevel + 1)
+    ));
+
+    pendingLevels.forEach((level) => {
+      (level.itemRequirements || []).forEach((requirement) => {
+        const requirementKey = getRequirementKey(mode, station.id, level.level, requirement);
+        if (markedItems?.[requirementKey]) return;
+
+        const item = requirement.item || {};
+        const itemKey = item.id || item.normalizedName || item.name || requirement.id;
+        if (!itemKey) return;
+
+        const count = getRequirementCount(requirement);
+        const unitPrice = getRequirementPrice(requirement);
+        const requiresFir = isFirRequirement(requirement);
+        const current = groupedItems.get(itemKey) || {
+          id: itemKey,
+          item,
+          isCurrency: isCurrencyItem(item),
+          count: 0,
+          estimatedCost: 0,
+          firCount: 0,
+          uses: []
+        };
+
+        current.count += count;
+        current.estimatedCost += unitPrice * count;
+        if (requiresFir) current.firCount += count;
+        current.uses.push({
+          key: requirementKey,
+          stationId: station.id,
+          stationName: station.name,
+          level: level.level,
+          count,
+          requiresFir
+        });
+        groupedItems.set(itemKey, current);
+      });
+    });
+  });
+
+  const items = [...groupedItems.values()].sort((left, right) => {
+    const leftLevel = Math.min(...left.uses.map((usage) => usage.level));
+    const rightLevel = Math.min(...right.uses.map((usage) => usage.level));
+    return leftLevel - rightLevel || right.count - left.count ||
+      String(left.item?.name || '').localeCompare(String(right.item?.name || ''));
+  });
+
+  return {
+    items,
+    uniqueItems: items.length,
+    totalUnits: items.reduce((sum, item) => sum + (item.isCurrency ? 0 : item.count), 0),
+    estimatedCost: items.reduce((sum, item) => sum + item.estimatedCost, 0),
+    firUnits: items.reduce((sum, item) => sum + item.firCount, 0)
+  };
+};
+
 export const getHideoutProgress = (stations, builtLevels) => {
   const totalLevels = stations.reduce((sum, station) => sum + (station.levels?.length || 0), 0);
   const builtCount = stations.reduce(

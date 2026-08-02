@@ -9,6 +9,7 @@ import {
 import { mergeBossSpawnData } from '../src/modules/bosses/bossesApi.js';
 import { handler as goonsHandler } from '../netlify/functions/goons-tracker.js';
 import { buildKeyMapIndex, isKeyItem } from '../src/modules/keys/keysApi.js';
+import { getGlobalHideoutNeeds, getRequirementKey } from '../src/modules/hideout/hideoutUtils.js';
 import { parseReaderTimeline, parseTimelineHtml } from '../netlify/functions/tarkov-news.js';
 import { buildHealthReport } from '../netlify/functions/lib/app-health.js';
 
@@ -256,4 +257,61 @@ test('Keys use official map locks and merge duplicate map variants', () => {
   assert.deepEqual(index.get('factory-exit'), ['Factory']);
   assert.equal(isKeyItem({ types: ['keys'] }), true);
   assert.equal(isKeyItem({ types: ['container'], normalizedName: 'key-tool' }), false);
+});
+
+test('Hideout global needs aggregate every unbuilt level and ignore completed requirements', () => {
+  const screw = { id: 'screw', name: 'Screw nuts', lastLowPrice: 1000 };
+  const tape = { id: 'tape', name: 'Duct tape', lastLowPrice: 2000 };
+  const roubles = { id: '5449016a4bdc2d6f028b456f', name: 'Roubles', types: ['currency'], lastLowPrice: 1 };
+  const requirement = (id, item, count, fir = false) => ({
+    id,
+    item,
+    count,
+    attributes: fir ? [{ type: 'foundInRaid', value: 'true' }] : []
+  });
+  const stations = [
+    {
+      id: 'workbench',
+      name: 'Workbench',
+      levels: [
+        { level: 1, itemRequirements: [] },
+        { level: 2, itemRequirements: [requirement('screw-l2', screw, 2), requirement('tape-l2', tape, 3, true)] },
+        { level: 3, itemRequirements: [requirement('screw-l3', screw, 1)] }
+      ]
+    },
+    {
+      id: 'lavatory',
+      name: 'Lavatory',
+      levels: [{ level: 1, itemRequirements: [requirement('screw-l1', screw, 4)] }]
+    },
+    {
+      id: 'stash',
+      name: 'Stash',
+      levels: [{ level: 1, itemRequirements: [requirement('roubles-l1', roubles, 9_000_000)] }]
+    }
+  ];
+  const markedKey = getRequirementKey('PVP', 'lavatory', 1, stations[1].levels[0].itemRequirements[0]);
+
+  const allNeeds = getGlobalHideoutNeeds({
+    stations,
+    builtLevels: { workbench: 1 },
+    markedItems: { [markedKey]: true },
+    mode: 'PVP'
+  });
+  assert.equal(allNeeds.uniqueItems, 3);
+  assert.equal(allNeeds.totalUnits, 6);
+  assert.equal(allNeeds.estimatedCost, 9_009_000);
+  assert.equal(allNeeds.firUnits, 3);
+  assert.equal(allNeeds.items.find((entry) => entry.id === 'screw').count, 3);
+  assert.equal(allNeeds.items.find((entry) => entry.id === roubles.id).isCurrency, true);
+
+  const nextNeeds = getGlobalHideoutNeeds({
+    stations,
+    builtLevels: { workbench: 1 },
+    markedItems: { [markedKey]: true },
+    mode: 'PVP',
+    nextLevelOnly: true
+  });
+  assert.equal(nextNeeds.items.find((entry) => entry.id === 'screw').count, 2);
+  assert.equal(nextNeeds.totalUnits, 5);
 });

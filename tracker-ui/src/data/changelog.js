@@ -18,6 +18,50 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.4.0',
+    date: '2026-08-03',
+    codename: 'Quartermaster',
+    type: 'feature',
+    title: {
+      es: 'Planificación global del Hideout',
+      en: 'Global Hideout planning'
+    },
+    summary: {
+      es: 'El Hideout incorpora una vista que reúne todos los materiales pendientes según el progreso real de cada estación.',
+      en: 'The Hideout now includes a view that gathers every remaining material based on the actual progress of each station.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'La nueva vista Todo lo que necesitas agrupa objetos repetidos entre estaciones, descuenta requisitos completados y permite abrir directamente el nivel donde se utilizarán.',
+          en: 'The new Everything you need view groups repeated items across stations, excludes completed requirements and opens the exact level where each item is used.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'Incluye búsqueda, filtro FIR, coste estimado y resúmenes de objetos distintos y unidades pendientes.',
+          en: 'It includes search, an FIR filter, estimated cost and summaries for unique items and remaining units.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'Próximas mejoras es la perspectiva predeterminada para priorizar el progreso inmediato; Todo lo pendiente queda disponible para planificar a largo plazo.',
+          en: 'Next upgrades is the default perspective for immediate progress, while All remaining supports long-term planning.'
+        }
+      },
+      {
+        type: 'fixed',
+        text: {
+          es: 'Rublos, dólares y euros dejan de inflar el contador de unidades físicas, aunque permanecen visibles como requisitos económicos.',
+          en: 'Roubles, dollars and euros no longer inflate the physical item count while remaining visible as economic requirements.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.3.0',
     date: '2026-08-01',
     codename: 'Watchtower',

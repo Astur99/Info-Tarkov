@@ -1926,7 +1926,6 @@
       "localError": "LOKALER MODUS: CLOUD-TABELLE NICHT VERFÜGBAR ODER SYNC-FEHLER"
     },
     "economy": {
-      "summary": "JSON tarkov.dev · {{crafts}} Crafts · {{barters}} Tauschgeschäfte · {{traders}} Händler",
       "stationCrafts": "{{count}} offizielle Crafts an dieser Station"
     },
     "errors": {
@@ -1938,6 +1937,33 @@
       "selectSection": "Abschnitt auswählen",
       "availableUpgrades": "{{count}} Upgrade(s) freigeschaltet",
       "blocked": "LOCK"
+    },
+    "global": {
+      "navigationLabel": "Versteckansichten",
+      "stationView": "Nach Station",
+      "globalView": "Alles, was du brauchst",
+      "title": "AUSSTEHENDE MATERIALIEN",
+      "subtitle": "Alles, was du für die verbleibenden Versteckstufen brauchst, nach Gegenstand gruppiert und ohne bereits abgehakte Anforderungen.",
+      "scopeLabel": "Materialumfang",
+      "allFuture": "Alles Ausstehende",
+      "nextUpgrades": "Nächste Upgrades",
+      "uniqueItems": "Verschiedene Gegenstände",
+      "totalUnits": "Gegenstandseinheiten",
+      "estimatedBudget": "Geschätzte {{mode}}-Kosten",
+      "firUnits": "FIR-Einheiten",
+      "searchPlaceholder": "Gegenstand oder Station suchen...",
+      "firOnly": "Nur FIR",
+      "results": "{{count}} sichtbare Gegenstände",
+      "pendingHint": "Aktualisiert sich mit deinem Fortschritt",
+      "estimatedCost": "Geschätzte Kosten: {{price}}",
+      "priceUnavailable": "Preis nicht verfügbar",
+      "firNeeded": "{{count}} FIR",
+      "usedIn": "{{count}} ausstehende Verwendungen",
+      "stationLevel": "{{station}} L{{level}} · ×{{count}}",
+      "moreUses": "+{{count}} Verwendungen",
+      "openNext": "Nächste Station öffnen",
+      "emptyTitle": "Nichts mehr zu sammeln",
+      "emptyBody": "Die aktuelle Auswahl ist abgeschlossen oder kein Gegenstand entspricht den Filtern."
     },
     "detail": {
       "targetLevel": "{{mode}} / ZIELEBENE",

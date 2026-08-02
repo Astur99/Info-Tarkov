@@ -1920,7 +1920,6 @@
       "localError": "ЛОКАЛЬНЫЙ РЕЖИМ: ОБЛАЧНАЯ ТАБЛИЦА НЕДОСТУПНА ИЛИ ОШИБКА СИНХРОНИЗАЦИИ"
     },
     "economy": {
-      "summary": "JSON tarkov.dev · крафты: {{crafts}} · бартеры: {{barters}} · торговцы: {{traders}}",
       "stationCrafts": "Официальных крафтов на этой станции: {{count}}"
     },
     "errors": {
@@ -1932,6 +1931,33 @@
       "selectSection": "Выберите раздел",
       "availableUpgrades": "{{count}} обновлений разблокировано",
       "blocked": "LOCK"
+    },
+    "global": {
+      "navigationLabel": "Виды убежища",
+      "stationView": "По станциям",
+      "globalView": "Всё необходимое",
+      "title": "ОСТАВШИЕСЯ МАТЕРИАЛЫ",
+      "subtitle": "Все предметы для оставшихся уровней убежища, сгруппированные по типу и без уже отмеченных требований.",
+      "scopeLabel": "Объём материалов",
+      "allFuture": "Всё оставшееся",
+      "nextUpgrades": "Следующие улучшения",
+      "uniqueItems": "Разных предметов",
+      "totalUnits": "Единиц предметов",
+      "estimatedBudget": "Примерная стоимость {{mode}}",
+      "firUnits": "Единиц FIR",
+      "searchPlaceholder": "Поиск предмета или станции...",
+      "firOnly": "Только FIR",
+      "results": "Видимых предметов: {{count}}",
+      "pendingHint": "Обновляется вместе с прогрессом",
+      "estimatedCost": "Примерная стоимость: {{price}}",
+      "priceUnavailable": "Цена недоступна",
+      "firNeeded": "{{count}} FIR",
+      "usedIn": "Осталось применений: {{count}}",
+      "stationLevel": "{{station}} ур. {{level}} · ×{{count}}",
+      "moreUses": "+{{count}} применений",
+      "openNext": "Открыть следующую станцию",
+      "emptyTitle": "Больше ничего собирать не нужно",
+      "emptyBody": "Текущий выбор завершён или ни один предмет не соответствует фильтрам."
     },
     "detail": {
       "targetLevel": "{{mode}} / ЦЕЛЕВОЙ УРОВЕНЬ",

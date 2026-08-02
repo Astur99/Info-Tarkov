@@ -1920,7 +1920,6 @@
       "localError": "MODALITÀ LOCALE: TABELLA CLOUD NON DISPONIBILE O ERRORE SINCRONIZZAZIONE"
     },
     "economy": {
-      "summary": "JSON tarkov.dev · {{crafts}} creazioni · {{barters}} baratti · {{traders}} mercanti",
       "stationCrafts": "{{count}} creazioni ufficiali in questa stazione"
     },
     "errors": {
@@ -1932,6 +1931,33 @@
       "selectSection": "Seleziona sezione",
       "availableUpgrades": "{{count}} aggiornamento/i sbloccato/i",
       "blocked": "LOCK"
+    },
+    "global": {
+      "navigationLabel": "Viste del rifugio",
+      "stationView": "Per stazione",
+      "globalView": "Tutto ciò che ti serve",
+      "title": "MATERIALI RIMANENTI",
+      "subtitle": "Tutto ciò che ti serve ancora per i livelli rimanenti del rifugio, raggruppato per oggetto ed escludendo quanto già selezionato.",
+      "scopeLabel": "Ambito dei materiali",
+      "allFuture": "Tutto il rimanente",
+      "nextUpgrades": "Prossimi miglioramenti",
+      "uniqueItems": "Oggetti distinti",
+      "totalUnits": "Unità di oggetti",
+      "estimatedBudget": "Costo {{mode}} stimato",
+      "firUnits": "Unità FIR",
+      "searchPlaceholder": "Cerca oggetto o stazione...",
+      "firOnly": "Solo FIR",
+      "results": "{{count}} oggetto/i visibile/i",
+      "pendingHint": "Si aggiorna con i tuoi progressi",
+      "estimatedCost": "Costo stimato: {{price}}",
+      "priceUnavailable": "Prezzo non disponibile",
+      "firNeeded": "{{count}} FIR",
+      "usedIn": "{{count}} utilizzo/i rimanente/i",
+      "stationLevel": "{{station}} L{{level}} · ×{{count}}",
+      "moreUses": "+{{count}} utilizzi",
+      "openNext": "Apri la prossima stazione",
+      "emptyTitle": "Non resta nulla da raccogliere",
+      "emptyBody": "Hai completato la selezione attuale o nessun oggetto corrisponde ai filtri."
     },
     "detail": {
       "targetLevel": "{{mode}} / LIVELLO OBIETTIVO",

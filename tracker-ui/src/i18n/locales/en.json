@@ -1950,7 +1950,6 @@
       "localError": "LOCAL MODE: CLOUD TABLE UNAVAILABLE OR SYNC ERROR"
     },
     "economy": {
-      "summary": "JSON tarkov.dev · {{crafts}} crafts · {{barters}} barters · {{traders}} traders",
       "stationCrafts": "{{count}} official crafts at this station"
     },
     "errors": {
@@ -1962,6 +1961,33 @@
       "selectSection": "Select section",
       "availableUpgrades": "{{count}} upgrade(s) unlocked",
       "blocked": "LOCK"
+    },
+    "global": {
+      "navigationLabel": "Hideout views",
+      "stationView": "By station",
+      "globalView": "Everything you need",
+      "title": "REMAINING MATERIALS",
+      "subtitle": "Everything you still need for the remaining hideout levels, grouped by item and excluding anything you have already checked off.",
+      "scopeLabel": "Material scope",
+      "allFuture": "All remaining",
+      "nextUpgrades": "Next upgrades",
+      "uniqueItems": "Unique items",
+      "totalUnits": "Item units",
+      "estimatedBudget": "Estimated {{mode}} cost",
+      "firUnits": "FIR units",
+      "searchPlaceholder": "Search item or station...",
+      "firOnly": "FIR only",
+      "results": "{{count}} visible item(s)",
+      "pendingHint": "Updates with your progress",
+      "estimatedCost": "Estimated cost: {{price}}",
+      "priceUnavailable": "Price unavailable",
+      "firNeeded": "{{count}} FIR",
+      "usedIn": "{{count}} pending use(s)",
+      "stationLevel": "{{station}} L{{level}} · ×{{count}}",
+      "moreUses": "+{{count}} uses",
+      "openNext": "Open next station",
+      "emptyTitle": "Nothing left to collect",
+      "emptyBody": "You have completed the current selection or no items match these filters."
     },
     "detail": {
       "targetLevel": "{{mode}} / TARGET LEVEL",

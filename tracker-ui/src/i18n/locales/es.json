@@ -1950,7 +1950,6 @@
       "localError": "MODO LOCAL: TABLA CLOUD NO DISPONIBLE O ERROR DE SINCRONIZACIÓN"
     },
     "economy": {
-      "summary": "JSON tarkov.dev · {{crafts}} crafteos · {{barters}} trueques · {{traders}} comerciantes",
       "stationCrafts": "{{count}} crafteos oficiales en esta estación"
     },
     "errors": {
@@ -1962,6 +1961,33 @@
       "selectSection": "Seleccionar sección",
       "availableUpgrades": "{{count}} mejora(s) desbloqueada(s)",
       "blocked": "BLOQ"
+    },
+    "global": {
+      "navigationLabel": "Vistas del refugio",
+      "stationView": "Por estación",
+      "globalView": "Todo lo que necesitas",
+      "title": "MATERIALES PENDIENTES",
+      "subtitle": "Todo lo que aún necesitas para construir los niveles pendientes del refugio, agrupado por objeto y descontando lo que ya has marcado.",
+      "scopeLabel": "Alcance de materiales",
+      "allFuture": "Todo lo pendiente",
+      "nextUpgrades": "Próximas mejoras",
+      "uniqueItems": "Objetos distintos",
+      "totalUnits": "Unidades de objetos",
+      "estimatedBudget": "Coste estimado {{mode}}",
+      "firUnits": "Unidades FIR",
+      "searchPlaceholder": "Buscar objeto o estación...",
+      "firOnly": "Solo FIR",
+      "results": "{{count}} objeto(s) visible(s)",
+      "pendingHint": "Se actualiza con tu progreso",
+      "estimatedCost": "Coste estimado: {{price}}",
+      "priceUnavailable": "Precio no disponible",
+      "firNeeded": "{{count}} FIR",
+      "usedIn": "{{count}} uso(s) pendiente(s)",
+      "stationLevel": "{{station}} L{{level}} · ×{{count}}",
+      "moreUses": "+{{count}} usos",
+      "openNext": "Abrir próxima estación",
+      "emptyTitle": "No queda nada pendiente",
+      "emptyBody": "Has completado la selección actual o no hay objetos que coincidan con los filtros."
     },
     "detail": {
       "targetLevel": "{{mode}} / NIVEL OBJETIVO",

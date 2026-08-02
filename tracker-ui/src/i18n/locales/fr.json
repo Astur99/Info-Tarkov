@@ -1920,7 +1920,6 @@
       "localError": "MODE LOCAL : TABLE CLOUD INDISPONIBLE OU ERREUR DE SYNC"
     },
     "economy": {
-      "summary": "JSON tarkov.dev · {{crafts}} fabrications · {{barters}} trocs · {{traders}} marchands",
       "stationCrafts": "{{count}} fabrications officielles dans cette station"
     },
     "errors": {
@@ -1932,6 +1931,33 @@
       "selectSection": "Sélectionner une rubrique",
       "availableUpgrades": "{{count}} mise à niveau(s) débloquée(s)",
       "blocked": "LOCK"
+    },
+    "global": {
+      "navigationLabel": "Vues du refuge",
+      "stationView": "Par station",
+      "globalView": "Tout ce qu'il vous faut",
+      "title": "MATÉRIAUX RESTANTS",
+      "subtitle": "Tout ce qu'il vous faut encore pour les niveaux restants du refuge, regroupé par objet et sans les éléments déjà cochés.",
+      "scopeLabel": "Portée des matériaux",
+      "allFuture": "Tout le reste",
+      "nextUpgrades": "Prochaines améliorations",
+      "uniqueItems": "Objets distincts",
+      "totalUnits": "Unités d'objets",
+      "estimatedBudget": "Coût {{mode}} estimé",
+      "firUnits": "Unités FIR",
+      "searchPlaceholder": "Rechercher un objet ou une station...",
+      "firOnly": "FIR uniquement",
+      "results": "{{count}} objet(s) visible(s)",
+      "pendingHint": "Mis à jour avec votre progression",
+      "estimatedCost": "Coût estimé : {{price}}",
+      "priceUnavailable": "Prix indisponible",
+      "firNeeded": "{{count}} FIR",
+      "usedIn": "{{count}} utilisation(s) restante(s)",
+      "stationLevel": "{{station}} N{{level}} · ×{{count}}",
+      "moreUses": "+{{count}} utilisations",
+      "openNext": "Ouvrir la prochaine station",
+      "emptyTitle": "Plus rien à récupérer",
+      "emptyBody": "La sélection actuelle est terminée ou aucun objet ne correspond aux filtres."
     },
     "detail": {
       "targetLevel": "{{mode}} / NIVEAU CIBLE",
