@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
 import { fetchKappaTaskDataset } from './kappaApi';
+import { getAvailableTaskIds } from './kappaUtils';
 
 const STORAGE_PREFIX = 'sherpa_progreso_misiones_';
 const MODE_STORAGE_KEY = 'sherpa_modo_misiones_activo';
@@ -197,10 +198,12 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
     if (!tasks.length) return getFallbackPlans(t);
 
     const completed = new Set(completedIds);
+    const available = getAvailableTaskIds(tasks, completedIds);
     const byMap = new Map();
 
     tasks.forEach((task) => {
       if (completed.has(task.id)) return;
+      if (!available.has(task.id)) return;
       if (kappaOnly && !task.kappaRequired) return;
 
       const taskMaps = getTaskMaps(task);

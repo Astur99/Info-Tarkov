@@ -1028,6 +1028,22 @@
     "title": "Admin-Panel",
     "subtitle": "Interne Nutzungsmetriken und registrierte Benutzer.",
     "loading": "Messwerte werden geladen...",
+    "security": {
+      "eyebrow": "GESCHÜTZTER ZUGANG",
+      "title": "Administratorbestätigung",
+      "checking": "Sitzungssicherheit wird geprüft…",
+      "enrollDescription": "Scanne diesen QR-Code mit einer Authenticator-App. MFA ist danach für den Admin-Zugang erforderlich.",
+      "qrAlt": "QR-Code zur MFA-Einrichtung",
+      "manualCode": "Manueller Code",
+      "challengeDescription": "Gib den sechsstelligen Code aus deinem Authenticator ein, um das Admin-Panel zu öffnen.",
+      "codeLabel": "Authentifizierungscode",
+      "verifying": "Wird überprüft…",
+      "verify": "PRÜFEN UND ÖFFNEN",
+      "sectionsLabel": "Admin-Bereiche",
+      "overview": "Übersicht",
+      "userManagement": "Benutzer und Zugriffe",
+      "userPrivacyNotice": "Personenbezogene Daten werden nur in diesem geschützten Bereich geladen. E-Mail-Adressen bleiben bis zum Öffnen der Benutzerdetails maskiert."
+    },
     "health": {
       "eyebrow": "Betriebliche Telemetrie",
       "title": "Zuverlässigkeitsmonitor",
@@ -1316,16 +1332,16 @@
     }
   },
   "troubleshooting": {
-    "title": "KNOWN ERROR LOG",
-    "subtitle": "Bekannte App-Anomalien und verfügbare Problemumgehungen. Es wird noch an Korrekturen gearbeitet.",
+    "title": "BEKANNTE PROBLEME UND EINSCHRÄNKUNGEN",
+    "subtitle": "Überprüft am 2. August 2026. Es werden nur noch aktuelle Probleme und Einschränkungen aufgeführt.",
     "symptomLabel": "SYMPTOM",
-    "fixLabel": "FIX",
+    "fixLabel": "LÖSUNG",
     "incidents": [
       {
-        "code": "ERR_GRAPH_ISO_V1",
-        "title": "Suche nach Übereinstimmungsisolation",
-        "symptom": "Bei der Suche nach gemeinsamen Begriffen in Missionen / Kappa, wie zum Beispiel „Krise“, filtert die App korrekt, zeigt jedoch möglicherweise zunächst nur eine sichtbare Übereinstimmung innerhalb des aktiven Händlers an.",
-        "fix": "Wenn Sie nach einer Quest mit einem gemeinsamen Namen suchen, geben Sie das Wort in das Suchfeld ein und sehen Sie sich die verschiedenen Händler-Registerkarten an, um alle Übereinstimmungen zu sehen."
+        "code": "QUEST_SEARCH_SCOPE_V2",
+        "title": "Suchbereich für Missionen",
+        "symptom": "Missionen / Kappa öffnet den Händler mit der ersten passenden Mission. Wenn derselbe Text Missionen mehrerer Händler findet, sind jeweils nur die Treffer des aktiven Händlers sichtbar.",
+        "fix": "Lass den Suchtext stehen und prüfe die anderen Händler-Tabs, um die übrigen Treffer zu sehen."
       },
       {
         "code": "SYS_GUEST_STORAGE_V2",
@@ -1334,34 +1350,34 @@
         "fix": "Erstellen Sie ein Konto und melden Sie sich an, um den Fortschritt in Supabase zu speichern. Der Gastmodus funktioniert weiterhin, sollte jedoch nicht als permanente Persistenz betrachtet werden."
       },
       {
-        "code": "NET_EXTERNAL_APIS_V1",
-        "title": "Externe API-Abhängigkeit",
-        "symptom": "Serverstatus, Goons Tracker, Flea Market und einige Kappa-Daten hängen von externen Quellen ab. Wenn ein API, ein Proxy oder eine externe Site ausfällt, zeigt das Modul möglicherweise leere Daten, alte Daten oder einen vorübergehenden Fehler an.",
-        "fix": "Versuchen Sie es nach ein paar Minuten erneut und überprüfen Sie Ihre Verbindung. Kritische Module behalten Fallbacks oder Zustandsmeldungen bei, wenn eine externe Quelle nicht antwortet."
+        "code": "NET_JSON_UPSTREAM_V2",
+        "title": "Abhängigkeit von externen Daten",
+        "symptom": "Flea Market, Hideout, Schlüssel, Missionen, Goons, Ballistik und Serverstatus hängen von den öffentlichen Tarkov.dev-JSON-Daten ab. Eine Störung der Quelle kann zu zwischengespeicherten Daten, unvollständigen Ergebnissen oder einem vorübergehenden Fehler führen.",
+        "fix": "Versuche es nach einigen Minuten erneut und prüfe deine Verbindung. Lösche nicht den lokalen Fortschritt; die betroffenen Daten kehren normalerweise zurück, sobald die externe Quelle wieder verfügbar ist."
       },
       {
-        "code": "GOONS_HTML_PARSE_V1",
-        "title": "Goons Tracker-Lesung",
-        "symptom": "Goons Tracker extrahiert Informationen aus externem HTML. Wenn die Quellsite ihre Struktur ändert, erkennt die App die aktive Karte möglicherweise nicht richtig.",
-        "fix": "Wenn ein Erfassungsfehler auftritt oder die Karte nicht zuverlässig aussieht, validieren Sie die Daten mit der Originalquelle, bis der Parser aktualisiert wird."
+        "code": "FLEA_SNAPSHOT_V1",
+        "title": "Flea-Preise sind Momentaufnahmen",
+        "symptom": "Die Flea-Werte stammen aus der letzten öffentlichen Momentaufnahme und bilden nicht jedes Angebot im Spiel live ab. Kurzzeitige Abweichungen sind möglich, und ungewöhnliche Angebote können Spitzen im Preisverlauf erzeugen.",
+        "fix": "Prüfe die Aktualisierungszeit und vergleiche Durchschnitt, letztes Minimum und 24-Stunden-Minimum. Bestätige den aktuellen Preis im Spiel vor einem teuren Kauf."
       },
       {
-        "code": "I18N_REVIEWED_PRE_1_0",
-        "title": "Überprüfte ES/EN-Abdeckung",
-        "symptom": "Der ES/EN-Selektor deckt jetzt die wichtigste öffentliche Schnittstelle ab: Startseite, Login, Konto, Bericht, Serverstatus, Missionen / Kappa, PMC Profil, Flea, Hideout, Bosse, Prestige, Schlüsselsystem, Quest-Optimierer, Goons, Karten, Info und Ballistik-Simulator.",
-        "fix": "Die sichtbare Übersetzung wurde für die Phase vor 1.0 überprüft. Dossier ist ausgeschlossen, da es sich um eine private Projektdokumentation handelt; Alle neuen Module sollten von Anfang an mit ES/EN i18n-Schlüsseln hinzugefügt werden."
+        "code": "KEY_MAP_COVERAGE_V2",
+        "title": "Kartenabdeckung der Schlüssel",
+        "symptom": "Der Katalog enthält derzeit 256 Gegenstände vom Typ Schlüssel. Kartenfilter zeigen nur Schlüssel, die in den öffentlichen Kartendaten mit einem Schloss oder einer Zugangsanforderung verknüpft sind. Einige Einträge bleiben daher ohne Kartenzuordnung.",
+        "fix": "Nutze die Textsuche oder den Filter Alle Karten für nicht zugeordnete Schlüssel. Eine fehlende Kartenzuordnung bedeutet nicht, dass der Schlüssel im Katalog fehlt."
       },
       {
-        "code": "PMC_STATIC_INDEX_V1",
+        "code": "PMC_STATIC_INDEX_V2",
         "title": "PMC Profil und öffentlicher Index",
-        "symptom": "PMC Profil hängt von öffentlichen Playern ab.tarkov.dev JSON Dateien. Es können nur Spieler angezeigt werden, die bereits auf tarkov.dev/players angesehen wurden und im öffentlichen Index vorhanden sind. Dieser Index wird etwa einmal täglich aktualisiert.",
-        "fix": "Wenn ein Spieler nicht erscheint, öffnen Sie zunächst sein Profil unter tarkov.dev/players und warten Sie auf die nächste Indexaktualisierung. Die App vermeidet die durch Drehkreuze geschützte Suche und verwendet nur verfügbare öffentliche JSON-Dateien."
+        "symptom": "Das PMC-Profil verwendet die öffentlichen JSON-Dateien von players.tarkov.dev. Es können nur Spieler erscheinen, die bereits auf tarkov.dev/players aufgerufen wurden und im öffentlichen Index stehen. Dieser Index wird ungefähr einmal täglich aktualisiert.",
+        "fix": "Wenn ein Spieler nicht erscheint, öffne oder suche zuerst sein Profil auf tarkov.dev/players und warte auf die nächste Indexaktualisierung. Die App umgeht die mit Turnstile geschützte Suche nicht."
       },
       {
-        "code": "BUILD_CHUNK_SIZE_V1",
-        "title": "Warnung zur Paketgröße",
-        "symptom": "Der Produktions-Build ist erfolgreich, Vite warnt jedoch vor großen Blöcken aufgrund der Gesamtgröße der App, der Assets und der implementierten Module.",
-        "fix": "Es blockiert die Produktion nicht. Hauptmodule nutzen bereits Lazy Loading; Vor 1.0 sollten schwere Vermögenswerte und zusätzliche Aufteilung überprüft werden, wenn die tatsächliche Leistung dies erfordert."
+        "code": "NEWS_X_CACHE_V1",
+        "title": "Cache der offiziellen Nachrichten",
+        "symptom": "X kann seinen öffentlichen Timeline-Feed vorübergehend blockieren. In diesem Fall verwendet Offizielle Nachrichten den letzten gültigen Cache oder einen integrierten Fallback, sodass der neueste Beitrag verzögert erscheinen kann.",
+        "fix": "Öffne das offizielle Profil, um die neueste Meldung zu bestätigen, und aktualisiere das Panel später erneut."
       }
     ]
   },

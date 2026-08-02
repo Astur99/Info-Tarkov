@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 
 const localesPath = 'src/i18n/locales';
-const targets = ['de', 'fr', 'it', 'ru'];
+const targets = ['es', 'de', 'fr', 'it', 'ru'];
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''));
 const source = readJson(`${localesPath}/en.json`);
 
@@ -21,6 +21,9 @@ const placeholders = (value) =>
   [...String(value).matchAll(/\{\{[^}]+\}\}/g)].map((match) => match[0]).sort().join('|');
 
 const sourceKeys = keys(source).sort();
+const sourceTroubleshootingCodes = (source.troubleshooting?.incidents || [])
+  .map((incident) => incident.code)
+  .join('|');
 let ok = true;
 
 const walk = (sourceValue, targetValue, trace = '') => {
@@ -53,11 +56,16 @@ for (const target of targets) {
   const sameKeys = JSON.stringify(sourceKeys) === JSON.stringify(targetKeys);
   const raw = fs.readFileSync(targetPath, 'utf8');
   const leftoverTokens = (raw.match(/__ITK_[0-9]+__/g) || []).length;
+  const troubleshootingCodes = (data.troubleshooting?.incidents || [])
+    .map((incident) => incident.code)
+    .join('|');
+  const sameTroubleshootingCodes = troubleshootingCodes === sourceTroubleshootingCodes;
 
   console.log(target, 'keys', targetKeys.length, 'expected', sourceKeys.length, 'same', sameKeys);
   console.log(target, 'leftover tokens', leftoverTokens);
+  console.log(target, 'troubleshooting codes', sameTroubleshootingCodes ? 'same' : 'mismatch');
 
-  if (!sameKeys || leftoverTokens) ok = false;
+  if (!sameKeys || leftoverTokens || !sameTroubleshootingCodes) ok = false;
   walk(source, data);
 }
 

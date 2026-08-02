@@ -2,6 +2,7 @@ import { useCallback, useMemo, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 import HealthMonitorPanel from './HealthMonitorPanel';
+import AdminSecurityGate from './AdminSecurityGate';
 
 const panelStyle = {
   padding: '1.4rem',
@@ -78,6 +79,20 @@ const getAdminDisplayUsername = (user) =>
   user.auth_tarkov_username ||
   null;
 
+const maskEmail = (email) => {
+  const [localPart = '', domain = ''] = String(email || '').split('@');
+  if (!localPart || !domain) return '—';
+  const visible = localPart.slice(0, Math.min(2, localPart.length));
+  return `${visible}${'*'.repeat(Math.max(3, localPart.length - visible.length))}@${domain}`;
+};
+
+const getMaskedEmail = (user) => user.masked_email || maskEmail(user.email);
+
+const getUserReference = (user) =>
+  getAdminDisplayUsername(user) || getMaskedEmail(user);
+
+const isOwnerUser = (user) => Boolean(user.is_owner || user.email === OWNER_EMAIL);
+
 const isRecentlyOnline = (lastSeen) => {
   if (!lastSeen) return false;
   return Date.now() - new Date(lastSeen).getTime() < 120000;
@@ -102,13 +117,18 @@ const getTicketButtonStyle = ({ color, border, background, active = false, dange
   fontFamily: "'Rajdhani', sans-serif"
 });
 
-export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
+function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
   const { t } = useTranslation();
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [feedback, setFeedback] = useState([]);
+  const [activeSection, setActiveSection] = useState('overview');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [usersLoaded, setUsersLoaded] = useState(false);
+  const [usersSecureSource, setUsersSecureSource] = useState(false);
+  const [userTotal, setUserTotal] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [activityFilter, setActivityFilter] = useState('all');
@@ -119,32 +139,66 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
   const feedbackStatusLabel = (status) => t(`admin.feedback.status.${status}`, { defaultValue: feedbackStatusLabels[status] || status });
   const feedbackStatusAction = (status) => t(`admin.feedback.statusActions.${status}`, { defaultValue: feedbackStatusActions[status] || status });
 
-  const loadAdminData = useCallback(async () => {
+  const loadAdminOverview = useCallback(async () => {
     setLoading(true);
     setMessage('');
 
     const [
       { data: statsData, error: statsError },
-      { data: usersData, error: usersError },
       { data: feedbackData, error: feedbackError }
     ] = await Promise.all([
       supabase.rpc('get_admin_app_stats'),
-      supabase.rpc('list_admin_users'),
       supabase.rpc('list_admin_feedback')
     ]);
 
     setLoading(false);
 
-    if (statsError || usersError || feedbackError) {
-      console.error(statsError || usersError || feedbackError);
+    if (statsError || feedbackError) {
+      console.error(statsError || feedbackError);
       setMessage(t('admin.messages.loadError'));
       return;
     }
 
     setStats(Array.isArray(statsData) ? statsData[0] : statsData);
-    setUsers(usersData || []);
     setFeedback(feedbackData || []);
   }, [t]);
+
+  const loadUsers = useCallback(async () => {
+    setUsersLoading(true);
+    setMessage('');
+    let { data, error } = await supabase.rpc('list_admin_users_secure', {
+      search_text: searchQuery.trim(),
+      role_filter: roleFilter,
+      activity_filter: activityFilter,
+      page_limit: 50,
+      page_offset: 0
+    });
+    let secureSource = true;
+
+    const secureRpcMissing = error && (
+      error.code === 'PGRST202' ||
+      error.code === '42883' ||
+      String(error.message || '').includes('list_admin_users_secure')
+    );
+
+    if (secureRpcMissing) {
+      ({ data, error } = await supabase.rpc('list_admin_users'));
+      secureSource = false;
+    }
+
+    setUsersLoading(false);
+    setUsersLoaded(true);
+
+    if (error) {
+      console.error(error);
+      setMessage(t('admin.messages.loadError'));
+      return;
+    }
+
+    setUsers(data || []);
+    setUsersSecureSource(secureSource);
+    setUserTotal(Number(data?.[0]?.total_count ?? data?.length ?? 0));
+  }, [activityFilter, roleFilter, searchQuery, t]);
 
   const onlineUsers = useMemo(
     () => users.filter((user) => isRecentlyOnline(user.last_seen)).length,
@@ -153,6 +207,8 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
   const filteredUsers = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
+
+    if (usersSecureSource) return users;
 
     return users.filter((user) => {
       const username = (getAdminDisplayUsername(user) || '').toLowerCase();
@@ -167,16 +223,22 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
       return matchesQuery && matchesRole && matchesActivity;
     });
-  }, [activityFilter, roleFilter, searchQuery, users]);
+  }, [activityFilter, roleFilter, searchQuery, users, usersSecureSource]);
 
   const openUserDetail = async (user) => {
     setSelectedUser(user);
     setSelectedUserProgress(null);
     setDetailLoading(true);
 
-    const { data, error } = await supabase.rpc('admin_get_user_progress', {
-      target_user_id: user.user_id
-    });
+    const [progressResult, identityResult] = await Promise.all([
+      supabase.rpc('admin_get_user_progress', { target_user_id: user.user_id }),
+      supabase.rpc('admin_get_user_identity_secure', { target_user_id: user.user_id })
+    ]);
+    const { data, error } = progressResult;
+
+    if (!identityResult.error && identityResult.data?.email) {
+      setSelectedUser((current) => current ? { ...current, email: identityResult.data.email } : current);
+    }
 
     setDetailLoading(false);
 
@@ -194,20 +256,26 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
   };
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(loadAdminData, 0);
+    const initialLoad = window.setTimeout(loadAdminOverview, 0);
 
     const interval = window.setInterval(() => {
-      loadAdminData();
-    }, 15000);
+      loadAdminOverview();
+    }, 30000);
 
     return () => {
       window.clearTimeout(initialLoad);
       window.clearInterval(interval);
     };
-  }, [loadAdminData]);
+  }, [loadAdminOverview]);
+
+  useEffect(() => {
+    if (activeSection !== 'users') return undefined;
+    const timer = window.setTimeout(loadUsers, 250);
+    return () => window.clearTimeout(timer);
+  }, [activeSection, loadUsers]);
 
   const handleRoleChange = async (user, nextRole) => {
-    const confirmed = window.confirm(t('admin.prompts.roleChange', { email: user.email, role: nextRole }));
+    const confirmed = window.confirm(t('admin.prompts.roleChange', { email: getUserReference(user), role: nextRole }));
     if (!confirmed) return;
 
     const { error } = await supabase.rpc('admin_set_user_role', {
@@ -222,12 +290,12 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
     }
 
     setMessage(t('admin.messages.roleUpdated'));
-    loadAdminData();
+    loadUsers();
   };
 
   const handleDeleteUser = async (user) => {
     const confirmed = window.confirm(
-      t('admin.prompts.deleteUser', { email: user.email })
+      t('admin.prompts.deleteUser', { email: getUserReference(user) })
     );
     if (!confirmed) return;
 
@@ -248,7 +316,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
     }
 
     setMessage(t('admin.messages.deleteSuccess'));
-    loadAdminData();
+    loadUsers();
   };
 
   const handleSendMessage = async (user) => {
@@ -286,7 +354,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
     }
 
     setMessage(t('admin.messages.feedbackUpdated'));
-    loadAdminData();
+    loadAdminOverview();
     onNotificationsChanged?.();
   };
 
@@ -306,7 +374,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
     }
 
     setMessage(t('admin.messages.replySent'));
-    loadAdminData();
+    loadAdminOverview();
     onNotificationsChanged?.();
   };
 
@@ -328,7 +396,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
     }
 
     setMessage(t('admin.messages.feedbackDeleted'));
-    loadAdminData();
+    loadAdminOverview();
     onNotificationsChanged?.();
   };
 
@@ -372,10 +440,36 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
           </p>
         </header>
 
-        {loading && <p style={{ color: 'var(--tk-green)' }}>{t('admin.loading')}</p>}
+        <nav
+          aria-label={t('admin.security.sectionsLabel', { defaultValue: 'Admin sections' })}
+          style={{ display: 'flex', gap: '0.65rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}
+        >
+          {[
+            ['overview', t('admin.security.overview', { defaultValue: 'Overview' })],
+            ['users', t('admin.security.userManagement', { defaultValue: 'Users & access' })]
+          ].map(([section, label]) => (
+            <button
+              key={section}
+              type="button"
+              onClick={() => setActiveSection(section)}
+              aria-pressed={activeSection === section}
+              style={{
+                ...actionButtonStyle,
+                padding: '0.7rem 1rem',
+                color: activeSection === section ? '#081008' : '#fff',
+                background: activeSection === section ? 'var(--tk-green)' : 'rgba(255,255,255,0.045)',
+                borderColor: activeSection === section ? 'var(--tk-green)' : 'rgba(255,255,255,0.09)'
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+
+        {(loading || usersLoading) && <p style={{ color: 'var(--tk-green)' }}>{t('admin.loading')}</p>}
         {message && <p style={{ color: '#ffcf66' }}>{message}</p>}
 
-        {stats && (
+        {activeSection === 'overview' && stats && (
           <section
             className="admin-mobile-stats"
             style={{
@@ -402,7 +496,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
             <article style={panelStyle}>
               <span style={{ color: 'var(--tk-text-muted)', fontWeight: '800' }}>{t('admin.stats.onlineUsers')}</span>
-              <p style={statValueStyle}>{onlineUsers}</p>
+              <p style={statValueStyle}>{usersLoaded ? onlineUsers : (stats.online_users ?? '—')}</p>
               <span style={{ color: 'var(--tk-text-muted)', fontSize: '0.78rem', fontWeight: '800' }}>
                 {t('admin.stats.onlineWindow')}
               </span>
@@ -410,9 +504,15 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
           </section>
         )}
 
-        <HealthMonitorPanel />
+        {activeSection === 'overview' && <HealthMonitorPanel />}
 
+        {activeSection === 'users' && (
         <section className="admin-mobile-panel admin-users-panel" style={panelStyle}>
+          <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 1rem', lineHeight: 1.5 }}>
+            {t('admin.security.userPrivacyNotice', {
+              defaultValue: 'Personal data is loaded only in this protected section. Emails stay masked until an individual user detail is opened.'
+            })}
+          </p>
           <div
             className="admin-mobile-section-heading"
             style={{
@@ -427,7 +527,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
 
             <button
               type="button"
-              onClick={loadAdminData}
+              onClick={loadUsers}
               style={{
                 background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.08)',
@@ -503,7 +603,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
           </div>
 
           <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 0.75rem', fontWeight: '800' }}>
-            {t('admin.users.showing', { filtered: filteredUsers.length, total: users.length })}
+            {t('admin.users.showing', { filtered: filteredUsers.length, total: userTotal || users.length })}
           </p>
 
           <div className="admin-desktop-table-wrap" style={{ overflowX: 'auto' }}>
@@ -526,7 +626,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                       {getAdminDisplayUsername(user) || t('admin.users.unconfigured')}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      {user.email}
+                      {getMaskedEmail(user)}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)', color: user.role === 'admin' ? 'var(--tk-green)' : '#fff' }}>
                       {t(`admin.roles.${user.role || 'user'}`)}
@@ -541,7 +641,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                       )}
                     </td>
                     <td style={{ padding: '0.7rem', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      {user.email === OWNER_EMAIL ? (
+                      {isOwnerUser(user) ? (
                         <span
                           style={{
                             display: 'inline-block',
@@ -597,7 +697,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                           </button>
                         </div>
                       )}
-                      {user.email === OWNER_EMAIL && (
+                      {isOwnerUser(user) && (
                         <button
                           type="button"
                           onClick={() => openUserDetail(user)}
@@ -617,7 +717,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
             {filteredUsers.map((user) => {
               const displayName = getAdminDisplayUsername(user) || t('admin.users.unconfigured');
               const online = isRecentlyOnline(user.last_seen);
-              const isOwner = user.email === OWNER_EMAIL;
+              const isOwner = isOwnerUser(user);
 
               return (
                 <article key={user.user_id} className="admin-mobile-user-card">
@@ -628,7 +728,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                   >
                     <span>
                       <strong>{displayName}</strong>
-                      <small>{user.email}</small>
+                      <small>{getMaskedEmail(user)}</small>
                     </span>
                     <span className={online ? 'is-online' : ''}>
                       {online ? t('admin.filters.online') : t('admin.filters.offline')}
@@ -682,7 +782,9 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
             })}
           </div>
         </section>
+        )}
 
+        {activeSection === 'overview' && (
         <section className="admin-mobile-panel admin-feedback-panel" style={{ ...panelStyle, marginTop: '1.5rem' }}>
           <div
             className="admin-mobile-section-heading"
@@ -746,7 +848,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
                     <h3 style={{ color: '#fff', margin: '0 0 0.35rem 0' }}>{item.subject}</h3>
 
                     <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 0.7rem 0' }}>
-                      {item.username || t('admin.feedback.noUser')} · {item.email || t('admin.feedback.noEmail')} ·{' '}
+                      {item.username || t('admin.feedback.noUser')} · {item.email ? maskEmail(item.email) : t('admin.feedback.noEmail')} ·{' '}
                       {item.created_at ? new Date(item.created_at).toLocaleString() : '-'}
                     </p>
 
@@ -846,6 +948,7 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
             })}
           </div>
         </section>
+        )}
 
         {selectedUser && (
           <div
@@ -937,6 +1040,14 @@ export default function AdminPanel({ onViewChange, onNotificationsChanged }) {
         )}
       </main>
     </div>
+  );
+}
+
+export default function AdminPanel(props) {
+  return (
+    <AdminSecurityGate onBack={() => props.onViewChange('home')}>
+      <AdminPanelContent {...props} />
+    </AdminSecurityGate>
   );
 }
 

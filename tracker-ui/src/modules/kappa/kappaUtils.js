@@ -12,6 +12,52 @@ export const getInitialTreePan = () => ({
 export const QUEST_CARD_WIDTH = 340;
 export const QUEST_CARD_HEIGHT = 160;
 
+const getRequirementStatuses = (requirement) =>
+  new Set((requirement?.status || []).map((status) => String(status).toLowerCase()));
+
+export const taskRequirementAllowsActive = (requirement) =>
+  getRequirementStatuses(requirement).has('active');
+
+export const getCompletionTaskRequirementIds = (task) =>
+  (task?.taskRequirements || [])
+    .filter((requirement) => !taskRequirementAllowsActive(requirement))
+    .map((requirement) => requirement?.task?.id)
+    .filter(Boolean);
+
+export const getAvailableTaskIds = (tasks, completedIds = []) => {
+  const completed = new Set(completedIds);
+  const available = new Set();
+  const taskIds = new Set(tasks.map((task) => task.id));
+
+  let changed = true;
+  for (let pass = 0; pass < tasks.length && changed; pass += 1) {
+    changed = false;
+
+    tasks.forEach((task) => {
+      if (completed.has(task.id) || available.has(task.id)) return;
+
+      const requirementsMet = (task.taskRequirements || []).every((requirement) => {
+        const requiredId = requirement?.task?.id;
+        if (!requiredId || !taskIds.has(requiredId)) return false;
+
+        const statuses = getRequirementStatuses(requirement);
+        if (completed.has(requiredId)) {
+          return statuses.size === 0 || statuses.has('complete') || statuses.has('active');
+        }
+
+        return statuses.has('active') && available.has(requiredId);
+      });
+
+      if (requirementsMet) {
+        available.add(task.id);
+        changed = true;
+      }
+    });
+  }
+
+  return available;
+};
+
 export const buildQuestGraph = ({ tasks, currentTrader, soloKappa, soloPendientes, completadas }) => {
   let traderTasks = tasks.filter((task) => task.trader?.name === currentTrader);
 
@@ -33,8 +79,15 @@ export const buildQuestGraph = ({ tasks, currentTrader, soloKappa, soloPendiente
   const tasksWithPrevIds = traderTasks.map((task) => ({
     ...task,
     _prevIds: (task.taskRequirements || [])
+      .filter((requirement) => !taskRequirementAllowsActive(requirement))
       .map((req) => req?.task?.id)
-      .filter((id) => taskMap.has(id))
+      .filter((id) => taskMap.has(id)),
+    _levelRequirements: (task.taskRequirements || [])
+      .map((requirement) => ({
+        id: requirement?.task?.id,
+        weight: taskRequirementAllowsActive(requirement) ? 0 : 1
+      }))
+      .filter((requirement) => taskMap.has(requirement.id))
   }));
 
   let changed = true;
@@ -43,9 +96,10 @@ export const buildQuestGraph = ({ tasks, currentTrader, soloKappa, soloPendiente
     changed = false;
 
     tasksWithPrevIds.forEach((task) => {
-      task._prevIds.forEach((previousId) => {
-        if (levels[task.id] <= levels[previousId]) {
-          levels[task.id] = levels[previousId] + 1;
+      task._levelRequirements.forEach(({ id: previousId, weight }) => {
+        const requiredLevel = levels[previousId] + weight;
+        if (levels[task.id] < requiredLevel) {
+          levels[task.id] = requiredLevel;
           changed = true;
         }
       });

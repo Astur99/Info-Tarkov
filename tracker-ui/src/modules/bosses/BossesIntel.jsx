@@ -140,7 +140,6 @@ export default function BossesView({ onViewChange }) {
     if (!boss) return [];
 
     const base = [
-      t('bossesModule.plan.confirmSpawn', { map: boss.spawnDetails?.[0]?.name || boss.mapa }),
       t('bossesModule.plan.avoidLongDuels', { weakness: boss.debiles }),
       t('bossesModule.plan.expectedAmmo', { ammo: boss.municion })
     ];

@@ -1028,6 +1028,22 @@
     "title": "Pannello di amministrazione",
     "subtitle": "Metriche di utilizzo interno e utenti registrati.",
     "loading": "Caricamento metriche...",
+    "security": {
+      "eyebrow": "ACCESSO PROTETTO",
+      "title": "Verifica amministratore",
+      "checking": "Verifica della sicurezza della sessione…",
+      "enrollDescription": "Scansiona questo codice QR con un'app di autenticazione. L'MFA sarà obbligatoria per l'accesso amministrativo.",
+      "qrAlt": "Codice QR di configurazione MFA",
+      "manualCode": "Codice manuale",
+      "challengeDescription": "Inserisci il codice a sei cifre dell'autenticatore per aprire il pannello.",
+      "codeLabel": "Codice di autenticazione",
+      "verifying": "Verifica…",
+      "verify": "VERIFICA E APRI",
+      "sectionsLabel": "Sezioni amministrative",
+      "overview": "Panoramica",
+      "userManagement": "Utenti e accessi",
+      "userPrivacyNotice": "I dati personali vengono caricati solo in questa sezione protetta. Le email restano mascherate finché non si apre il dettaglio del singolo utente."
+    },
     "health": {
       "eyebrow": "Telemetria operativa",
       "title": "Monitor di affidabilità",
@@ -1316,16 +1332,16 @@
     }
   },
   "troubleshooting": {
-    "title": "KNOWN ERROR LOG",
-    "subtitle": "Anomalie note dell'app e soluzioni alternative disponibili. Le correzioni sono ancora in fase di elaborazione.",
+    "title": "PROBLEMI E LIMITAZIONI NOTI",
+    "subtitle": "Revisione del 2 agosto 2026. Sono elencati solo i problemi e i limiti ancora attuali.",
     "symptomLabel": "SYMPTOM",
-    "fixLabel": "FIX",
+    "fixLabel": "SOLUZIONE",
     "incidents": [
       {
-        "code": "ERR_GRAPH_ISO_V1",
-        "title": "Isolamento della corrispondenza di ricerca",
-        "symptom": "Durante la ricerca di termini condivisi in Missioni / Kappa, come \"Crisi\", l'app filtra correttamente ma potrebbe prima esporre solo una corrispondenza visibile all'interno del trader attivo.",
-        "fix": "Se stai cercando una missione con un nome comune o condiviso, digita la parola nella casella di ricerca ed esamina le diverse schede dei commercianti per vedere tutte le corrispondenze."
+        "code": "QUEST_SEARCH_SCOPE_V2",
+        "title": "Ambito della ricerca missioni",
+        "symptom": "Missioni / Kappa apre il mercante che contiene la prima missione corrispondente. Se lo stesso testo trova missioni di più mercanti, sono visibili solo i risultati del mercante attivo.",
+        "fix": "Mantieni il testo di ricerca e controlla le schede degli altri mercanti per vedere le corrispondenze restanti."
       },
       {
         "code": "SYS_GUEST_STORAGE_V2",
@@ -1334,34 +1350,34 @@
         "fix": "Crea un account e accedi per salvare i progressi in Supabase. La modalità ospite funziona ancora, ma non deve essere trattata come persistenza permanente."
       },
       {
-        "code": "RETE_ESTERNA_APIS_V1",
-        "title": "Dipendenza API esterna",
-        "symptom": "Lo stato del server, Goons Tracker, Flea Market e alcuni dati Kappa dipendono da fonti esterne. Se un API, proxy o sito esterno fallisce, il modulo potrebbe mostrare dati vuoti, dati vecchi o un errore temporaneo.",
-        "fix": "Riprova dopo qualche minuto e controlla la connessione. I moduli critici mantengono fallback o messaggi di stato quando una fonte esterna non risponde."
+        "code": "NET_JSON_UPSTREAM_V2",
+        "title": "Dipendenza dai dati esterni",
+        "symptom": "Flea Market, Hideout, Chiavi, Missioni, Goons, Balistica e stato dei server dipendono dai dati JSON pubblici di Tarkov.dev. Un'interruzione della fonte può produrre dati memorizzati nella cache, risultati incompleti o un errore temporaneo.",
+        "fix": "Riprova dopo qualche minuto e controlla la connessione. Non eliminare i progressi locali: i dati interessati tornano normalmente quando la fonte esterna viene ripristinata."
       },
       {
-        "code": "GOONS_HTML_PARSE_V1",
-        "title": "Goons Lettura del tracker",
-        "symptom": "Goons Tracker estrae informazioni da HTML esterno. Se il sito di origine cambia struttura, l'app potrebbe non rilevare correttamente la mappa attiva.",
-        "fix": "Se viene visualizzato un errore di acquisizione o la mappa non sembra affidabile, convalidare i dati con la fonte originale finché il parser non viene aggiornato."
+        "code": "FLEA_SNAPSHOT_V1",
+        "title": "I prezzi del Flea sono istantanee",
+        "symptom": "I valori del Flea provengono dall'ultima istantanea pubblica disponibile e non rappresentano in tempo reale ogni offerta del gioco. Sono possibili brevi differenze e offerte insolite possono creare picchi nello storico.",
+        "fix": "Controlla l'ora di aggiornamento e confronta media, ultimo minimo e minimo delle 24 ore. Conferma il prezzo attuale nel gioco prima di un acquisto importante."
       },
       {
-        "code": "I18N_REVIEWED_PRE_1_0",
-        "title": "Copertura ES/EN rivista",
-        "symptom": "Il selettore ES/EN ora copre l'interfaccia pubblica principale: home, login, account, Report, Stato del server, Missioni / Kappa, PMC Profilo, Flea, Hideout, Boss, Prestigio, Sistema chiave, Quest Optimizer, Goons, Mappe, Informazioni e Simulatore balistico.",
-        "fix": "La traduzione visibile è stata rivista per la fase pre-1.0. Il dossier è escluso perché si tratta di documentazione di progetto privato; eventuali nuovi moduli dovranno essere aggiunti fin dall'inizio con le chiavi ES/EN i18n."
+        "code": "KEY_MAP_COVERAGE_V2",
+        "title": "Copertura delle mappe per le chiavi",
+        "symptom": "Il catalogo contiene attualmente 256 oggetti di tipo chiave. I filtri per mappa includono solo le chiavi collegate a una serratura o a un requisito di accesso nei dati pubblici, quindi alcune voci restano senza una mappa assegnata.",
+        "fix": "Usa la ricerca testuale o il filtro Tutte le mappe per le chiavi non assegnate. Una mappa mancante non significa che la chiave non sia presente nel catalogo."
       },
       {
-        "code": "PMC_STATIC_INDEX_V1",
+        "code": "PMC_STATIC_INDEX_V2",
         "title": "PMC Profilo e indice pubblico",
-        "symptom": "PMC Il profilo dipende dai giocatori pubblici.tarkov.dev JSON file. Possono apparire solo i giocatori già visualizzati su tarkov.dev/players e presenti nell'indice pubblico, e tale indice si aggiorna circa una volta al giorno.",
-        "fix": "Se un giocatore non appare, apri prima il suo profilo su tarkov.dev/players e attendi il prossimo aggiornamento dell'indice. L'app evita la ricerca protetta da Turnstile e utilizza solo i file JSON pubblici disponibili."
+        "symptom": "Il profilo PMC dipende dai file JSON pubblici di players.tarkov.dev. Possono apparire solo i giocatori già consultati su tarkov.dev/players e presenti nell'indice pubblico, che viene aggiornato circa una volta al giorno.",
+        "fix": "Se un giocatore non appare, apri o cerca prima il suo profilo su tarkov.dev/players e attendi il prossimo aggiornamento dell'indice. L'app non aggira la ricerca protetta da Turnstile."
       },
       {
-        "code": "BUILD_CHUNK_SIZE_V1",
-        "title": "Avviso sulla dimensione del pacchetto",
-        "symptom": "La build di produzione viene superata, ma Vite avvisa in caso di blocchi di grandi dimensioni a causa delle dimensioni accumulate dell'app, delle risorse e dei moduli implementati.",
-        "fix": "Non blocca la produzione. I moduli principali utilizzano già il caricamento lento; prima della versione 1.0, gli asset pesanti e la suddivisione extra dovrebbero essere rivisti se la performance reale lo richiede."
+        "code": "NEWS_X_CACHE_V1",
+        "title": "Cache delle notizie ufficiali",
+        "symptom": "X può bloccare temporaneamente il proprio feed pubblico. In quel caso, Notizie ufficiali usa l'ultima cache valida o un contenuto di riserva integrato, quindi il post più recente potrebbe apparire in ritardo.",
+        "fix": "Apri il profilo ufficiale per verificare l'ultimo annuncio e prova ad aggiornare nuovamente il pannello più tardi."
       }
     ]
   },

@@ -1028,6 +1028,22 @@
     "title": "Panel Admin",
     "subtitle": "Métricas internas de uso y usuarios registrados.",
     "loading": "Cargando métricas...",
+    "security": {
+      "eyebrow": "ACCESO PROTEGIDO",
+      "title": "Verificación de administrador",
+      "checking": "Comprobando la seguridad de la sesión…",
+      "enrollDescription": "Escanea este QR con una aplicación de autenticación. El segundo factor será obligatorio para acceder a administración.",
+      "qrAlt": "Código QR de configuración MFA",
+      "manualCode": "Código manual",
+      "challengeDescription": "Introduce el código de seis dígitos de tu autenticador para abrir el panel.",
+      "codeLabel": "Código de autenticación",
+      "verifying": "Verificando…",
+      "verify": "VERIFICAR Y ABRIR",
+      "sectionsLabel": "Secciones de administración",
+      "overview": "Resumen",
+      "userManagement": "Usuarios y accesos",
+      "userPrivacyNotice": "Los datos personales solo se cargan en esta sección protegida. Los correos permanecen ocultos hasta abrir el detalle individual."
+    },
     "health": {
       "eyebrow": "Telemetría operativa",
       "title": "Monitor de fiabilidad",
@@ -1316,16 +1332,16 @@
     }
   },
   "troubleshooting": {
-    "title": "LOG DE ERRORES CONOCIDOS",
-    "subtitle": "Reporte de anomalias conocidas en la app y de soluciones aplicables. Se sigue trabajando en los fixes.",
-    "symptomLabel": "SINTOMA",
-    "fixLabel": "FIX",
+    "title": "INCIDENCIAS Y LIMITACIONES CONOCIDAS",
+    "subtitle": "Estado revisado el 2 de agosto de 2026. Solo se muestran problemas y limitaciones que siguen vigentes.",
+    "symptomLabel": "SÍNTOMA",
+    "fixLabel": "SOLUCIÓN",
     "incidents": [
       {
-        "code": "ERR_GRAPH_ISO_V1",
-        "title": "Aislamiento de Coincidencias en Buscador",
-        "symptom": "Al buscar términos compartidos en Misiones / Kappa, como por ejemplo \"Crisis\", la app filtra correctamente pero puede exponer primero solo una coincidencia visible dentro del trader activo.",
-        "fix": "Si buscas una misión con un nombre común o compartido, escribe la palabra en el buscador y revisa las pestañas de los diferentes comerciantes para ver todas las coincidencias."
+        "code": "QUEST_SEARCH_SCOPE_V2",
+        "title": "Alcance del Buscador de Misiones",
+        "symptom": "Misiones / Kappa abre el comerciante que contiene la primera coincidencia. Si el mismo texto coincide con misiones de varios comerciantes, solo se ven a la vez los resultados del comerciante activo.",
+        "fix": "Mantén el texto de búsqueda y revisa las pestañas de los demás comerciantes para ver el resto de coincidencias."
       },
       {
         "code": "SYS_GUEST_STORAGE_V2",
@@ -1334,34 +1350,34 @@
         "fix": "Crea una cuenta e inicia sesión para guardar el progreso en Supabase. El modo invitado sigue funcionando, pero no debe tratarse como persistencia permanente."
       },
       {
-        "code": "NET_EXTERNAL_APIS_V1",
-        "title": "Dependencia de APIs Externas",
-        "symptom": "Estado de servidores, Goons Tracker, Flea Market y algunos datos de Kappa dependen de fuentes externas. Si una API, proxy o web externa falla, el modulo puede mostrar datos vacios, antiguos o un error temporal.",
-        "fix": "Reintenta pasados unos minutos y comprueba tu conexion. Los modulos criticos mantienen fallbacks o mensajes de estado cuando la fuente externa no responde."
+        "code": "NET_JSON_UPSTREAM_V2",
+        "title": "Dependencia de Datos Externos",
+        "symptom": "Flea Market, Hideout, Llaves, Misiones, Goons, Balística y el estado de servidores dependen de los JSON públicos de Tarkov.dev. Una interrupción externa puede provocar datos en caché, resultados incompletos o un error temporal.",
+        "fix": "Reintenta pasados unos minutos y comprueba tu conexión. No borres el progreso local: los datos afectados normalmente vuelven cuando se recupera la fuente externa."
       },
       {
-        "code": "GOONS_HTML_PARSE_V1",
-        "title": "Lectura del Tracker de Goons",
-        "symptom": "El Tracker de Goons extrae información desde HTML externo. Si la web fuente cambia su estructura, la app puede no detectar correctamente el mapa activo.",
-        "fix": "Si aparece un error de captura o el mapa no parece fiable, valida el dato con la fuente original hasta actualizar el parser."
+        "code": "FLEA_SNAPSHOT_V1",
+        "title": "Los Precios del Flea Son Capturas",
+        "symptom": "Los valores del Flea proceden de la última captura pública disponible y no representan en directo cada oferta del juego. Puede haber diferencias breves y las ofertas anómalas pueden producir picos en la gráfica histórica.",
+        "fix": "Comprueba la hora de actualización y compara la media, el último mínimo y el mínimo de 24 horas. Confirma el precio actual dentro del juego antes de una compra importante."
       },
       {
-        "code": "I18N_REVIEWED_PRE_1_0",
-        "title": "Cobertura ES/EN Revisada",
-        "symptom": "El selector ES/EN ya cubre la interfaz publica principal: portada, login, cuenta, Report, estado de servidores, Misiones / Kappa, Perfil PMC, Flea, Hideout, Bosses, Prestigios, Sistema de Llaves, Quest Optimizer, Goons, Mapas, About y Simulador Balistico.",
-        "fix": "La traduccion visible ha sido revisada para la fase pre-1.0. Dossier queda fuera por ser documentacion privada del proyecto; si se anaden nuevos modulos, deben entrar ya con claves i18n ES/EN."
+        "code": "KEY_MAP_COVERAGE_V2",
+        "title": "Cobertura de Mapas en Llaves",
+        "symptom": "El catálogo contiene actualmente 256 objetos de tipo llave. Los filtros por mapa solo incluyen las llaves vinculadas a una cerradura o requisito de acceso en los datos públicos, por lo que algunas quedan sin asignar y no aparecen dentro de un mapa concreto.",
+        "fix": "Usa el buscador de texto o el filtro Todos los mapas para localizar llaves sin asignación. Que falte el mapa no significa que la llave falte en el catálogo."
       },
       {
-        "code": "PMC_STATIC_INDEX_V1",
+        "code": "PMC_STATIC_INDEX_V2",
         "title": "Perfil PMC e Índice Público",
         "symptom": "Perfil PMC depende de los JSON públicos de players.tarkov.dev. Solo aparecen jugadores que ya han sido consultados en tarkov.dev/players y cuyo perfil está en el índice público, que se actualiza aproximadamente una vez al día.",
         "fix": "Si un jugador no aparece, abre primero su perfil en tarkov.dev/players y espera a la siguiente actualización del índice. La app evita la búsqueda protegida por Turnstile y usa solo los JSON públicos disponibles."
       },
       {
-        "code": "BUILD_CHUNK_SIZE_V1",
-        "title": "Aviso de Tamaño de Bundle",
-        "symptom": "El build de producción pasa correctamente, pero Vite avisa de chunks grandes por el tamaño acumulado de la app, assets y módulos ya implementados.",
-        "fix": "No bloquea producción. La app ya usa lazy loading en módulos principales; antes de 1.0 conviene revisar assets pesados y posibles divisiones adicionales si el rendimiento real lo pide."
+        "code": "NEWS_X_CACHE_V1",
+        "title": "Caché de Noticias Oficiales",
+        "symptom": "X puede bloquear temporalmente su feed público. Cuando ocurre, Noticias Oficiales utiliza la última caché válida o un fallback incluido en la app, por lo que el mensaje más reciente puede tardar en aparecer.",
+        "fix": "Usa Abrir perfil oficial para confirmar el último comunicado y vuelve a actualizar el panel más tarde."
       }
     ]
   },

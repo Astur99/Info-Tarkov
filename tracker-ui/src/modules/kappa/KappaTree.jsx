@@ -16,6 +16,8 @@ import {
   QUEST_CARD_HEIGHT,
   QUEST_CARD_WIDTH,
   buildQuestGraph,
+  getAvailableTaskIds,
+  getCompletionTaskRequirementIds,
   getInitialTreePan,
   normalizeCollectorName
 } from './kappaUtils';
@@ -214,10 +216,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
       const mision = mapa.get(id);
       if (!mision) return;
 
-      const requisitos = mision.taskRequirements || [];
-
-      requisitos.forEach((req) => {
-        const requisitoId = req?.task?.id;
+      getCompletionTaskRequirementIds(mision).forEach((requisitoId) => {
         if (!requisitoId || visitadas.has(requisitoId)) return;
 
         visitadas.add(requisitoId);
@@ -234,7 +233,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
 
     const recorrer = (id) => {
       const hijas = todasLasMisiones.filter((mision) =>
-        (mision.taskRequirements || []).some((req) => req?.task?.id === id)
+        getCompletionTaskRequirementIds(mision).includes(id)
       );
 
       hijas.forEach((hija) => {
@@ -345,6 +344,11 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
       completadas
     });
   }, [completadas, currentTrader, soloKappa, soloPendientes, todasLasMisiones]);
+
+  const misionesDisponibles = useMemo(
+    () => getAvailableTaskIds(todasLasMisiones, completadas),
+    [completadas, todasLasMisiones]
+  );
 
   useEffect(() => {
     let animationFrame = null;
@@ -1172,9 +1176,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
             const esCompletada = completadas.includes(mision.id);
             const esCollector = mision.name?.toLowerCase() === 'collector';
 
-            const esDesbloqueada =
-              mision.prevIds.length === 0 ||
-              mision.prevIds.every((id) => completadas.includes(id));
+            const esDesbloqueada = misionesDisponibles.has(mision.id);
 
             const esMatchBuscador =
               searchQuery.trim() !== '' &&

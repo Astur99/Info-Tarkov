@@ -1028,6 +1028,22 @@
     "title": "Admin Panel",
     "subtitle": "Internal usage metrics and registered users.",
     "loading": "Loading metrics...",
+    "security": {
+      "eyebrow": "PROTECTED ACCESS",
+      "title": "Administrator verification",
+      "checking": "Checking session security…",
+      "enrollDescription": "Scan this QR code with an authenticator app. MFA will be required for administrative access.",
+      "qrAlt": "MFA configuration QR code",
+      "manualCode": "Manual code",
+      "challengeDescription": "Enter the six-digit code from your authenticator to open the admin panel.",
+      "codeLabel": "Authentication code",
+      "verifying": "Verifying…",
+      "verify": "VERIFY AND OPEN",
+      "sectionsLabel": "Admin sections",
+      "overview": "Overview",
+      "userManagement": "Users & access",
+      "userPrivacyNotice": "Personal data is loaded only in this protected section. Emails stay masked until an individual user detail is opened."
+    },
     "health": {
       "eyebrow": "Operational telemetry",
       "title": "Reliability monitor",
@@ -1316,16 +1332,16 @@
     }
   },
   "troubleshooting": {
-    "title": "KNOWN ERROR LOG",
-    "subtitle": "Known app anomalies and available workarounds. Fixes are still being worked through.",
+    "title": "KNOWN ISSUES AND LIMITATIONS",
+    "subtitle": "Reviewed on August 2, 2026. Only current issues and limitations are listed.",
     "symptomLabel": "SYMPTOM",
-    "fixLabel": "FIX",
+    "fixLabel": "WORKAROUND",
     "incidents": [
       {
-        "code": "ERR_GRAPH_ISO_V1",
-        "title": "Search Match Isolation",
-        "symptom": "When searching shared terms in Missions / Kappa, such as \"Crisis\", the app filters correctly but may first expose only one visible match inside the active trader.",
-        "fix": "If you are searching for a quest with a common or shared name, type the word in the search box and review the different trader tabs to see all matches."
+        "code": "QUEST_SEARCH_SCOPE_V2",
+        "title": "Quest Search Scope",
+        "symptom": "Missions / Kappa opens the trader containing the first matching quest. If the same text matches quests from several traders, only the matches for the active trader are visible at once.",
+        "fix": "Keep the search text and review the trader tabs to see the other matches."
       },
       {
         "code": "SYS_GUEST_STORAGE_V2",
@@ -1334,34 +1350,34 @@
         "fix": "Create an account and log in to save progress in Supabase. Guest mode still works, but it should not be treated as permanent persistence."
       },
       {
-        "code": "NET_EXTERNAL_APIS_V1",
-        "title": "External API Dependency",
-        "symptom": "Server status, Goons Tracker, Flea Market and some Kappa data depend on external sources. If an API, proxy or external site fails, the module may show empty data, old data or a temporary error.",
-        "fix": "Try again after a few minutes and check your connection. Critical modules keep fallbacks or state messages when an external source does not respond."
+        "code": "NET_JSON_UPSTREAM_V2",
+        "title": "External Data Dependency",
+        "symptom": "Flea Market, Hideout, Keys, Missions, Goons, Ballistics and server status depend on public Tarkov.dev JSON data. An upstream interruption can produce cached data, incomplete results or a temporary error.",
+        "fix": "Try again after a few minutes and check your connection. Do not clear local progress: the affected data normally returns when the external source recovers."
       },
       {
-        "code": "GOONS_HTML_PARSE_V1",
-        "title": "Goons Tracker Reading",
-        "symptom": "Goons Tracker extracts information from external HTML. If the source site changes its structure, the app may not detect the active map correctly.",
-        "fix": "If a capture error appears or the map does not look reliable, validate the data with the original source until the parser is updated."
+        "code": "FLEA_SNAPSHOT_V1",
+        "title": "Flea Prices Are Snapshots",
+        "symptom": "Flea values come from the latest public upstream snapshot and are not a live copy of every in-game offer. Prices can differ briefly from the game, and unusual offers may create spikes in the history chart.",
+        "fix": "Check the update time and compare the average, latest minimum and 24-hour minimum. Confirm the current in-game price before making an expensive purchase."
       },
       {
-        "code": "I18N_REVIEWED_PRE_1_0",
-        "title": "Reviewed ES/EN Coverage",
-        "symptom": "The ES/EN selector now covers the main public interface: home, login, account, Report, Server Status, Missions / Kappa, PMC Profile, Flea, Hideout, Bosses, Prestige, Key System, Quest Optimizer, Goons, Maps, About and Ballistics Simulator.",
-        "fix": "Visible translation has been reviewed for the pre-1.0 phase. Dossier is excluded because it is private project documentation; any new modules should be added with ES/EN i18n keys from the start."
+        "code": "KEY_MAP_COVERAGE_V2",
+        "title": "Key Map Coverage",
+        "symptom": "The catalog currently contains 256 key-type items. Map filters only include keys connected to a lock or access requirement in the public map data, so some catalog entries remain unassigned and do not appear under a specific map.",
+        "fix": "Use the text search or the All maps filter for unassigned keys. A missing map association does not mean the key is missing from the catalog."
       },
       {
-        "code": "PMC_STATIC_INDEX_V1",
+        "code": "PMC_STATIC_INDEX_V2",
         "title": "PMC Profile and Public Index",
         "symptom": "PMC Profile depends on public players.tarkov.dev JSON files. Only players already viewed on tarkov.dev/players and present in the public index can appear, and that index updates roughly once per day.",
         "fix": "If a player does not appear, open their profile on tarkov.dev/players first and wait for the next index update. The app avoids the Turnstile-protected search and only uses available public JSON files."
       },
       {
-        "code": "BUILD_CHUNK_SIZE_V1",
-        "title": "Bundle Size Warning",
-        "symptom": "The production build passes, but Vite warns about large chunks due to the accumulated size of the app, assets and implemented modules.",
-        "fix": "It does not block production. Main modules already use lazy loading; before 1.0, heavy assets and extra splitting should be reviewed if real performance requires it."
+        "code": "NEWS_X_CACHE_V1",
+        "title": "Official News Cache",
+        "symptom": "X can temporarily block its public timeline feed. When that happens, Official News uses the last valid cache or a bundled fallback, so the newest post may not appear immediately.",
+        "fix": "Use Open official profile to confirm the latest announcement and try refreshing the panel later."
       }
     ]
   },

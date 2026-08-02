@@ -1028,6 +1028,22 @@
     "title": "Panneau d'administration",
     "subtitle": "Métriques d’utilisation interne et utilisateurs enregistrés.",
     "loading": "Chargement des métriques...",
+    "security": {
+      "eyebrow": "ACCÈS PROTÉGÉ",
+      "title": "Vérification administrateur",
+      "checking": "Vérification de la sécurité de la session…",
+      "enrollDescription": "Scannez ce QR code avec une application d'authentification. La MFA sera ensuite obligatoire pour l'administration.",
+      "qrAlt": "QR code de configuration MFA",
+      "manualCode": "Code manuel",
+      "challengeDescription": "Saisissez le code à six chiffres de votre authentificateur pour ouvrir le panneau.",
+      "codeLabel": "Code d'authentification",
+      "verifying": "Vérification…",
+      "verify": "VÉRIFIER ET OUVRIR",
+      "sectionsLabel": "Sections d'administration",
+      "overview": "Vue d'ensemble",
+      "userManagement": "Utilisateurs et accès",
+      "userPrivacyNotice": "Les données personnelles ne sont chargées que dans cette section protégée. Les e-mails restent masqués jusqu'à l'ouverture du détail d'un utilisateur."
+    },
     "health": {
       "eyebrow": "Télémétrie opérationnelle",
       "title": "Moniteur de fiabilité",
@@ -1316,16 +1332,16 @@
     }
   },
   "troubleshooting": {
-    "title": "KNOWN ERROR LOG",
-    "subtitle": "Anomalies connues de l’application et solutions de contournement disponibles. Des correctifs sont toujours en cours d’élaboration.",
+    "title": "PROBLÈMES ET LIMITES CONNUS",
+    "subtitle": "Révision effectuée le 2 août 2026. Seuls les problèmes et limites encore actuels sont affichés.",
     "symptomLabel": "SYMPTOM",
-    "fixLabel": "FIX",
+    "fixLabel": "SOLUTION",
     "incidents": [
       {
-        "code": "ERR_GRAPH_ISO_V1",
-        "title": "Isolement des correspondances de recherche",
-        "symptom": "Lors de la recherche de termes partagés dans Missions / Kappa, tels que « Crise », l'application filtre correctement mais peut d'abord exposer une seule correspondance visible au sein du trader actif.",
-        "fix": "Si vous recherchez une quête avec un nom commun ou partagé, tapez le mot dans la zone de recherche et consultez les différents onglets des commerçants pour voir toutes les correspondances."
+        "code": "QUEST_SEARCH_SCOPE_V2",
+        "title": "Portée de la recherche de missions",
+        "symptom": "Missions / Kappa ouvre le marchand contenant la première mission correspondante. Si le même texte correspond aux missions de plusieurs marchands, seuls les résultats du marchand actif sont visibles à la fois.",
+        "fix": "Conservez le texte de recherche et consultez les onglets des autres marchands pour voir les résultats restants."
       },
       {
         "code": "SYS_GUEST_STORAGE_V2",
@@ -1334,34 +1350,34 @@
         "fix": "Créez un compte et connectez-vous pour enregistrer votre progression dans Supabase. Le mode Invité fonctionne toujours, mais il ne doit pas être traité comme une persistance permanente."
       },
       {
-        "code": "NET_EXTERNAL_APIS_V1",
-        "title": "Dépendance externe API",
-        "symptom": "L'état du serveur, Goons Tracker, Flea Market et certaines données Kappa dépendent de sources externes. Si un API, un proxy ou un site externe échoue, le module peut afficher des données vides, d'anciennes données ou une erreur temporaire.",
-        "fix": "Réessayez après quelques minutes et vérifiez votre connexion. Les modules critiques conservent des messages de secours ou d'état lorsqu'une source externe ne répond pas."
+        "code": "NET_JSON_UPSTREAM_V2",
+        "title": "Dépendance aux données externes",
+        "symptom": "Le Flea Market, le Hideout, les clés, les missions, les Goons, la balistique et l'état des serveurs dépendent des données JSON publiques de Tarkov.dev. Une interruption de la source peut produire des données en cache, des résultats incomplets ou une erreur temporaire.",
+        "fix": "Réessayez après quelques minutes et vérifiez votre connexion. Ne supprimez pas votre progression locale : les données concernées reviennent normalement lorsque la source externe est rétablie."
       },
       {
-        "code": "GOONS_HTML_PARSE_V1",
-        "title": "Goons Lecture du traqueur",
-        "symptom": "Goons Tracker extrait les informations du HTML externe. Si le site source modifie sa structure, l'application peut ne pas détecter correctement la carte active.",
-        "fix": "Si une erreur de capture apparaît ou si la carte ne semble pas fiable, validez les données avec la source d'origine jusqu'à ce que l'analyseur soit mis à jour."
+        "code": "FLEA_SNAPSHOT_V1",
+        "title": "Les prix du Flea sont des instantanés",
+        "symptom": "Les valeurs du Flea proviennent du dernier instantané public disponible et ne reproduisent pas en direct toutes les offres du jeu. De brèves différences sont possibles et des offres inhabituelles peuvent créer des pics dans l'historique.",
+        "fix": "Vérifiez l'heure de mise à jour et comparez la moyenne, le dernier minimum et le minimum sur 24 heures. Confirmez le prix actuel dans le jeu avant un achat important."
       },
       {
-        "code": "I18N_REVIEWED_PRE_1_0",
-        "title": "Couverture ES/EN révisée",
-        "symptom": "Le sélecteur ES/EN couvre désormais l'interface publique principale : accueil, connexion, compte, Rapport, Statut du serveur, Missions / Kappa, PMC Profil, Flea, Hideout, Boss, Prestige, Système de clés, Quest Optimizer, Goons, Cartes, À propos et Simulateur balistique.",
-        "fix": "La traduction visible a été revue pour la phase pré-1.0. Le dossier est exclu car il s'agit d'une documentation de projet privée ; tout nouveau module doit être ajouté avec les clés ES/EN i18n dès le début."
+        "code": "KEY_MAP_COVERAGE_V2",
+        "title": "Couverture des cartes pour les clés",
+        "symptom": "Le catalogue contient actuellement 256 objets de type clé. Les filtres par carte n'incluent que les clés associées à une serrure ou à une condition d'accès dans les données publiques. Certaines entrées restent donc sans carte attribuée.",
+        "fix": "Utilisez la recherche textuelle ou le filtre Toutes les cartes pour les clés non attribuées. Une carte manquante ne signifie pas que la clé manque dans le catalogue."
       },
       {
-        "code": "PMC_STATIC_INDEX_V1",
+        "code": "PMC_STATIC_INDEX_V2",
         "title": "PMC Profil et index public",
-        "symptom": "PMC Le profil dépend des acteurs publics.tarkov.dev JSON fichiers. Seuls les joueurs déjà consultés sur tarkov.dev/players et présents dans l'index public peuvent apparaître, et cet index est mis à jour environ une fois par jour.",
-        "fix": "Si un joueur n'apparaît pas, ouvrez d'abord son profil sur tarkov.dev/players et attendez la prochaine mise à jour de l'index. L'application évite la recherche protégée par Turnstile et utilise uniquement les fichiers JSON publics disponibles."
+        "symptom": "Le profil PMC dépend des fichiers JSON publics de players.tarkov.dev. Seuls les joueurs déjà consultés sur tarkov.dev/players et présents dans l'index public peuvent apparaître. Cet index est mis à jour environ une fois par jour.",
+        "fix": "Si un joueur n'apparaît pas, ouvrez ou recherchez d'abord son profil sur tarkov.dev/players, puis attendez la prochaine mise à jour de l'index. L'application ne contourne pas la recherche protégée par Turnstile."
       },
       {
-        "code": "BUILD_CHUNK_SIZE_V1",
-        "title": "Avertissement concernant la taille du paquet",
-        "symptom": "La version de production réussit, mais Vite avertit des gros morceaux dus à la taille accumulée de l'application, des actifs et des modules implémentés.",
-        "fix": "Cela ne bloque pas la production. Les modules principaux utilisent déjà le chargement paresseux ; avant la version 1.0, les actifs lourds et le fractionnement supplémentaire doivent être revus si les performances réelles l'exigent."
+        "code": "NEWS_X_CACHE_V1",
+        "title": "Cache des actualités officielles",
+        "symptom": "X peut bloquer temporairement son flux public. Dans ce cas, Actualités officielles utilise le dernier cache valide ou un contenu de secours intégré, et la publication la plus récente peut tarder à apparaître.",
+        "fix": "Ouvrez le profil officiel pour confirmer la dernière annonce, puis actualisez de nouveau le panneau plus tard."
       }
     ]
   },

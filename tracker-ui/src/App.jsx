@@ -170,6 +170,7 @@ function App() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [session, setSession] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [roleLoading, setRoleLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [adminNotificationCount, setAdminNotificationCount] = useState(0);
@@ -209,9 +210,11 @@ function App() {
 
   useEffect(() => {
     const syncSessionData = async (nextSession) => {
+      setRoleLoading(true);
       if (!nextSession) {
         setUserRole(null);
         setUserProfile(null);
+        setRoleLoading(false);
         return;
       }
 
@@ -223,6 +226,7 @@ function App() {
       setUserRole(role);
       setUserProfile(profile);
       hydrateGameModePreference(profile, nextSession);
+      setRoleLoading(false);
     };
 
     supabase.auth.getSession().then(({ data }) => {
@@ -242,6 +246,13 @@ function App() {
 
     return () => subscription.unsubscribe();
   }, [navigateToView]);
+
+  useEffect(() => {
+    const isAdminView = currentView === 'admin' || currentView === 'project-dossier';
+    if (!isAdminView || authLoading || roleLoading || userRole === 'admin') return undefined;
+    const redirect = window.setTimeout(() => navigateToView('home', { replace: true }), 0);
+    return () => window.clearTimeout(redirect);
+  }, [authLoading, currentView, navigateToView, roleLoading, userRole]);
 
   useEffect(() => {
     const clientSessionId = getClientSessionId();
@@ -352,7 +363,7 @@ function App() {
     window.setTimeout(loadNotificationCounts, 600);
   }, [loadNotificationCounts, navigateToView]);
 
-  if (authLoading) {
+  if (authLoading || ((currentView === 'admin' || currentView === 'project-dossier') && roleLoading)) {
     return <LoadingTerminal />;
   }
 
@@ -474,7 +485,7 @@ function App() {
     );
   }
 
-  if (currentView === 'admin') {
+  if (currentView === 'admin' && userRole === 'admin') {
     return (
       <LazyView>
         <AdminPanel onViewChange={navigateToView} onNotificationsChanged={loadNotificationCounts} />
