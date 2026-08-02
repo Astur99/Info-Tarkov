@@ -20,7 +20,8 @@ const formatMetric = (value, locale) => new Intl.NumberFormat(locale, {
 }).format(Number(value) || 0);
 
 const fetchOfficialNews = async (signal) => {
-  const request = await fetch('/api/tarkov-news', {
+  const refreshWindow = Math.floor(Date.now() / NEWS_REFRESH_INTERVAL_MS);
+  const request = await fetch(`/api/tarkov-news?v=3&window=${refreshWindow}`, {
     headers: { Accept: 'application/json' },
     signal
   });
