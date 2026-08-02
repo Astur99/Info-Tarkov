@@ -9,7 +9,7 @@ import {
 import { mergeBossSpawnData } from '../src/modules/bosses/bossesApi.js';
 import { handler as goonsHandler } from '../netlify/functions/goons-tracker.js';
 import { buildKeyMapIndex, isKeyItem } from '../src/modules/keys/keysApi.js';
-import { parseTimelineHtml } from '../netlify/functions/tarkov-news.js';
+import { parseReaderTimeline, parseTimelineHtml } from '../netlify/functions/tarkov-news.js';
 import { buildHealthReport } from '../netlify/functions/lib/app-health.js';
 
 const response = (body, { ok = true, status = 200 } = {}) => ({
@@ -44,6 +44,25 @@ test('official news parser keeps @tarkov posts in reverse chronological order', 
 
   assert.deepEqual(posts.map((post) => post.id), ['new', 'old']);
   assert.equal(posts[0].createdAt, '2026-06-18T14:00:13.000Z');
+});
+
+test('official news reader fallback parses current posts, media and compact metrics', () => {
+  const payload = {
+    data: {
+      content: [
+        '* [![Image 1: user avatar](https://pbs.twimg.com/profile_images/avatar.jpg)](https://twitter.com/tarkov) [Escape from Tarkov](https://x.com/tarkov) [@tarkov](https://x.com/tarkov) [7h](https://twitter.com/tarkov/status/2083906294348406919) [#EscapefromTarkov](https://x.com/hashtag/EscapefromTarkov)  [![Image 2](https://pbs.twimg.com/media/example?format=webp&name=small)](https://twitter.com/tarkov/status/2083906294348406919/photo/1) 7 35 487 [](https://twitter.com/tarkov/status/2083906294348406919/quotes)',
+        '* [![Image 3: user avatar](https://pbs.twimg.com/profile_images/avatar.jpg)](https://twitter.com/tarkov) [Escape from Tarkov](https://x.com/tarkov) [@tarkov](https://x.com/tarkov) [3h](https://twitter.com/tarkov/status/2083967990282719470) Tomorrow we are planning to install patch 1.1.0.0.    89 321 1.5K [](https://twitter.com/tarkov/status/2083967990282719470/quotes)'
+      ].join('\n')
+    }
+  };
+
+  const posts = parseReaderTimeline(payload);
+  assert.deepEqual(posts.map((post) => post.id), ['2083967990282719470', '2083906294348406919']);
+  assert.equal(posts[0].text, 'Tomorrow we are planning to install patch 1.1.0.0.');
+  assert.equal(posts[0].metrics.likes, 1500);
+  assert.equal(posts[1].text, '#EscapefromTarkov');
+  assert.equal(posts[1].media[0].url, 'https://pbs.twimg.com/media/example?format=webp&name=small');
+  assert.equal(posts[0].createdAt, '2026-08-02T17:27:41.793Z');
 });
 
 test('health monitor validates critical PVP and PVE JSON sources', async () => {

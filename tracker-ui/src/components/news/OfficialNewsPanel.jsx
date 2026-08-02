@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { TARKOV_NEWS_FALLBACK } from '../../data/tarkovNewsFallback';
 
 const TARKOV_X_URL = 'https://x.com/tarkov';
+const NEWS_REFRESH_INTERVAL_MS = 5 * 60 * 1000;
 
 const XLogo = () => (
   <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15">
@@ -37,12 +38,20 @@ export default function OfficialNewsPanel() {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetchOfficialNews(controller.signal)
-      .then((nextPosts) => {
-        if (nextPosts.length) setPosts(nextPosts);
-      })
-      .catch(() => {});
-    return () => controller.abort();
+    const refreshNews = () => {
+      fetchOfficialNews(controller.signal)
+        .then((nextPosts) => {
+          if (nextPosts.length) setPosts(nextPosts);
+        })
+        .catch(() => {});
+    };
+
+    refreshNews();
+    const refreshTimer = window.setInterval(refreshNews, NEWS_REFRESH_INTERVAL_MS);
+    return () => {
+      controller.abort();
+      window.clearInterval(refreshTimer);
+    };
   }, []);
 
   return (

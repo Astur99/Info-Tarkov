@@ -1,7 +1,16 @@
 import { TARKOV_NEWS_FALLBACK } from '../../src/data/tarkovNewsFallback.js';
 
 const TIMELINE_URL = 'https://syndication.twitter.com/srv/timeline-profile/screen-name/tarkov?dnt=true&frame=false&lang=en&theme=dark';
+const READER_TIMELINE_URL = 'https://r.jina.ai/https://twitter.com/tarkov?lang=en';
 const CACHE_TTL_MS = 5 * 60 * 1000;
+const TWITTER_EPOCH_MS = 1288834974657n;
+
+const TARKOV_AUTHOR = {
+  name: 'Escape from Tarkov',
+  username: 'tarkov',
+  avatar: 'https://pbs.twimg.com/profile_images/2058838438900617216/3MT4g_A3_normal.jpg',
+  verified: true
+};
 
 let lastGoodResponse = null;
 
@@ -10,7 +19,7 @@ const response = (statusCode, body, extraHeaders = {}) => ({
   headers: {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
-    'Cache-Control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=86400',
+    'Cache-Control': 'public, max-age=60, s-maxage=300, stale-while-revalidate=900',
     ...extraHeaders
   },
   body: JSON.stringify(body)
@@ -75,24 +84,119 @@ export const parseTimelineHtml = (html) => {
   return posts;
 };
 
+const snowflakeToIsoDate = (id) => {
+  try {
+    return new Date(Number((BigInt(id) >> 22n) + TWITTER_EPOCH_MS)).toISOString();
+  } catch {
+    return new Date().toISOString();
+  }
+};
+
+const parseCompactMetric = (value) => {
+  const normalized = String(value || '').trim().replace(',', '.').toUpperCase();
+  const match = normalized.match(/^(\d+(?:\.\d+)?)([KMB])?$/);
+  if (!match) return 0;
+  const multiplier = { K: 1_000, M: 1_000_000, B: 1_000_000_000 }[match[2]] || 1;
+  return Math.round(Number(match[1]) * multiplier);
+};
+
+const markdownToText = (value) => String(value || '')
+  .replace(/!\[[^\]]*\]\([^)]+\)/g, '')
+  .replace(/\[([^\]]+)\]\([^)]+\)/g, ' $1 ')
+  .replace(/\s*Show more\s*$/i, '')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+const extractReaderPost = (segment) => {
+  const timeLink = segment.match(
+    /\[([^\]]+)\]\(https:\/\/(?:twitter|x)\.com\/tarkov\/status\/(\d+)\)/i
+  );
+  if (!timeLink) return null;
+
+  const [, , id] = timeLink;
+  const body = segment.slice((timeLink.index || 0) + timeLink[0].length);
+  const contentBoundary = body.search(
+    /\s{2,}(?:\[!\[Image|\[Video\b|\[\]\(https:\/\/(?:twitter|x)\.com\/tarkov\/status\/\d+\/quotes\)|\d[\d.,KMB]*\s+\d[\d.,KMB]*\s+\d[\d.,KMB]*)/i
+  );
+  const text = markdownToText(contentBoundary >= 0 ? body.slice(0, contentBoundary) : body);
+  if (!text) return null;
+
+  const mediaMatch = body.match(
+    /!\[Image[^\]]*\]\((https:\/\/pbs\.twimg\.com\/(?!profile_images)[^)]+)\)/i
+  );
+  const metricsMatch = body.match(
+    /\s(\d[\d.,KMB]*)\s+(\d[\d.,KMB]*)\s+(\d[\d.,KMB]*)\s+\[\]\(https:\/\/(?:twitter|x)\.com\/tarkov\/status\/\d+\/quotes\)/i
+  );
+
+  return {
+    id,
+    text,
+    createdAt: snowflakeToIsoDate(id),
+    url: `https://x.com/tarkov/status/${id}`,
+    author: TARKOV_AUTHOR,
+    metrics: {
+      replies: parseCompactMetric(metricsMatch?.[1]),
+      reposts: parseCompactMetric(metricsMatch?.[2]),
+      likes: parseCompactMetric(metricsMatch?.[3])
+    },
+    media: mediaMatch ? [{
+      type: /video_thumb/i.test(mediaMatch[1]) ? 'video' : 'photo',
+      url: mediaMatch[1].replace(/&amp;/g, '&')
+    }] : []
+  };
+};
+
+export const parseReaderTimeline = (payload) => {
+  const content = typeof payload === 'string' ? payload : payload?.data?.content;
+  if (!content) throw new Error('X reader timeline data was not found.');
+
+  const posts = String(content)
+    .split(/(?=\*\s+(?:\s*Pinned\s+)?\[!\[Image[^\]]*user avatar)/i)
+    .map(extractReaderPost)
+    .filter(Boolean);
+
+  const uniquePosts = [...new Map(posts.map((post) => [post.id, post])).values()]
+    .sort((left, right) => new Date(right.createdAt) - new Date(left.createdAt))
+    .slice(0, 12);
+
+  if (!uniquePosts.length) throw new Error('X reader did not contain public @tarkov posts.');
+  return uniquePosts;
+};
+
+const fetchSyndicationTimeline = async () => {
+  const upstream = await fetch(TIMELINE_URL, {
+    headers: {
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Cache-Control': 'no-cache',
+      Referer: 'https://x.com/tarkov',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36'
+    }
+  });
+  if (!upstream.ok) throw new Error(`X timeline unavailable (${upstream.status}).`);
+  return parseTimelineHtml(await upstream.text());
+};
+
+const fetchReaderTimeline = async () => {
+  const upstream = await fetch(READER_TIMELINE_URL, {
+    headers: {
+      Accept: 'application/json',
+      'Cache-Control': 'no-cache',
+      'User-Agent': 'InfoTarkov/1.3 (+https://infotarkov.com)'
+    }
+  });
+  if (!upstream.ok) throw new Error(`X reader unavailable (${upstream.status}).`);
+  return parseReaderTimeline(await upstream.json());
+};
+
 export const handler = async () => {
   if (lastGoodResponse && Date.now() - lastGoodResponse.cachedAt < CACHE_TTL_MS) {
     return response(200, { ...lastGoodResponse.payload, source: 'cache' });
   }
 
+  let syndicationError;
   try {
-    const upstream = await fetch(TIMELINE_URL, {
-      headers: {
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Cache-Control': 'no-cache',
-        Referer: 'https://x.com/tarkov',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36'
-      }
-    });
-    if (!upstream.ok) throw new Error(`X timeline unavailable (${upstream.status}).`);
-
-    const posts = parseTimelineHtml(await upstream.text());
+    const posts = await fetchSyndicationTimeline();
     const payload = {
       posts,
       source: 'x-syndication',
@@ -101,18 +205,32 @@ export const handler = async () => {
     lastGoodResponse = { cachedAt: Date.now(), payload };
     return response(200, payload);
   } catch (error) {
+    syndicationError = error;
+  }
+
+  try {
+    const posts = await fetchReaderTimeline();
+    const payload = {
+      posts,
+      source: 'x-reader',
+      fetchedAt: new Date().toISOString(),
+      warning: syndicationError?.message
+    };
+    lastGoodResponse = { cachedAt: Date.now(), payload };
+    return response(200, payload);
+  } catch (readerError) {
     if (lastGoodResponse) {
       return response(200, {
         ...lastGoodResponse.payload,
         source: 'stale-cache',
-        warning: error.message
+        warning: `${syndicationError?.message || 'X timeline unavailable.'} ${readerError.message}`
       });
     }
     return response(200, {
       posts: TARKOV_NEWS_FALLBACK,
       source: 'bundled-fallback',
       fetchedAt: '2026-07-31T00:00:00.000Z',
-      warning: error.message || 'Official X timeline unavailable.'
+      warning: `${syndicationError?.message || 'X timeline unavailable.'} ${readerError.message}`
     });
   }
 };
