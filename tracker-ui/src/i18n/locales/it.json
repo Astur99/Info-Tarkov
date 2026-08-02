@@ -1039,6 +1039,9 @@
       "codeLabel": "Codice di autenticazione",
       "verifying": "Verifica…",
       "verify": "VERIFICA E APRI",
+      "verifyFresh": "VERIFICA DI NUOVO",
+      "inactivityLocked": "Utenti e accessi è stato bloccato dopo 5 minuti di inattività.",
+      "confirmRole": "Conferma cambio ruolo", "confirmDelete": "Conferma eliminazione account", "confirmProfile": "Conferma modifica profilo", "confirmEmail": "Conferma richiesta cambio email", "confirmPasswordRecovery": "Conferma recupero password",
       "sectionsLabel": "Sezioni amministrative",
       "overview": "Panoramica",
       "userManagement": "Utenti e accessi",
@@ -1099,6 +1102,7 @@
       "makeAdmin": "Diventa amministratore",
       "removeAdmin": "Rimuovi amministratore",
       "message": "Messaggio"
+      ,"saveProfile": "Salva profilo", "requestEmailChange": "Richiedi cambio email verificato", "sendPasswordRecovery": "Invia recupero password"
     },
     "feedback": {
       "title": "Rapporti",
@@ -1142,6 +1146,7 @@
       },
       "status": "Stato",
       "lastActivity": "Ultima attività",
+      "userId": "ID utente", "registered": "Registrazione", "lastSignIn": "Ultimo accesso", "emailConfirmed": "Email confermata", "providers": "Provider di accesso", "mfa": "Autenticazione a due fattori", "mfaEnabled": "Attivata", "mfaDisabled": "Non attivata", "profileData": "Dati profilo", "appUsername": "Nome utente app", "tarkovUsername": "Nome Tarkov", "accountSecurity": "Sicurezza account", "passwordNotice": "Le password non sono mai visibili o impostate dagli amministratori. È possibile solo inviare un recupero sicuro.", "newEmail": "Nuova email proposta",
       "loadingProgress": "Caricamento avanzamento...",
       "cloudProgress": "Avanzamento del cloud per modulo",
       "noModuleStates": "Nessuno stato cloud salvato.",
@@ -1177,6 +1182,7 @@
       "feedbackDeleted": "Rapporto eliminato.",
       "rpcUnavailable": "RPC non disponibile",
       "progressLoadError": "Impossibile caricare i progressi nel cloud: {{error}}. Esegui l'SQL aggiornato se manca l'RPC."
+      ,"profileUpdated": "Profilo aggiornato.", "emailChangeRequested": "Cambio email richiesto. L’utente deve accettarlo e verificarlo.", "passwordRecoverySent": "Email di recupero inviata.", "sensitiveActionError": "Azione protetta non riuscita: {{error}}"
     }
   },
   "account": {
@@ -1226,6 +1232,7 @@
       "save": "Cambiare la password",
       "saving": "Aggiornamento..."
     },
+    "emailChange": { "title": "Cambio email in sospeso", "description": "Un amministratore ha proposto {{email}}. Accettando, Supabase invierà la verifica.", "accept": "Accetta e verifica", "reject": "Rifiuta", "verificationSent": "Verifica richiesta. Controlla le caselle email necessarie.", "rejected": "Cambio email rifiutato.", "error": "Impossibile elaborare la richiesta." },
     "delete": {
       "title": "Elimina account",
       "warning": "Questa azione eliminerà il tuo account e perderai i progressi ad esso collegati. Non è possibile annullarlo.",

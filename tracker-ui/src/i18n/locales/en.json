@@ -1039,6 +1039,13 @@
       "codeLabel": "Authentication code",
       "verifying": "Verifying…",
       "verify": "VERIFY AND OPEN",
+      "verifyFresh": "VERIFY AGAIN",
+      "inactivityLocked": "Users & access was locked after 5 minutes of inactivity.",
+      "confirmRole": "Confirm role change",
+      "confirmDelete": "Confirm account deletion",
+      "confirmProfile": "Confirm profile update",
+      "confirmEmail": "Confirm email change request",
+      "confirmPasswordRecovery": "Confirm password recovery",
       "sectionsLabel": "Admin sections",
       "overview": "Overview",
       "userManagement": "Users & access",
@@ -1099,6 +1106,9 @@
       "makeAdmin": "Make admin",
       "removeAdmin": "Remove admin",
       "message": "Message"
+      ,"saveProfile": "Save profile",
+      "requestEmailChange": "Request verified email change",
+      "sendPasswordRecovery": "Send password recovery"
     },
     "feedback": {
       "title": "Reports",
@@ -1142,6 +1152,20 @@
       },
       "status": "Status",
       "lastActivity": "Last activity",
+      "userId": "User ID",
+      "registered": "Registered",
+      "lastSignIn": "Last sign-in",
+      "emailConfirmed": "Email confirmed",
+      "providers": "Login providers",
+      "mfa": "Two-factor authentication",
+      "mfaEnabled": "Enabled",
+      "mfaDisabled": "Not enabled",
+      "profileData": "Profile data",
+      "appUsername": "App username",
+      "tarkovUsername": "Tarkov username",
+      "accountSecurity": "Account security",
+      "passwordNotice": "Passwords are never visible or set by administrators. Only a secure recovery email can be sent.",
+      "newEmail": "Proposed new email",
       "loadingProgress": "Loading progress...",
       "cloudProgress": "Cloud progress by module",
       "noModuleStates": "No cloud states saved.",
@@ -1177,6 +1201,10 @@
       "feedbackDeleted": "Report deleted.",
       "rpcUnavailable": "RPC unavailable",
       "progressLoadError": "Cloud progress could not be loaded: {{error}}. Run the updated SQL if the RPC is missing."
+      ,"profileUpdated": "Profile updated.",
+      "emailChangeRequested": "Email change requested. The user must accept it and verify the new address.",
+      "passwordRecoverySent": "Password recovery email sent.",
+      "sensitiveActionError": "Protected action failed: {{error}}"
     }
   },
   "account": {
@@ -1225,6 +1253,15 @@
       "placeholder": "New password",
       "save": "Change password",
       "saving": "Updating..."
+    },
+    "emailChange": {
+      "title": "Pending email change",
+      "description": "An administrator proposed changing your account email to {{email}}. Accepting sends Supabase verification; the address is not changed silently.",
+      "accept": "Accept and verify",
+      "reject": "Reject",
+      "verificationSent": "Verification was requested. Check the required inboxes before the address changes.",
+      "rejected": "Email change rejected.",
+      "error": "The email change request could not be processed."
     },
     "delete": {
       "title": "Delete account",

@@ -1039,6 +1039,13 @@
       "codeLabel": "Authentifizierungscode",
       "verifying": "Wird überprüft…",
       "verify": "PRÜFEN UND ÖFFNEN",
+      "verifyFresh": "ERNEUT PRÜFEN",
+      "inactivityLocked": "Benutzer und Zugriffe wurde nach 5 Minuten Inaktivität gesperrt.",
+      "confirmRole": "Rollenänderung bestätigen",
+      "confirmDelete": "Kontolöschung bestätigen",
+      "confirmProfile": "Profiländerung bestätigen",
+      "confirmEmail": "E-Mail-Änderung bestätigen",
+      "confirmPasswordRecovery": "Passwortwiederherstellung bestätigen",
       "sectionsLabel": "Admin-Bereiche",
       "overview": "Übersicht",
       "userManagement": "Benutzer und Zugriffe",
@@ -1099,6 +1106,9 @@
       "makeAdmin": "Machen Sie Administrator",
       "removeAdmin": "Administrator entfernen",
       "message": "Nachricht"
+      ,"saveProfile": "Profil speichern",
+      "requestEmailChange": "Verifizierte E-Mail-Änderung anfordern",
+      "sendPasswordRecovery": "Passwortwiederherstellung senden"
     },
     "feedback": {
       "title": "Berichte",
@@ -1142,6 +1152,7 @@
       },
       "status": "Status",
       "lastActivity": "Letzte Aktivität",
+      "userId": "Benutzer-ID", "registered": "Registriert", "lastSignIn": "Letzte Anmeldung", "emailConfirmed": "E-Mail bestätigt", "providers": "Anmeldeanbieter", "mfa": "Zwei-Faktor-Authentifizierung", "mfaEnabled": "Aktiviert", "mfaDisabled": "Nicht aktiviert", "profileData": "Profildaten", "appUsername": "App-Benutzername", "tarkovUsername": "Tarkov-Benutzername", "accountSecurity": "Kontosicherheit", "passwordNotice": "Passwörter werden Administratoren nie angezeigt und nicht von ihnen gesetzt. Es kann nur eine sichere Wiederherstellungs-E-Mail gesendet werden.", "newEmail": "Neue vorgeschlagene E-Mail",
       "loadingProgress": "Ladefortschritt...",
       "cloudProgress": "Cloud-Fortschritt nach Modul",
       "noModuleStates": "Keine Cloud-Zustände gespeichert.",
@@ -1177,6 +1188,7 @@
       "feedbackDeleted": "Bericht gelöscht.",
       "rpcUnavailable": "RPC nicht verfügbar",
       "progressLoadError": "Der Cloud-Fortschritt konnte nicht geladen werden: {{error}}. Führen Sie die aktualisierte SQL aus, wenn der RPC fehlt."
+      ,"profileUpdated": "Profil aktualisiert.", "emailChangeRequested": "E-Mail-Änderung angefordert. Der Benutzer muss sie annehmen und bestätigen.", "passwordRecoverySent": "E-Mail zur Passwortwiederherstellung gesendet.", "sensitiveActionError": "Geschützte Aktion fehlgeschlagen: {{error}}"
     }
   },
   "account": {
@@ -1226,6 +1238,7 @@
       "save": "Kennwort ändern",
       "saving": "Aktualisierung..."
     },
+    "emailChange": { "title": "Ausstehende E-Mail-Änderung", "description": "Ein Administrator hat {{email}} als neue E-Mail vorgeschlagen. Nach Annahme sendet Supabase eine Bestätigung.", "accept": "Annehmen und bestätigen", "reject": "Ablehnen", "verificationSent": "Bestätigung angefordert. Prüfe die erforderlichen Postfächer.", "rejected": "E-Mail-Änderung abgelehnt.", "error": "Die E-Mail-Änderung konnte nicht verarbeitet werden." },
     "delete": {
       "title": "Konto löschen",
       "warning": "Durch diese Aktion wird Ihr Konto gelöscht und Sie verlieren den damit verbundenen Fortschritt. Es kann nicht rückgängig gemacht werden.",

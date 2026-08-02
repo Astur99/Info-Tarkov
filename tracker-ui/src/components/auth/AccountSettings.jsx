@@ -88,6 +88,9 @@ export default function AccountSettings({
   const [deleteConfirm, setDeleteConfirm] = useState('');
   const [profileMessage, setProfileMessage] = useState('');
   const [passwordMessage, setPasswordMessage] = useState('');
+  const [pendingEmailChange, setPendingEmailChange] = useState(null);
+  const [emailChangeMessage, setEmailChangeMessage] = useState('');
+  const [emailChangeLoading, setEmailChangeLoading] = useState(false);
   const [deleteMessage, setDeleteMessage] = useState('');
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
@@ -164,6 +167,26 @@ export default function AccountSettings({
     };
   }, [session?.user?.id]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadPendingEmailChange = async () => {
+      if (!session?.user?.id) return;
+      const { data, error } = await supabase
+        .from('admin_email_change_requests')
+        .select('requested_email, requested_at')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (!cancelled && !error) setPendingEmailChange(data || null);
+    };
+
+    loadPendingEmailChange();
+    return () => {
+      cancelled = true;
+    };
+  }, [session?.user?.id]);
+
   const handleSaveUsername = async (event) => {
     event.preventDefault();
     setProfileMessage('');
@@ -231,6 +254,35 @@ export default function AccountSettings({
 
     setNewPassword('');
     setPasswordMessage(t('account.messages.passwordSaved'));
+  };
+
+  const handlePendingEmailChange = async (accept) => {
+    if (!pendingEmailChange || !session?.user?.id) return;
+    setEmailChangeLoading(true);
+    setEmailChangeMessage('');
+
+    if (accept) {
+      const { error } = await supabase.auth.updateUser({ email: pendingEmailChange.requested_email });
+      if (error) {
+        setEmailChangeLoading(false);
+        setEmailChangeMessage(t('account.emailChange.error'));
+        return;
+      }
+    }
+
+    const { error: clearError } = await supabase
+      .from('admin_email_change_requests')
+      .delete()
+      .eq('user_id', session.user.id);
+
+    setEmailChangeLoading(false);
+    if (clearError) {
+      setEmailChangeMessage(t('account.emailChange.error'));
+      return;
+    }
+
+    setPendingEmailChange(null);
+    setEmailChangeMessage(accept ? t('account.emailChange.verificationSent') : t('account.emailChange.rejected'));
   };
 
   const handleDeleteAccount = async () => {
@@ -440,6 +492,28 @@ export default function AccountSettings({
             </p>
           )}
         </form>
+
+        {(pendingEmailChange || emailChangeMessage) && (
+          <section className="account-mobile-panel" style={{ ...panelStyle, width: '100%', borderColor: 'rgba(255,207,102,0.35)' }}>
+            <h2 style={sectionTitleStyle}>{t('account.emailChange.title')}</h2>
+            {pendingEmailChange && (
+              <>
+                <p style={helperStyle}>
+                  {t('account.emailChange.description', { email: pendingEmailChange.requested_email })}
+                </p>
+                <div style={{ display: 'flex', gap: '0.65rem' }}>
+                  <button type="button" disabled={emailChangeLoading} onClick={() => handlePendingEmailChange(true)} style={{ ...primaryButtonStyle, width: 'auto' }}>
+                    {t('account.emailChange.accept')}
+                  </button>
+                  <button type="button" disabled={emailChangeLoading} onClick={() => handlePendingEmailChange(false)} style={{ ...primaryButtonStyle, width: 'auto', background: 'rgba(255,255,255,0.08)', color: '#fff' }}>
+                    {t('account.emailChange.reject')}
+                  </button>
+                </div>
+              </>
+            )}
+            {emailChangeMessage && <p style={{ color: '#ffcf66', marginBottom: 0 }}>{emailChangeMessage}</p>}
+          </section>
+        )}
 
         <section
           className="account-mobile-panel account-mobile-danger"

@@ -1039,6 +1039,9 @@
       "codeLabel": "Code d'authentification",
       "verifying": "Vérification…",
       "verify": "VÉRIFIER ET OUVRIR",
+      "verifyFresh": "VÉRIFIER À NOUVEAU",
+      "inactivityLocked": "Utilisateurs et accès a été verrouillé après 5 minutes d’inactivité.",
+      "confirmRole": "Confirmer le changement de rôle", "confirmDelete": "Confirmer la suppression du compte", "confirmProfile": "Confirmer la modification du profil", "confirmEmail": "Confirmer la demande de changement d’e-mail", "confirmPasswordRecovery": "Confirmer la récupération du mot de passe",
       "sectionsLabel": "Sections d'administration",
       "overview": "Vue d'ensemble",
       "userManagement": "Utilisateurs et accès",
@@ -1099,6 +1102,7 @@
       "makeAdmin": "Faire administrateur",
       "removeAdmin": "Supprimer l'administrateur",
       "message": "Message"
+      ,"saveProfile": "Enregistrer le profil", "requestEmailChange": "Demander un changement d’e-mail vérifié", "sendPasswordRecovery": "Envoyer la récupération du mot de passe"
     },
     "feedback": {
       "title": "Rapports",
@@ -1142,6 +1146,7 @@
       },
       "status": "Statut",
       "lastActivity": "Dernière activité",
+      "userId": "ID utilisateur", "registered": "Inscription", "lastSignIn": "Dernière connexion", "emailConfirmed": "E-mail confirmé", "providers": "Fournisseurs de connexion", "mfa": "Authentification à deux facteurs", "mfaEnabled": "Activée", "mfaDisabled": "Non activée", "profileData": "Données du profil", "appUsername": "Nom dans l’application", "tarkovUsername": "Nom Tarkov", "accountSecurity": "Sécurité du compte", "passwordNotice": "Les mots de passe ne sont jamais visibles ni définis par un administrateur. Seul un e-mail sécurisé de récupération peut être envoyé.", "newEmail": "Nouvel e-mail proposé",
       "loadingProgress": "Progression du chargement...",
       "cloudProgress": "Progression du cloud par module",
       "noModuleStates": "Aucun état de cloud enregistré.",
@@ -1177,6 +1182,7 @@
       "feedbackDeleted": "Rapport supprimé.",
       "rpcUnavailable": "RPC indisponible",
       "progressLoadError": "La progression du cloud n'a pas pu être chargée : {{error}}. Exécutez le SQL mis à jour si le RPC est manquant."
+      ,"profileUpdated": "Profil mis à jour.", "emailChangeRequested": "Changement d’e-mail demandé. L’utilisateur doit l’accepter et le vérifier.", "passwordRecoverySent": "E-mail de récupération envoyé.", "sensitiveActionError": "Échec de l’action protégée : {{error}}"
     }
   },
   "account": {
@@ -1226,6 +1232,7 @@
       "save": "Changer le mot de passe",
       "saving": "Mise à jour..."
     },
+    "emailChange": { "title": "Changement d’e-mail en attente", "description": "Un administrateur a proposé {{email}}. Après acceptation, Supabase enverra une vérification.", "accept": "Accepter et vérifier", "reject": "Refuser", "verificationSent": "Vérification demandée. Consultez les boîtes mail requises.", "rejected": "Changement d’e-mail refusé.", "error": "La demande n’a pas pu être traitée." },
     "delete": {
       "title": "Supprimer le compte",
       "warning": "Cette action supprimera votre compte et vous perdrez la progression qui y est liée. Cela ne peut pas être annulé.",

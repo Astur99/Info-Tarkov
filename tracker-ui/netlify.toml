@@ -25,3 +25,8 @@
   from = "/api/app-health"
   to = "/.netlify/functions/app-health"
   status = 200
+
+[[redirects]]
+  from = "/api/admin-user-account"
+  to = "/.netlify/functions/admin-user-account"
+  status = 200

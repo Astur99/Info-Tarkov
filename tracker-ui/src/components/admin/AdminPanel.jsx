@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect, useState } from 'react';
+import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 import HealthMonitorPanel from './HealthMonitorPanel';
@@ -93,6 +93,24 @@ const getUserReference = (user) =>
 
 const isOwnerUser = (user) => Boolean(user.is_owner || user.email === OWNER_EMAIL);
 
+const callProtectedAdminAction = async (payload) => {
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData?.session?.access_token;
+  if (!token) throw new Error('Authentication required.');
+
+  const response = await fetch('/api/admin-user-account', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || 'The protected action failed.');
+  return result;
+};
+
 const isRecentlyOnline = (lastSeen) => {
   if (!lastSeen) return false;
   return Date.now() - new Date(lastSeen).getTime() < 120000;
@@ -135,6 +153,11 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserProgress, setSelectedUserProgress] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [usersAccessGranted, setUsersAccessGranted] = useState(false);
+  const [pendingSensitiveAction, setPendingSensitiveAction] = useState(null);
+  const [profileDraft, setProfileDraft] = useState({ username: '', tarkovUsername: '', primaryGameMode: 'PVP' });
+  const [newEmail, setNewEmail] = useState('');
+  const usersInactivityTimer = useRef(null);
   const feedbackTypeLabel = (type) => t(`admin.feedback.types.${type}`, { defaultValue: feedbackTypeLabels[type] || type });
   const feedbackStatusLabel = (status) => t(`admin.feedback.status.${status}`, { defaultValue: feedbackStatusLabels[status] || status });
   const feedbackStatusAction = (status) => t(`admin.feedback.statusActions.${status}`, { defaultValue: feedbackStatusActions[status] || status });
@@ -200,6 +223,26 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
     setUserTotal(Number(data?.[0]?.total_count ?? data?.length ?? 0));
   }, [activityFilter, roleFilter, searchQuery, t]);
 
+  const lockUsersAccess = useCallback(() => {
+    setUsersAccessGranted(false);
+    setUsers([]);
+    setUsersLoaded(false);
+    setSelectedUser(null);
+    setSelectedUserProgress(null);
+    setNewEmail('');
+    if (usersInactivityTimer.current) window.clearTimeout(usersInactivityTimer.current);
+  }, []);
+
+  const grantUsersAccess = useCallback(() => {
+    setUsersAccessGranted(true);
+  }, []);
+
+  const selectSection = (section) => {
+    if (section !== 'users') lockUsersAccess();
+    if (section === 'users' && activeSection !== 'users') setUsersAccessGranted(false);
+    setActiveSection(section);
+  };
+
   const onlineUsers = useMemo(
     () => users.filter((user) => isRecentlyOnline(user.last_seen)).length,
     [users]
@@ -227,6 +270,12 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
 
   const openUserDetail = async (user) => {
     setSelectedUser(user);
+    setProfileDraft({
+      username: getAdminDisplayUsername(user) || '',
+      tarkovUsername: user.tarkov_username || getAdminDisplayUsername(user) || '',
+      primaryGameMode: user.primary_game_mode || 'PVP'
+    });
+    setNewEmail('');
     setSelectedUserProgress(null);
     setDetailLoading(true);
 
@@ -237,7 +286,13 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
     const { data, error } = progressResult;
 
     if (!identityResult.error && identityResult.data?.email) {
-      setSelectedUser((current) => current ? { ...current, email: identityResult.data.email } : current);
+      const identity = identityResult.data;
+      setSelectedUser((current) => current ? { ...current, ...identity } : current);
+      setProfileDraft({
+        username: identity.username || '',
+        tarkovUsername: identity.tarkov_username || identity.username || '',
+        primaryGameMode: identity.primary_game_mode || 'PVP'
+      });
     }
 
     setDetailLoading(false);
@@ -269,28 +324,41 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
   }, [loadAdminOverview]);
 
   useEffect(() => {
-    if (activeSection !== 'users') return undefined;
+    if (activeSection !== 'users' || !usersAccessGranted) return undefined;
     const timer = window.setTimeout(loadUsers, 250);
     return () => window.clearTimeout(timer);
-  }, [activeSection, loadUsers]);
+  }, [activeSection, loadUsers, usersAccessGranted]);
+
+  useEffect(() => {
+    if (activeSection !== 'users' || !usersAccessGranted) return undefined;
+
+    const resetInactivityLock = () => {
+      if (usersInactivityTimer.current) window.clearTimeout(usersInactivityTimer.current);
+      usersInactivityTimer.current = window.setTimeout(() => {
+        lockUsersAccess();
+        setMessage(t('admin.security.inactivityLocked'));
+      }, 5 * 60 * 1000);
+    };
+
+    ['pointerdown', 'keydown', 'scroll'].forEach((eventName) => window.addEventListener(eventName, resetInactivityLock, { passive: true }));
+    resetInactivityLock();
+    return () => {
+      ['pointerdown', 'keydown', 'scroll'].forEach((eventName) => window.removeEventListener(eventName, resetInactivityLock));
+      if (usersInactivityTimer.current) window.clearTimeout(usersInactivityTimer.current);
+    };
+  }, [activeSection, lockUsersAccess, t, usersAccessGranted]);
 
   const handleRoleChange = async (user, nextRole) => {
     const confirmed = window.confirm(t('admin.prompts.roleChange', { email: getUserReference(user), role: nextRole }));
     if (!confirmed) return;
-
-    const { error } = await supabase.rpc('admin_set_user_role', {
-      target_user_id: user.user_id,
-      target_role: nextRole
+    setPendingSensitiveAction({
+      label: t('admin.security.confirmRole'),
+      run: async () => {
+        await callProtectedAdminAction({ action: 'set_role', targetUserId: user.user_id, role: nextRole });
+        setMessage(t('admin.messages.roleUpdated'));
+        await loadUsers();
+      }
     });
-
-    if (error) {
-      console.error(error);
-      setMessage(t('admin.messages.roleError'));
-      return;
-    }
-
-    setMessage(t('admin.messages.roleUpdated'));
-    loadUsers();
   };
 
   const handleDeleteUser = async (user) => {
@@ -305,19 +373,79 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
       return;
     }
 
-    const { error } = await supabase.rpc('admin_delete_user', {
-      target_user_id: user.user_id
+    setPendingSensitiveAction({
+      label: t('admin.security.confirmDelete'),
+      run: async () => {
+        await callProtectedAdminAction({ action: 'delete_user', targetUserId: user.user_id });
+        setSelectedUser(null);
+        setMessage(t('admin.messages.deleteSuccess'));
+        await loadUsers();
+      }
     });
-
-    if (error) {
-      console.error(error);
-      setMessage(t('admin.messages.deleteError'));
-      return;
-    }
-
-    setMessage(t('admin.messages.deleteSuccess'));
-    loadUsers();
   };
+
+  const handleSaveProfile = () => {
+    if (!selectedUser) return;
+    setPendingSensitiveAction({
+      label: t('admin.security.confirmProfile'),
+      run: async () => {
+        await callProtectedAdminAction({
+          action: 'update_profile',
+          targetUserId: selectedUser.user_id,
+          username: profileDraft.username,
+          tarkovUsername: profileDraft.tarkovUsername,
+          primaryGameMode: profileDraft.primaryGameMode
+        });
+        setSelectedUser((current) => current ? {
+          ...current,
+          username: profileDraft.username,
+          tarkov_username: profileDraft.tarkovUsername,
+          primary_game_mode: profileDraft.primaryGameMode
+        } : current);
+        setMessage(t('admin.messages.profileUpdated'));
+        await loadUsers();
+      }
+    });
+  };
+
+  const handleRequestEmailChange = () => {
+    if (!selectedUser || !newEmail.trim()) return;
+    setPendingSensitiveAction({
+      label: t('admin.security.confirmEmail'),
+      run: async () => {
+        await callProtectedAdminAction({
+          action: 'request_email_change',
+          targetUserId: selectedUser.user_id,
+          newEmail: newEmail.trim()
+        });
+        setNewEmail('');
+        setMessage(t('admin.messages.emailChangeRequested'));
+      }
+    });
+  };
+
+  const handlePasswordRecovery = () => {
+    if (!selectedUser) return;
+    setPendingSensitiveAction({
+      label: t('admin.security.confirmPasswordRecovery'),
+      run: async () => {
+        await callProtectedAdminAction({ action: 'send_password_recovery', targetUserId: selectedUser.user_id });
+        setMessage(t('admin.messages.passwordRecoverySent'));
+      }
+    });
+  };
+
+  const verifyPendingSensitiveAction = useCallback(async () => {
+    if (!pendingSensitiveAction?.run) return;
+    try {
+      await pendingSensitiveAction.run();
+      setPendingSensitiveAction(null);
+    } catch (error) {
+      console.error(error);
+      setMessage(t('admin.messages.sensitiveActionError', { error: error.message }));
+      throw error;
+    }
+  }, [pendingSensitiveAction, t]);
 
   const handleSendMessage = async (user) => {
     const subject = window.prompt(t('admin.prompts.messageSubject'));
@@ -451,7 +579,7 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
             <button
               key={section}
               type="button"
-              onClick={() => setActiveSection(section)}
+              onClick={() => selectSection(section)}
               aria-pressed={activeSection === section}
               style={{
                 ...actionButtonStyle,
@@ -506,7 +634,17 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
 
         {activeSection === 'overview' && <HealthMonitorPanel />}
 
-        {activeSection === 'users' && (
+        {activeSection === 'users' && !usersAccessGranted && (
+          <AdminSecurityGate
+            forceChallenge
+            onVerified={grantUsersAccess}
+            onBack={() => selectSection('overview')}
+          >
+            <span />
+          </AdminSecurityGate>
+        )}
+
+        {activeSection === 'users' && usersAccessGranted && (
         <section className="admin-mobile-panel admin-users-panel" style={panelStyle}>
           <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 1rem', lineHeight: 1.5 }}>
             {t('admin.security.userPrivacyNotice', {
@@ -950,6 +1088,18 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
         </section>
         )}
 
+        {pendingSensitiveAction && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 7000, background: '#0a0a0c' }}>
+            <AdminSecurityGate
+              forceChallenge
+              onVerified={verifyPendingSensitiveAction}
+              onBack={() => setPendingSensitiveAction(null)}
+            >
+              <span />
+            </AdminSecurityGate>
+          </div>
+        )}
+
         {selectedUser && (
           <div
             role="dialog"
@@ -992,7 +1142,47 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
                 <DetailStat label={t('admin.detail.profile')} value={t(`admin.detail.profileStatus.${getUserProfileStatus(selectedUser)}`)} />
                 <DetailStat label={t('admin.detail.status')} value={isRecentlyOnline(selectedUser.last_seen) ? t('admin.filters.online') : t('admin.filters.offline')} />
                 <DetailStat label={t('admin.detail.lastActivity')} value={selectedUser.last_seen ? new Date(selectedUser.last_seen).toLocaleString() : '-'} />
+                <DetailStat label={t('admin.detail.userId')} value={selectedUser.user_id} />
+                <DetailStat label={t('admin.detail.registered')} value={selectedUser.created_at ? new Date(selectedUser.created_at).toLocaleString() : '-'} />
+                <DetailStat label={t('admin.detail.lastSignIn')} value={selectedUser.last_sign_in_at ? new Date(selectedUser.last_sign_in_at).toLocaleString() : '-'} />
+                <DetailStat label={t('admin.detail.emailConfirmed')} value={selectedUser.email_confirmed_at ? t('common.yes', { defaultValue: 'Yes' }) : t('common.no', { defaultValue: 'No' })} />
+                <DetailStat label={t('admin.detail.providers')} value={(selectedUser.providers || []).join(', ') || '-'} />
+                <DetailStat label={t('admin.detail.mfa')} value={selectedUser.mfa_enabled ? t('admin.detail.mfaEnabled') : t('admin.detail.mfaDisabled')} />
               </div>
+
+              {!detailLoading && (
+                <div style={{ display: 'grid', gap: '1rem', marginBottom: '1rem' }}>
+                  <section style={{ padding: '1rem', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px' }}>
+                    <h3 style={{ color: '#fff', margin: '0 0 0.75rem' }}>{t('admin.detail.profileData')}</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.65rem' }}>
+                      <input value={profileDraft.username} onChange={(event) => setProfileDraft((current) => ({ ...current, username: event.target.value }))} placeholder={t('admin.detail.appUsername')} style={{ ...actionButtonStyle, cursor: 'text' }} />
+                      <input value={profileDraft.tarkovUsername} onChange={(event) => setProfileDraft((current) => ({ ...current, tarkovUsername: event.target.value }))} placeholder={t('admin.detail.tarkovUsername')} style={{ ...actionButtonStyle, cursor: 'text' }} />
+                      <select value={profileDraft.primaryGameMode} onChange={(event) => setProfileDraft((current) => ({ ...current, primaryGameMode: event.target.value }))} style={actionButtonStyle}>
+                        <option value="PVP">PVP</option>
+                        <option value="PVE">PVE</option>
+                        <option value="BOTH">PVP + PVE</option>
+                      </select>
+                    </div>
+                    <button type="button" onClick={handleSaveProfile} style={{ ...actionButtonStyle, color: 'var(--tk-green)', marginTop: '0.75rem' }}>
+                      {t('admin.actions.saveProfile')}
+                    </button>
+                  </section>
+
+                  <section style={{ padding: '1rem', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '8px' }}>
+                    <h3 style={{ color: '#fff', margin: '0 0 0.4rem' }}>{t('admin.detail.accountSecurity')}</h3>
+                    <p style={{ color: 'var(--tk-text-muted)', margin: '0 0 0.75rem' }}>{t('admin.detail.passwordNotice')}</p>
+                    <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+                      <input type="email" value={newEmail} onChange={(event) => setNewEmail(event.target.value)} placeholder={t('admin.detail.newEmail')} style={{ ...actionButtonStyle, cursor: 'text', minWidth: '260px' }} />
+                      <button type="button" disabled={!newEmail.trim()} onClick={handleRequestEmailChange} style={{ ...actionButtonStyle, color: '#ffcf66' }}>
+                        {t('admin.actions.requestEmailChange')}
+                      </button>
+                      <button type="button" onClick={handlePasswordRecovery} style={{ ...actionButtonStyle, color: 'var(--tk-green)' }}>
+                        {t('admin.actions.sendPasswordRecovery')}
+                      </button>
+                    </div>
+                  </section>
+                </div>
+              )}
 
               {detailLoading && <p style={{ color: 'var(--tk-green)' }}>{t('admin.detail.loadingProgress')}</p>}
 

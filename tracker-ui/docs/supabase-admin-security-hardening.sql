@@ -12,9 +12,39 @@ create table if not exists public.admin_audit_log (
   created_at timestamptz not null default now()
 );
 
+alter table public.admin_audit_log
+  add column if not exists action text,
+  add column if not exists target_user_id uuid,
+  add column if not exists metadata jsonb not null default '{}'::jsonb;
+
 alter table public.admin_audit_log enable row level security;
 revoke all on table public.admin_audit_log from public, anon, authenticated;
 revoke all on sequence public.admin_audit_log_id_seq from public, anon, authenticated;
+
+create table if not exists public.admin_email_change_requests (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  requested_email text not null,
+  requested_by uuid not null,
+  requested_at timestamptz not null default now(),
+  constraint admin_email_change_requests_email_check
+    check (requested_email ~* '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$')
+);
+
+alter table public.admin_email_change_requests enable row level security;
+revoke all on table public.admin_email_change_requests from public, anon;
+grant select, delete on table public.admin_email_change_requests to authenticated;
+
+drop policy if exists "Users can read their pending email change" on public.admin_email_change_requests;
+create policy "Users can read their pending email change"
+on public.admin_email_change_requests for select
+to authenticated
+using ((select auth.uid()) = user_id);
+
+drop policy if exists "Users can clear their pending email change" on public.admin_email_change_requests;
+create policy "Users can clear their pending email change"
+on public.admin_email_change_requests for delete
+to authenticated
+using ((select auth.uid()) = user_id);
 
 create or replace function public.assert_admin_aal2()
 returns void
@@ -45,6 +75,31 @@ $$;
 revoke execute on function public.assert_admin_aal2() from public, anon;
 grant execute on function public.assert_admin_aal2() to authenticated;
 
+create or replace function public.assert_admin_fresh_mfa(max_age_seconds integer default 300)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  perform public.assert_admin_aal2();
+
+  if not exists (
+    select 1
+    from jsonb_array_elements(coalesce((select auth.jwt()->'amr'), '[]'::jsonb)) as method
+    where method->>'method' = 'totp'
+      and coalesce(method->>'timestamp', '') ~ '^[0-9]+$'
+      and to_timestamp((method->>'timestamp')::bigint) >= now() - make_interval(secs => greatest(30, least(max_age_seconds, 600)))
+      and to_timestamp((method->>'timestamp')::bigint) <= now() + interval '30 seconds'
+  ) then
+    raise exception 'Fresh MFA verification required' using errcode = '42501';
+  end if;
+end;
+$$;
+
+revoke execute on function public.assert_admin_fresh_mfa(integer) from public, anon;
+grant execute on function public.assert_admin_fresh_mfa(integer) to authenticated;
+
 create or replace function public.list_admin_users_secure(
   search_text text default '',
   role_filter text default 'all',
@@ -70,7 +125,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  perform public.assert_admin_aal2();
+  perform public.assert_admin_fresh_mfa();
 
   return query
   with users_with_activity as (
@@ -140,11 +195,29 @@ as $$
 declare
   result jsonb;
 begin
-  perform public.assert_admin_aal2();
+  perform public.assert_admin_fresh_mfa();
 
-  select jsonb_build_object('email', users.email::text)
+  select jsonb_build_object(
+    'email', users.email::text,
+    'email_confirmed_at', users.email_confirmed_at,
+    'created_at', users.created_at,
+    'last_sign_in_at', users.last_sign_in_at,
+    'providers', coalesce(users.raw_app_meta_data->'providers', '[]'::jsonb),
+    'username', coalesce(profiles.username, users.raw_user_meta_data->>'username'),
+    'tarkov_username', coalesce(profiles.tarkov_username, users.raw_user_meta_data->>'tarkov_username'),
+    'primary_game_mode', coalesce(profiles.primary_game_mode, users.raw_user_meta_data->>'primary_game_mode', 'PVP'),
+    'role', coalesce(roles.role, 'user'),
+    'mfa_enabled', exists (
+      select 1
+      from auth.mfa_factors as factors
+      where factors.user_id = users.id
+        and factors.status = 'verified'
+    )
+  )
   into result
   from auth.users as users
+  left join public.user_profiles as profiles on profiles.user_id = users.id
+  left join public.user_roles as roles on roles.user_id = users.id
   where users.id = target_user_id;
 
   return coalesce(result, '{}'::jsonb);
@@ -171,12 +244,25 @@ declare
       '/rpc/list_admin_feedback',
       '/rpc/get_admin_app_stats'
     );
+  fresh_mfa_rpc boolean := request_path in (
+    '/rpc/list_admin_users',
+    '/rpc/list_admin_users_secure',
+    '/rpc/admin_get_user_identity_secure',
+    '/rpc/admin_get_user_progress',
+    '/rpc/admin_set_user_role',
+    '/rpc/admin_delete_user',
+    '/rpc/admin_send_user_message'
+  );
 begin
   if not protected_rpc then
     return;
   end if;
 
   perform public.assert_admin_aal2();
+
+  if fresh_mfa_rpc then
+    perform public.assert_admin_fresh_mfa();
+  end if;
 
   insert into public.admin_audit_log (admin_user_id, request_path, request_method)
   values ((select auth.uid()), request_path, request_method);

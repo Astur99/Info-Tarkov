@@ -35,7 +35,7 @@ const buttonStyle = {
 const getVerifiedTotpFactor = (factors) =>
   (factors?.totp || []).find((factor) => factor.status === 'verified');
 
-export default function AdminSecurityGate({ children, onBack }) {
+export default function AdminSecurityGate({ children, onBack, forceChallenge = false, onVerified }) {
   const { t } = useTranslation();
   const [status, setStatus] = useState('checking');
   const [factorId, setFactorId] = useState(null);
@@ -58,8 +58,9 @@ export default function AdminSecurityGate({ children, onBack }) {
       return;
     }
 
-    if (assurance?.currentLevel === 'aal2') {
+    if (assurance?.currentLevel === 'aal2' && !forceChallenge) {
       setStatus('verified');
+      onVerified?.();
       return;
     }
 
@@ -95,7 +96,7 @@ export default function AdminSecurityGate({ children, onBack }) {
     setQrCode(enrollment.totp?.qr_code || '');
     setSecret(enrollment.totp?.secret || '');
     setStatus('enroll');
-  }, []);
+  }, [forceChallenge, onVerified]);
 
   useEffect(() => {
     const initialCheck = window.setTimeout(initializeAccess, 0);
@@ -129,7 +130,15 @@ export default function AdminSecurityGate({ children, onBack }) {
     }
 
     await supabase.auth.refreshSession();
-    setStatus('verified');
+
+    try {
+      await onVerified?.();
+      setStatus('verified');
+    } catch (verificationError) {
+      setError(verificationError?.message || t('admin.messages.sensitiveActionError', {
+        defaultValue: 'The protected action could not be completed.'
+      }));
+    }
   };
 
   if (status === 'verified') return children;
@@ -175,7 +184,9 @@ export default function AdminSecurityGate({ children, onBack }) {
         {status === 'challenge' && (
           <p style={{ color: 'var(--tk-text-muted)', lineHeight: 1.55 }}>
             {t('admin.security.challengeDescription', {
-              defaultValue: 'Enter the six-digit code from your authenticator to open the admin panel.'
+              defaultValue: forceChallenge
+                ? 'Enter a new six-digit code to access this protected area or confirm the sensitive action.'
+                : 'Enter the six-digit code from your authenticator to open the admin panel.'
             })}
           </p>
         )}
@@ -207,7 +218,9 @@ export default function AdminSecurityGate({ children, onBack }) {
             <button type="submit" disabled={submitting || code.length !== 6} style={{ ...buttonStyle, opacity: submitting || code.length !== 6 ? 0.5 : 1 }}>
               {submitting
                 ? t('admin.security.verifying', { defaultValue: 'Verifying…' })
-                : t('admin.security.verify', { defaultValue: 'VERIFY AND OPEN' })}
+                : forceChallenge
+                  ? t('admin.security.verifyFresh', { defaultValue: 'VERIFY AGAIN' })
+                  : t('admin.security.verify', { defaultValue: 'VERIFY AND OPEN' })}
             </button>
           </form>
         )}
