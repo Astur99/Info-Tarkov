@@ -6,6 +6,7 @@ import { supabase } from './lib/supabaseClient';
 import { shouldReloadIdentityForAuthEvent } from './lib/authState';
 import { buildProfileFromSessionMetadata, hydrateGameModePreference } from './lib/userProfilePreferences';
 import LanguageSwitcher from './components/layout/LanguageSwitcher';
+import KordBreachWorkNotice from './components/layout/KordBreachWorkNotice';
 import OfficialNewsPanel from './components/news/OfficialNewsPanel';
 import { APP_VERSION } from './data/appVersion';
 
@@ -767,6 +768,8 @@ function App() {
                 : t('home.guestMode')}
             </p>
           </div>
+
+          <KordBreachWorkNotice />
         </header>
 
         <div
