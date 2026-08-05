@@ -39,7 +39,11 @@ const normalizeReport = (report, mapsById) => {
 };
 
 const fetchJsonReports = async (mode) => {
-  const apiMode = mode === 'pve' ? 'pve' : 'regular';
+  const apiMode = mode === 'pve'
+    ? 'pve'
+    : mode === 'seasonal_pvp'
+      ? 'pvp-season'
+      : 'regular';
   const sourceUrl = `${JSON_API_URL}/${apiMode}/maps`;
   const response = await fetch(sourceUrl, {
     headers: {
@@ -79,9 +83,12 @@ const fetchJsonReports = async (mode) => {
 };
 
 export const handler = async (event) => {
-  const mode = String(event.queryStringParameters?.mode || 'pvp').toLowerCase() === 'pve'
-    ? 'pve'
-    : 'pvp';
+  const requestedMode = String(event.queryStringParameters?.mode || 'pvp').toLowerCase();
+  const mode = ['seasonal_pvp', 'pvp-season', 'seasonal'].includes(requestedMode)
+    ? 'seasonal_pvp'
+    : requestedMode === 'pve'
+      ? 'pve'
+      : 'pvp';
   const now = Date.now();
   const cached = cache.get(mode);
 

@@ -100,6 +100,16 @@
         "title": "PMC PROFILE",
         "desc": "Lokale Wipe-Zusammenfassung mit Hauptziel, Überleben, Wirtschaftlichkeit und operativem Fortschritt."
       },
+      "achievements": {
+        "title": "ERFOLGSARCHIV",
+        "desc": "Alle Tarkov-, Event- und Arena-Erfolge mit Suche, Filtern und persönlicher Verfolgung.",
+        "badge": "TARKOV · EVENTS · ARENA"
+      },
+      "kordBreach": {
+        "title": "KORD BREACH",
+        "desc": "Einsatzzentrale für saisonale PMC-Modifikatoren, Dokumente, Erfolge und Battle Pass.",
+        "badge": "SAISON 01 · LOKALE VORSCHAU"
+      },
       "trouble": {
         "title": "TROUBLESHOOTING",
         "desc": "Bekannte App-Probleme, Debug-Hinweise und verfügbare Korrekturen."
@@ -125,7 +135,7 @@
   "keysModule": {
     "eyebrow": "Greifen Sie auf die Suchmaschine zu",
     "title": "Schlüsselsystem",
-    "subtitle": "Live-Suche nach Tarkov-Schlüsseln und Schlüsselkarten mit separaten PVP/PVE-Preisen und einer taktischen Ebene zur Hervorhebung der wichtigsten Schlüssel.",
+    "subtitle": "Live-Suche nach Tarkov-Schlüsseln und Schlüsselkarten mit separaten Preisen für PVP, PVE und Saison-PVP sowie einer taktischen Ebene zur Hervorhebung der wichtigsten Schlüssel.",
     "searchPlaceholder": "Durchsuchen Sie jeden Schlüssel, jede Schlüsselkarte, jede Quest, jede Karte oder jeden Tag ...",
     "fallbackIcon": "KEY",
     "empty": "Keine Schlüssel entsprechen diesen Filtern.",
@@ -1228,6 +1238,7 @@
       "globalPreference": "Globale Präferenz",
       "missionsPvp": "PVP Missionen",
       "missionsPve": "PVE Missionen",
+      "missionsSeasonalPvp": "Saisonale PVP-Missionen",
       "cloudCompleted": "Cloud abgeschlossen",
       "collector": "Collector",
       "collectorMarked": "PVP / PVE markiert",
@@ -1300,6 +1311,7 @@
     "modes": {
       "pvp": "PVP",
       "pve": "PVE",
+      "seasonal_pvp": "SAISON-PVP",
       "both": "Beide"
     },
     "checks": {
@@ -1917,7 +1929,7 @@
   },
   "hideoutModule": {
     "title": "VERSTECKTE LOGISTIK",
-    "subtitle": "Separate PVP/PVE-Kosten, örtliche Material-Checkliste, FIR-Warnungen und Stations-, Händler- und Qualifikationsanforderungen.",
+    "subtitle": "Separate Kosten für PVP, PVE und Saison-PVP, örtliche Material-Checkliste, FIR-Warnungen und Stations-, Händler- und Qualifikationsanforderungen.",
     "loading": "VERBINDUNG MIT HIDEOUT-MODUL HERGESTELLT, BITTE WARTEN...",
     "sync": {
       "cloud": "CLOUD-FORTSCHRITT AKTIV",
@@ -2197,7 +2209,7 @@
   },
   "fleaModule": {
     "title": "Flea Market Tracker",
-    "subtitle": "Dynamische Preisanalyse, Schwankungsdiagramme und Artikelrentabilität für PVP und PVE.",
+    "subtitle": "Dynamische Preisanalyse, Schwankungsdiagramme und Artikelrentabilität für PVP, PVE und Saison-PVP.",
     "noDate": "Kein Datum",
     "search": {
       "title": "Hybridsuche ({{mode}}) – Englisch/Spanisch ohne Akzente",

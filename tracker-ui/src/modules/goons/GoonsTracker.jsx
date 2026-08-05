@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import {
+  GAME_MODE_LABELS,
+  GAME_MODE_PVP,
+  GAME_MODE_PVE,
+  GAME_MODE_SEASONAL_PVP,
+  readDefaultPlayableMode
+} from '../../lib/gameModePreferences';
+
+const GOONS_MODES = [
+  { value: GAME_MODE_PVP.toLowerCase(), label: GAME_MODE_LABELS[GAME_MODE_PVP], color: 'var(--tk-red)', glow: 'rgba(176,21,21,0.4)' },
+  { value: GAME_MODE_PVE.toLowerCase(), label: GAME_MODE_LABELS[GAME_MODE_PVE], color: 'var(--tk-green)', glow: 'rgba(26,176,21,0.3)' },
+  { value: GAME_MODE_SEASONAL_PVP.toLowerCase(), label: GAME_MODE_LABELS[GAME_MODE_SEASONAL_PVP], color: '#d3aa55', glow: 'rgba(211,170,85,0.3)' }
+];
 
 const PERFILES_GOONS = [
   {
@@ -33,6 +45,7 @@ export default function GoonsTracker({ onViewChange }) {
   const [loading, setLoading] = useState(true);
   const [errorRadar, setErrorRadar] = useState(null);
   const [modoJuego, setModoJuego] = useState(() => readDefaultPlayableMode().toLowerCase());
+  const activeModeLabel = GOONS_MODES.find((mode) => mode.value === modoJuego)?.label || 'PVP';
 
   useEffect(() => {
     const controller = new AbortController();
@@ -61,7 +74,7 @@ export default function GoonsTracker({ onViewChange }) {
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
-          console.error(t('goonsModule.consoleCaptureError', { mode: modoJuego.toUpperCase() }), err);
+          console.error(t('goonsModule.consoleCaptureError', { mode: activeModeLabel }), err);
           setErrorRadar(err.message);
         }
       } finally {
@@ -83,7 +96,7 @@ export default function GoonsTracker({ onViewChange }) {
       window.clearTimeout(initialScan);
       clearInterval(intervaloRadar);
     };
-  }, [modoJuego, t]);
+  }, [activeModeLabel, modoJuego, t]);
 
   const comprobarPresencia = (mapId) => {
     return goonData?.activeMapId === mapId;
@@ -123,7 +136,7 @@ export default function GoonsTracker({ onViewChange }) {
           fontSize: '1.5rem',
           textTransform: 'uppercase'
         }}>
-          {t('goonsModule.loading', { mode: modoJuego.toUpperCase() })}
+          {t('goonsModule.loading', { mode: activeModeLabel })}
         </p>
       </div>
     );
@@ -171,48 +184,36 @@ export default function GoonsTracker({ onViewChange }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{
             display: 'flex',
+            flexWrap: 'wrap',
             backgroundColor: 'rgba(0,0,0,0.4)',
             border: '1px solid rgba(255,255,255,0.08)',
             padding: '4px',
             borderRadius: '8px'
           }}>
-            <button
-              onClick={() => setModoJuego('pvp')}
-              style={{
-                backgroundColor: modoJuego === 'pvp' ? 'var(--tk-red)' : 'transparent',
-                color: '#fff',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '700',
-                fontSize: '0.85rem',
-                letterSpacing: '1px',
-                transition: 'all 0.3s var(--tk-ease)',
-                boxShadow: modoJuego === 'pvp' ? '0 0 15px rgba(176,21,21,0.4)' : 'none'
-              }}
-            >
-              {t('goonsModule.channel', { mode: 'PVP' })}
-            </button>
-
-            <button
-              onClick={() => setModoJuego('pve')}
-              style={{
-                backgroundColor: modoJuego === 'pve' ? 'var(--tk-green)' : 'transparent',
-                color: '#fff',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontWeight: '700',
-                fontSize: '0.85rem',
-                letterSpacing: '1px',
-                transition: 'all 0.3s var(--tk-ease)',
-                boxShadow: modoJuego === 'pve' ? '0 0 15px rgba(26,176,21,0.3)' : 'none'
-              }}
-            >
-              {t('goonsModule.channel', { mode: 'PVE' })}
-            </button>
+            {GOONS_MODES.map((mode) => {
+              const active = modoJuego === mode.value;
+              return (
+                <button
+                  key={mode.value}
+                  onClick={() => setModoJuego(mode.value)}
+                  style={{
+                    backgroundColor: active ? mode.color : 'transparent',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: '700',
+                    fontSize: '0.85rem',
+                    letterSpacing: '1px',
+                    transition: 'all 0.3s var(--tk-ease)',
+                    boxShadow: active ? `0 0 15px ${mode.glow}` : 'none'
+                  }}
+                >
+                  {t('goonsModule.channel', { mode: mode.label })}
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -383,13 +384,15 @@ export default function GoonsTracker({ onViewChange }) {
                 ? 'var(--tk-red)'
                 : modoJuego === 'pvp'
                   ? 'var(--tk-red)'
-                  : 'var(--tk-green)',
+                  : modoJuego === 'pve'
+                    ? 'var(--tk-green)'
+                    : '#d3aa55',
               marginTop: '0.3rem',
               letterSpacing: '0.5px'
             }}>
               {errorRadar
                 ? t('goonsModule.telemetryError')
-                : t('goonsModule.telemetryOk', { mode: modoJuego.toUpperCase() })}
+                : t('goonsModule.telemetryOk', { mode: activeModeLabel })}
             </div>
 
             <div style={{

@@ -111,7 +111,7 @@ export const handler = async (event) => {
       if (!/^[A-Za-z0-9_-]{3,20}$/.test(username) || !/^[A-Za-z0-9_-]{3,20}$/.test(tarkovUsername)) {
         return response(400, { error: 'Invalid username format.' });
       }
-      if (!['PVP', 'PVE', 'BOTH'].includes(primaryGameMode)) {
+      if (!['PVP', 'PVE', 'SEASONAL_PVP', 'BOTH'].includes(primaryGameMode)) {
         return response(400, { error: 'Invalid game mode.' });
       }
 

@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import {
+  GAME_MODE_LABELS,
+  TARKOV_JSON_GAME_MODES,
+  readDefaultPlayableMode
+} from '../../lib/gameModePreferences';
 import { getIntlLocale } from '../../i18n/languages';
 import { fetchFleaHotDeals, fetchFleaPriceHistory, searchFleaItems } from './fleaApi';
 import FleaPriceChart from './FleaPriceChart';
 
-const MARKET_MODES = {
-  PVP: 'regular',
-  PVE: 'pve'
-};
+const MARKET_MODES = TARKOV_JSON_GAME_MODES;
 
 const ITEMS_INTERES = [
   "Graphics card", "LedX", "Defibrillator", "Water filter", "Expeditionary fuel tank",
@@ -32,6 +33,7 @@ export default function FleaTracker({ onViewChange }) {
   const [cargandoHistorico, setCargandoHistorico] = useState(false);
   const [errorHistorico, setErrorHistorico] = useState('');
   const gameMode = MARKET_MODES[modoMercado];
+  const marketModeLabel = GAME_MODE_LABELS[modoMercado];
 
   // 1. RADAR AUTOMÁTICO DE ANOMALÍAS (HOT DEALS VIVO)
   useEffect(() => {
@@ -243,7 +245,7 @@ export default function FleaTracker({ onViewChange }) {
                     transition: 'all 0.2s ease'
                   }}
                 >
-                  {mode}
+                  {GAME_MODE_LABELS[mode]}
                 </button>
               );
             })}
@@ -260,7 +262,7 @@ export default function FleaTracker({ onViewChange }) {
       {/* INPUT DEL BUSCADOR GENERAL */}
       <section style={{ marginBottom: '2.5rem' }}>
         <h3 style={{ fontSize: '0.9rem', color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          {t('fleaModule.search.title', { mode: modoMercado })}
+          {t('fleaModule.search.title', { mode: marketModeLabel })}
         </h3>
         <input 
           type="text" 
@@ -297,7 +299,7 @@ export default function FleaTracker({ onViewChange }) {
             fontFamily: "'Rajdhani', sans-serif",
             textTransform: 'uppercase'
           }}>
-            {t('fleaModule.search.empty', { mode: modoMercado })}
+            {t('fleaModule.search.empty', { mode: marketModeLabel })}
           </p>
         )}
       </section>
@@ -359,14 +361,14 @@ export default function FleaTracker({ onViewChange }) {
         {itemSeleccionado && (
           <section style={{ backgroundColor: 'var(--tk-glass)', backdropFilter: 'blur(20px)', border: '1px solid var(--tk-glass-border)', borderRadius: '12px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', height: 'fit-content' }}>
             <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1rem' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px' }}>{t('fleaModule.detail.specificData', { mode: modoMercado })}</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--tk-green)', letterSpacing: '1px' }}>{t('fleaModule.detail.specificData', { mode: marketModeLabel })}</span>
               <h3 style={{ fontSize: '1.6rem', fontWeight: '700', color: '#fff', margin: '0.2rem 0 0 0' }}>{itemSeleccionado.name}</h3>
             </div>
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '0.8rem' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--tk-text-muted)', fontWeight: '700', letterSpacing: '0.5px' }}>
-                  {t('fleaModule.detail.historicalTrend', { mode: modoMercado })}
+                  {t('fleaModule.detail.historicalTrend', { mode: marketModeLabel })}
                 </span>
                 <select
                   value={rangoHistorico}
@@ -438,7 +440,7 @@ export default function FleaTracker({ onViewChange }) {
       {/* CAMBIO DE ORDEN: RADAR DE ANOMALÍAS EN LA MITAD INFERIOR */}
       <section style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '3rem' }}>
         <h3 style={{ fontSize: '0.9rem', color: 'var(--tk-text-muted)', fontWeight: '800', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          {t('fleaModule.hotDeals.title', { mode: modoMercado })}
+          {t('fleaModule.hotDeals.title', { mode: marketModeLabel })}
         </h3>
         
         {cargandoHotDeals ? (

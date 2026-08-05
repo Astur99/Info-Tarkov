@@ -1160,6 +1160,7 @@ function AdminPanelContent({ onViewChange, onNotificationsChanged }) {
                       <select value={profileDraft.primaryGameMode} onChange={(event) => setProfileDraft((current) => ({ ...current, primaryGameMode: event.target.value }))} style={actionButtonStyle}>
                         <option value="PVP">PVP</option>
                         <option value="PVE">PVE</option>
+                        <option value="SEASONAL_PVP">SEASONAL PVP</option>
                         <option value="BOTH">PVP + PVE</option>
                       </select>
                     </div>

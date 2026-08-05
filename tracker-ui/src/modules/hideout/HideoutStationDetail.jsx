@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { GAME_MODE_LABELS } from '../../lib/gameModePreferences';
 import {
   formatRublos,
   getRequirementCount,
@@ -26,6 +27,7 @@ export default function HideoutStationDetail({
   stationCraftCount
 }) {
   const { t } = useTranslation();
+  const modeLabel = GAME_MODE_LABELS[modoMercado] || modoMercado;
 
   if (!estacionSeleccionada) return null;
 
@@ -64,7 +66,7 @@ export default function HideoutStationDetail({
               letterSpacing: '1.5px'
             }}
           >
-            {t('hideoutModule.detail.targetLevel', { mode: modoMercado })}
+            {t('hideoutModule.detail.targetLevel', { mode: modeLabel })}
           </span>
 
           <h3
@@ -157,7 +159,7 @@ export default function HideoutStationDetail({
         }}
       >
         <StatBlock
-          label={t('hideoutModule.detail.budget', { mode: modoMercado })}
+          label={t('hideoutModule.detail.budget', { mode: modeLabel })}
           value={itemStats.total > 0 ? formatRublos(itemStats.total) : t('hideoutModule.detail.noCost')}
           highlight={itemStats.total > 0}
         />
@@ -323,7 +325,7 @@ export default function HideoutStationDetail({
                     >
                       <span>
                         {t('hideoutModule.detail.priceEach', {
-                          mode: modoMercado,
+                          mode: modeLabel,
                           price: precioUnidad > 0 ? formatRublos(precioUnidad) : '-'
                         })}
                       </span>

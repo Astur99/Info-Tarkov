@@ -1,0 +1,244 @@
+.achievements-page {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  padding: 3rem clamp(1rem, 4vw, 5rem) 6rem;
+  color: #f3f3ef;
+  background:
+    radial-gradient(circle at 78% 5%, rgba(112, 145, 99, 0.11), transparent 32rem),
+    radial-gradient(circle at 16% 38%, rgba(187, 157, 91, 0.08), transparent 32rem),
+    #080a09;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.achievements-page__grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.2;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.024) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(to bottom, #000, transparent 84%);
+}
+
+.achievements-header,
+.achievements-tabs,
+.achievements-content {
+  width: min(1480px, 100%);
+  margin-inline: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.achievements-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-bottom: 2.4rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.achievements-header > div > span {
+  color: #9eb68f;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 2.2px;
+}
+
+.achievements-header h1 {
+  margin: 0.45rem 0;
+  font-size: clamp(2.8rem, 6vw, 5.8rem);
+  line-height: 0.92;
+}
+
+.achievements-header p {
+  max-width: 760px;
+  margin: 0;
+  color: #898e88;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.achievements-header__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.8rem;
+}
+
+.achievements-header__actions button,
+.achievements-empty button {
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  color: #eee;
+  background: rgba(255,255,255,0.035);
+  font: 800 0.72rem 'Rajdhani', sans-serif;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+}
+
+.achievements-source {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #9fb492;
+  font-size: 0.67rem;
+  font-weight: 900;
+  letter-spacing: 1.3px;
+}
+
+.achievements-source i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #a8c295;
+  box-shadow: 0 0 12px rgba(168,194,149,0.75);
+}
+
+.achievements-source.is-cached { color: #d8af5a; }
+.achievements-source.is-cached i { background: #d8af5a; }
+
+.achievements-tabs {
+  display: flex;
+  gap: 0.55rem;
+  margin-top: 1.4rem;
+  overflow-x: auto;
+}
+
+.achievements-tabs button {
+  min-width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 6px;
+  color: #777c76;
+  background: rgba(255,255,255,0.02);
+  font: 900 0.7rem 'Rajdhani', sans-serif;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+}
+
+.achievements-tabs button span { color: #aab2a4; font-size: 0.64rem; }
+.achievements-tabs button.is-active { color: #10140f; border-color: #a9c198; background: #a9c198; }
+.achievements-tabs button.is-active span { color: #34402e; }
+
+.achievements-content { padding-top: 2rem; }
+
+.achievements-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 220px)) minmax(180px, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.achievements-stats article,
+.achievement-card {
+  border: 1px solid rgba(255,255,255,0.075);
+  background: linear-gradient(145deg, rgba(18,20,18,0.94), rgba(9,10,9,0.97));
+}
+
+.achievements-stats article { min-height: 98px; padding: 1rem; border-radius: 7px; }
+.achievements-stats article span { display: block; color: #6e746c; font-size: 0.63rem; font-weight: 900; letter-spacing: 1.1px; }
+.achievements-stats article strong { display: block; margin-top: 0.5rem; color: #c7d5bc; font-size: 1.8rem; }
+
+.achievements-progress { height: 5px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,0.06); }
+.achievements-progress i { display: block; height: 100%; background: #9bb88b; box-shadow: 0 0 16px rgba(155,184,139,0.5); transition: width 0.3s ease; }
+
+.achievements-filters {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 220px 180px;
+  gap: 0.7rem;
+  margin: 1rem 0 1.3rem;
+}
+
+.achievements-filters input,
+.achievements-filters select {
+  min-width: 0;
+  height: 48px;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 6px;
+  color: #e8e8e4;
+  background: #101210;
+  font: 800 0.75rem 'Rajdhani', sans-serif;
+  letter-spacing: 0.6px;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.achievement-card {
+  min-height: 236px;
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 7px;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.achievement-card:hover { transform: translateY(-2px); border-color: rgba(160,190,143,0.35); }
+.achievement-card.rarity-rare { border-color: rgba(118,138,177,0.2); }
+.achievement-card.rarity-legendary { border-color: rgba(190,156,82,0.22); }
+.achievement-card.rarity-seasonal,
+.achievement-card.rarity-seasonal::before,
+.achievement-card.rarity-seasonal::after,
+.achievement-card.rarity-seasonal span {
+  animation: none !important;
+}
+.achievement-card.is-completed { border-color: rgba(135,184,111,0.58); background: linear-gradient(145deg, rgba(35,56,30,0.64), rgba(9,11,9,0.97)); }
+
+.achievement-card__icon {
+  width: 86px;
+  height: 86px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+}
+
+.achievement-card__icon img { width: 100%; height: 100%; object-fit: contain; }
+.achievement-card__content { min-width: 0; display: flex; flex-direction: column; }
+.achievement-card__badges { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.achievement-card__badges span { padding: 0.18rem 0.38rem; border-radius: 3px; color: #9eb491; background: rgba(126,158,109,0.1); font-size: 0.55rem; font-weight: 900; letter-spacing: 0.8px; }
+.rarity-rare .achievement-card__badges span:first-child { color: #9dadce; background: rgba(108,130,175,0.12); }
+.rarity-legendary .achievement-card__badges span:first-child { color: #d0ad63; background: rgba(190,156,82,0.12); }
+.achievement-card h2 { margin: 0.55rem 0 0.45rem; font-size: 1.08rem; }
+.achievement-card p { flex: 1; margin: 0; color: #848a83; font-size: 0.82rem; line-height: 1.42; }
+.achievement-card small { display: block; margin-top: 0.55rem; color: #858d81; font-size: 0.68rem; line-height: 1.35; }
+.achievement-card footer { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; margin-top: 0.8rem; padding-top: 0.7rem; border-top: 1px solid rgba(255,255,255,0.06); }
+.achievement-card footer > span { color: #7f9076; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.8px; }
+.achievement-card footer button { padding: 0.42rem 0.58rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #9ea69a; background: rgba(255,255,255,0.03); font: 900 0.6rem 'Rajdhani', sans-serif; letter-spacing: 0.7px; cursor: pointer; }
+.achievement-card footer button.is-completed { color: #c7d9bb; border-color: rgba(145,183,125,0.45); background: rgba(80,112,64,0.18); }
+
+.achievements-empty { padding: 3rem 1rem; border: 1px dashed rgba(255,255,255,0.12); color: #858b84; text-align: center; }
+.achievements-empty p { margin-bottom: 1rem; }
+.achievements-attribution { display: inline-flex; margin-top: 1.8rem; color: #747b71; font-size: 0.68rem; font-weight: 800; text-decoration: none; }
+.achievements-attribution:hover { color: #acbca1; }
+
+@media (max-width: 1100px) {
+  .achievements-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .achievements-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .achievements-progress { grid-column: 1 / -1; }
+}
+
+@media (max-width: 720px) {
+  .achievements-page { padding: 1.4rem 0.85rem 4rem; }
+  .achievements-header { flex-direction: column; }
+  .achievements-header__actions { align-items: flex-start; }
+  .achievements-filters,
+  .achievements-grid { grid-template-columns: 1fr; }
+  .achievements-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .achievement-card { grid-template-columns: 70px minmax(0, 1fr); }
+  .achievement-card__icon { width: 70px; height: 70px; }
+}

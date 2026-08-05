@@ -8,6 +8,7 @@ const MODE_STORAGE_KEY = 'info_tarkov_pmc_profile_mode';
 const HISTORY_STORAGE_KEY = 'info_tarkov_pmc_profile_history';
 
 const ACHIEVEMENT_FILTERS = ['all', 'legendary', 'rare', 'common'];
+const readDefaultProfileMode = () => readDefaultPlayableMode() === 'PVE' ? 'PVE' : 'PVP';
 
 const ACHIEVEMENT_SORTS = ['date', 'rarity', 'name'];
 
@@ -269,7 +270,10 @@ const getProfileUsername = (userProfile, session) =>
 export default function PmcProfileModule({ onViewChange, session, userProfile }) {
   const { i18n, t } = useTranslation();
   const locale = getIntlLocale(i18n.resolvedLanguage || i18n.language);
-  const [activeMode, setActiveMode] = useState(() => localStorage.getItem(MODE_STORAGE_KEY) || readDefaultPlayableMode());
+  const [activeMode, setActiveMode] = useState(() => {
+    const savedMode = localStorage.getItem(MODE_STORAGE_KEY);
+    return savedMode === 'PVE' || savedMode === 'PVP' ? savedMode : readDefaultProfileMode();
+  });
   const [remoteProfile, setRemoteProfile] = useState(null);
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState('');

@@ -22,6 +22,7 @@ import troubleshootingImage from './assets/backgrounds/troubleshooting.png';
 import prestigeImage from './assets/backgrounds/prestigios.png';
 import keysImage from './assets/backgrounds/llaves.png';
 import pmcProfileImage from './assets/backgrounds/pmc.png';
+import seasonImage from './assets/backgrounds/season.png';
 
 const Auth = lazy(() => import('./components/auth/Auth'));
 const AccountSettings = lazy(() => import('./components/auth/AccountSettings'));
@@ -43,6 +44,8 @@ const ArmorSimulator = lazy(() => import('./modules/armor/ArmorSimulator'));
 const PrestigeModule = lazy(() => import('./modules/prestige/PrestigeModule'));
 const KeysModule = lazy(() => import('./modules/keys/KeysModule'));
 const PmcProfileModule = lazy(() => import('./modules/pmc/PmcProfileModule'));
+const AchievementsModule = lazy(() => import('./modules/achievements/AchievementsModule'));
+const KordBreachModule = lazy(() => import('./modules/seasonal/KordBreachModule'));
 const TroubleshootingView = lazy(() => import('./modules/troubleshooting/TroubleshootingView'));
 const ServerStatus = lazy(() => import('./modules/server-status/ServerStatus'));
 
@@ -466,6 +469,21 @@ function App() {
       imagePosition: { right: '-10px', bottom: '-100px', width: '180px', maxWidth: '58%' }
     },
     {
+      id: 'achievements',
+      title: t('home.modules.achievements.title'),
+      desc: t('home.modules.achievements.desc'),
+      badge: t('home.modules.achievements.badge')
+    },
+    {
+      id: 'kord-breach',
+      title: t('home.modules.kordBreach.title'),
+      desc: t('home.modules.kordBreach.desc'),
+      badge: t('home.modules.kordBreach.badge'),
+      accent: 'kord',
+      bgImage: seasonImage,
+      imagePosition: { right: '-5px', bottom: '3px', width: '180px', maxWidth: '58%' }
+    },
+    {
       id: 'trouble',
       title: t('home.modules.trouble.title'),
       desc: t('home.modules.trouble.desc'),
@@ -561,6 +579,8 @@ function App() {
   if (currentView === 'keys') return <LazyView><KeysModule onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'quest-optimizer') return <LazyView><KappaTree onViewChange={navigateToView} session={session} userRole={userRole} initialTool="optimizer" /></LazyView>;
   if (currentView === 'pmc-profile') return <LazyView><PmcProfileModule onViewChange={navigateToView} session={session} userProfile={userProfile} /></LazyView>;
+  if (currentView === 'achievements') return <LazyView><AchievementsModule onViewChange={navigateToView} /></LazyView>;
+  if (currentView === 'kord-breach') return <LazyView><KordBreachModule onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'trouble') return <LazyView><TroubleshootingView onViewChange={navigateToView} /></LazyView>;
   if (currentView === 'server-status') return <LazyView><ServerStatus onViewChange={navigateToView} /></LazyView>;
 
@@ -967,6 +987,7 @@ function ModuleCard({ mod, index, onViewChange }) {
   const [isHovered, setIsHovered] = useState(false);
   const delayClass = `delay-${(index % 7) + 1}`;
   const hasBgImage = Boolean(mod.bgImage);
+  const isKord = mod.accent === 'kord';
 
   return (
     <div
@@ -978,17 +999,22 @@ function ModuleCard({ mod, index, onViewChange }) {
         backgroundColor: 'var(--tk-glass)',
         backdropFilter: 'blur(25px)',
         WebkitBackdropFilter: 'blur(25px)',
-        border: `1px solid ${isHovered ? 'rgba(26, 176, 21, 0.4)' : 'var(--tk-glass-border)'}`,
+        border: `1px solid ${isKord
+          ? (isHovered ? 'rgba(214, 171, 77, 0.62)' : 'rgba(214, 171, 77, 0.24)')
+          : (isHovered ? 'rgba(26, 176, 21, 0.4)' : 'var(--tk-glass-border)')}`,
         borderRadius: '8px',
         padding: '2.5rem 2.25rem',
         cursor: 'pointer',
         position: 'relative',
         overflow: 'hidden',
         minHeight: '170px',
+        backgroundImage: isKord
+          ? 'radial-gradient(circle at 90% 20%, rgba(214,171,77,0.13), transparent 46%)'
+          : 'none',
         transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
         transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
         boxShadow: isHovered
-          ? '0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(26,176,21,0.05)'
+          ? `0 20px 40px rgba(0,0,0,0.5), 0 0 30px ${isKord ? 'rgba(214,171,77,0.08)' : 'rgba(26,176,21,0.05)'}`
           : '0 4px 12px rgba(0,0,0,0.3)'
       }}
     >
@@ -1047,6 +1073,11 @@ function ModuleCard({ mod, index, onViewChange }) {
       )}
 
       <div style={{ position: 'relative', zIndex: 3, maxWidth: hasBgImage ? '68%' : '100%' }}>
+        {mod.badge && (
+          <span style={{ display: 'block', marginBottom: '0.55rem', color: '#bda465', fontSize: '0.62rem', fontWeight: 900, letterSpacing: '1.5px' }}>
+            {mod.badge}
+          </span>
+        )}
         <h3
           style={{
             color: isHovered ? '#fff' : '#bbb',

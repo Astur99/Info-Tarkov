@@ -12,6 +12,23 @@ import { buildKeyMapIndex, isKeyItem } from '../src/modules/keys/keysApi.js';
 import { getGlobalHideoutNeeds, getRequirementKey } from '../src/modules/hideout/hideoutUtils.js';
 import { parseReaderTimeline, parseTimelineHtml } from '../netlify/functions/tarkov-news.js';
 import { buildHealthReport } from '../netlify/functions/lib/app-health.js';
+import {
+  GAME_MODE_SEASONAL_PVP,
+  getTarkovJsonGameMode,
+  normalizeGameModePreference
+} from '../src/lib/gameModePreferences.js';
+import {
+  BATTLE_PASS_DOCUMENTS,
+  BATTLE_PASS_PAGES,
+  BATTLE_PASS_REWARDS,
+  calculateModifierBalance,
+  getBattlePassProgressRequirements,
+  getBattlePassRewardTags,
+  GLOBAL_MODIFIERS,
+  PERSONAL_MODIFIERS,
+  searchBattlePassRewards
+} from '../src/modules/seasonal/seasonalData.js';
+import wikiAchievements from '../src/modules/achievements/wikiAchievements.generated.json' with { type: 'json' };
 
 const response = (body, { ok = true, status = 200 } = {}) => ({
   ok,
@@ -66,7 +83,7 @@ test('official news reader fallback parses current posts, media and compact metr
   assert.equal(posts[0].createdAt, '2026-08-02T17:27:41.793Z');
 });
 
-test('health monitor validates critical PVP and PVE JSON sources', async () => {
+test('health monitor validates critical PVP, PVE and Seasonal PVP JSON sources', async () => {
   const makeResponse = (url) => {
     if (url.includes('/api/tarkov-news')) {
       return { ok: true, status: 200, json: async () => ({ posts: [{ id: 'post-1' }] }) };
@@ -95,6 +112,157 @@ test('health monitor validates critical PVP and PVE JSON sources', async () => {
   assert.equal(report.overall, 'operational');
   assert.equal(report.modules.length, 7);
   assert.equal(report.sources.find((source) => source.id === 'items-pvp').details.keys, 256);
+  assert.equal(report.sources.find((source) => source.id === 'items-seasonal-pvp').details.keys, 256);
+});
+
+test('Seasonal PVP is normalized as an independent playable JSON mode', () => {
+  assert.equal(normalizeGameModePreference('seasonal_pvp'), GAME_MODE_SEASONAL_PVP);
+  assert.equal(getTarkovJsonGameMode(GAME_MODE_SEASONAL_PVP), 'pvp-season');
+  assert.equal(getTarkovJsonGameMode('pvp-season'), 'pvp-season');
+  assert.equal(getTarkovJsonGameMode('PVE'), 'pve');
+  assert.equal(getTarkovJsonGameMode('PVP'), 'regular');
+});
+
+test('KORD BREACH modifier builds require a non-negative point balance', () => {
+  assert.equal(calculateModifierBalance(['street-tax']), -1);
+  assert.equal(calculateModifierBalance(['street-tax', 'third-leg']), 0);
+  assert.equal(calculateModifierBalance(['kappa-protocol', 'no-flea-market']), -2);
+});
+
+test('KORD BREACH exposes the complete current perk catalog with local icons', () => {
+  assert.equal(GLOBAL_MODIFIERS.length, 6);
+  assert.equal(PERSONAL_MODIFIERS.filter((modifier) => modifier.type === 'positive').length, 19);
+  assert.equal(PERSONAL_MODIFIERS.filter((modifier) => modifier.type === 'negative').length, 14);
+  assert.equal(
+    [...GLOBAL_MODIFIERS, ...PERSONAL_MODIFIERS].every((modifier) => modifier.icon.endsWith('.webp')),
+    true
+  );
+});
+
+test('KORD BREACH tracks every Battle Pass document type without duplicate ids', () => {
+  assert.equal(BATTLE_PASS_DOCUMENTS.length, 9);
+  assert.equal(new Set(BATTLE_PASS_DOCUMENTS.map((document) => document.id)).size, 9);
+  assert.equal(BATTLE_PASS_DOCUMENTS.filter((document) => document.wildcard).length, 1);
+});
+
+test('KORD BREACH Battle Pass keeps all 12 pages and validated document costs consistent', () => {
+  const documentIds = new Set(BATTLE_PASS_DOCUMENTS.map((document) => document.id));
+  const verifiedRewards = BATTLE_PASS_REWARDS.filter((reward) => reward.verifiedRequirements);
+
+  assert.equal(BATTLE_PASS_PAGES.length, 12);
+  assert.equal(BATTLE_PASS_REWARDS.length, 53);
+  assert.equal(new Set(BATTLE_PASS_REWARDS.map((reward) => reward.id)).size, 53);
+  assert.equal(BATTLE_PASS_REWARDS.every((reward) => Boolean(reward.imageLink)), true);
+  assert.equal(BATTLE_PASS_REWARDS.filter((reward) => !reward.nameVerified).length, 0);
+  assert.deepEqual(
+    BATTLE_PASS_REWARDS.find((reward) => reward.id === 'overview-bp-005'),
+    {
+      id: 'overview-bp-005',
+      page: 1,
+      position: 5,
+      name: 'Black Wood Ceiling',
+      nameEs: 'Techo de madera negra',
+      type: 'hideout customization',
+    requirements: [
+      { documentId: '6a31824878450ec91c0ea1ae', count: 2 },
+      { documentId: '6a3181f178450ec91c0ea1aa', count: 2 },
+      { documentId: '6a3182dc6cd8de21cf0a3a7d', count: 1 }
+    ],
+      imageLink: '/images/kord-breach/battle-pass/season-one-background.webp',
+      nameVerified: true,
+    verifiedRequirements: true
+    }
+  );
+  const correctedRewards = Object.fromEntries(
+    ['007', '009', '013', '025', '026', '027', '047'].map((number) => {
+      const id = `overview-bp-${number}`;
+      return [id, BATTLE_PASS_REWARDS.find((reward) => reward.id === id)];
+    })
+  );
+  assert.equal(correctedRewards['overview-bp-007'].name, 'Red Hawaii');
+  assert.deepEqual(
+    {
+      name: correctedRewards['overview-bp-009'].name,
+      type: correctedRewards['overview-bp-009'].type,
+      imageLink: correctedRewards['overview-bp-009'].imageLink
+    },
+    {
+      name: 'Scorpion Target',
+      type: 'hideout customization',
+      imageLink: '/images/kord-breach/battle-pass/scorpion-target.webp'
+    }
+  );
+  assert.deepEqual(
+    {
+      name: correctedRewards['overview-bp-013'].name,
+      type: correctedRewards['overview-bp-013'].type,
+      nameVerified: correctedRewards['overview-bp-013'].nameVerified
+    },
+    { name: 'Black Herringbone', type: 'hideout customization', nameVerified: true }
+  );
+  assert.deepEqual(correctedRewards['overview-bp-025'].requirements.map(({ count }) => count), [3, 2, 2]);
+  assert.deepEqual(correctedRewards['overview-bp-026'].requirements.map(({ count }) => count), [4, 4, 3, 2]);
+  assert.deepEqual(correctedRewards['overview-bp-027'].requirements.map(({ count }) => count), [4, 3, 3, 2]);
+  assert.equal(
+    correctedRewards['overview-bp-047'].imageLink,
+    '/images/kord-breach/battle-pass/dogtag-bitten.webp'
+  );
+  assert.equal(verifiedRewards.length, 53);
+  assert.equal(
+    verifiedRewards.every((reward) => reward.requirements.every(
+      ({ documentId, count }) => documentIds.has(documentId) && Number.isInteger(count) && count > 0
+    )),
+    true
+  );
+});
+
+test('KORD BREACH Battle Pass search resolves names, common aliases and category tags', () => {
+  const exactResult = searchBattlePassRewards({ query: 'Scorpion Target' });
+  const clothingResults = searchBattlePassRewards({ query: 'ropa' });
+  const dogtagResults = searchBattlePassRewards({ tag: 'dogtags' });
+  const tarcoinResults = searchBattlePassRewards({ query: 'tarcoins' });
+
+  assert.equal(exactResult[0].id, 'overview-bp-009');
+  assert.equal(exactResult[0].page, 2);
+  assert.equal(clothingResults.length > 0, true);
+  assert.equal(
+    clothingResults.every((reward) => getBattlePassRewardTags(reward).includes('clothing')),
+    true
+  );
+  assert.equal(dogtagResults.every((reward) => reward.type === 'dogtag'), true);
+  assert.equal(tarcoinResults.every((reward) => reward.type === 'currency'), true);
+});
+
+test('KORD BREACH cumulative wishlist totals share the route to its furthest reward', () => {
+  const earlierPlan = getBattlePassProgressRequirements(['overview-bp-025']);
+  const laterPlan = getBattlePassProgressRequirements(['overview-bp-047']);
+  const combinedPlan = getBattlePassProgressRequirements([
+    'overview-bp-025',
+    'overview-bp-047'
+  ]);
+
+  assert.equal(earlierPlan.furthestReward.id, 'overview-bp-025');
+  assert.equal(combinedPlan.furthestReward.id, 'overview-bp-047');
+  assert.deepEqual(combinedPlan.totals, laterPlan.totals);
+  assert.equal(combinedPlan.knownTotal, laterPlan.knownTotal);
+  assert.equal(laterPlan.knownTotal > earlierPlan.knownTotal, true);
+  assert.equal(combinedPlan.unverifiedRewards.length, 0);
+});
+
+test('achievement archive separates Tarkov, events, Seasonal and Arena catalogs', () => {
+  const counts = wikiAchievements.achievements.reduce((result, achievement) => ({
+    ...result,
+    [achievement.category]: (result[achievement.category] || 0) + 1
+  }), {});
+
+  assert.deepEqual(counts, {
+    normal: 88,
+    seasonal: 11,
+    event: 23,
+    arena: 79,
+    'arena-event': 4,
+    retired: 1
+  });
 });
 
 test('PMC static catalog extracts only requested metadata and items', () => {
@@ -224,6 +392,30 @@ test('Goons tracker reads the latest official JSON map report', async () => {
     assert.equal(payload.source, 'json');
     assert.equal(payload.activeMapId, 'woods');
     assert.equal(payload.reports.length, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('Goons tracker routes Seasonal PVP to the pvp-season dataset', async () => {
+  const originalFetch = globalThis.fetch;
+  let requestedUrl = '';
+  globalThis.fetch = async (url) => {
+    requestedUrl = String(url);
+    return response({
+      data: {
+        maps: { woods: { id: 'woods-id', normalizedName: 'woods' } },
+        goonReports: [{ map: 'woods-id', timestamp: '2000' }]
+      }
+    });
+  };
+
+  try {
+    const result = await goonsHandler({ queryStringParameters: { mode: 'seasonal_pvp' } });
+    const payload = JSON.parse(result.body);
+    assert.equal(result.statusCode, 200);
+    assert.equal(payload.mode, 'seasonal_pvp');
+    assert.match(requestedUrl, /\/pvp-season\/maps$/);
   } finally {
     globalThis.fetch = originalFetch;
   }

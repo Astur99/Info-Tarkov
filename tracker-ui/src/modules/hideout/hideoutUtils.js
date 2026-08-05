@@ -1,7 +1,6 @@
-export const MARKET_MODES = {
-  PVP: 'regular',
-  PVE: 'pve'
-};
+import { TARKOV_JSON_GAME_MODES } from '../../lib/gameModePreferences.js';
+
+export const MARKET_MODES = TARKOV_JSON_GAME_MODES;
 
 export const STORAGE_PREFIX = 'info_tarkov_hideout_items';
 export const LEVEL_STORAGE_PREFIX = 'info_tarkov_hideout_levels';

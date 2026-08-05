@@ -100,6 +100,16 @@
         "title": "PERFIL DE PMC",
         "desc": "Resumen local de tu wipe, objetivo principal, supervivencia, economía y progreso operativo."
       },
+      "achievements": {
+        "title": "ARCHIVO DE LOGROS",
+        "desc": "Todos los logros de Tarkov, eventos y Arena con búsqueda, filtros y seguimiento personal.",
+        "badge": "TARKOV · EVENTOS · ARENA"
+      },
+      "kordBreach": {
+        "title": "KORD BREACH",
+        "desc": "Centro de operaciones del PMC estacional: modificadores, documentos, logros y Battle Pass.",
+        "badge": "SEASON 01 · PREVIEW LOCAL"
+      },
       "trouble": {
         "title": "TROUBLESHOOTING",
         "desc": "Reporte de anomalías conocidas en la app, registros de depuración y soluciones aplicables."
@@ -125,7 +135,7 @@
   "keysModule": {
     "eyebrow": "Motor de búsqueda de acceso",
     "title": "Sistema de llaves",
-    "subtitle": "Buscador vivo de llaves y keycards de Tarkov con precios separados para PVP/PVE y capa táctica para destacar las más importantes.",
+    "subtitle": "Buscador vivo de llaves y keycards de Tarkov con precios separados para PVP, PVE y PVP estacional, además de una capa táctica para destacar las más importantes.",
     "searchPlaceholder": "Buscar cualquier llave, keycard, quest, mapa o tag...",
     "fallbackIcon": "KEY",
     "empty": "No hay llaves que coincidan con esos filtros.",
@@ -1244,11 +1254,12 @@
       "globalPreference": "Preferencia global",
       "missionsPvp": "Misiones PVP",
       "missionsPve": "Misiones PVE",
+      "missionsSeasonalPvp": "Misiones PVP estacional",
       "cloudCompleted": "Completadas cloud",
       "collector": "Collector",
-      "collectorMarked": "PVP / PVE marcados",
+      "collectorMarked": "PVP / PVE / Estacional marcados",
       "hideout": "Hideout",
-      "hideoutMaterials": "Materiales PVP / PVE"
+      "hideoutMaterials": "Materiales PVP / PVE / Estacional"
     },
     "quickActions": {
       "title": "Accesos rápidos",
@@ -1324,6 +1335,7 @@
     "modes": {
       "pvp": "PVP",
       "pve": "PVE",
+      "seasonal_pvp": "PVP ESTACIONAL",
       "both": "Ambos"
     },
     "checks": {
@@ -1941,7 +1953,7 @@
   },
   "hideoutModule": {
     "title": "HIDEOUT LOGISTICS",
-    "subtitle": "Costes separados para PVP/PVE, checklist local de materiales, avisos FIR y requisitos de estaciones, traders y skills.",
+    "subtitle": "Costes separados para PVP, PVE y PVP estacional, checklist local de materiales, avisos FIR y requisitos de estaciones, traders y skills.",
     "loading": "CONECTANDO CON MÓDULO DEL REFUGIO, ESPERE...",
     "sync": {
       "cloud": "PROGRESO CLOUD ACTIVO",
@@ -2221,7 +2233,7 @@
   },
   "fleaModule": {
     "title": "Flea Market Tracker",
-    "subtitle": "Análisis dinámico de precios, gráficos de fluctuación y rentabilidad por item en PVP y PVE.",
+    "subtitle": "Análisis dinámico de precios, gráficos de fluctuación y rentabilidad por item en PVP, PVE y PVP estacional.",
     "noDate": "Sin fecha",
     "search": {
       "title": "Buscador híbrido ({{mode}}) - inglés / español sin tildes",

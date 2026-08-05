@@ -25,6 +25,15 @@ const checks = [
       ).length >= 250
   },
   {
+    name: 'Catálogo Seasonal PVP / Flea / Llaves / Balística',
+    url: 'https://json.tarkov.dev/pvp-season/items',
+    validate: (payload) =>
+      Object.keys(payload?.data?.items || {}).length > 0 &&
+      Object.values(payload?.data?.items || {}).filter((item) =>
+        item?.types?.includes('keys')
+      ).length >= 250
+  },
+  {
     name: 'Hideout',
     url: 'https://json.tarkov.dev/regular/hideout',
     validate: (payload) => Object.values(payload?.data || {}).some(
@@ -34,6 +43,13 @@ const checks = [
   {
     name: 'Hideout PVE',
     url: 'https://json.tarkov.dev/pve/hideout',
+    validate: (payload) => Object.values(payload?.data || {}).some(
+      (station) => station?.id && Array.isArray(station?.levels)
+    )
+  },
+  {
+    name: 'Hideout Seasonal PVP',
+    url: 'https://json.tarkov.dev/pvp-season/hideout',
     validate: (payload) => Object.values(payload?.data || {}).some(
       (station) => station?.id && Array.isArray(station?.levels)
     )
@@ -56,6 +72,11 @@ const checks = [
   {
     name: 'Misiones / Kappa',
     url: 'https://json.tarkov.dev/regular/tasks',
+    validate: (payload) => Object.keys(payload?.data?.tasks || {}).length > 0
+  },
+  {
+    name: 'Misiones / Kappa Seasonal PVP',
+    url: 'https://json.tarkov.dev/pvp-season/tasks',
     validate: (payload) => Object.keys(payload?.data?.tasks || {}).length > 0
   },
   {

@@ -1,3 +1,5 @@
+import { getTarkovJsonGameMode } from '../../lib/gameModePreferences.js';
+
 const TARKOV_JSON_URL = 'https://json.tarkov.dev';
 
 const MOB_ALIASES = {
@@ -68,7 +70,7 @@ export const mergeBossSpawnData = (localBosses, payload) => {
 };
 
 export const fetchBossSpawnData = async ({ gameMode = 'regular', fetchImpl = fetch } = {}) => {
-  const mode = String(gameMode).toLowerCase() === 'pve' ? 'pve' : 'regular';
+  const mode = getTarkovJsonGameMode(gameMode);
   const response = await fetchImpl(`${TARKOV_JSON_URL}/${mode}/maps`, {
     headers: { Accept: 'application/json' }
   });

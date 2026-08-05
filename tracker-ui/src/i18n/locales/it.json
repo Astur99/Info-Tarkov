@@ -100,6 +100,16 @@
         "title": "PMC PROFILE",
         "desc": "Riepilogo della pulizia locale con obiettivo principale, sopravvivenza, economia e progresso operativo."
       },
+      "achievements": {
+        "title": "ARCHIVIO OBIETTIVI",
+        "desc": "Tutti gli obiettivi di Tarkov, degli eventi e di Arena con ricerca, filtri e tracciamento personale.",
+        "badge": "TARKOV · EVENTI · ARENA"
+      },
+      "kordBreach": {
+        "title": "KORD BREACH",
+        "desc": "Centro operativo PMC stagionale per modificatori, documenti, obiettivi e Battle Pass.",
+        "badge": "STAGIONE 01 · ANTEPRIMA LOCALE"
+      },
       "trouble": {
         "title": "TROUBLESHOOTING",
         "desc": "Problemi noti dell'app, note di debug e soluzioni disponibili."
@@ -125,7 +135,7 @@
   "keysModule": {
     "eyebrow": "Accedi al motore di ricerca",
     "title": "Sistema chiave",
-    "subtitle": "Ricerca in tempo reale di chiavi e keycard Tarkov con prezzi PVP/PVE separati e un livello tattico per evidenziare le chiavi più importanti.",
+    "subtitle": "Ricerca in tempo reale di chiavi e keycard Tarkov con prezzi separati per PVP, PVE e PVP stagionale, oltre a un livello tattico per evidenziare le chiavi più importanti.",
     "searchPlaceholder": "Cerca qualsiasi chiave, tessera magnetica, missione, mappa o tag...",
     "fallbackIcon": "KEY",
     "empty": "Nessuna chiave corrisponde a questi filtri.",
@@ -1222,6 +1232,7 @@
       "globalPreference": "Preferenza globale",
       "missionsPvp": "PVP missioni",
       "missionsPve": "PVE missioni",
+      "missionsSeasonalPvp": "Missioni PVP stagionali",
       "cloudCompleted": "Nuvola completata",
       "collector": "Collector",
       "collectorMarked": "PVP / PVE segnato",
@@ -1294,6 +1305,7 @@
     "modes": {
       "pvp": "PVP",
       "pve": "PVE",
+      "seasonal_pvp": "PVP STAGIONALE",
       "both": "Entrambi"
     },
     "checks": {
@@ -1911,7 +1923,7 @@
   },
   "hideoutModule": {
     "title": "LOGISTICA DEL NASCONDIGLIO",
-    "subtitle": "Costi PVP/PVE separati, lista di controllo dei materiali locali, avvisi FIR e requisiti di stazione, commerciante e abilità.",
+    "subtitle": "Costi separati per PVP, PVE e PVP stagionale, lista di controllo dei materiali locali, avvisi FIR e requisiti di stazione, commerciante e abilità.",
     "loading": "CONNESSIONE AL MODULO HIDEOUT, ATTENDERE...",
     "sync": {
       "cloud": "PROGRESSO CLOUD ATTIVO",
@@ -2191,7 +2203,7 @@
   },
   "fleaModule": {
     "title": "Flea Market Localizzatore",
-    "subtitle": "Analisi dinamica dei prezzi, grafici di fluttuazione e redditività degli articoli per PVP e PVE.",
+    "subtitle": "Analisi dinamica dei prezzi, grafici di fluttuazione e redditività degli articoli per PVP, PVE e PVP stagionale.",
     "noDate": "Nessuna data",
     "search": {
       "title": "Ricerca ibrida ({{mode}}) - inglese/spagnolo senza accenti",

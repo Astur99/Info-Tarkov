@@ -22,15 +22,12 @@ where tarkov_username is null
 
 do $$
 begin
-  if not exists (
-    select 1
-    from pg_constraint
-    where conname = 'user_profiles_primary_game_mode_check'
-  ) then
-    alter table public.user_profiles
-    add constraint user_profiles_primary_game_mode_check
-    check (primary_game_mode in ('PVP', 'PVE', 'BOTH'));
-  end if;
+  alter table public.user_profiles
+  drop constraint if exists user_profiles_primary_game_mode_check;
+
+  alter table public.user_profiles
+  add constraint user_profiles_primary_game_mode_check
+  check (primary_game_mode in ('PVP', 'PVE', 'SEASONAL_PVP', 'BOTH'));
 end $$;
 
 create or replace function public.is_username_available(candidate_username text)
@@ -66,7 +63,7 @@ begin
 
   metadata_mode := upper(coalesce(nullif(new.raw_user_meta_data->>'primary_game_mode', ''), 'PVP'));
 
-  if metadata_mode not in ('PVP', 'PVE', 'BOTH') then
+  if metadata_mode not in ('PVP', 'PVE', 'SEASONAL_PVP', 'BOTH') then
     metadata_mode := 'PVP';
   end if;
 

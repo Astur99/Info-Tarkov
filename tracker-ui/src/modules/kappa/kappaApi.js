@@ -1,5 +1,6 @@
 import { collectorItemNames } from './kappaData';
 import { normalizeCollectorName } from './kappaUtils';
+import { getTarkovJsonGameMode } from '../../lib/gameModePreferences.js';
 import { loadJsonItemCatalog } from '../../services/tarkovDataApi';
 
 const TARKOV_JSON_URL = 'https://json.tarkov.dev';
@@ -122,8 +123,7 @@ const normalizeJsonTasks = (taskMap, translations) => {
   }));
 };
 
-const normalizeTaskGameMode = (gameMode) =>
-  String(gameMode || '').toLowerCase() === 'pve' ? 'pve' : 'regular';
+const normalizeTaskGameMode = (gameMode) => getTarkovJsonGameMode(gameMode);
 
 const fetchJsonTasks = async (locale, gameMode) => {
   const language = normalizeTaskLocale(locale);

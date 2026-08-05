@@ -4,12 +4,16 @@ const DEFAULT_TIMEOUT_MS = 12000;
 const SOURCE_DEFINITIONS = [
   { id: 'items-pvp', label: 'Items PVP', path: 'regular/items', type: 'items', minimum: 2000 },
   { id: 'items-pve', label: 'Items PVE', path: 'pve/items', type: 'items', minimum: 2000 },
+  { id: 'items-seasonal-pvp', label: 'Items Seasonal PVP', path: 'pvp-season/items', type: 'items', minimum: 2000 },
   { id: 'tasks-pvp', label: 'Missions PVP', path: 'regular/tasks', type: 'tasks', minimum: 300 },
   { id: 'tasks-pve', label: 'Missions PVE', path: 'pve/tasks', type: 'tasks', minimum: 300 },
+  { id: 'tasks-seasonal-pvp', label: 'Missions Seasonal PVP', path: 'pvp-season/tasks', type: 'tasks', minimum: 300 },
   { id: 'hideout-pvp', label: 'Hideout PVP', path: 'regular/hideout', type: 'hideout', minimum: 20 },
   { id: 'hideout-pve', label: 'Hideout PVE', path: 'pve/hideout', type: 'hideout', minimum: 20 },
+  { id: 'hideout-seasonal-pvp', label: 'Hideout Seasonal PVP', path: 'pvp-season/hideout', type: 'hideout', minimum: 20 },
   { id: 'maps-pvp', label: 'Maps PVP', path: 'regular/maps', type: 'maps', minimum: 10 },
   { id: 'maps-pve', label: 'Maps PVE', path: 'pve/maps', type: 'maps', minimum: 10 },
+  { id: 'maps-seasonal-pvp', label: 'Maps Seasonal PVP', path: 'pvp-season/maps', type: 'maps', minimum: 10 },
   {
     id: 'official-news',
     label: 'Official News',
@@ -20,12 +24,12 @@ const SOURCE_DEFINITIONS = [
 ];
 
 const MODULE_DEFINITIONS = [
-  { id: 'flea', label: 'Flea Market', dependencies: ['items-pvp', 'items-pve'] },
-  { id: 'keys', label: 'Key System', dependencies: ['items-pvp', 'items-pve', 'maps-pvp', 'maps-pve'] },
-  { id: 'hideout', label: 'Hideout', dependencies: ['hideout-pvp', 'hideout-pve', 'items-pvp', 'items-pve'] },
-  { id: 'missions', label: 'Missions / Kappa', dependencies: ['tasks-pvp', 'tasks-pve'] },
-  { id: 'ballistics', label: 'Ballistics', dependencies: ['items-pvp', 'items-pve'] },
-  { id: 'goons', label: 'Goons Tracker', dependencies: ['maps-pvp', 'maps-pve'] },
+  { id: 'flea', label: 'Flea Market', dependencies: ['items-pvp', 'items-pve', 'items-seasonal-pvp'] },
+  { id: 'keys', label: 'Key System', dependencies: ['items-pvp', 'items-pve', 'items-seasonal-pvp', 'maps-pvp', 'maps-pve', 'maps-seasonal-pvp'] },
+  { id: 'hideout', label: 'Hideout', dependencies: ['hideout-pvp', 'hideout-pve', 'hideout-seasonal-pvp', 'items-pvp', 'items-pve', 'items-seasonal-pvp'] },
+  { id: 'missions', label: 'Missions / Kappa', dependencies: ['tasks-pvp', 'tasks-pve', 'tasks-seasonal-pvp'] },
+  { id: 'ballistics', label: 'Ballistics', dependencies: ['items-pvp', 'items-pve', 'items-seasonal-pvp'] },
+  { id: 'goons', label: 'Goons Tracker', dependencies: ['maps-pvp', 'maps-pve', 'maps-seasonal-pvp'] },
   { id: 'news', label: 'Official News', dependencies: ['official-news'] }
 ];
 

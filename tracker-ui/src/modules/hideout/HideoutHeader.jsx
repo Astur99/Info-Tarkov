@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { GAME_MODE_LABELS } from '../../lib/gameModePreferences';
 import { MARKET_MODES } from './hideoutUtils';
 
 export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, setModoMercado, onViewChange }) {
@@ -96,7 +97,7 @@ export default function HideoutHeader({ errorFuente, syncStatus, modoMercado, se
                   transition: 'all 0.2s ease'
                 }}
               >
-                {mode}
+                {GAME_MODE_LABELS[mode]}
               </button>
             );
           })}

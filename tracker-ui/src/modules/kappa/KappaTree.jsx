@@ -1,5 +1,9 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  GAME_MODE_LABELS,
+  PLAYABLE_GAME_MODES
+} from '../../lib/gameModePreferences';
 import { fetchCollectorItemAssets, fetchKappaTasks } from './kappaApi';
 import { TRADERS, TRADER_STYLES, collectorItemsList } from './kappaData';
 import {
@@ -42,8 +46,9 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
   const [collectorItems, setCollectorItems] = useState(() => readCollectorProgress(readActiveMode()));
   const [collectorSearch, setCollectorSearch] = useState('');
   const [collectorItemAssets, setCollectorItemAssets] = useState({});
+  const modeLabel = GAME_MODE_LABELS[modoJuego] || modoJuego;
 
-  const [completadas, setCompletadas] = useState(() => readProgress('PVP'));
+  const [completadas, setCompletadas] = useState(() => readProgress(readActiveMode()));
 
   const matrixRef = useRef(null);
   const pinchRef = useRef(null);
@@ -282,7 +287,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
 
   const resetearProgreso = () => {
     const confirmar = window.confirm(
-      t('kappa.confirm.resetProgress', { mode: modoJuego })
+      t('kappa.confirm.resetProgress', { mode: modeLabel })
     );
 
     if (!confirmar) return;
@@ -303,7 +308,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
 
   const resetCollectorItems = () => {
     const confirmar = window.confirm(
-      t('kappa.confirm.resetCollector', { mode: modoJuego })
+      t('kappa.confirm.resetCollector', { mode: modeLabel })
     );
 
     if (!confirmar) return;
@@ -890,7 +895,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
       >
         {collectorOpen && (
           <CollectorPanel
-            mode={modoJuego}
+            mode={modeLabel}
             items={collectorItemsFiltrados}
             allItems={collectorItemsList}
             completed={collectorItems}
@@ -912,7 +917,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
             className="kappa-mobile-stats-toggle"
             onClick={() => setStatsPanelOpen((open) => !open)}
           >
-            <span>{modoJuego} / {t('kappa.panel.statsTitle')}</span>
+            <span>{modeLabel} / {t('kappa.panel.statsTitle')}</span>
             <span aria-hidden="true">{statsPanelOpen ? 'v' : '^'}</span>
           </button>
 
@@ -924,19 +929,15 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
                 marginBottom: '0.9rem'
               }}
             >
-              <button
-                onClick={() => cambiarModoJuego('PVP')}
-                style={modeButtonStyle(modoJuego === 'PVP')}
-              >
-                PvP
-              </button>
-
-              <button
-                onClick={() => cambiarModoJuego('PVE')}
-                style={modeButtonStyle(modoJuego === 'PVE')}
-              >
-                PvE
-              </button>
+              {PLAYABLE_GAME_MODES.map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => cambiarModoJuego(mode)}
+                  style={modeButtonStyle(modoJuego === mode)}
+                >
+                  {GAME_MODE_LABELS[mode]}
+                </button>
+              ))}
             </div>
 
             <div
@@ -953,7 +954,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
                 textAlign: 'center'
               }}
             >
-              {t('kappa.panel.activeProfile')}: <span style={{ color: 'var(--tk-green)' }}>{modoJuego}</span>
+              {t('kappa.panel.activeProfile')}: <span style={{ color: 'var(--tk-green)' }}>{modeLabel}</span>
             </div>
 
           <div
@@ -1044,7 +1045,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
 
           <div style={statRowStyle}>
             <span style={statLabelStyle}>{t('kappa.stats.profile')}:</span>
-            <strong style={statValueStyle}>{modoJuego}</strong>
+            <strong style={statValueStyle}>{modeLabel}</strong>
           </div>
 
           <div style={statRowStyle}>
@@ -1097,7 +1098,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
               padding: '0.75rem'
             }}
           >
-            {t('kappa.panel.resetProgress', { mode: modoJuego })}
+            {t('kappa.panel.resetProgress', { mode: modeLabel })}
           </button>
           </div>
         </aside>
@@ -1256,7 +1257,7 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
                       }}
                     >
                       {esCompletada
-                        ? t('kappa.node.completedStatus', { mode: modoJuego })
+                        ? t('kappa.node.completedStatus', { mode: modeLabel })
                         : esDesbloqueada
                         ? t('kappa.node.availableStatus')
                         : t('kappa.node.lockedStatus')}
@@ -1354,12 +1355,12 @@ export default function KappaTree({ onViewChange, session, initialTool = 'tree' 
                     }}
                     title={
                       esCompletada
-                        ? t('kappa.node.uncompleteTitle', { mode: modoJuego })
-                        : t('kappa.node.completeTitle', { mode: modoJuego })
+                        ? t('kappa.node.uncompleteTitle', { mode: modeLabel })
+                        : t('kappa.node.completeTitle', { mode: modeLabel })
                     }
                   >
                     {esCompletada
-                      ? t('kappa.node.completedButton', { mode: modoJuego })
+                      ? t('kappa.node.completedButton', { mode: modeLabel })
                       : t('kappa.node.completeButton')}
                   </button>
 

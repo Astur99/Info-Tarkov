@@ -100,6 +100,16 @@
         "title": "PMC PROFILE",
         "desc": "Local wipe summary with main goal, survival, economy and operational progress."
       },
+      "achievements": {
+        "title": "ACHIEVEMENT ARCHIVE",
+        "desc": "Every Tarkov, event and Arena achievement with search, filters and personal tracking.",
+        "badge": "TARKOV · EVENTS · ARENA"
+      },
+      "kordBreach": {
+        "title": "KORD BREACH",
+        "desc": "Seasonal PMC operations center for modifiers, documents, achievements and Battle Pass.",
+        "badge": "SEASON 01 · LOCAL PREVIEW"
+      },
       "trouble": {
         "title": "TROUBLESHOOTING",
         "desc": "Known app issues, debug notes and available fixes."
@@ -125,7 +135,7 @@
   "keysModule": {
     "eyebrow": "Access search engine",
     "title": "Key system",
-    "subtitle": "Live Tarkov key and keycard search with separate PVP/PVE prices and a tactical layer for highlighting the most important keys.",
+    "subtitle": "Live Tarkov key and keycard search with separate PVP, PVE and Seasonal PVP prices, plus a tactical layer for highlighting the most important keys.",
     "searchPlaceholder": "Search any key, keycard, quest, map or tag...",
     "fallbackIcon": "KEY",
     "empty": "No keys match those filters.",
@@ -1244,11 +1254,12 @@
       "globalPreference": "Global preference",
       "missionsPvp": "PVP missions",
       "missionsPve": "PVE missions",
+      "missionsSeasonalPvp": "Seasonal PVP missions",
       "cloudCompleted": "Cloud completed",
       "collector": "Collector",
-      "collectorMarked": "PVP / PVE marked",
+      "collectorMarked": "PVP / PVE / Seasonal marked",
       "hideout": "Hideout",
-      "hideoutMaterials": "PVP / PVE materials"
+      "hideoutMaterials": "PVP / PVE / Seasonal materials"
     },
     "quickActions": {
       "title": "Quick access",
@@ -1324,6 +1335,7 @@
     "modes": {
       "pvp": "PVP",
       "pve": "PVE",
+      "seasonal_pvp": "SEASONAL PVP",
       "both": "Both"
     },
     "checks": {
@@ -1941,7 +1953,7 @@
   },
   "hideoutModule": {
     "title": "HIDEOUT LOGISTICS",
-    "subtitle": "Separate PVP/PVE costs, local material checklist, FIR warnings and station, trader and skill requirements.",
+    "subtitle": "Separate PVP, PVE and Seasonal PVP costs, local material checklist, FIR warnings and station, trader and skill requirements.",
     "loading": "CONNECTING TO HIDEOUT MODULE, PLEASE WAIT...",
     "sync": {
       "cloud": "CLOUD PROGRESS ACTIVE",
@@ -2221,7 +2233,7 @@
   },
   "fleaModule": {
     "title": "Flea Market Tracker",
-    "subtitle": "Dynamic price analysis, fluctuation charts and item profitability for PVP and PVE.",
+    "subtitle": "Dynamic price analysis, fluctuation charts and item profitability for PVP, PVE and Seasonal PVP.",
     "noDate": "No date",
     "search": {
       "title": "Hybrid search ({{mode}}) - English / Spanish without accents",

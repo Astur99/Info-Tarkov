@@ -98,10 +98,13 @@ export default function AccountSettings({
   const [accountSummary, setAccountSummary] = useState({
     questPvp: 0,
     questPve: 0,
+    questSeasonalPvp: 0,
     collectorPvp: 0,
     collectorPve: 0,
+    collectorSeasonalPvp: 0,
     hideoutPvp: 0,
     hideoutPve: 0,
+    hideoutSeasonalPvp: 0,
     loading: true
   });
 
@@ -114,8 +117,9 @@ export default function AccountSettings({
     { label: t('account.summary.mainMode'), value: getModeLabel(primaryGameMode, t), meta: t('account.summary.globalPreference') },
     { label: t('account.summary.missionsPvp'), value: accountSummary.questPvp, meta: t('account.summary.cloudCompleted') },
     { label: t('account.summary.missionsPve'), value: accountSummary.questPve, meta: t('account.summary.cloudCompleted') },
-    { label: t('account.summary.collector'), value: `${accountSummary.collectorPvp}/${accountSummary.collectorPve}`, meta: t('account.summary.collectorMarked') },
-    { label: t('account.summary.hideout'), value: `${accountSummary.hideoutPvp}/${accountSummary.hideoutPve}`, meta: t('account.summary.hideoutMaterials') }
+    { label: t('account.summary.missionsSeasonalPvp'), value: accountSummary.questSeasonalPvp, meta: t('account.summary.cloudCompleted') },
+    { label: t('account.summary.collector'), value: `${accountSummary.collectorPvp}/${accountSummary.collectorPve}/${accountSummary.collectorSeasonalPvp}`, meta: t('account.summary.collectorMarked') },
+    { label: t('account.summary.hideout'), value: `${accountSummary.hideoutPvp}/${accountSummary.hideoutPve}/${accountSummary.hideoutSeasonalPvp}`, meta: t('account.summary.hideoutMaterials') }
   ], [accountSummary, primaryGameMode, t]);
 
   useEffect(() => {
@@ -131,8 +135,10 @@ export default function AccountSettings({
         questProgress,
         collectorPvp,
         collectorPve,
+        collectorSeasonalPvp,
         hideoutPvp,
-        hideoutPve
+        hideoutPve,
+        hideoutSeasonalPvp
       ] = await Promise.all([
         supabase
           .from('quest_progress')
@@ -140,8 +146,10 @@ export default function AccountSettings({
           .eq('user_id', session.user.id),
         Promise.resolve({ data: readLocalObject('info_tarkov_collector_items_pvp') }),
         Promise.resolve({ data: readLocalObject('info_tarkov_collector_items_pve') }),
+        Promise.resolve({ data: readLocalObject('info_tarkov_collector_items_seasonal_pvp') }),
         loadModuleState({ userId: session.user.id, moduleKey: 'hideout_progress', mode: 'PVP' }),
-        loadModuleState({ userId: session.user.id, moduleKey: 'hideout_progress', mode: 'PVE' })
+        loadModuleState({ userId: session.user.id, moduleKey: 'hideout_progress', mode: 'PVE' }),
+        loadModuleState({ userId: session.user.id, moduleKey: 'hideout_progress', mode: 'SEASONAL_PVP' })
       ]);
 
       if (cancelled) return;
@@ -152,10 +160,13 @@ export default function AccountSettings({
       setAccountSummary({
         questPvp: getQuestCount('PVP'),
         questPve: getQuestCount('PVE'),
+        questSeasonalPvp: getQuestCount('SEASONAL_PVP'),
         collectorPvp: countObjectValues(collectorPvp.data),
         collectorPve: countObjectValues(collectorPve.data),
+        collectorSeasonalPvp: countObjectValues(collectorSeasonalPvp.data),
         hideoutPvp: countObjectValues(hideoutPvp.data?.items || hideoutPvp.data),
         hideoutPve: countObjectValues(hideoutPve.data?.items || hideoutPve.data),
+        hideoutSeasonalPvp: countObjectValues(hideoutSeasonalPvp.data?.items || hideoutSeasonalPvp.data),
         loading: false
       });
     };

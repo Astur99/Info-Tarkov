@@ -1,3 +1,5 @@
+import { getTarkovJsonGameMode } from '../lib/gameModePreferences.js';
+
 const TARKOV_JSON_URL = 'https://json.tarkov.dev';
 
 const SUPPORTED_LOCALES = new Set([
@@ -25,8 +27,7 @@ const jsonDataRequests = new Map();
 const lastGoodJsonData = new Map();
 const JSON_CACHE_TTL_MS = 5 * 60 * 1000;
 
-export const normalizeTarkovGameMode = (gameMode) =>
-  String(gameMode || '').toLowerCase() === 'pve' ? 'pve' : 'regular';
+export const normalizeTarkovGameMode = (gameMode) => getTarkovJsonGameMode(gameMode);
 
 export const normalizeTarkovLocale = (locale) => {
   const language = String(locale || 'en').toLowerCase().split('-')[0];

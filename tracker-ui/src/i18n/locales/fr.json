@@ -100,6 +100,16 @@
         "title": "PMC PROFILE",
         "desc": "Résumé de l'effacement local avec l'objectif principal, la survie, l'économie et les progrès opérationnels."
       },
+      "achievements": {
+        "title": "ARCHIVES DES SUCCÈS",
+        "desc": "Tous les succès de Tarkov, des événements et d'Arena avec recherche, filtres et suivi personnel.",
+        "badge": "TARKOV · ÉVÉNEMENTS · ARENA"
+      },
+      "kordBreach": {
+        "title": "KORD BREACH",
+        "desc": "Centre d'opérations du PMC saisonnier : modificateurs, documents, succès et Battle Pass.",
+        "badge": "SAISON 01 · APERÇU LOCAL"
+      },
       "trouble": {
         "title": "TROUBLESHOOTING",
         "desc": "Problèmes d'application connus, notes de débogage et correctifs disponibles."
@@ -125,7 +135,7 @@
   "keysModule": {
     "eyebrow": "Accéder au moteur de recherche",
     "title": "Système de clé",
-    "subtitle": "Recherche de clés et de cartes-clés Tarkov en direct avec des prix PVP/PVE séparés et une couche tactique pour mettre en évidence les clés les plus importantes.",
+    "subtitle": "Recherche de clés et de cartes-clés Tarkov en direct avec des prix séparés pour le PVP, le PVE et le PVP saisonnier, ainsi qu'une couche tactique pour mettre en évidence les clés les plus importantes.",
     "searchPlaceholder": "Recherchez n'importe quelle clé, carte-clé, quête, carte ou tag...",
     "fallbackIcon": "KEY",
     "empty": "Aucune clé ne correspond à ces filtres.",
@@ -1222,6 +1232,7 @@
       "globalPreference": "Préférence globale",
       "missionsPvp": "PVP missions",
       "missionsPve": "PVE missions",
+      "missionsSeasonalPvp": "Missions PVP saisonnières",
       "cloudCompleted": "Nuage terminé",
       "collector": "Collector",
       "collectorMarked": "PVP / PVE marqué",
@@ -1294,6 +1305,7 @@
     "modes": {
       "pvp": "PVP",
       "pve": "PVE",
+      "seasonal_pvp": "PVP SAISONNIER",
       "both": "Les deux"
     },
     "checks": {
@@ -1911,7 +1923,7 @@
   },
   "hideoutModule": {
     "title": "LOGISTIQUE DE LA CACHE",
-    "subtitle": "Coûts PVP/PVE séparés, liste de contrôle du matériel local, FIR avertissements et exigences en matière de station, de commerçant et de compétences.",
+    "subtitle": "Coûts séparés pour le PVP, le PVE et le PVP saisonnier, liste de contrôle du matériel local, avertissements FIR et exigences en matière de station, de commerçant et de compétences.",
     "loading": "CONNEXION AU MODULE HIDEOUT, VEUILLEZ ATTENDRE...",
     "sync": {
       "cloud": "PROGRÈS CLOUD ACTIF",
@@ -2191,7 +2203,7 @@
   },
   "fleaModule": {
     "title": "Flea Market Traqueur",
-    "subtitle": "Analyse dynamique des prix, graphiques de fluctuation et rentabilité des articles pour PVP et PVE.",
+    "subtitle": "Analyse dynamique des prix, graphiques de fluctuation et rentabilité des articles pour le PVP, le PVE et le PVP saisonnier.",
     "noDate": "Pas de date",
     "search": {
       "title": "Recherche hybride ({{mode}}) - Anglais / Espagnol sans accents",

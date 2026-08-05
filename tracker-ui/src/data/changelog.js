@@ -18,6 +18,43 @@ export const VERSION_POLICY = {
 
 export const changelogEntries = [
   {
+    version: '1.5.0',
+    date: '2026-08-04',
+    codename: 'Kord Foundation',
+    type: 'feature',
+    title: {
+      es: 'Base independiente para PVP estacional',
+      en: 'Independent Seasonal PVP foundation'
+    },
+    summary: {
+      es: 'Info Tarkov incorpora PVP estacional como una tercera instancia separada, conectada al modo pvp-season oficial de Tarkov.dev.',
+      en: 'Info Tarkov introduces Seasonal PVP as a separate third instance connected to Tarkov.dev official pvp-season mode.'
+    },
+    changes: [
+      {
+        type: 'added',
+        text: {
+          es: 'Misiones, Quest Optimizer, Flea Market, Llaves, Hideout y Goons ya pueden cargar sus catálogos estacionales sin mezclar datos con PVP o PVE.',
+          en: 'Missions, Quest Optimizer, Flea Market, Keys, Hideout and Goons can now load their seasonal datasets without mixing them with PVP or PVE.'
+        }
+      },
+      {
+        type: 'added',
+        text: {
+          es: 'El progreso local y cloud, Collector, materiales del Hideout y la preferencia principal cuentan con un espacio propio para SEASONAL PVP.',
+          en: 'Local and cloud progress, Collector, Hideout materials and the main preference now have dedicated SEASONAL PVP storage.'
+        }
+      },
+      {
+        type: 'changed',
+        text: {
+          es: 'El monitor de fiabilidad comprueba también items, misiones, Hideout y mapas de pvp-season.',
+          en: 'The reliability monitor now also checks pvp-season items, missions, Hideout and maps.'
+        }
+      }
+    ]
+  },
+  {
     version: '1.4.0',
     date: '2026-08-03',
     codename: 'Quartermaster',

@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
-import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import {
+  GAME_MODE_LABELS,
+  PLAYABLE_GAME_MODES,
+  readDefaultPlayableMode
+} from '../../lib/gameModePreferences';
 import { fetchKappaTaskDataset } from './kappaApi';
 import { getAvailableTaskIds } from './kappaUtils';
 
@@ -309,8 +313,9 @@ export default function QuestOptimizerModule({ onViewChange, session }) {
             onChange={(event) => setMode(event.target.value)}
             style={selectStyle}
           >
-            <option value="PVP">PVP</option>
-            <option value="PVE">PVE</option>
+            {PLAYABLE_GAME_MODES.map((gameMode) => (
+              <option key={gameMode} value={gameMode}>{GAME_MODE_LABELS[gameMode]}</option>
+            ))}
           </select>
 
           <select

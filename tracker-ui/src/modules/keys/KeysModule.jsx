@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { readDefaultPlayableMode } from '../../lib/gameModePreferences';
+import {
+  GAME_MODE_LABELS,
+  TARKOV_JSON_GAME_MODES,
+  readDefaultPlayableMode
+} from '../../lib/gameModePreferences';
 import { getIntlLocale } from '../../i18n/languages';
 import { loadJsonKeys } from './keysApi';
 
-const MARKET_MODES = {
-  PVP: 'regular',
-  PVE: 'pve'
-};
+const MARKET_MODES = TARKOV_JSON_GAME_MODES;
 
 const UNCONFIRMED_MAP = 'Sin mapa confirmado';
 const maps = ['Todos', 'Customs', 'Shoreline', 'Reserve', 'Streets', 'Interchange', 'Woods', 'Lighthouse', 'Factory', 'Labs', 'Ground Zero', 'Terminal', 'Labyrinth', UNCONFIRMED_MAP];
@@ -326,6 +327,7 @@ export default function KeysModule({ onViewChange }) {
   const [mappedKeyCount, setMappedKeyCount] = useState(0);
   const [modoMercado, setModoMercado] = useState(() => readDefaultPlayableMode());
   const gameMode = MARKET_MODES[modoMercado];
+  const marketModeLabel = GAME_MODE_LABELS[modoMercado];
   const locale = getIntlLocale(i18n.resolvedLanguage || i18n.language);
 
   useEffect(() => {
@@ -462,7 +464,7 @@ export default function KeysModule({ onViewChange }) {
                       fontFamily: "'Rajdhani', sans-serif"
                     }}
                   >
-                    {mode}
+                    {GAME_MODE_LABELS[mode]}
                   </button>
                 );
               })}
@@ -546,7 +548,7 @@ export default function KeysModule({ onViewChange }) {
         </section>
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem', marginBottom: '1.25rem' }}>
-          <StatCard label={t('keysModule.stats.visible', { mode: modoMercado })} value={filteredKeys.length} />
+          <StatCard label={t('keysModule.stats.visible', { mode: marketModeLabel })} value={filteredKeys.length} />
           <StatCard label={t('keysModule.stats.catalog')} value={allKeys.length} />
           <StatCard
             label={t('keysModule.stats.mapped', { defaultValue: 'Con mapa confirmado' })}
@@ -561,17 +563,17 @@ export default function KeysModule({ onViewChange }) {
           />
         </section>
 
-        {loading && <p style={{ color: 'var(--tk-green)', marginBottom: '1rem' }}>{t('keysModule.status.loading', { mode: modoMercado })}</p>}
+        {loading && <p style={{ color: 'var(--tk-green)', marginBottom: '1rem' }}>{t('keysModule.status.loading', { mode: marketModeLabel })}</p>}
         {!loading && dataSource === 'json' && (
           <p style={{ color: 'var(--tk-green)', margin: '0 0 1rem', fontWeight: '900', letterSpacing: '0.8px' }}>
-            JSON TARKOV.DEV · {t('keysModule.stats.catalog')}: {allKeys.length} · {modoMercado}
+            JSON TARKOV.DEV · {t('keysModule.stats.catalog')}: {allKeys.length} · {marketModeLabel}
           </p>
         )}
         {status && <p style={{ color: '#ffcf66', marginBottom: '1rem' }}>{status}</p>}
 
         <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1rem' }}>
           {filteredKeys.map((key) => (
-          <KeyCard key={key.id} keyItem={key} mode={modoMercado} locale={locale} />
+          <KeyCard key={key.id} keyItem={key} mode={marketModeLabel} locale={locale} />
           ))}
         </section>
 

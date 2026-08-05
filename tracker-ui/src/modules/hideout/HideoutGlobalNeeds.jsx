@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GAME_MODE_LABELS } from '../../lib/gameModePreferences';
 import { formatRublos, getGlobalHideoutNeeds } from './hideoutUtils';
 
 export default function HideoutGlobalNeeds({
@@ -14,6 +15,7 @@ export default function HideoutGlobalNeeds({
   const [nextLevelOnly, setNextLevelOnly] = useState(true);
   const [firOnly, setFirOnly] = useState(false);
   const locale = i18n.resolvedLanguage || i18n.language || 'en';
+  const modeLabel = GAME_MODE_LABELS[mode] || mode;
   const formatCount = (value) => new Intl.NumberFormat(locale).format(Number(value) || 0);
 
   const needs = useMemo(() => getGlobalHideoutNeeds({
@@ -63,7 +65,7 @@ export default function HideoutGlobalNeeds({
       <div className="hideout-global-needs__stats">
         <GlobalStat label={t('hideoutModule.global.uniqueItems')} value={formatCount(needs.uniqueItems)} />
         <GlobalStat label={t('hideoutModule.global.totalUnits')} value={formatCount(needs.totalUnits)} />
-        <GlobalStat label={t('hideoutModule.global.estimatedBudget', { mode })} value={formatRublos(needs.estimatedCost)} />
+        <GlobalStat label={t('hideoutModule.global.estimatedBudget', { mode: modeLabel })} value={formatRublos(needs.estimatedCost)} />
         <GlobalStat label={t('hideoutModule.global.firUnits')} value={formatCount(needs.firUnits)} tone="amber" />
       </div>
 
