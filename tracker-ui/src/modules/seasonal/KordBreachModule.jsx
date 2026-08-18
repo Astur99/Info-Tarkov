@@ -83,7 +83,7 @@ const COPY = {
     live: 'DATOS ESTACIONALES CONECTADOS',
     cached: 'USANDO ÚLTIMA COPIA VÁLIDA',
     loading: 'SINCRONIZANDO INTEL...',
-    tabs: ['MODIFICADORES', 'BATTLE PASS', 'LOGROS'],
+    tabs: ['MODIFICADORES', 'BATTLE PASS', 'MAPAS', 'LOGROS'],
     mandatory: 'OBLIGATORIO',
     mandatoryPerks: 'PERKS OBLIGATORIOS',
     mandatoryPerksBody: 'Se aplican automáticamente a todos los PMC estacionales y no pueden desactivarse.',
@@ -132,6 +132,11 @@ const COPY = {
     inventoryBody: 'Marca los tipos de documentos que ya tienes localizados. Los documentos clasificados funcionan como comodín.',
     collected: 'DOCUMENTOS CONTROLADOS',
     wildcard: 'COMODÍN',
+    mapsTitle: 'Mapas de documentos',
+    mapsBody: 'Consulta las ubicaciones comunitarias de los documentos requeridos para KORD BREACH sin salir de InfoTarkov.',
+    mapsNotice: 'Mapa comunitario externo integrado desde Kord Map. Las ubicaciones pueden actualizarse a medida que se verifican nuevos hallazgos.',
+    openMaps: 'ABRIR MAPA EN PANTALLA COMPLETA',
+    mapsFrameTitle: 'Mapa interactivo de documentos de KORD BREACH',
     achievementsTitle: 'Logros estacionales',
     achievementsBody: 'Leídos directamente del dataset pvp-season de Tarkov.dev.',
     sourceTitle: 'Cobertura actual de datos',
@@ -148,7 +153,7 @@ const COPY = {
     live: 'SEASONAL DATA CONNECTED',
     cached: 'USING LAST VALID SNAPSHOT',
     loading: 'SYNCING INTEL...',
-    tabs: ['MODIFIERS', 'BATTLE PASS', 'ACHIEVEMENTS'],
+    tabs: ['MODIFIERS', 'BATTLE PASS', 'MAPS', 'ACHIEVEMENTS'],
     mandatory: 'MANDATORY',
     mandatoryPerks: 'MANDATORY PERKS',
     mandatoryPerksBody: 'Automatically applied to every Seasonal PMC and cannot be disabled.',
@@ -197,6 +202,11 @@ const COPY = {
     inventoryBody: 'Mark the document types you have located. Classified Documents work as a wildcard.',
     collected: 'DOCUMENTS TRACKED',
     wildcard: 'WILDCARD',
+    mapsTitle: 'Document maps',
+    mapsBody: 'Browse community document locations required for KORD BREACH without leaving InfoTarkov.',
+    mapsNotice: 'External community map embedded from Kord Map. Locations may change as new finds are verified.',
+    openMaps: 'OPEN FULL-SCREEN MAP',
+    mapsFrameTitle: 'Interactive KORD BREACH document map',
     achievementsTitle: 'Seasonal achievements',
     achievementsBody: 'Read directly from Tarkov.dev pvp-season data.',
     sourceTitle: 'Current data coverage',
@@ -306,7 +316,7 @@ export default function KordBreachModule({ onViewChange }) {
     () => BATTLE_PASS_REWARDS.filter((reward) => wishlistSet.has(reward.id)),
     [wishlistSet]
   );
-  const tabs = ['modifiers', 'battle-pass', 'achievements'];
+  const tabs = ['modifiers', 'battle-pass', 'maps', 'achievements'];
 
   const toggleStoredItem = (id, values, setter, storageKey) => {
     const next = values.includes(id) ? values.filter((value) => value !== id) : [...values, id];
@@ -783,6 +793,29 @@ export default function KordBreachModule({ onViewChange }) {
               ))}
             </div>
           )}
+        </section>
+      )}
+
+      {activeTab === 'maps' && (
+        <section className="kord-section kord-maps">
+          <SectionHeading eyebrow="FIELD INTELLIGENCE" title={copy.mapsTitle} body={copy.mapsBody} />
+          <div className="kord-maps__toolbar">
+            <p>{copy.mapsNotice}</p>
+            <a href="https://kordmap.wiki/" target="_blank" rel="noreferrer">
+              {copy.openMaps}
+            </a>
+          </div>
+          <div className="kord-maps__frame">
+            <iframe
+              src="https://kordmap.wiki/"
+              title={copy.mapsFrameTitle}
+              loading="lazy"
+              allowFullScreen
+            />
+          </div>
+          <p className="kord-maps__credit">
+            Kord Map · Community locations · CC BY-NC-SA 4.0
+          </p>
         </section>
       )}
 

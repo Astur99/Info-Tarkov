@@ -51,8 +51,7 @@ export default function StoryDecisions({ onViewChange }) {
       width: '2px',
       height: '40px',
       background: 'linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.02))',
-      margin: '0 auto',
-      animation: 'pulseLinea 2s infinite alternate'
+      margin: '0 auto'
     },
     animacionContenedor: {
       animation: 'fadeScaleIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards'
@@ -79,10 +78,6 @@ export default function StoryDecisions({ onViewChange }) {
         @keyframes fadeScaleIn {
           from { opacity: 0; transform: translateY(15px) scale(0.99); }
           to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes pulseLinea {
-          from { opacity: 0.3; }
-          to { opacity: 0.8; }
         }
         .nodo-interactivo {
           transition: all 0.3s ease;
