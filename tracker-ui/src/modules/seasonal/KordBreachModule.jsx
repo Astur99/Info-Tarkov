@@ -14,12 +14,24 @@ import {
   searchBattlePassRewards,
   SEASON
 } from './seasonalData';
+import {
+  estimateDocumentProgress,
+  getBattlePassDocumentTotals,
+  getRemainingDocuments,
+  KORD_PROFILE_LIMITS,
+  normalizeDailyDocumentProgress,
+  rankDocumentFarmMaps,
+  recommendWildcardUse
+} from './kordPlanner';
 import './kord-breach.css';
 
 const BUILD_STORAGE_KEY = 'info_tarkov_kord_breach_modifier_build';
 const DOCUMENT_STORAGE_KEY = 'info_tarkov_kord_breach_documents';
 const REWARD_STORAGE_KEY = 'info_tarkov_kord_breach_claimed_rewards';
 const WISHLIST_STORAGE_KEY = 'info_tarkov_kord_breach_reward_wishlist';
+const PROFILE_STORAGE_KEY = 'info_tarkov_kord_breach_active_profile';
+const PROFILE_INVENTORY_STORAGE_KEY = 'info_tarkov_kord_breach_profile_inventory';
+const DAILY_DOCUMENT_STORAGE_KEY = 'info_tarkov_kord_breach_daily_documents';
 
 const SPANISH_EFFECTS = {
   'no-insurance': 'El seguro está desactivado para todos los PMC estacionales.',
@@ -137,6 +149,31 @@ const COPY = {
     mapsNotice: 'Mapa comunitario externo integrado desde Kord Map. Las ubicaciones pueden actualizarse a medida que se verifican nuevos hallazgos.',
     openMaps: 'ABRIR MAPA EN PANTALLA COMPLETA',
     mapsFrameTitle: 'Mapa interactivo de documentos de KORD BREACH',
+    operationsTitle: 'Planificador de documentación',
+    operationsBody: 'Controla el inventario de cada perfil y calcula dónde farmear según lo que todavía necesitas.',
+    profile: 'PERFIL ACTIVO',
+    profileLabels: { season: 'PVP ESTACIONAL', pvp: 'PVP ZONE', pve: 'PVE ZONE' },
+    dailyFound: 'ENCONTRADOS HOY',
+    communityLimit: 'LÍMITE COMUNITARIO',
+    remainingTotal: 'DOCUMENTOS RESTANTES',
+    estimatedRaids: 'RAIDS MÍNIMAS',
+    estimatedDays: 'DÍAS MÍNIMOS',
+    raidEstimateNote: 'Estimación usando el límite comunitario actual de 4 documentos por raid.',
+    inventoryCounts: 'INVENTARIO DEL PERFIL',
+    bestMaps: 'MEJORES MAPAS AHORA',
+    typesCovered: 'TIPOS ÚTILES',
+    noRoute: 'Este perfil ya cubre todos los documentos farmeables.',
+    wildcardPlan: 'USO RECOMENDADO DE CLASIFICADOS SOBRANTES',
+    noWildcard: 'No tienes documentos clasificados sobrantes después de reservar los exigidos por el pase.',
+    provisionalLimits: 'Los límites diarios son datos comunitarios y pueden cambiar sin aviso.',
+    storageTitle: 'Almacenamiento compatible',
+    storageBody: 'Puedes guardar documentación en Items Case, THICC Items Case, Junk Box, Documents Case, SICC y Folder of reports for Skier.',
+    seasonRulesTitle: 'Reglas que conviene recordar',
+    seasonRules: [
+      'Los documentos encontrados en raid son personales; los obtenidos de Black Division son compartidos.',
+      'Las recompensas del Battle Pass se desbloquean en todos los modos.',
+      'Las ofertas estacionales de tareas que no desbloquees antes del final serán permanentemente inaccesibles.'
+    ],
     achievementsTitle: 'Logros estacionales',
     achievementsBody: 'Leídos directamente del dataset pvp-season de Tarkov.dev.',
     sourceTitle: 'Cobertura actual de datos',
@@ -207,6 +244,31 @@ const COPY = {
     mapsNotice: 'External community map embedded from Kord Map. Locations may change as new finds are verified.',
     openMaps: 'OPEN FULL-SCREEN MAP',
     mapsFrameTitle: 'Interactive KORD BREACH document map',
+    operationsTitle: 'Document planner',
+    operationsBody: 'Track each profile inventory and calculate where to farm based on what you still need.',
+    profile: 'ACTIVE PROFILE',
+    profileLabels: { season: 'SEASONAL PVP', pvp: 'PVP ZONE', pve: 'PVE ZONE' },
+    dailyFound: 'FOUND TODAY',
+    communityLimit: 'COMMUNITY LIMIT',
+    remainingTotal: 'DOCUMENTS REMAINING',
+    estimatedRaids: 'MINIMUM RAIDS',
+    estimatedDays: 'MINIMUM DAYS',
+    raidEstimateNote: 'Estimate based on the current community limit of 4 documents per raid.',
+    inventoryCounts: 'PROFILE INVENTORY',
+    bestMaps: 'BEST MAPS NOW',
+    typesCovered: 'USEFUL TYPES',
+    noRoute: 'This profile already covers every farmable document.',
+    wildcardPlan: 'RECOMMENDED SPARE CLASSIFIED USE',
+    noWildcard: 'You have no spare Classified Documents after reserving those required by the pass.',
+    provisionalLimits: 'Daily limits are community data and may change without notice.',
+    storageTitle: 'Compatible storage',
+    storageBody: 'Documents can be stored in Items Case, THICC Items Case, Junk Box, Documents Case, SICC and Folder of reports for Skier.',
+    seasonRulesTitle: 'Rules worth remembering',
+    seasonRules: [
+      'Documents found in raids are personal; documents dropped by Black Division are shared.',
+      'Battle Pass rewards unlock across every game mode.',
+      'Seasonal task offers left locked at season end become permanently unobtainable.'
+    ],
     achievementsTitle: 'Seasonal achievements',
     achievementsBody: 'Read directly from Tarkov.dev pvp-season data.',
     sourceTitle: 'Current data coverage',
@@ -224,6 +286,15 @@ const readStoredList = (key) => {
     return Array.isArray(value) ? value : [];
   } catch {
     return [];
+  }
+};
+
+const readStoredObject = (key, fallback = {}) => {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || 'null');
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : fallback;
+  } catch {
+    return fallback;
   }
 };
 
@@ -246,6 +317,13 @@ export default function KordBreachModule({ onViewChange }) {
   const [selectedRewardId, setSelectedRewardId] = useState('');
   const [selectedPage, setSelectedPage] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [activeProfile, setActiveProfile] = useState(() => localStorage.getItem(PROFILE_STORAGE_KEY) || 'season');
+  const [profileInventory, setProfileInventory] = useState(() => readStoredObject(PROFILE_INVENTORY_STORAGE_KEY, {
+    season: {}, pvp: {}, pve: {}
+  }));
+  const [dailyDocuments, setDailyDocuments] = useState(() => normalizeDailyDocumentProgress(
+    readStoredObject(DAILY_DOCUMENT_STORAGE_KEY, null)
+  ));
 
   useEffect(() => {
     let active = true;
@@ -316,6 +394,37 @@ export default function KordBreachModule({ onViewChange }) {
     () => BATTLE_PASS_REWARDS.filter((reward) => wishlistSet.has(reward.id)),
     [wishlistSet]
   );
+  const battlePassDocumentTotals = useMemo(
+    () => getBattlePassDocumentTotals(BATTLE_PASS_REWARDS),
+    []
+  );
+  const activeProfileInventory = useMemo(
+    () => profileInventory[activeProfile] || {},
+    [profileInventory, activeProfile]
+  );
+  const remainingDocuments = useMemo(
+    () => getRemainingDocuments(battlePassDocumentTotals, activeProfileInventory),
+    [battlePassDocumentTotals, activeProfileInventory]
+  );
+  const classifiedDocument = documents.find((document) => document.wildcard);
+  const progressEstimate = useMemo(() => estimateDocumentProgress({
+    remaining: remainingDocuments,
+    dailyLimit: KORD_PROFILE_LIMITS[activeProfile],
+    wildcardId: classifiedDocument?.id
+  }), [remainingDocuments, activeProfile, classifiedDocument]);
+  const farmMapRecommendations = useMemo(
+    () => rankDocumentFarmMaps({ documents, remaining: remainingDocuments }).slice(0, 5),
+    [documents, remainingDocuments]
+  );
+  const spareClassified = classifiedDocument
+    ? Math.max(0, Number(activeProfileInventory[classifiedDocument.id] || 0)
+      - Number(battlePassDocumentTotals[classifiedDocument.id] || 0))
+    : 0;
+  const wildcardRecommendation = useMemo(() => recommendWildcardUse({
+    remaining: remainingDocuments,
+    wildcardId: classifiedDocument?.id,
+    available: spareClassified
+  }), [remainingDocuments, classifiedDocument, spareClassified]);
   const tabs = ['modifiers', 'battle-pass', 'maps', 'achievements'];
 
   const toggleStoredItem = (id, values, setter, storageKey) => {
@@ -333,6 +442,39 @@ export default function KordBreachModule({ onViewChange }) {
   const selectBattlePassReward = (reward) => {
     setSelectedRewardId(reward.id);
     setSelectedPage(reward.page);
+  };
+
+  const selectProfile = (profile) => {
+    setActiveProfile(profile);
+    localStorage.setItem(PROFILE_STORAGE_KEY, profile);
+  };
+
+  const changeInventoryCount = (documentId, delta) => {
+    const next = {
+      ...profileInventory,
+      [activeProfile]: {
+        ...activeProfileInventory,
+        [documentId]: Math.max(0, Number(activeProfileInventory[documentId] || 0) + delta)
+      }
+    };
+    setProfileInventory(next);
+    localStorage.setItem(PROFILE_INVENTORY_STORAGE_KEY, JSON.stringify(next));
+  };
+
+  const changeDailyCount = (delta) => {
+    const normalized = normalizeDailyDocumentProgress(dailyDocuments);
+    const next = {
+      ...normalized,
+      counts: {
+        ...normalized.counts,
+        [activeProfile]: Math.min(
+          KORD_PROFILE_LIMITS[activeProfile],
+          Math.max(0, Number(normalized.counts[activeProfile] || 0) + delta)
+        )
+      }
+    };
+    setDailyDocuments(next);
+    localStorage.setItem(DAILY_DOCUMENT_STORAGE_KEY, JSON.stringify(next));
   };
 
   const renderDocumentTotals = (progress) => (
@@ -483,6 +625,122 @@ export default function KordBreachModule({ onViewChange }) {
             <article><span>{copy.verifiedCosts}</span><strong>{verifiedRewardCount}/{rewardCount}</strong></article>
             <article><span>{copy.claimedRewards}</span><strong>{claimedSet.size}/{rewardCount}</strong></article>
           </div>
+
+          <section className="kord-operations">
+            <header className="kord-operations__header">
+              <div>
+                <span>FIELD LOGISTICS · COMMUNITY DATA</span>
+                <h3>{copy.operationsTitle}</h3>
+                <p>{copy.operationsBody}</p>
+              </div>
+              <div className="kord-operations__profiles" aria-label={copy.profile}>
+                <span>{copy.profile}</span>
+                <div>
+                  {Object.keys(KORD_PROFILE_LIMITS).map((profile) => (
+                    <button
+                      key={profile}
+                      type="button"
+                      className={activeProfile === profile ? 'is-active' : ''}
+                      onClick={() => selectProfile(profile)}
+                    >
+                      {copy.profileLabels[profile]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </header>
+
+            <div className="kord-operations__metrics">
+              <article>
+                <span>{copy.dailyFound}</span>
+                <strong>{dailyDocuments.counts[activeProfile] || 0}<small>/{KORD_PROFILE_LIMITS[activeProfile]}</small></strong>
+                <div className="kord-counter-controls">
+                  <button type="button" onClick={() => changeDailyCount(-1)}>−</button>
+                  <button type="button" onClick={() => changeDailyCount(1)}>+</button>
+                </div>
+              </article>
+              <article><span>{copy.remainingTotal}</span><strong>{progressEstimate.totalRemaining}</strong></article>
+              <article><span>{copy.estimatedRaids}</span><strong>{progressEstimate.estimatedRaids}</strong></article>
+              <article><span>{copy.estimatedDays}</span><strong>{progressEstimate.estimatedDays}</strong></article>
+            </div>
+
+            <p className="kord-operations__disclaimer">
+              {copy.raidEstimateNote} {copy.provisionalLimits}
+            </p>
+
+            <div className="kord-operations__inventory">
+              <h4>{copy.inventoryCounts}</h4>
+              <div>
+                {documents.map((document) => (
+                  <article key={document.id}>
+                    <span className="kord-operations__document-icon">
+                      {document.imageLink && !document.imageLink.includes('unknown-item')
+                        ? <img src={document.imageLink} alt="" />
+                        : 'DOC'}
+                    </span>
+                    <span>
+                      <strong>{language === 'es' ? SPANISH_DOCUMENT_NAMES[document.id] : document.name}</strong>
+                      <small>{remainingDocuments[document.id] || 0} {copy.remainingTotal.toLowerCase()}</small>
+                    </span>
+                    <div className="kord-counter-controls">
+                      <button type="button" onClick={() => changeInventoryCount(document.id, -1)}>−</button>
+                      <b>{activeProfileInventory[document.id] || 0}</b>
+                      <button type="button" onClick={() => changeInventoryCount(document.id, 1)}>+</button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="kord-operations__recommendations">
+              <section>
+                <h4>{copy.bestMaps}</h4>
+                {farmMapRecommendations.length ? (
+                  <div className="kord-farm-map-list">
+                    {farmMapRecommendations.map((entry, index) => (
+                      <article key={entry.mapName}>
+                        <span>{String(index + 1).padStart(2, '0')}</span>
+                        <div>
+                          <strong>{entry.mapName}</strong>
+                          <small>{entry.documents.filter((document) => document.needed > 0).map((document) => `${document.name} ×${document.needed}`).join(' · ')}</small>
+                        </div>
+                        <b>{entry.usefulTypes} {copy.typesCovered}</b>
+                      </article>
+                    ))}
+                  </div>
+                ) : <p>{copy.noRoute}</p>}
+              </section>
+
+              <section>
+                <h4>{copy.wildcardPlan}</h4>
+                {wildcardRecommendation.length ? (
+                  <div className="kord-wildcard-list">
+                    {wildcardRecommendation.map(({ documentId, count }) => {
+                      const document = documentById.get(documentId);
+                      return (
+                        <span key={documentId}>
+                          {document?.imageLink && <img src={document.imageLink} alt="" />}
+                          <strong>×{count}</strong>
+                          <small>{language === 'es' ? SPANISH_DOCUMENT_NAMES[documentId] : document?.name}</small>
+                        </span>
+                      );
+                    })}
+                  </div>
+                ) : <p>{copy.noWildcard}</p>}
+                <div className="kord-storage-note">
+                  <strong>{copy.storageTitle}</strong>
+                  <p>{copy.storageBody}</p>
+                </div>
+              </section>
+            </div>
+
+            <aside className="kord-season-rules">
+              <strong>{copy.seasonRulesTitle}</strong>
+              <ul>
+                {copy.seasonRules.map((rule) => <li key={rule}>{rule}</li>)}
+              </ul>
+            </aside>
+          </section>
 
           <section className="kord-pass-search" aria-label={copy.searchResults}>
             <input
