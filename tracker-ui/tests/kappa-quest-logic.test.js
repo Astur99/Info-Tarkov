@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {
   buildQuestGraph,
   getAvailableTaskIds,
-  getCompletionTaskRequirementIds
+  getCompletionTaskRequirementIds,
+  MAX_QUESTS_PER_ROW
 } from '../src/modules/kappa/kappaUtils.js';
 
 const requirement = (task, status) => ({ task: { id: task }, status });
@@ -59,4 +60,44 @@ test('optimizer eligibility excludes quests until every completion requirement i
     getAvailableTaskIds(tasks, ['trophy', 'controller', 'sellout']).has('stray-dogs'),
     true
   );
+});
+
+test('quest graph wraps large independent sets and keeps descendants below every root row', () => {
+  const roots = Array.from({ length: MAX_QUESTS_PER_ROW + 3 }, (_, index) =>
+    makeTask(`root-${index}`)
+  );
+  const child = makeTask('child', [requirement('root-0', ['complete'])]);
+  const graph = buildQuestGraph({
+    tasks: [...roots, child],
+    currentTrader: 'Jaeger',
+    soloKappa: false,
+    soloPendientes: false,
+    completadas: []
+  });
+
+  const rootRows = new Set(roots.map((task) =>
+    graph.nodos.find((node) => node.id === task.id).y
+  ));
+  const childNode = graph.nodos.find((node) => node.id === 'child');
+  assert.equal(rootRows.size, 2);
+  assert.ok(childNode.y > Math.max(...rootRows));
+  assert.equal(graph.conexiones.some((edge) => edge.id === 'root-0-child'), true);
+});
+
+test('cross-trader prerequisites influence depth without drawing a misleading local edge', () => {
+  const externalParent = {
+    ...makeTask('external-parent'),
+    trader: { name: 'Prapor' }
+  };
+  const localChild = makeTask('local-child', [requirement('external-parent', ['complete'])]);
+  const graph = buildQuestGraph({
+    tasks: [externalParent, localChild],
+    currentTrader: 'Jaeger',
+    soloKappa: false,
+    soloPendientes: false,
+    completadas: []
+  });
+
+  assert.ok(graph.nodos.find((node) => node.id === 'local-child').y > 0);
+  assert.equal(graph.conexiones.length, 0);
 });

@@ -11,6 +11,7 @@ export const getInitialTreePan = () => ({
 
 export const QUEST_CARD_WIDTH = 340;
 export const QUEST_CARD_HEIGHT = 160;
+export const MAX_QUESTS_PER_ROW = 6;
 
 const getRequirementStatuses = (requirement) =>
   new Set((requirement?.status || []).map((status) => String(status).toLowerCase()));
@@ -59,6 +60,32 @@ export const getAvailableTaskIds = (tasks, completedIds = []) => {
 };
 
 export const buildQuestGraph = ({ tasks, currentTrader, soloKappa, soloPendientes, completadas }) => {
+  const allTasksById = new Map(tasks.map((task) => [task.id, task]));
+  const levels = Object.fromEntries(tasks.map((task) => [task.id, 0]));
+  const allLevelRequirements = new Map(tasks.map((task) => [
+    task.id,
+    (task.taskRequirements || [])
+      .map((requirement) => ({
+        id: requirement?.task?.id,
+        weight: taskRequirementAllowsActive(requirement) ? 0 : 1
+      }))
+      .filter((requirement) => allTasksById.has(requirement.id))
+  ]));
+
+  let changed = true;
+  for (let pass = 0; pass < tasks.length && changed; pass += 1) {
+    changed = false;
+    tasks.forEach((task) => {
+      (allLevelRequirements.get(task.id) || []).forEach(({ id: previousId, weight }) => {
+        const requiredLevel = levels[previousId] + weight;
+        if (levels[task.id] < requiredLevel) {
+          levels[task.id] = requiredLevel;
+          changed = true;
+        }
+      });
+    });
+  }
+
   let traderTasks = tasks.filter((task) => task.trader?.name === currentTrader);
 
   if (soloKappa) {
@@ -69,42 +96,15 @@ export const buildQuestGraph = ({ tasks, currentTrader, soloKappa, soloPendiente
     traderTasks = traderTasks.filter((task) => !completadas.includes(task.id));
   }
 
-  const taskMap = new Map(traderTasks.map((task) => [task.id, task]));
-  const levels = {};
-
-  traderTasks.forEach((task) => {
-    levels[task.id] = 0;
-  });
+  const visibleTaskMap = new Map(traderTasks.map((task) => [task.id, task]));
 
   const tasksWithPrevIds = traderTasks.map((task) => ({
     ...task,
     _prevIds: (task.taskRequirements || [])
       .filter((requirement) => !taskRequirementAllowsActive(requirement))
       .map((req) => req?.task?.id)
-      .filter((id) => taskMap.has(id)),
-    _levelRequirements: (task.taskRequirements || [])
-      .map((requirement) => ({
-        id: requirement?.task?.id,
-        weight: taskRequirementAllowsActive(requirement) ? 0 : 1
-      }))
-      .filter((requirement) => taskMap.has(requirement.id))
+      .filter((id) => visibleTaskMap.has(id))
   }));
-
-  let changed = true;
-
-  for (let index = 0; index < 20 && changed; index++) {
-    changed = false;
-
-    tasksWithPrevIds.forEach((task) => {
-      task._levelRequirements.forEach(({ id: previousId, weight }) => {
-        const requiredLevel = levels[previousId] + weight;
-        if (levels[task.id] < requiredLevel) {
-          levels[task.id] = requiredLevel;
-          changed = true;
-        }
-      });
-    });
-  }
 
   const tasksByLevel = {};
 
@@ -146,24 +146,26 @@ export const buildQuestGraph = ({ tasks, currentTrader, soloKappa, soloPendiente
   const gapY = 120;
   const nodes = [];
   const connections = [];
+  let visualRow = 0;
 
-  Object.keys(tasksByLevel).forEach((level) => {
+  sortedLevels.forEach((level) => {
     const list = tasksByLevel[level];
-    const totalLevel = list.length;
-    const totalLevelWidth = totalLevel * QUEST_CARD_WIDTH + (totalLevel - 1) * gapX;
-    const startX = -totalLevelWidth / 2;
+    visualRow = Math.max(visualRow, Number(level));
+    for (let offset = 0; offset < list.length; offset += MAX_QUESTS_PER_ROW) {
+      const rowTasks = list.slice(offset, offset + MAX_QUESTS_PER_ROW);
+      const rowWidth = rowTasks.length * QUEST_CARD_WIDTH + (rowTasks.length - 1) * gapX;
+      const startX = -rowWidth / 2;
 
-    list.forEach((task, index) => {
-      const x = startX + index * (QUEST_CARD_WIDTH + gapX);
-      const y = level * (QUEST_CARD_HEIGHT + gapY);
-
-      nodes.push({
-        ...task,
-        x,
-        y,
-        prevIds: task._prevIds
+      rowTasks.forEach((task, index) => {
+        nodes.push({
+          ...task,
+          x: startX + index * (QUEST_CARD_WIDTH + gapX),
+          y: visualRow * (QUEST_CARD_HEIGHT + gapY),
+          prevIds: task._prevIds
+        });
       });
-    });
+      visualRow += 1;
+    }
   });
 
   nodes.forEach((node) => {
