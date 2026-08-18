@@ -62,7 +62,7 @@ test('optimizer eligibility excludes quests until every completion requirement i
   );
 });
 
-test('quest graph wraps large independent sets and keeps descendants below every root row', () => {
+test('quest graph packs independent quests without splitting a connected branch', () => {
   const roots = Array.from({ length: MAX_QUESTS_PER_ROW + 3 }, (_, index) =>
     makeTask(`root-${index}`)
   );
@@ -75,12 +75,14 @@ test('quest graph wraps large independent sets and keeps descendants below every
     completadas: []
   });
 
-  const rootRows = new Set(roots.map((task) =>
+  const rootRows = new Set(roots.slice(1).map((task) =>
     graph.nodos.find((node) => node.id === task.id).y
   ));
+  const connectedRoot = graph.nodos.find((node) => node.id === 'root-0');
   const childNode = graph.nodos.find((node) => node.id === 'child');
-  assert.equal(rootRows.size, 2);
-  assert.ok(childNode.y > Math.max(...rootRows));
+  assert.ok(rootRows.size >= 1);
+  assert.ok(childNode.y > connectedRoot.y);
+  assert.equal(childNode.x, connectedRoot.x);
   assert.equal(graph.conexiones.some((edge) => edge.id === 'root-0-child'), true);
 });
 

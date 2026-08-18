@@ -12,6 +12,12 @@ export const getInitialTreePan = () => ({
 export const QUEST_CARD_WIDTH = 340;
 export const QUEST_CARD_HEIGHT = 160;
 export const MAX_QUESTS_PER_ROW = 6;
+const QUEST_GAP_X = 60;
+const QUEST_GAP_Y = 120;
+const FOREST_GAP_X = 100;
+const FOREST_GAP_Y = 180;
+const FOREST_MAX_WIDTH =
+  MAX_QUESTS_PER_ROW * QUEST_CARD_WIDTH + (MAX_QUESTS_PER_ROW - 1) * QUEST_GAP_X;
 
 const getRequirementStatuses = (requirement) =>
   new Set((requirement?.status || []).map((status) => String(status).toLowerCase()));
@@ -106,66 +112,92 @@ export const buildQuestGraph = ({ tasks, currentTrader, soloKappa, soloPendiente
       .filter((id) => visibleTaskMap.has(id))
   }));
 
-  const tasksByLevel = {};
+  const nodes = [];
+  const connections = [];
+  const visibleById = new Map(tasksWithPrevIds.map((task) => [task.id, task]));
+  const neighbors = new Map(tasksWithPrevIds.map((task) => [task.id, new Set()]));
 
   tasksWithPrevIds.forEach((task) => {
-    const level = levels[task.id];
-
-    if (!tasksByLevel[level]) tasksByLevel[level] = [];
-
-    if (!tasksByLevel[level].some((current) => current.id === task.id)) {
-      tasksByLevel[level].push(task);
-    }
-  });
-
-  const sortedLevels = Object.keys(tasksByLevel).sort((a, b) => Number(a) - Number(b));
-
-  sortedLevels.forEach((level, index) => {
-    if (index === 0) return;
-
-    const previousLevel = tasksByLevel[sortedLevels[index - 1]];
-
-    tasksByLevel[level].sort((a, b) => {
-      const firstParentA = a._prevIds
-        .map((previousId) => previousLevel.findIndex((node) => node.id === previousId))
-        .filter((parentIndex) => parentIndex !== -1)[0];
-
-      const firstParentB = b._prevIds
-        .map((previousId) => previousLevel.findIndex((node) => node.id === previousId))
-        .filter((parentIndex) => parentIndex !== -1)[0];
-
-      if (firstParentA !== undefined && firstParentB !== undefined) {
-        return firstParentA - firstParentB;
-      }
-
-      return 0;
+    task._prevIds.forEach((previousId) => {
+      neighbors.get(task.id)?.add(previousId);
+      neighbors.get(previousId)?.add(task.id);
     });
   });
 
-  const gapX = 60;
-  const gapY = 120;
-  const nodes = [];
-  const connections = [];
-  let visualRow = 0;
+  const visited = new Set();
+  const components = [];
+  tasksWithPrevIds.forEach((task) => {
+    if (visited.has(task.id)) return;
+    const pending = [task.id];
+    const component = [];
+    visited.add(task.id);
 
-  sortedLevels.forEach((level) => {
-    const list = tasksByLevel[level];
-    visualRow = Math.max(visualRow, Number(level));
-    for (let offset = 0; offset < list.length; offset += MAX_QUESTS_PER_ROW) {
-      const rowTasks = list.slice(offset, offset + MAX_QUESTS_PER_ROW);
-      const rowWidth = rowTasks.length * QUEST_CARD_WIDTH + (rowTasks.length - 1) * gapX;
-      const startX = -rowWidth / 2;
+    while (pending.length) {
+      const currentId = pending.shift();
+      const current = visibleById.get(currentId);
+      if (current) component.push(current);
+      neighbors.get(currentId)?.forEach((neighborId) => {
+        if (visited.has(neighborId)) return;
+        visited.add(neighborId);
+        pending.push(neighborId);
+      });
+    }
+    components.push(component);
+  });
 
-      rowTasks.forEach((task, index) => {
+  const componentLayouts = components
+    .map((component, originalIndex) => {
+      const componentLevels = [...new Set(component.map((task) => levels[task.id]))]
+        .sort((left, right) => left - right);
+      const leadingLevels = componentLevels[0] || 0;
+      const rows = componentLevels.map((level) =>
+        component
+          .filter((task) => levels[task.id] === level)
+          .sort((left, right) => left.name.localeCompare(right.name))
+      );
+      const widestRow = Math.max(...rows.map((row) => row.length));
+      return {
+        component,
+        originalIndex,
+        rows,
+        leadingLevels,
+        width: widestRow * QUEST_CARD_WIDTH + Math.max(0, widestRow - 1) * QUEST_GAP_X,
+        height: (rows.length + leadingLevels) * QUEST_CARD_HEIGHT
+          + Math.max(0, rows.length + leadingLevels - 1) * QUEST_GAP_Y
+      };
+    })
+    .sort((left, right) =>
+      Number(right.component.length > 1) - Number(left.component.length > 1)
+      || right.component.length - left.component.length
+      || left.originalIndex - right.originalIndex
+    );
+
+  let shelfX = 0;
+  let shelfY = 0;
+  let shelfHeight = 0;
+
+  componentLayouts.forEach((layout) => {
+    if (shelfX > 0 && shelfX + layout.width > FOREST_MAX_WIDTH) {
+      shelfX = 0;
+      shelfY += shelfHeight + FOREST_GAP_Y;
+      shelfHeight = 0;
+    }
+
+    layout.rows.forEach((row, rowIndex) => {
+      const rowWidth = row.length * QUEST_CARD_WIDTH + Math.max(0, row.length - 1) * QUEST_GAP_X;
+      const rowStartX = shelfX + (layout.width - rowWidth) / 2;
+      row.forEach((task, index) => {
         nodes.push({
           ...task,
-          x: startX + index * (QUEST_CARD_WIDTH + gapX),
-          y: visualRow * (QUEST_CARD_HEIGHT + gapY),
+          x: rowStartX + index * (QUEST_CARD_WIDTH + QUEST_GAP_X) - FOREST_MAX_WIDTH / 2,
+          y: shelfY + (rowIndex + layout.leadingLevels) * (QUEST_CARD_HEIGHT + QUEST_GAP_Y),
           prevIds: task._prevIds
         });
       });
-      visualRow += 1;
-    }
+    });
+
+    shelfX += layout.width + FOREST_GAP_X;
+    shelfHeight = Math.max(shelfHeight, layout.height);
   });
 
   nodes.forEach((node) => {
